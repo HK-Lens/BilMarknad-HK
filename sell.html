@@ -9,40 +9,44 @@
     <style>
         * { box-sizing: border-box; font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
         body { background-color: #f4f7f9; color: #333; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        h1 { color: #002d5a; margin-bottom: 10px; text-align: center; }
-        .section-title { margin: 25px 0 15px; padding-bottom: 5px; border-bottom: 2px solid #eee; color: #0056b3; font-size: 18px; }
+        .container { max-width: 850px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
+        h1 { color: #002d5a; text-align: center; margin-bottom: 30px; }
+        .section-title { margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 2px solid #0056b3; color: #0056b3; font-weight: bold; }
         
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; font-size: 14px; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; transition: border 0.3s; }
-        input:focus { border-color: #0056b3; outline: none; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #444; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
         
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .btn-submit { background: #28a745; color: white; border: none; padding: 18px; width: 100%; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .btn-submit:hover { background: #218838; }
-
+        
         /* Photo Upload Styling */
-        .photo-upload { border: 2px dashed #ddd; padding: 30px; text-align: center; border-radius: 8px; cursor: pointer; background: #fafafa; }
-        .photo-upload:hover { border-color: #0056b3; background: #f0f7ff; }
+        .upload-area { border: 2px dashed #0056b3; padding: 40px; text-align: center; border-radius: 10px; background: #f0f7ff; cursor: pointer; transition: 0.3s; }
+        .upload-area:hover { background: #e1efff; }
+        .upload-area p { color: #0056b3; font-weight: bold; margin-bottom: 5px; }
+        .upload-area span { font-size: 12px; color: #666; }
 
-        .contact-options { background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee; }
-        .radio-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-        .radio-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .radio-item input { width: auto; }
+        /* Contact Options Styles */
+        .privacy-box { background: #f9f9f9; padding: 20px; border-radius: 10px; border: 1px solid #eee; margin-top: 10px; }
+        .option-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px; cursor: pointer; }
+        .option-item input { width: auto; margin-top: 4px; }
+        .option-text b { display: block; font-size: 15px; }
+        .option-text span { font-size: 13px; color: #666; }
+
+        .btn-submit { background: #28a745; color: white; border: none; padding: 20px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 30px; transition: 0.3s; }
+        .btn-submit:hover { background: #218838; transform: translateY(-2px); }
+        .loading-overlay { display: none; color: #0056b3; font-weight: bold; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Skapa din annons</h1>
-        <p style="text-align:center; color:#666;">Fyll i bilens detaljer och välj hur du vill bli kontaktad.</p>
+        <h1>Publicera din annons</h1>
 
         <form id="sell-car-form">
             
-            <div class="section-title">Bilinformation</div>
+            <div class="section-title">1. Fordonsinformation</div>
             <div class="form-group">
-                <label>Registreringsnummer</label>
+                <label>Registreringsnummer (Reg nr)</label>
                 <input type="text" id="regNr" placeholder="t.ex. ABC 123" required>
             </div>
 
@@ -52,10 +56,10 @@
                     <select id="brand" required>
                         <option value="">Välj märke</option>
                         <option value="Volvo">Volvo</option>
-                        <option value="Volkswagen">Volkswagen</option>
                         <option value="BMW">BMW</option>
-                        <option value="Audi">Audi</option>
                         <option value="Tesla">Tesla</option>
+                        <option value="Volkswagen">Volkswagen</option>
+                        <option value="Audi">Audi</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -66,115 +70,133 @@
 
             <div class="row">
                 <div class="form-group">
-                    <label>Årsmodell</label>
-                    <input type="number" id="year" placeholder="2023" required>
-                </div>
-                <div class="form-group">
                     <label>Miltal (mil)</label>
                     <input type="number" id="mileage" placeholder="t.ex. 4500" required>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label>Pris (kr)</label>
-                <input type="number" id="price" placeholder="t.ex. 295000" required>
-            </div>
-
-            <div class="section-title">Bilder</div>
-            <div class="form-group">
-                <label>Ladda upp bilder på bilen</label>
-                <div class="photo-upload" onclick="document.getElementById('photos').click()">
-                    <span id="photo-label">Klicka här för att välja bilder</span>
-                    <input type="file" id="photos" multiple accept="image/*" style="display:none">
+                <div class="form-group">
+                    <label>Pris (kr)</label>
+                    <input type="number" id="price" placeholder="t.ex. 245000" required>
                 </div>
             </div>
 
-            <div class="section-title">Kontakt & Integritet</div>
-            <div class="contact-options">
-                <label>Hur vill du bli kontaktad av köpare?</label>
-                <div class="radio-group">
-                    <label class="radio-item">
-                        <input type="radio" name="contactMethod" value="phone_email" checked>
-                        <span>Visa både telefon och e-post</span>
-                    </label>
-                    <label class="radio-item">
-                        <input type="radio" name="contactMethod" value="email_only">
-                        <span>Endast e-post</span>
-                    </label>
-                    <label class="radio-item">
-                        <input type="radio" name="contactMethod" value="internal_inbox">
-                        <span>Endast via internt meddelande (Dölj mina uppgifter)</span>
-                    </label>
-                </div>
-                
-                <div id="phone-input-div" class="form-group" style="margin-top:20px;">
-                    <label>Telefonnummer</label>
-                    <input type="tel" id="phone" placeholder="070 123 45 67">
-                </div>
+            <div class="section-title">2. Bilder</div>
+            <div class="upload-area" onclick="document.getElementById('photos').click()">
+                <p>Ladda upp bilder</p>
+                <span id="photo-count">Klicka för att välja upp till 10 bilder</span>
+                <input type="file" id="photos" multiple accept="image/*" style="display:none">
             </div>
 
-            <button type="submit" class="btn-submit">Publicera annons</button>
+            <div class="section-title">3. Kontakt & Integritet</div>
+            <div class="privacy-box">
+                <label class="option-item">
+                    <input type="radio" name="contactPref" value="public" checked>
+                    <div class="option-text">
+                        <b>Visa mina kontaktuppgifter</b>
+                        <span>Telefonnummer och e-post visas i annonsen.</span>
+                    </div>
+                </label>
+                <label class="option-item">
+                    <input type="radio" name="contactPref" value="private">
+                    <div class="option-text">
+                        <b>Dölj mina uppgifter (Internt meddelande)</b>
+                        <span>Köpare kan endast kontakta dig via BilMarknad-HK inbox.</span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="form-group" id="phone-div" style="margin-top: 20px;">
+                <label>Telefonnummer (valfritt)</label>
+                <input type="tel" id="phone" placeholder="070 123 45 67">
+            </div>
+
+            <div id="loading" class="loading-overlay">Publicerar annonsen, vänligen vänta...</div>
+            <button type="submit" class="btn-submit" id="submit-btn">Publicera nu</button>
         </form>
 
-        <a href="index.html" style="display:block; text-align:center; margin-top:25px; color:#0056b3; text-decoration:none; font-size:14px;">← Tillbaka till start</a>
+        <a href="index.html" style="display:block; text-align:center; margin-top:30px; color:#666; text-decoration:none; font-size:14px;">Avbryt och gå tillbaka</a>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDCsMbG5pT3y6MC6b05LEdFoByWM1nT7NY",
             authDomain: "bilmarknad-hk.firebaseapp.com",
             projectId: "bilmarknad-hk",
+            storageBucket: "bilmarknad-hk.firebasestorage.app", // تأكد من صحة هذا الرابط
+            messagingSenderId: "284008879407",
             appId: "1:284008879407:web:66bee60b51ec277e8dbdda"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         let currentUser = null;
 
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                alert("Du måste logga in för att skapa en annons.");
-                window.location.href = 'login.html';
-            }
+            if (!user) { window.location.href = 'login.html'; }
             currentUser = user;
         });
 
-        // تحديث نص رفع الصور عند اختيار ملفات
-        document.getElementById('photos').addEventListener('change', function() {
-            const count = this.files.length;
-            document.getElementById('photo-label').innerText = count + " bilder valda";
+        // تحديث عدد الصور المختارة
+        const photoInput = document.getElementById('photos');
+        photoInput.addEventListener('change', () => {
+            document.getElementById('photo-count').innerText = photoInput.files.length + " bilder valda";
         });
 
         const sellForm = document.getElementById('sell-car-form');
         sellForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const carData = {
-                regNr: document.getElementById('regNr').value,
-                brand: document.getElementById('brand').value,
-                model: document.getElementById('model').value,
-                year: document.getElementById('year').value,
-                mileage: document.getElementById('mileage').value,
-                price: document.getElementById('price').value,
-                contactMethod: document.querySelector('input[name="contactMethod"]:checked').value,
-                phone: document.getElementById('phone').value,
-                sellerName: currentUser.displayName,
-                sellerEmail: currentUser.email,
-                createdAt: new Date()
-            };
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const loadingText = document.getElementById('loading');
+            
+            submitBtn.disabled = true;
+            loadingText.style.display = 'block';
 
             try {
+                // 1. رفع الصور والحصول على الروابط
+                const imageUrls = [];
+                const files = photoInput.files;
+                
+                for (let i = 0; i < files.length; i++) {
+                    const storageRef = ref(storage, `cars/${Date.now()}_${files[i].name}`);
+                    const snapshot = await uploadBytes(storageRef, files[i]);
+                    const url = await getDownloadURL(snapshot.ref);
+                    imageUrls.push(url);
+                }
+
+                // 2. تجميع بيانات السيارة
+                const carData = {
+                    regNr: document.getElementById('regNr').value.toUpperCase(),
+                    brand: document.getElementById('brand').value,
+                    model: document.getElementById('model').value,
+                    mileage: document.getElementById('mileage').value,
+                    price: document.getElementById('price').value,
+                    contactPref: document.querySelector('input[name="contactPref"]:checked').value,
+                    phone: document.getElementById('phone').value,
+                    images: imageUrls,
+                    sellerId: currentUser.uid,
+                    sellerName: currentUser.displayName,
+                    createdAt: new Date()
+                };
+
+                // 3. الحفظ في Firestore
                 await addDoc(collection(db, "cars"), carData);
-                alert("Annonsen har publicerats!");
+                
+                alert("Grattis! Din annons är nu publicerad.");
                 window.location.href = 'index.html';
+
             } catch (error) {
-                alert("Ett fel uppstod: " + error.message);
+                console.error(error);
+                alert("Ett fel uppstod vid publicering: " + error.message);
+                submitBtn.disabled = false;
+                loadingText.style.display = 'none';
             }
         });
     </script>
