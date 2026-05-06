@@ -9,95 +9,114 @@
     <style>
         * { box-sizing: border-box; font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
         body { background-color: #f4f7f9; color: #333; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { color: #002d5a; margin-bottom: 10px; text-align: center; }
+        .section-title { margin: 25px 0 15px; padding-bottom: 5px; border-bottom: 2px solid #eee; color: #0056b3; font-size: 18px; }
         
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { color: #002d5a; margin-bottom: 20px; text-align: center; }
-        p { text-align: center; color: #666; margin-bottom: 30px; }
-
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
-        textarea { height: 100px; resize: vertical; }
-
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-        .btn-submit { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 4px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-submit:hover { background: #218838; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; transition: border 0.3s; }
+        input:focus { border-color: #0056b3; outline: none; }
         
-        .back-link { display: block; text-align: center; margin-top: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .btn-submit { background: #28a745; color: white; border: none; padding: 18px; width: 100%; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .btn-submit:hover { background: #218838; }
+
+        /* Photo Upload Styling */
+        .photo-upload { border: 2px dashed #ddd; padding: 30px; text-align: center; border-radius: 8px; cursor: pointer; background: #fafafa; }
+        .photo-upload:hover { border-color: #0056b3; background: #f0f7ff; }
+
+        .contact-options { background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee; }
+        .radio-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .radio-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .radio-item input { width: auto; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Sälj din bil</h1>
-        <p>Fyll i informationen nedan för att publicera din annons.</p>
+        <h1>Skapa din annons</h1>
+        <p style="text-align:center; color:#666;">Fyll i bilens detaljer och välj hur du vill bli kontaktad.</p>
 
         <form id="sell-car-form">
+            
+            <div class="section-title">Bilinformation</div>
             <div class="form-group">
-                <label>Bilismärke (Märke)</label>
-                <select id="brand" required>
-                    <option value="">Välj märke</option>
-                    <option value="Volvo">Volvo</option>
-                    <option value="Volkswagen">Volkswagen</option>
-                    <option value="BMW">BMW</option>
-                    <option value="Audi">Audi</option>
-                    <option value="Mercedes-Benz">Mercedes-Benz</option>
-                    <option value="Tesla">Tesla</option>
-                    <option value="Toyota">Toyota</option>
-                    <option value="Kia">Kia</option>
-                </select>
+                <label>Registreringsnummer</label>
+                <input type="text" id="regNr" placeholder="t.ex. ABC 123" required>
             </div>
 
-            <div class="form-group">
-                <label>Modell</label>
-                <input type="text" id="model" placeholder="t.ex. XC60, Model 3..." required>
+            <div class="row">
+                <div class="form-group">
+                    <label>Märke</label>
+                    <select id="brand" required>
+                        <option value="">Välj märke</option>
+                        <option value="Volvo">Volvo</option>
+                        <option value="Volkswagen">Volkswagen</option>
+                        <option value="BMW">BMW</option>
+                        <option value="Audi">Audi</option>
+                        <option value="Tesla">Tesla</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Modell</label>
+                    <input type="text" id="model" placeholder="t.ex. XC60" required>
+                </div>
             </div>
 
             <div class="row">
                 <div class="form-group">
                     <label>Årsmodell</label>
-                    <input type="number" id="year" placeholder="2023" min="1900" max="2027" required>
+                    <input type="number" id="year" placeholder="2023" required>
                 </div>
                 <div class="form-group">
                     <label>Miltal (mil)</label>
-                    <input type="number" id="mileage" placeholder="t.ex. 5000" required>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group">
-                    <label>Drivmedel</label>
-                    <select id="fuel">
-                        <option value="Bensin">Bensin</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="El">El</option>
-                        <option value="Laddhybrid">Laddhybrid</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Växellåda</label>
-                    <select id="gearbox">
-                        <option value="Automat">Automat</option>
-                        <option value="Manuell">Manuell</option>
-                    </select>
+                    <input type="number" id="mileage" placeholder="t.ex. 4500" required>
                 </div>
             </div>
 
             <div class="form-group">
                 <label>Pris (kr)</label>
-                <input type="number" id="price" placeholder="t.ex. 250000" required>
+                <input type="number" id="price" placeholder="t.ex. 295000" required>
             </div>
 
+            <div class="section-title">Bilder</div>
             <div class="form-group">
-                <label>Beskrivning</label>
-                <textarea id="description" placeholder="Berätta mer om bilen..."></textarea>
+                <label>Ladda upp bilder på bilen</label>
+                <div class="photo-upload" onclick="document.getElementById('photos').click()">
+                    <span id="photo-label">Klicka här för att välja bilder</span>
+                    <input type="file" id="photos" multiple accept="image/*" style="display:none">
+                </div>
+            </div>
+
+            <div class="section-title">Kontakt & Integritet</div>
+            <div class="contact-options">
+                <label>Hur vill du bli kontaktad av köpare?</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="contactMethod" value="phone_email" checked>
+                        <span>Visa både telefon och e-post</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="contactMethod" value="email_only">
+                        <span>Endast e-post</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="contactMethod" value="internal_inbox">
+                        <span>Endast via internt meddelande (Dölj mina uppgifter)</span>
+                    </label>
+                </div>
+                
+                <div id="phone-input-div" class="form-group" style="margin-top:20px;">
+                    <label>Telefonnummer</label>
+                    <input type="tel" id="phone" placeholder="070 123 45 67">
+                </div>
             </div>
 
             <button type="submit" class="btn-submit">Publicera annons</button>
         </form>
 
-        <a href="index.html" class="back-link">← Tillbaka till startsidan</a>
+        <a href="index.html" style="display:block; text-align:center; margin-top:25px; color:#0056b3; text-decoration:none; font-size:14px;">← Tillbaka till start</a>
     </div>
 
     <script type="module">
@@ -116,43 +135,45 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let userEmail = "";
+        let currentUser = null;
 
-        // التأكد من أن المستخدم مسجل دخول
         onAuthStateChanged(auth, (user) => {
             if (!user) {
-                alert("Du måste vara inloggad för att sälja en bil.");
+                alert("Du måste logga in för att skapa en annons.");
                 window.location.href = 'login.html';
-            } else {
-                userEmail = user.email;
             }
+            currentUser = user;
         });
 
-        // حفظ البيانات عند إرسال النموذج
+        // تحديث نص رفع الصور عند اختيار ملفات
+        document.getElementById('photos').addEventListener('change', function() {
+            const count = this.files.length;
+            document.getElementById('photo-label').innerText = count + " bilder valda";
+        });
+
         const sellForm = document.getElementById('sell-car-form');
         sellForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const carData = {
+                regNr: document.getElementById('regNr').value,
                 brand: document.getElementById('brand').value,
                 model: document.getElementById('model').value,
                 year: document.getElementById('year').value,
                 mileage: document.getElementById('mileage').value,
-                fuel: document.getElementById('fuel').value,
-                gearbox: document.getElementById('gearbox').value,
                 price: document.getElementById('price').value,
-                description: document.getElementById('description').value,
-                sellerEmail: userEmail,
+                contactMethod: document.querySelector('input[name="contactMethod"]:checked').value,
+                phone: document.getElementById('phone').value,
+                sellerName: currentUser.displayName,
+                sellerEmail: currentUser.email,
                 createdAt: new Date()
             };
 
             try {
-                // حفظ في مجموعة تسمى "cars"
                 await addDoc(collection(db, "cars"), carData);
-                alert("Annonsen har publicerats framgångsrikt!");
+                alert("Annonsen har publicerats!");
                 window.location.href = 'index.html';
             } catch (error) {
-                console.error("Error adding document: ", error);
                 alert("Ett fel uppstod: " + error.message);
             }
         });
