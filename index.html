@@ -8,39 +8,124 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
-        body { background-color: #f0f2f5; color: #333; }
+        body { background-color: #f0f2f5; color: #333; line-height: 1.6; }
 
-        /* Header */
-        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
+        /* Navigation Bar */
+        header { 
+            background: #fff; 
+            padding: 15px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #ddd; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
         .logo { font-size: 24px; font-weight: 700; color: #0056b3; text-decoration: none; }
         .nav-right { display: flex; align-items: center; gap: 20px; }
-        .btn-post { background: #28a745; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 14px; }
+        
+        .btn-post { 
+            background: #28a745; 
+            color: white; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            font-size: 14px; 
+            transition: 0.3s;
+        }
+        .btn-post:hover { background: #218838; }
+        
         .user-link { font-weight: 500; font-size: 14px; color: #0056b3; text-decoration: none; }
-        .btn-logout { color: #d9534f; cursor: pointer; font-size: 12px; font-weight: bold; margin-left: 10px; border: none; background: none; }
+        .btn-logout { 
+            color: #d9534f; 
+            cursor: pointer; 
+            font-size: 12px; 
+            font-weight: bold; 
+            margin-left: 10px; 
+            border: none; 
+            background: none; 
+            text-decoration: underline;
+        }
 
-        /* Search Section */
-        .hero-search { background: #002d5a; padding: 40px 5%; color: white; text-align: center; }
-        .search-box { background: white; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; max-width: 1000px; margin: 20px auto 0; }
-        .search-box select, .search-box input { padding: 12px; border: 1px solid #ccc; border-radius: 4px; }
-        .btn-search { background: #007bff; color: white; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        /* Hero Search Section (Bytbil Style) */
+        .hero-search { 
+            background: #002d5a; 
+            padding: 50px 5%; 
+            color: white; 
+            text-align: center; 
+        }
+        .hero-search h1 { font-size: 36px; margin-bottom: 25px; }
+        .search-box { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 8px; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .search-box select, .search-box input { 
+            padding: 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-size: 15px;
+            color: #333;
+        }
+        .btn-search { 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            padding: 12px; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 16px;
+        }
+        .btn-search:hover { background: #0056b3; }
 
-        /* Main Content */
-        .main-content { padding: 40px 5%; max-width: 1200px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        /* Main Content - Car Grid */
+        .main-content { padding: 50px 5%; max-width: 1200px; margin: 0 auto; }
+        .section-title { margin-bottom: 30px; font-size: 24px; border-bottom: 2px solid #0056b3; display: inline-block; padding-bottom: 5px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
         
-        /* Car Card */
-        .car-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; }
-        .car-img { width: 100%; height: 200px; background: #ddd; object-fit: cover; }
-        .car-info { padding: 15px; }
-        .car-price { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
-        .car-title { font-size: 18px; margin-bottom: 10px; font-weight: 500; }
-        
-        /* Action Buttons */
-        .actions { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-action { flex: 1; padding: 10px; border-radius: 4px; border: 1px solid #ddd; cursor: pointer; font-size: 13px; font-weight: bold; background: #fff; transition: 0.2s; }
+        /* Car Card Design */
+        .car-card { 
+            background: white; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08); 
+            transition: 0.3s;
+        }
+        .car-card:hover { transform: translateY(-5px); box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+        .car-img { width: 100%; height: 220px; background: #eee; object-fit: cover; }
+        .car-info { padding: 20px; }
+        .car-price { font-size: 24px; font-weight: 700; color: #333; margin-bottom: 5px; }
+        .car-title { font-size: 18px; font-weight: 500; color: #0056b3; margin-bottom: 15px; height: 50px; overflow: hidden; }
+        .car-specs { display: flex; justify-content: space-between; font-size: 13px; color: #777; border-top: 1px solid #eee; padding-top: 15px; }
+
+        /* Action Buttons on Card */
+        .card-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-action { 
+            flex: 1; 
+            padding: 12px; 
+            border-radius: 4px; 
+            border: 1px solid #ddd; 
+            cursor: pointer; 
+            font-size: 14px; 
+            font-weight: bold; 
+            background: #fff; 
+            transition: 0.2s; 
+        }
         .btn-save { color: #555; }
         .btn-contact { background: #0056b3; color: white; border: none; }
-        .btn-action:hover { opacity: 0.8; }
+        .btn-action:hover { opacity: 0.8; background: #f9f9f9; }
+        .btn-contact:hover { background: #004494; color: white; }
+
+        footer { text-align: center; padding: 40px; color: #888; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -48,7 +133,7 @@
     <header>
         <a href="index.html" class="logo">BilMarknad-HK</a>
         <div class="nav-right">
-            <a href="#" class="btn-post protected-action">Sälj din bil</a>
+            <a href="sell.html" class="btn-post protected-action">Sälj din bil</a>
             <div id="auth-area">
                 </div>
         </div>
@@ -57,21 +142,36 @@
     <section class="hero-search">
         <h1>Hitta din nästa bil</h1>
         <div class="search-box">
-            <select><option>Alla märken</option><option>Volvo</option><option>Tesla</option></select>
-            <input type="text" placeholder="Max pris (kr)">
+            <select id="brand-select">
+                <option value="">Alla märken</option>
+                <option value="Volvo">Volvo</option>
+                <option value="BMW">BMW</option>
+                <option value="Tesla">Tesla</option>
+                <option value="Volkswagen">Volkswagen</option>
+            </select>
+            <select id="model-select">
+                <option value="">Alla modeller</option>
+            </select>
+            <input type="number" id="max-price" placeholder="Max pris (kr)">
             <button class="btn-search">Sök bilar</button>
         </div>
     </section>
 
     <main class="main-content">
-        <h2 style="margin-bottom: 20px;">Aktuella annonser</h2>
-        <div class="grid">
+        <h2 class="section-title">Senast inkomna bilar</h2>
+        
+        <div class="grid" id="car-grid">
             <div class="car-card">
-                <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=400" class="car-img">
+                <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=600" class="car-img" alt="Car">
                 <div class="car-info">
                     <p class="car-price">1 250 000 kr</p>
-                    <p class="car-title">Porsche 911 Carrera - 2023</p>
-                    <div class="actions">
+                    <p class="car-title">Porsche 911 Carrera Coupé (2023)</p>
+                    <div class="car-specs">
+                        <span>1 500 mil</span>
+                        <span>Automat</span>
+                        <span>Bensin</span>
+                    </div>
+                    <div class="card-actions">
                         <button class="btn-action btn-save protected-action">Spara ⭐</button>
                         <button class="btn-action btn-contact protected-action">Kontakta</button>
                     </div>
@@ -79,11 +179,33 @@
             </div>
 
             <div class="car-card">
-                <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c3d8?auto=format&fit=crop&q=80&w=400" class="car-img">
+                <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=600" class="car-img" alt="Car">
+                <div class="car-info">
+                    <p class="car-price">890 000 kr</p>
+                    <p class="car-title">BMW M4 Competition xDrive (2022)</p>
+                    <div class="car-specs">
+                        <span>2 100 mil</span>
+                        <span>Automat</span>
+                        <span>Bensin</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action btn-save protected-action">Spara ⭐</button>
+                        <button class="btn-action btn-contact protected-action">Kontakta</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="car-card">
+                <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c3d8?auto=format&fit=crop&q=80&w=600" class="car-img" alt="Car">
                 <div class="car-info">
                     <p class="car-price">950 000 kr</p>
-                    <p class="car-title">Volvo XC90 Recharge - 2024</p>
-                    <div class="actions">
+                    <p class="car-title">Volvo XC90 Recharge T8 (2024)</p>
+                    <div class="car-specs">
+                        <span>0 mil</span>
+                        <span>Automat</span>
+                        <span>Laddhybrid</span>
+                    </div>
+                    <div class="card-actions">
                         <button class="btn-action btn-save protected-action">Spara ⭐</button>
                         <button class="btn-action btn-contact protected-action">Kontakta</button>
                     </div>
@@ -92,10 +214,15 @@
         </div>
     </main>
 
+    <footer>
+        <p>© 2026 BilMarknad-HK - En privat marknadsplats för bilar</p>
+    </footer>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+        // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyDCsMbG5pT3y6MC6b05LEdFoByWM1nT7NY",
             authDomain: "bilmarknad-hk.firebaseapp.com",
@@ -103,40 +230,51 @@
             appId: "1:284008879407:web:66bee60b51ec277e8dbdda"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
         const authArea = document.getElementById('auth-area');
         let currentUser = null;
 
-        // التحقق من حالة المستخدم
+        // Listen for Authentication State
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if (user) {
-                // مستخدم مسجل
+                // User is signed in
                 authArea.innerHTML = `
-                    <span class="user-link">Välkommen, ${user.displayName}</span>
+                    <span class="user-link">Välkommen, <strong>${user.displayName || 'Användare'}</strong></span>
                     <button id="logout-btn" class="btn-logout">Logga ut</button>
                 `;
-                document.getElementById('logout-btn').addEventListener('click', () => signOut(auth).then(() => location.reload()));
+                document.getElementById('logout-btn').addEventListener('click', () => {
+                    signOut(auth).then(() => {
+                        window.location.reload();
+                    });
+                });
             } else {
-                // زائر
+                // User is not signed in
                 authArea.innerHTML = `<a href="login.html" class="user-link">Logga in</a>`;
             }
         });
 
-        // حماية الأزرار الخاصة (النشر، الحفظ، المراسلة)
+        // Protected Actions Logic
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('protected-action')) {
                 if (!currentUser) {
+                    // Prevent action and ask for login
                     e.preventDefault();
-                    if (confirm("Du måste vara inloggad för att göra detta. Vill du logga in nu?")) {
+                    const confirmLogin = confirm("Du måste vara inloggad för att utföra denna åtgärd. Vill du logga in nu?");
+                    if (confirmLogin) {
                         window.location.href = 'login.html';
                     }
                 } else {
-                    // إذا كان مسجلاً، يمكن إضافة المنطق الخاص بكل زر هنا
-                    if (e.target.classList.contains('btn-save')) alert("Sparad till dina favoriter!");
-                    if (e.target.classList.contains('btn-contact')) alert("Öppnar chatt med säljaren...");
+                    // User is logged in, perform specific actions if needed
+                    if (e.target.classList.contains('btn-save')) {
+                        alert("Bilen har sparats till dina favoriter!");
+                    }
+                    if (e.target.classList.contains('btn-contact')) {
+                        alert("Kontaktformulär öppnas... (Funktionen kommer snart)");
+                    }
                 }
             }
         });
