@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول | BilMarknad-HK</title>
+    
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --accent-color: #ffcc00;
+            --bg-color: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: block;
+            text-decoration: none;
+        }
+
+        h2 { color: #333; margin-bottom: 25px; font-size: 1.4rem; }
+
+        .input-group { text-align: right; margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; color: #666; font-size: 0.9rem; }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--primary-color); }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .btn-login:hover { background-color: #004494; }
+
+        .divider {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            color: #999;
+            font-size: 0.8rem;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #ddd;
+            margin: 0 10px;
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 12px;
+            background-color: white;
+            color: #555;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        .btn-google:hover { background-color: #f9f9f9; }
+        .btn-google img { width: 20px; }
+
+        .footer-links { margin-top: 20px; font-size: 0.85rem; color: #777; }
+        .footer-links a { color: var(--primary-color); text-decoration: none; font-weight: bold; }
+        
+        .back-home {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #999;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <a href="index.html" class="logo">BilMarknad-HK</a>
+        <h2>تسجيل الدخول | Logga in</h2>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <label>البريد الإلكتروني (E-post)</label>
+                <input type="email" id="email" required placeholder="example@mail.com">
+            </div>
+            <div class="input-group">
+                <label>كلمة المرور (Lösenord)</label>
+                <input type="password" id="password" required placeholder="********">
+            </div>
+            <button type="submit" class="btn-login">دخول</button>
+        </form>
+
+        <div class="divider">أو عبر</div>
+
+        <button class="btn-google" id="googleBtn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
+            الدخول عبر جوجل
+        </button>
+
+        <div class="footer-links">
+            ليس لديك حساب؟ <a href="#">سجل الآن مجاناً</a>
+        </div>
+
+        <a href="index.html" class="back-home">← العودة للرئيسية</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
+        // إعدادات مشروعك BilMarknad-HK
+        const firebaseConfig = {
+            apiKey: "AIzaSyDCsMbG5pT3y6MC6b05LEdFoByWM1nT7NY",
+            authDomain: "bilmarknad-hk.firebaseapp.com",
+            projectId: "bilmarknad-hk",
+            storageBucket: "bilmarknad-hk.firebasestorage.app",
+            messagingSenderId: "284008879407",
+            appId: "1:284008879407:web:66bee60b51ec277e8dbdda",
+            measurementId: "G-HZ54056GSG"
+        };
+
+        // بدء تشغيل Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // تفعيل زر جوجل
+        const googleBtn = document.getElementById('googleBtn');
+        googleBtn.onclick = () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    console.log("Success:", result.user);
+                    window.location.href = "index.html"; // التوجه للرئيسية بعد النجاح
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    alert("خطأ: تأكد من إضافة رابط موقعك في Authorized Domains داخل Firebase");
+                });
+        };
+
+        // تفعيل فورم الإيميل والباسورد
+        const loginForm = document.getElementById('loginForm');
+        loginForm.onsubmit = (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    window.location.href = "index.html";
+                })
+                .catch((error) => {
+                    alert("فشل الدخول: " + error.message);
+                });
+        };
+    </script>
+
+</body>
+</html>

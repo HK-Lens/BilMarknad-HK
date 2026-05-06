@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BilMarknad-HK | سوق السيارات المجاني</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #0056b3; /* الأزرق الاحترافي */
+            --secondary-color: #f4f4f4;
+            --accent-color: #ffcc00; /* الأصفر لجذب الانتباه */
+            --text-dark: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+        }
+
+        /* الهيدر */
+        header {
+            background-color: #fff;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 4px solid var(--primary-color);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); }
+        
+        .nav-buttons button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-login { background: transparent; color: var(--primary-color); border: 1px solid var(--primary-color) !important; }
+        .btn-sell { background: var(--primary-color); color: #fff; margin-right: 10px; }
+        .btn-sell:hover { background: #004494; }
+
+        /* منطقة البحث */
+        .search-section {
+            background: linear-gradient(rgba(0,86,179,0.8), rgba(0,86,179,0.8)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1000');
+            background-size: cover;
+            background-position: center;
+            padding: 60px 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .search-box {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .search-box input, .search-box select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-width: 200px;
+        }
+
+        .btn-search {
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* شبكة عرض السيارات */
+        .main-content { padding: 40px 5%; }
+        .section-title { margin-bottom: 30px; border-right: 5px solid var(--primary-color); padding-right: 15px; }
+
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .car-card {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+        .car-image {
+            width: 100%;
+            height: 180px;
+            background-color: #eee;
+            object-fit: cover;
+        }
+
+        .car-details { padding: 15px; }
+        .car-title { font-size: 1.1rem; font-weight: bold; margin: 0 0 10px 0; }
+        .car-meta { font-size: 0.9rem; color: #777; margin-bottom: 10px; }
+        .car-price { color: var(--primary-color); font-size: 1.3rem; font-weight: bold; }
+
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        /* رسالة تجريبية */
+        .empty-msg { text-align: center; color: #999; padding: 50px; grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">BilMarknad-HK</div>
+    <div class="nav-buttons">
+        <button class="btn-login">Inloggning | دخول</button>
+        <button class="btn-sell" onclick="alert('يرجى تسجيل الدخول أولاً لإضافة سيارتك')">Sälj din bil | بع سيارتك</button>
+    </div>
+</header>
+
+<section class="search-section">
+    <h1>ابحث عن سيارتك القادمة في السويد</h1>
+    <p>سوق مجاني ومباشر بين البائع والمشتري</p>
+    <div class="search-box">
+        <input type="text" placeholder="الماركة (مثلاً: Volvo, BMW)">
+        <select>
+            <option>السعر الأقصى</option>
+            <option>50,000 SEK</option>
+            <option>100,000 SEK</option>
+            <option>200,000 SEK+</option>
+        </select>
+        <button class="btn-search">Sök | بحث</button>
+    </div>
+</section>
+
+<main class="main-content">
+    <h2 class="section-title">أحدث الإعلانات | Senaste annonser</h2>
+    
+    <div class="car-grid" id="carGrid">
+        <div class="car-card">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=500" class="car-image" alt="Car">
+            <div class="car-details">
+                <p class="car-title">Porsche 911 Carrera</p>
+                <p class="car-meta">2021 • 1,500 mil • ستوكهولم</p>
+                <p class="car-price">950,000 SEK</p>
+            </div>
+        </div>
+
+        <div class="car-card">
+            <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=500" class="car-image" alt="Car">
+            <div class="car-details">
+                <p class="car-title">Volvo XC90 Recharge</p>
+                <p class="car-meta">2022 • 3,200 mil • يوتيبوري</p>
+                <p class="car-price">680,000 SEK</p>
+            </div>
+        </div>
+
+        <div class="empty-msg">لا توجد إعلانات أخرى حالياً. كن أول من يعلن عن سيارته!</div>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2026 BilMarknad-HK | Powered by HK Lens</p>
+</footer>
+
+</body>
+</html>
