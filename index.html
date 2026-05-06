@@ -1,6 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BilMarknad-HK | سوق السيارات المجاني</title>
+    
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #f4f4f4;
+            --accent-color: #ffcc00;
+            --text-dark: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+        }
+
+        header {
+            background-color: #fff;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); text-decoration: none; }
+        
+        .nav-buttons { display: flex; align-items: center; gap: 15px; }
+        .nav-buttons a, .nav-buttons button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .btn-login { background: transparent; color: var(--primary-color); border: 1.5px solid var(--primary-color) !important; }
+        .btn-sell { background: var(--primary-color); color: #fff; }
+        .btn-logout { background: #e74c3c; color: #fff; display: none; }
+        .user-name { font-weight: bold; color: var(--primary-color); display: none; }
+
+        .search-section {
+            background: linear-gradient(rgba(0,86,179,0.7), rgba(0,86,179,0.7)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1000');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .search-box {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            display: inline-flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .search-box input { padding: 12px; border: 1px solid #ddd; border-radius: 6px; min-width: 250px; }
+        .btn-search { background: var(--accent-color); color: #000; border: none; padding: 12px 30px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+        .main-content { padding: 40px 5%; }
+        .section-title { margin-bottom: 30px; border-right: 5px solid var(--primary-color); padding-right: 15px; }
+        
+        .car-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        
+        .car-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .car-card:hover { transform: translateY(-5px); }
+        .car-image { width: 100%; height: 200px; object-fit: cover; }
+        .car-details { padding: 15px; }
+        .car-title { font-weight: bold; font-size: 1.1rem; margin: 0 0 10px 0; }
+        .car-meta { color: #777; font-size: 0.9rem; margin-bottom: 10px; }
+        .car-price { color: var(--primary-color); font-size: 1.25rem; font-weight: bold; }
+
+        footer { background: #333; color: #fff; text-align: center; padding: 40px; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="logo">BilMarknad-HK</a>
+    <div class="nav-buttons">
+        <span id="userName" class="user-name"></span>
+        <a href="login.html" id="loginBtn" class="btn-login">Inloggning | دخول</a>
+        <button id="logoutBtn" class="btn-logout">Logga ut</button>
+        <a href="add-car.html" class="btn-sell" id="sellBtn">Sälj din bil | بع سيارتك</a>
+    </div>
+</header>
+
+<section class="search-section">
+    <h1>سوق السيارات المجاني في السويد</h1>
+    <p>ابحث عن سيارتك القادمة أو اعرض سيارتك للبيع مجاناً</p>
+    <div class="search-box">
+        <input type="text" placeholder="الماركة، الموديل...">
+        <button class="btn-search">Sök | بحث</button>
+    </div>
+</section>
+
+<main class="main-content">
+    <h2 class="section-title">أحدث الإعلانات | Senaste annonser</h2>
+    <div class="car-grid" id="carGrid">
+        <p id="loadingText">جاري تحميل السيارات...</p>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
+</footer>
+
 <script type="module">
+    // استيراد Firebase الإصدار الحديث
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDCsMbG5pT3y6MC6b05LEdFoByWM1nT7NY",
@@ -13,23 +139,66 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     const loginBtn = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
-    const sellBtn = document.getElementById('sellBtn');
+    const userNameSpan = document.getElementById('userName');
+    const carGrid = document.getElementById('carGrid');
 
+    // 1. إدارة حالة تسجيل الدخول
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            if(loginBtn) loginBtn.style.display = 'none';
-            if(logoutBtn) {
-                logoutBtn.style.display = 'block';
-                logoutBtn.onclick = () => signOut(auth).then(() => location.reload());
-            }
-            if(sellBtn) sellBtn.onclick = () => window.location.href = 'add-car.html';
+            loginBtn.style.display = 'none';
+            logoutBtn.style.display = 'block';
+            userNameSpan.style.display = 'block';
+            userNameSpan.innerText = "Hej, " + (user.displayName || "Användare");
         } else {
-            if(loginBtn) loginBtn.style.display = 'block';
-            if(logoutBtn) logoutBtn.style.display = 'none';
-            if(sellBtn) sellBtn.onclick = () => window.location.href = 'login.html';
+            loginBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+            userNameSpan.style.display = 'none';
         }
     });
+
+    // 2. تفعيل زر تسجيل الخروج
+    logoutBtn.onclick = () => {
+        signOut(auth).then(() => location.reload());
+    };
+
+    // 3. جلب وعرض السيارات الحقيقية من Firestore
+    async function fetchCars() {
+        try {
+            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+                carGrid.innerHTML = '<p>لا توجد إعلانات حالياً. كن أول من يضيف سيارة!</p>';
+                return;
+            }
+
+            carGrid.innerHTML = ''; // مسح نص التحميل
+            querySnapshot.forEach((doc) => {
+                const car = doc.data();
+                const carHTML = `
+                    <div class="car-card">
+                        <img src="${car.imageUrl || 'https://via.placeholder.com/300x200?text=No+Image'}" class="car-image" alt="${car.title}">
+                        <div class="car-details">
+                            <p class="car-title">${car.title}</p>
+                            <p class="car-meta">${car.mileage} • ${car.location}</p>
+                            <p class="car-price">${Number(car.price).toLocaleString()} SEK</p>
+                        </div>
+                    </div>
+                `;
+                carGrid.innerHTML += carHTML;
+            });
+        } catch (error) {
+            console.error("Error fetching cars:", error);
+            carGrid.innerHTML = '<p>حدث خطأ أثناء تحميل البيانات. تأكد من إعدادات Firestore Rules.</p>';
+        }
+    }
+
+    fetchCars();
 </script>
+
+</body>
+</html>
