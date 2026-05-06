@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>BilMarknad-HK | Home</title>
+    <title>BilMarknad-HK | Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
@@ -14,6 +14,7 @@
         header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .logo { font-size: 22px; font-weight: 700; color: #0d6efd; text-decoration: none; }
         .user-nav { display: flex; align-items: center; gap: 15px; }
+        .user-name-display { font-size: 14px; font-weight: 600; color: #333; }
         .btn-logout { color: #dc3545; cursor: pointer; font-weight: 600; text-decoration: none; font-size: 14px; }
 
         /* Sections visibility */
@@ -24,7 +25,7 @@
         .hero h1 { font-size: 40px; margin-bottom: 20px; }
         .btn-auth { background: #0d6efd; color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: 700; margin-top: 20px; }
 
-        /* Content Section (Your Full Page) */
+        /* Content Section */
         .main-content { padding: 50px 5%; max-width: 1200px; margin: 0 auto; }
         .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     </style>
@@ -39,21 +40,21 @@
 
     <section id="logged-out-view" class="hero">
         <h1>Private Development Mode</h1>
-        <p>Please log in to access the marketplace content.</p>
+        <p>Please log in to access the full system.</p>
         <a href="login.html" class="btn-auth">Authorized Login</a>
     </section>
 
     <section id="logged-in-view">
         <div class="hero" style="background: #0d6efd; height: 40vh;">
-            <h1 id="welcome-message">Welcome Back</h1>
-            <p>You now have full access to the dashboard.</p>
+            <h1 id="welcome-message">Welcome</h1>
+            <p>You have full verified access to your dashboard.</p>
         </div>
         <div class="main-content">
             <div class="card">
                 <h2>Marketplace Dashboard</h2>
-                <p>This is where your full content, cars listing, and tools will appear.</p>
+                <p>Welcome to your car marketplace control panel. Here you can manage your listings and profile.</p>
                 <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-                <p>Status: <span style="color: green; font-weight: bold;">Verified Access</span></p>
+                <p>Access Status: <span style="color: green; font-weight: bold;">Verified Profile</span></p>
             </div>
         </div>
     </section>
@@ -77,29 +78,31 @@
         const userNavArea = document.getElementById('user-nav-area');
         const welcomeMessage = document.getElementById('welcome-message');
 
-        // THE CORE LOGIC: Check if user is logged in on page load
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is signed in - Show Full Content
+                // User is logged in
                 loggedOutView.style.display = 'none';
                 loggedInView.style.display = 'block';
-                welcomeMessage.innerText = "Welcome, " + user.displayName;
                 
-                // Add Profile info and Logout button
+                // Show DISPLAY NAME in the Hero section
+                welcomeMessage.innerText = "Welcome, " + (user.displayName || "User");
+                
+                // Show DISPLAY NAME in the Header instead of Email
                 userNavArea.innerHTML = `
-                    <span style="font-size: 14px; font-weight: 600;">${user.email}</span>
+                    <span class="user-name-display">${user.displayName || user.email}</span>
                     <a href="#" id="logout-link" class="btn-logout">Logout</a>
                 `;
 
-                document.getElementById('logout-link').addEventListener('click', () => {
+                document.getElementById('logout-link').addEventListener('click', (e) => {
+                    e.preventDefault();
                     signOut(auth).then(() => window.location.reload());
                 });
 
             } else {
-                // User is signed out - Show Login Prompt
+                // User is logged out
                 loggedInView.style.display = 'none';
                 loggedOutView.style.display = 'flex';
-                userNavArea.innerHTML = `<a href="login.html" class="btn-logout" style="color: #0d6efd;">Login</a>`;
+                userNavArea.innerHTML = `<a href="login.html" style="color: #0d6efd; font-weight: 600; text-decoration: none;">Login</a>`;
             }
         });
     </script>
