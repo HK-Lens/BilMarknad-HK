@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="sv" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Sälj din bil | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f4f7f9; color: #333; padding: 20px; }
+        
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #002d5a; margin-bottom: 20px; text-align: center; }
+        p { text-align: center; color: #666; margin-bottom: 30px; }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+        textarea { height: 100px; resize: vertical; }
+
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        .btn-submit { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 4px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background: #218838; }
+        
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Sälj din bil</h1>
+        <p>Fyll i informationen nedan för att publicera din annons.</p>
+
+        <form id="sell-car-form">
+            <div class="form-group">
+                <label>Bilismärke (Märke)</label>
+                <select id="brand" required>
+                    <option value="">Välj märke</option>
+                    <option value="Volvo">Volvo</option>
+                    <option value="Volkswagen">Volkswagen</option>
+                    <option value="BMW">BMW</option>
+                    <option value="Audi">Audi</option>
+                    <option value="Mercedes-Benz">Mercedes-Benz</option>
+                    <option value="Tesla">Tesla</option>
+                    <option value="Toyota">Toyota</option>
+                    <option value="Kia">Kia</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Modell</label>
+                <input type="text" id="model" placeholder="t.ex. XC60, Model 3..." required>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Årsmodell</label>
+                    <input type="number" id="year" placeholder="2023" min="1900" max="2027" required>
+                </div>
+                <div class="form-group">
+                    <label>Miltal (mil)</label>
+                    <input type="number" id="mileage" placeholder="t.ex. 5000" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Drivmedel</label>
+                    <select id="fuel">
+                        <option value="Bensin">Bensin</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="El">El</option>
+                        <option value="Laddhybrid">Laddhybrid</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Växellåda</label>
+                    <select id="gearbox">
+                        <option value="Automat">Automat</option>
+                        <option value="Manuell">Manuell</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Pris (kr)</label>
+                <input type="number" id="price" placeholder="t.ex. 250000" required>
+            </div>
+
+            <div class="form-group">
+                <label>Beskrivning</label>
+                <textarea id="description" placeholder="Berätta mer om bilen..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Publicera annons</button>
+        </form>
+
+        <a href="index.html" class="back-link">← Tillbaka till startsidan</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDCsMbG5pT3y6MC6b05LEdFoByWM1nT7NY",
+            authDomain: "bilmarknad-hk.firebaseapp.com",
+            projectId: "bilmarknad-hk",
+            appId: "1:284008879407:web:66bee60b51ec277e8dbdda"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let userEmail = "";
+
+        // التأكد من أن المستخدم مسجل دخول
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                alert("Du måste vara inloggad för att sälja en bil.");
+                window.location.href = 'login.html';
+            } else {
+                userEmail = user.email;
+            }
+        });
+
+        // حفظ البيانات عند إرسال النموذج
+        const sellForm = document.getElementById('sell-car-form');
+        sellForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const carData = {
+                brand: document.getElementById('brand').value,
+                model: document.getElementById('model').value,
+                year: document.getElementById('year').value,
+                mileage: document.getElementById('mileage').value,
+                fuel: document.getElementById('fuel').value,
+                gearbox: document.getElementById('gearbox').value,
+                price: document.getElementById('price').value,
+                description: document.getElementById('description').value,
+                sellerEmail: userEmail,
+                createdAt: new Date()
+            };
+
+            try {
+                // حفظ في مجموعة تسمى "cars"
+                await addDoc(collection(db, "cars"), carData);
+                alert("Annonsen har publicerats framgångsrikt!");
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert("Ett fel uppstod: " + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
