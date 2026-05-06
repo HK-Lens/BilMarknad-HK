@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow"> <title>BilMarknad-HK | Login</title>
+    <meta name="robots" content="noindex, nofollow">
+    <title>BilMarknad-HK | Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
@@ -27,7 +28,7 @@
 
     <div class="login-card">
         <h1 class="brand-name">BilMarknad-HK</h1>
-        <p class="page-title">Sign In | Logga in</p>
+        <p class="page-title">Logga in | Sign In</p>
 
         <button id="google-login-btn" class="google-btn">
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="google-icon">
@@ -53,6 +54,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+        // إعدادات مشروعك
         const firebaseConfig = {
             apiKey: "AIzaSyDCsMbG5pT3y6MC6b05LEdFoByWM1nT7NY",
             authDomain: "bilmarknad-hk.firebaseapp.com",
@@ -67,15 +69,23 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
+        // تفعيل زر الدخول عبر جوجل مع التحويل التلقائي
         document.getElementById('google-login-btn').addEventListener('click', () => {
             signInWithPopup(auth, provider)
                 .then((result) => {
-                    // Success: Redirect to home page
+                    // الكود الذي سألت عنه يوضع هنا
+                    // بمجرد نجاح الدخول، يتم تحويلك للصفحة الرئيسية
                     window.location.href = 'index.html'; 
                 })
                 .catch((error) => {
                     alert("Login Error: " + error.message);
                 });
+        });
+
+        // منع التحديث عند محاولة دخول البريد (لأنه غير مفعل برمجياً بعد)
+        document.getElementById('email-login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("Email login functionality will be added soon.");
         });
     </script>
 </body>
