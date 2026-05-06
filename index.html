@@ -4,26 +4,104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>BilMarknad-HK | Private Beta</title>
+    <title>BilMarknad-HK | Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ... نفس التنسيقات السابقة ... */
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
-        body { background-color: #ffffff; color: #333; line-height: 1.6; }
-        header { background: #fff; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .logo { font-size: 24px; font-weight: 700; color: #0d6efd; text-decoration: none; }
-        .hero { height: 80vh; background: #000b26; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; }
-        .btn-main { background-color: #0d6efd; color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; }
+        body { background-color: #f8f9fa; color: #333; }
+        
+        /* Navigation Bar */
+        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .logo { font-size: 22px; font-weight: 700; color: #0d6efd; text-decoration: none; }
+        .user-nav { display: flex; align-items: center; gap: 15px; }
+        .btn-logout { color: #dc3545; cursor: pointer; font-weight: 600; text-decoration: none; font-size: 14px; }
+
+        /* Sections visibility */
+        #logged-out-view, #logged-in-view { display: none; }
+
+        /* Hero / Welcome Section */
+        .hero { height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: #000b26; color: white; padding: 20px; }
+        .hero h1 { font-size: 40px; margin-bottom: 20px; }
+        .btn-auth { background: #0d6efd; color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: 700; margin-top: 20px; }
+
+        /* Content Section (Your Full Page) */
+        .main-content { padding: 50px 5%; max-width: 1200px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
+
     <header>
-        <a href="#" class="logo">BilMarknad-HK (Development Mode)</a>
+        <a href="index.html" class="logo">BilMarknad-HK</a>
+        <div class="user-nav" id="user-nav-area">
+            </div>
     </header>
-    <section class="hero">
-        <h1>Private Development</h1>
-        <p>This site is currently under maintenance. Access is restricted.</p>
-        <a href="login.html" class="btn-main">Authorized Login</a>
+
+    <section id="logged-out-view" class="hero">
+        <h1>Private Development Mode</h1>
+        <p>Please log in to access the marketplace content.</p>
+        <a href="login.html" class="btn-auth">Authorized Login</a>
     </section>
+
+    <section id="logged-in-view">
+        <div class="hero" style="background: #0d6efd; height: 40vh;">
+            <h1 id="welcome-message">Welcome Back</h1>
+            <p>You now have full access to the dashboard.</p>
+        </div>
+        <div class="main-content">
+            <div class="card">
+                <h2>Marketplace Dashboard</h2>
+                <p>This is where your full content, cars listing, and tools will appear.</p>
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                <p>Status: <span style="color: green; font-weight: bold;">Verified Access</span></p>
+            </div>
+        </div>
+    </section>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDCsMbG5pT3y6MC6b05LEdFoByWM1nT7NY",
+            authDomain: "bilmarknad-hk.firebaseapp.com",
+            projectId: "bilmarknad-hk",
+            appId: "1:284008879407:web:66bee60b51ec277e8dbdda"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const loggedOutView = document.getElementById('logged-out-view');
+        const loggedInView = document.getElementById('logged-in-view');
+        const userNavArea = document.getElementById('user-nav-area');
+        const welcomeMessage = document.getElementById('welcome-message');
+
+        // THE CORE LOGIC: Check if user is logged in on page load
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in - Show Full Content
+                loggedOutView.style.display = 'none';
+                loggedInView.style.display = 'block';
+                welcomeMessage.innerText = "Welcome, " + user.displayName;
+                
+                // Add Profile info and Logout button
+                userNavArea.innerHTML = `
+                    <span style="font-size: 14px; font-weight: 600;">${user.email}</span>
+                    <a href="#" id="logout-link" class="btn-logout">Logout</a>
+                `;
+
+                document.getElementById('logout-link').addEventListener('click', () => {
+                    signOut(auth).then(() => window.location.reload());
+                });
+
+            } else {
+                // User is signed out - Show Login Prompt
+                loggedInView.style.display = 'none';
+                loggedOutView.style.display = 'flex';
+                userNavArea.innerHTML = `<a href="login.html" class="btn-logout" style="color: #0d6efd;">Login</a>`;
+            }
+        });
+    </script>
 </body>
 </html>
