@@ -1,60 +1,99 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="sv" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>BilMarknad-HK | Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>BilMarknad-HK | Köp och sälj bilar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
-        body { background-color: #f8f9fa; color: #333; }
-        
-        /* Navigation Bar */
-        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .logo { font-size: 22px; font-weight: 700; color: #0d6efd; text-decoration: none; }
-        .user-nav { display: flex; align-items: center; gap: 15px; }
-        .user-name-display { font-size: 14px; font-weight: 600; color: #333; }
-        .btn-logout { color: #dc3545; cursor: pointer; font-weight: 600; text-decoration: none; font-size: 14px; }
+        * { box-sizing: border-box; font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f0f2f5; color: #333; }
 
-        /* Sections visibility */
+        /* Header */
+        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 24px; font-weight: 700; color: #0056b3; text-decoration: none; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .user-name { font-weight: 500; font-size: 14px; }
+        .btn-logout { color: #d9534f; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; }
+
+        /* Search Section (Bytbil Style) */
+        .search-container { background: #002d5a; padding: 40px 5%; color: white; text-align: center; }
+        .search-container h1 { margin-bottom: 20px; font-size: 32px; }
+        .search-box { background: white; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; max-width: 1000px; margin: 0 auto; }
+        .search-box select, .search-box input { padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .btn-search { background: #007bff; color: white; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+        /* Content Visibility */
         #logged-out-view, #logged-in-view { display: none; }
 
-        /* Hero / Welcome Section */
-        .hero { height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: #000b26; color: white; padding: 20px; }
-        .hero h1 { font-size: 40px; margin-bottom: 20px; }
-        .btn-auth { background: #0d6efd; color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: 700; margin-top: 20px; }
+        /* Car Grid */
+        .main-content { padding: 40px 5%; max-width: 1200px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .car-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: 0.3s; }
+        .car-card:hover { transform: translateY(-5px); }
+        .car-img { width: 100%; height: 180px; background: #ddd; object-fit: cover; }
+        .car-info { padding: 15px; }
+        .car-info h3 { font-size: 18px; margin-bottom: 10px; color: #0056b3; }
+        .car-details { display: flex; justify-content: space-between; font-size: 14px; color: #666; margin-bottom: 10px; }
+        .car-price { font-size: 20px; font-weight: 700; color: #333; }
 
-        /* Content Section */
-        .main-content { padding: 50px 5%; max-width: 1200px; margin: 0 auto; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        /* Guest View */
+        .guest-hero { height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #002d5a; color: white; text-align: center; }
+        .btn-login { background: #fff; color: #002d5a; padding: 15px 40px; border-radius: 4px; text-decoration: none; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
 <body>
 
     <header>
         <a href="index.html" class="logo">BilMarknad-HK</a>
-        <div class="user-nav" id="user-nav-area">
-            </div>
+        <div class="nav-right" id="nav-area"></div>
     </header>
 
-    <section id="logged-out-view" class="hero">
-        <h1>Private Development Mode</h1>
-        <p>Please log in to access the full system.</p>
-        <a href="login.html" class="btn-auth">Authorized Login</a>
+    <section id="logged-out-view" class="guest-hero">
+        <h1>Välkommen till BilMarknad-HK</h1>
+        <p>Logga in för att se alla bilar och priser.</p>
+        <a href="login.html" class="btn-login">Logga in</a>
     </section>
 
     <section id="logged-in-view">
-        <div class="hero" style="background: #0d6efd; height: 40vh;">
-            <h1 id="welcome-message">Welcome</h1>
-            <p>You have full verified access to your dashboard.</p>
+        <div class="search-container">
+            <h1>Hitta din nästa bil</h1>
+            <div class="search-box">
+                <select><option>Alla märken</option><option>Volvo</option><option>BMW</option><option>Tesla</option></select>
+                <select><option>Alla modeller</option></select>
+                <input type="text" placeholder="Max pris (kr)">
+                <button class="btn-search">Sök bilar</button>
+            </div>
         </div>
+
         <div class="main-content">
-            <div class="card">
-                <h2>Marketplace Dashboard</h2>
-                <p>Welcome to your car marketplace control panel. Here you can manage your listings and profile.</p>
-                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-                <p>Access Status: <span style="color: green; font-weight: bold;">Verified Profile</span></p>
+            <h2 style="margin-bottom: 25px;">Senast inkomna bilar</h2>
+            <div class="grid">
+                <div class="car-card">
+                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=400" class="car-img">
+                    <div class="car-info">
+                        <h3>Porsche 911 Carrera</h3>
+                        <div class="car-details"><span>2023</span><span>1 500 mil</span><span>Automat</span></div>
+                        <p class="car-price">1 250 000 kr</p>
+                    </div>
+                </div>
+                <div class="car-card">
+                    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=400" class="car-img">
+                    <div class="car-info">
+                        <h3>BMW M4 Competition</h3>
+                        <div class="car-details"><span>2022</span><span>2 100 mil</span><span>Automat</span></div>
+                        <p class="car-price">890 000 kr</p>
+                    </div>
+                </div>
+                <div class="car-card">
+                    <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c3d8?auto=format&fit=crop&q=80&w=400" class="car-img">
+                    <div class="car-info">
+                        <h3>Volvo XC90 Recharge</h3>
+                        <div class="car-details"><span>2024</span><span>0 mil</span><span>Laddhybrid</span></div>
+                        <p class="car-price">950 000 kr</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -75,34 +114,23 @@
 
         const loggedOutView = document.getElementById('logged-out-view');
         const loggedInView = document.getElementById('logged-in-view');
-        const userNavArea = document.getElementById('user-nav-area');
-        const welcomeMessage = document.getElementById('welcome-message');
+        const navArea = document.getElementById('nav-area');
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is logged in
                 loggedOutView.style.display = 'none';
                 loggedInView.style.display = 'block';
-                
-                // Show DISPLAY NAME in the Hero section
-                welcomeMessage.innerText = "Welcome, " + (user.displayName || "User");
-                
-                // Show DISPLAY NAME in the Header instead of Email
-                userNavArea.innerHTML = `
-                    <span class="user-name-display">${user.displayName || user.email}</span>
-                    <a href="#" id="logout-link" class="btn-logout">Logout</a>
+                navArea.innerHTML = `
+                    <span class="user-name">Välkommen, ${user.displayName}</span>
+                    <a href="#" id="logout-btn" class="btn-logout">Logga ut</a>
                 `;
-
-                document.getElementById('logout-link').addEventListener('click', (e) => {
-                    e.preventDefault();
+                document.getElementById('logout-btn').addEventListener('click', () => {
                     signOut(auth).then(() => window.location.reload());
                 });
-
             } else {
-                // User is logged out
                 loggedInView.style.display = 'none';
                 loggedOutView.style.display = 'flex';
-                userNavArea.innerHTML = `<a href="login.html" style="color: #0d6efd; font-weight: 600; text-decoration: none;">Login</a>`;
+                navArea.innerHTML = `<a href="login.html" class="logo" style="font-size: 16px;">Logga in</a>`;
             }
         });
     </script>
