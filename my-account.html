@@ -1,91 +1,21 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Min Sida | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); padding: 20px; }
-        .container { max-width: 800px; margin: auto; }
-        .section { background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .msg-card { display: flex; gap: 15px; border-bottom: 1px solid #eee; padding: 15px 0; }
-        .reply-box { display: none; margin-top: 10px; background: #f1f5f9; padding: 15px; border-radius: 12px; }
-    </style>
-</head>
-<body>
-<div class="container">
-    <h1 id="uName" style="margin-bottom:20px; font-weight:900;">Min Sida</h1>
-    <div class="section">
-        <h3>📩 Inkorg (Meddelanden)</h3>
-        <div id="mList">Laddar...</div>
-    </div>
-    <div class="section">
-        <h3>🚗 Mina Annonser</h3>
-        <div id="aList">Laddar...</div>
-    </div>
-</div>
-
-<div id="rModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
-    <div style="background:white; padding:30px; border-radius:20px; width:400px;">
-        <h3>Svara</h3>
-        <textarea id="rText" style="width:100%; margin:15px 0;" rows="4"></textarea>
-        <button onclick="sendR()" style="width:100%; background:var(--dark); color:white; padding:10px; border-radius:10px; border:none;">Skicka svar</button>
-        <button onclick="document.getElementById('rModal').style.display='none'" style="width:100%; margin-top:10px; background:none; border:none; cursor:pointer;">Avbryt</button>
-    </div>
-</div>
-
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import firebaseConfig from './firebase-config.js';
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-    let curR = {}; // بيانات الرد
-
-    onAuthStateChanged(auth, user => {
-        if (!user) return window.location.href = 'login.html';
-        document.getElementById('uName').innerText = "Välkommen, " + (user.displayName || user.email.split('@')[0]);
-        loadM(user.uid);
-    });
-
-    async function loadM(uid) {
+    async function loadMessages(uid) {
+        const msgDiv = document.getElementById('messagesList');
         const q = query(collection(db, "messages"), where("recipientId", "==", uid));
         const snap = await getDocs(q);
-        const list = document.getElementById('mList');
-        if (snap.empty) { list.innerHTML = "Inga meddelanden."; return; }
-        list.innerHTML = snap.docs.map(d => {
+
+        msgDiv.innerHTML = snap.docs.sort((a,b) => b.data().timestamp - a.data().timestamp).map(d => {
             const m = d.data();
             return `
-                <div class="msg-card">
-                    <img src="${m.carImage}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;">
+                <div class="msg-card" style="display:flex; gap:12px; padding:15px; border:1px solid #eee; border-radius:12px; margin-bottom:10px; background:white;">
+                    <img src="${m.carImage}" onerror="this.src='https://via.placeholder.com/60?text=Bil'" style="width:60px; height:60px; border-radius:8px; object-fit:cover;">
                     <div style="flex:1;">
-                        <div style="font-size:12px; font-weight:800; color:var(--primary);">Angående: ${m.carTitle}</div>
-                        <div style="font-size:13px; font-weight:700;">Från: ${m.senderName}</div>
-                        <p style="font-size:13px; color:#444;">${m.message}</p>
-                        <button onclick="openR('${m.senderId}', '${m.carId}', '${m.carTitle}', '${m.carImage}')" style="background:none; border:none; color:var(--primary); font-weight:800; cursor:pointer; font-size:12px;">Svara ↩️</button>
+                        <div style="font-weight:800; font-size:13px;">${m.senderName}</div>
+                        <div style="font-size:11px; color:var(--primary); font-weight:700;">Ref: ${m.carTitle}</div>
+                        <p style="font-size:13px; color:#444; margin-top:5px;">${m.message}</p>
+                        <button onclick="openReply('${m.senderId}', '${m.carId}', '${m.carTitle}', '${m.carImage}')" style="background:none; border:none; color:var(--primary); font-weight:700; cursor:pointer; font-size:12px; margin-top:8px;">Svara ↩️</button>
                     </div>
                 </div>`;
         }).join('');
     }
-
-    window.openR = (to, cid, title, img) => {
-        curR = { to, cid, title, img };
-        document.getElementById('rModal').style.display = 'flex';
-    };
-
-    window.sendR = async () => {
-        const txt = document.getElementById('rText').value;
-        await addDoc(collection(db, "messages"), {
-            carId: curR.cid, carTitle: curR.title, carImage: curR.img,
-            senderId: auth.currentUser.uid, senderName: auth.currentUser.email.split('@')[0],
-            recipientId: curR.to, message: txt, timestamp: serverTimestamp()
-        });
-        alert("Svar skickat!"); document.getElementById('rModal').style.display='none';
-    };
 </script>
-</body>
-</html>
