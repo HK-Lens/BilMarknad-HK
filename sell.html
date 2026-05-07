@@ -7,30 +7,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); padding: 20px; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); padding-bottom: 50px; }
+        header { background: white; padding: 15px 6%; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .logo { text-decoration: none; font-size: 20px; font-weight: 900; color: var(--dark); }
+        .logo span { color: var(--primary); }
+        .container { max-width: 650px; margin: 30px auto; background: white; padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         input, select, textarea { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 15px; outline: none; }
-        .btn-publish { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: 800; cursor: pointer; }
+        .btn-pub { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: 800; cursor: pointer; }
     </style>
 </head>
 <body>
+<header><a href="index.html" class="logo">BIL<span>HK</span></a></header>
 <div class="container">
-    <h1 style="text-align:center; margin-bottom:25px;">Sälj din bil</h1>
-    <div style="display:flex; gap:10px; margin-bottom:20px;">
-        <input type="text" id="regNr" placeholder="REG-NR (t.ex ABC123)" style="font-weight:900; text-align:center; border:2px solid var(--dark);">
-        <button onclick="fetchInfo()" id="fBtn" style="padding:0 20px; border-radius:12px; background:var(--dark); color:white; border:none; cursor:pointer;">Hämta</button>
+    <h1 style="text-align:center; margin-bottom:25px; font-weight:900;">Sälj din bil</h1>
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <input type="text" id="reg" placeholder="Reg-nr (t.ex ABC123)" style="border:2px solid var(--dark); font-weight:900; text-align:center;">
+        <button onclick="fetch()" id="fBtn" style="padding:0 20px; border-radius:12px; background:var(--dark); color:white; border:none; cursor:pointer;">Hämta</button>
     </div>
-    <form id="sForm">
-        <select id="brand"><option>Välj märke</option></select>
+    <form id="form">
+        <select id="brand"><option value="">Välj märke</option></select>
+        <input type="text" id="model" placeholder="Modell">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <input type="number" id="year" placeholder="Årsmodell">
+            <input type="number" id="mil" placeholder="Miltal (mil)">
+        </div>
+        <select id="fuel">
+            <option value="Bensin">Bensin</option><option value="Diesel">Diesel</option>
+            <option value="El">El</option><option value="Hybrid">Hybrid</option>
+        </select>
         <input type="number" id="price" placeholder="Pris (kr)" required>
-        <input type="number" id="mileage" placeholder="Miltal (mil)" required>
-        <input type="tel" id="phone" placeholder="Telefonnummer">
-        <label style="font-size:12px;"><input type="checkbox" id="hideP"> Dölj nummer (använd endast internmeddelanden)</label>
-        <textarea id="desc" rows="4" placeholder="Beskrivning..."></textarea>
+        <div style="border:1px solid #eee; padding:15px; border-radius:12px; margin-bottom:15px;">
+            <label style="font-size:12px; color:#94a3b8;">KONTAKT</label>
+            <input type="tel" id="phone" placeholder="Telefonnummer" style="margin-top:5px;">
+            <label style="font-size:13px;"><input type="checkbox" id="hide"> Dölj nummer (använd internmeddelanden)</label>
+        </div>
+        <textarea id="desc" rows="4" placeholder="Beskrivning av bilen..."></textarea>
         <input type="file" id="pics" multiple required>
-        <button type="submit" class="btn-publish" id="sub">Publicera</button>
+        <button type="submit" class="btn-pub" id="subBtn">Publicera annons</button>
     </form>
 </div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -49,20 +65,23 @@
     const bSel = document.getElementById('brand');
     Object.keys(carData).sort().forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
 
-    window.fetchInfo = () => {
-        const btn = document.getElementById('fBtn');
-        btn.innerText = "Söker...";
+    window.fetch = () => {
+        const fBtn = document.getElementById('fBtn');
+        fBtn.innerText = "Söker...";
         setTimeout(() => {
             document.getElementById('brand').value = "Volvo";
-            btn.innerText = "Hämtat!"; btn.style.background = "#22c55e";
+            document.getElementById('model').value = "XC60";
+            document.getElementById('year').value = 2021;
+            fBtn.innerText = "Hämtat!"; fBtn.style.background = "#22c55e";
         }, 800);
     };
 
-    document.getElementById('sForm').onsubmit = async (e) => {
+    document.getElementById('form').onsubmit = async (e) => {
         e.preventDefault();
-        const sub = document.getElementById('sub');
-        sub.disabled = true; sub.innerText = "Publicerar...";
+        const sub = document.getElementById('subBtn');
+        sub.disabled = true; sub.innerText = "Laddar upp...";
         const files = document.getElementById('pics').files;
+
         try {
             const urls = [];
             for (let f of files) {
@@ -71,10 +90,11 @@
                 urls.push(await getDownloadURL(snap.ref));
             }
             await addDoc(collection(db, "cars"), {
-                regNr: document.getElementById('regNr').value.toUpperCase(),
-                brand: bSel.value, price: Number(document.getElementById('price').value),
-                mileage: Number(document.getElementById('mileage').value),
-                phone: document.getElementById('phone').value, hidePhone: document.getElementById('hideP').checked,
+                regNr: document.getElementById('reg').value.toUpperCase(),
+                brand: bSel.value, model: document.getElementById('model').value,
+                year: Number(document.getElementById('year').value), mileage: Number(document.getElementById('mil').value),
+                fuelType: document.getElementById('fuel').value, price: Number(document.getElementById('price').value),
+                phone: document.getElementById('phone').value, hidePhone: document.getElementById('hide').checked,
                 description: document.getElementById('desc').value, images: urls,
                 sellerId: user.uid, createdAt: serverTimestamp()
             });
