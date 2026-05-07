@@ -8,83 +8,75 @@
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding-bottom: 80px; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding-bottom: 50px; }
 
         header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .logo { text-decoration: none; font-size: 22px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        .dashboard-header { background: var(--dark); color: white; padding: 50px 6%; text-align: center; }
-        .dashboard-header h1 { font-size: 32px; font-weight: 900; margin-bottom: 10px; letter-spacing: -1px; }
+        .dashboard-header { background: var(--dark); color: white; padding: 40px 6%; text-align: center; }
+        .dashboard-header h1 { font-size: 28px; font-weight: 900; margin-bottom: 5px; }
 
-        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
-        .section-title { font-size: 13px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 40px 0 15px; letter-spacing: 0.05em; display: flex; align-items: center; gap: 10px; }
-        .section-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+        .container { max-width: 900px; margin: 30px auto; padding: 0 15px; }
+        .section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 35px 0 15px; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 
-        /* بطاقة السيارة */
-        .car-admin-card { background: white; border-radius: 20px; padding: 15px; display: grid; grid-template-columns: 120px 1fr; gap: 15px; margin-bottom: 15px; border: 1px solid var(--border); align-items: center; }
-        @media (min-width: 600px) { .car-admin-card { grid-template-columns: 180px 1fr auto; padding: 20px; } }
-        .car-admin-card img { width: 100%; height: 100px; object-fit: cover; border-radius: 12px; }
+        /* بطاقة السيارة الإدارية */
+        .admin-card { background: white; border-radius: 20px; padding: 15px; display: grid; grid-template-columns: 100px 1fr; gap: 15px; margin-bottom: 12px; border: 1px solid var(--border); align-items: center; }
+        @media (min-width: 600px) { .admin-card { grid-template-columns: 150px 1fr auto; padding: 20px; } }
+        .admin-card img { width: 100%; height: 80px; object-fit: cover; border-radius: 12px; }
 
-        .card-actions { display: flex; flex-direction: column; gap: 8px; }
-        .btn-action { padding: 10px 20px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; font-size: 13px; text-align: center; transition: 0.2s; }
+        .btn-group { display: flex; flex-direction: column; gap: 8px; }
+        .btn-action { padding: 10px 18px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.2s; }
         .btn-edit { background: var(--primary); color: white; }
         .btn-delete { background: #fee2e2; color: #ef4444; }
 
-        /* صندوق الرسائل (Inbox) */
-        .message-card { background: white; border-radius: 18px; padding: 20px; border: 1px solid var(--border); margin-bottom: 12px; }
-        .msg-info { display: flex; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 10px; }
-        .msg-text { font-size: 14px; line-height: 1.6; color: #334155; }
-        .msg-reply { display: inline-block; margin-top: 10px; color: var(--primary); text-decoration: none; font-weight: 700; font-size: 13px; }
+        /* صندوق الرسائل (Inkorg) */
+        .msg-card { background: white; border-radius: 16px; padding: 20px; border: 1px solid var(--border); margin-bottom: 10px; position: relative; }
+        .msg-badge { position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 800; }
+        .msg-sender { font-weight: 800; font-size: 14px; color: var(--dark); }
+        .msg-meta { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+        .msg-body { font-size: 14px; margin-top: 10px; color: #475569; line-height: 1.5; }
 
         /* Modal التعديل */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: white; padding: 30px; border-radius: 24px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
-        .field { margin-bottom: 15px; }
-        .field label { display: block; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
-        .modal-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; outline: none; font-size: 15px; }
-
-        .btn-save { width: 100%; background: var(--dark); color: white; border: none; padding: 15px; border-radius: 50px; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; padding: 15px; }
+        .modal-content { background: white; padding: 25px; border-radius: 24px; width: 100%; max-width: 450px; }
+        .modal-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; margin-top: 5px; margin-bottom: 15px; outline: none; }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div style="display: flex; gap: 15px; align-items: center;">
-        <span id="topUserName" style="font-size: 13px; font-weight: 700; color: #64748b;"></span>
-        <button onclick="logout()" style="background:none; border:none; color:#ef4444; font-weight:700; cursor:pointer;">Logga ut</button>
-    </div>
+    <button onclick="logout()" style="background:none; border:none; color:#ef4444; font-weight:700; cursor:pointer;">Logga ut</button>
 </header>
 
 <div class="dashboard-header">
-    <h1 id="welcomeTitle">Välkommen</h1>
-    <p id="userEmail" style="opacity: 0.8; font-size: 14px;"></p>
+    <h1 id="welcomeUser">Välkommen</h1>
+    <p id="userEmail" style="font-size: 14px; opacity: 0.7;"></p>
 </div>
 
 <div class="container">
-    <div class="section-title">Mina annonser</div>
-    <div id="myAds">Laddar dina bilar...</div>
+    <div class="section-title">Inkorg (Meddelanden)</div>
+    <div id="messagesList">Laddar meddelanden...</div>
 
-    <div class="section-title">Min inkorg (Meddelanden)</div>
-    <div id="myMessages">Inga nya meddelanden.</div>
+    <div class="section-title">Mina annonser</div>
+    <div id="adsList">Laddar dina bilar...</div>
 </div>
 
 <div class="modal" id="editModal">
     <div class="modal-content">
-        <h2 style="margin-bottom:20px; font-weight:900;">Redigera bil</h2>
-        <div class="field"><label>Pris (kr)</label><input type="number" id="editPrice" class="modal-input"></div>
-        <div class="field"><label>Miltal (mil)</label><input type="number" id="editMileage" class="modal-input"></div>
-        <div class="field">
-            <label>Drivmedel</label>
-            <select id="editFuel" class="modal-input">
-                <option value="Bensin">Bensin</option><option value="Diesel">Diesel</option>
-                <option value="El">El</option><option value="Hybrid">Hybrid</option>
-            </select>
-        </div>
-        <div class="field"><label>Beskrivning</label><textarea id="editDesc" class="modal-input" rows="4"></textarea></div>
-        <button class="btn-save" onclick="saveChanges()">Spara ändringar</button>
-        <button onclick="closeModal()" style="width:100%; background:none; border:none; margin-top:15px; color:#64748b; font-weight:600; cursor:pointer;">Avbryt</button>
+        <h2 style="margin-bottom:20px; font-weight:900;">Redigera annons</h2>
+        <label style="font-size:11px; font-weight:800; color:#94a3b8;">PRIS (KR)</label>
+        <input type="number" id="editPrice" class="modal-input">
+        
+        <label style="font-size:11px; font-weight:800; color:#94a3b8;">MILTAL (MIL)</label>
+        <input type="number" id="editMileage" class="modal-input">
+
+        <label style="font-size:11px; font-weight:800; color:#94a3b8;">BESKRIVNING</label>
+        <textarea id="editDesc" class="modal-input" rows="4"></textarea>
+
+        <button onclick="saveChanges()" style="width:100%; background:var(--dark); color:white; border:none; padding:15px; border-radius:12px; font-weight:800; cursor:pointer;">Spara ändringar</button>
+        <button onclick="closeModal()" style="width:100%; background:none; border:none; margin-top:10px; color:#64748b; font-weight:700; cursor:pointer;">Avbryt</button>
     </div>
 </div>
 
@@ -97,78 +89,74 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
-
     let currentEditId = null;
 
     onAuthStateChanged(auth, (user) => {
         if (!user) {
             window.location.href = "login.html";
         } else {
-            const name = user.displayName || user.email.split('@')[0];
-            document.getElementById('topUserName').innerText = name;
-            document.getElementById('welcomeTitle').innerText = `Välkommen, ${name}!`;
+            const userName = user.displayName || user.email.split('@')[0];
+            document.getElementById('welcomeUser').innerText = `Hej, ${userName}!`;
             document.getElementById('userEmail').innerText = user.email;
-            loadMyContent(user.uid);
+            loadData(user.uid);
         }
     });
 
-    async function loadMyContent(uid) {
-        // 1. تحميل الإعلانات
-        const adsContainer = document.getElementById('myAds');
-        const adsQ = query(collection(db, "cars"), where("sellerId", "==", uid));
-        const adsSnap = await getDocs(adsQ);
+    async function loadData(uid) {
+        // 1. تحميل الرسائل الواردة
+        const msgDiv = document.getElementById('messagesList');
+        const qMsg = query(collection(db, "messages"), where("recipientId", "==", uid));
+        const snapMsg = await getDocs(qMsg);
 
-        if (adsSnap.empty) {
-            adsContainer.innerHTML = "<p style='color:#94a3b8; text-align:center;'>Du har inga aktiva annonser.</p>";
+        if (snapMsg.empty) {
+            msgDiv.innerHTML = "<p style='text-align:center; color:#94a3b8; font-size:13px;'>Inga meddelanden än.</p>";
         } else {
-            adsContainer.innerHTML = adsSnap.docs.map(d => {
+            msgDiv.innerHTML = snapMsg.docs.sort((a,b) => b.data().timestamp - a.data().timestamp).map(d => {
+                const m = d.data();
+                return `
+                    <div class="msg-card">
+                        <div class="msg-sender">${m.senderName}</div>
+                        <div class="msg-meta">Angående: <b>${m.carTitle}</b> • ${m.timestamp?.toDate().toLocaleDateString()}</div>
+                        <div class="msg-body">${m.message}</div>
+                        <a href="mailto:${m.senderEmail}" style="display:inline-block; margin-top:10px; font-size:12px; color:var(--primary); font-weight:700; text-decoration:none;">Svara via e-post ✉️</a>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 2. تحميل السيارات
+        const adsDiv = document.getElementById('adsList');
+        const qAds = query(collection(db, "cars"), where("sellerId", "==", uid));
+        const snapAds = await getDocs(qAds);
+
+        if (snapAds.empty) {
+            adsDiv.innerHTML = "<p style='text-align:center; color:#94a3b8; font-size:13px;'>Du har inga aktiva annonser.</p>";
+        } else {
+            adsDiv.innerHTML = snapAds.docs.map(d => {
                 const c = d.data();
                 return `
-                    <div class="car-admin-card">
+                    <div class="admin-card">
                         <img src="${c.images?.[0] || ''}">
                         <div>
-                            <div style="font-weight:900;">${c.brand} ${c.model || ''}</div>
-                            <div style="color:var(--primary); font-weight:800; margin-top:4px;">${Number(c.price).toLocaleString()} kr</div>
-                            <div style="font-size:12px; color:#64748b;">${c.year} • ${c.mileage} mil</div>
+                            <div style="font-weight:900;">${c.brand} ${c.model}</div>
+                            <div style="color:var(--primary); font-weight:800;">${Number(c.price).toLocaleString()} kr</div>
+                            <div style="font-size:11px; color:#64748b;">${c.mileage} mil • ${c.year}</div>
                         </div>
-                        <div class="card-actions">
-                            <button class="btn-action btn-edit" onclick="openEdit('${d.id}', ${c.price}, ${c.mileage}, '${c.fuelType}', \`${c.description || ''}\`)">Redigera</button>
+                        <div class="btn-group">
+                            <button class="btn-action btn-edit" onclick="openEdit('${d.id}', ${c.price}, ${c.mileage}, \`${c.description || ''}\`)">Redigera</button>
                             <button class="btn-action btn-delete" onclick="deleteAd('${d.id}')">Ta bort</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
-
-        // 2. تحميل الرسائل (Inbox)
-        const msgContainer = document.getElementById('myMessages');
-        const msgQ = query(collection(db, "messages"), where("recipientId", "==", uid), orderBy("timestamp", "desc"));
-        const msgSnap = await getDocs(msgQ);
-
-        if (!msgSnap.empty) {
-            msgContainer.innerHTML = msgSnap.docs.map(d => {
-                const m = d.data();
-                return `
-                    <div class="message-card">
-                        <div class="msg-info">
-                            <span>Från: <b>${m.senderName}</b></span>
-                            <span>${m.timestamp?.toDate().toLocaleDateString()}</span>
-                        </div>
-                        <div style="font-size:11px; font-weight:800; color:var(--primary); margin-bottom:8px;">Angående: ${m.carTitle}</div>
-                        <p class="msg-text">${m.message}</p>
-                        <a href="mailto:${m.senderEmail}" class="msg-reply">Svara via e-post ✉️</a>
-                    </div>
-                `;
-            }).join('');
-        }
     }
 
-    // وظائف الإدارة
-    window.openEdit = (id, price, mileage, fuel, desc) => {
+    // وظائف التحكم
+    window.openEdit = (id, price, mileage, desc) => {
         currentEditId = id;
         document.getElementById('editPrice').value = price;
         document.getElementById('editMileage').value = mileage;
-        document.getElementById('editFuel').value = fuel;
         document.getElementById('editDesc').value = desc;
         document.getElementById('editModal').style.display = 'flex';
     };
@@ -176,20 +164,17 @@
     window.closeModal = () => document.getElementById('editModal').style.display = 'none';
 
     window.saveChanges = async () => {
-        try {
-            await updateDoc(doc(db, "cars", currentEditId), {
-                price: Number(document.getElementById('editPrice').value),
-                mileage: Number(document.getElementById('editMileage').value),
-                fuelType: document.getElementById('editFuel').value,
-                description: document.getElementById('editDesc').value
-            });
-            alert("Annonsen har uppdaterats!");
-            location.reload();
-        } catch (e) { alert("Ett fel uppstod."); }
+        await updateDoc(doc(db, "cars", currentEditId), {
+            price: Number(document.getElementById('editPrice').value),
+            mileage: Number(document.getElementById('editMileage').value),
+            description: document.getElementById('editDesc').value
+        });
+        alert("Uppdaterat!");
+        location.reload();
     };
 
     window.deleteAd = async (id) => {
-        if (confirm("Vill du ta bort annonsen permanent?")) {
+        if (confirm("Vill du ta bort annonsen?")) {
             await deleteDoc(doc(db, "cars", id));
             location.reload();
         }
