@@ -6,7 +6,14 @@
     <title>BilMarknad-HK | Premium Hem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --white: #ffffff; }
+        :root { 
+            --primary: #f58220; 
+            --dark: #0f172a; 
+            --bg: #f8fafc; 
+            --border: #e2e8f0; 
+            --glass: rgba(255, 255, 255, 0.9);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
 
@@ -14,189 +21,73 @@
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
+        /* --- Header مع نظام التعرف على المستخدم --- */
         header {
-            position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(12px); padding: 15px 6%; display: flex; 
-            justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 1000;
+            background: var(--glass); backdrop-filter: blur(12px);
+            padding: 15px 6%; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border);
         }
-        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
+        .logo { text-decoration: none; font-size: 26px; font-weight: 900; color: var(--dark); letter-spacing: -1px; }
         .logo span { color: var(--primary); }
 
-        .nav-actions { display: flex; gap: 12px; align-items: center; }
-        .btn { text-decoration: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 14px; transition: 0.3s; }
-        .btn-login { border: 1px solid var(--border); color: var(--dark); }
+        .nav-actions { display: flex; gap: 15px; align-items: center; }
+        .btn { text-decoration: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 14px; transition: 0.3s; display: inline-flex; align-items: center; }
+        .btn-login { border: 1px solid var(--border); color: var(--dark); background: white; }
         .btn-sell { background: var(--dark); color: white; }
+        .btn-sell:hover { background: var(--primary); transform: translateY(-2px); }
 
-        .hero { padding: 60px 6% 20px; text-align: center; }
-        .hero h1 { font-size: 42px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 10px; }
-        .hero p { color: #64748b; font-size: 18px; }
+        /* --- Hero Section --- */
+        .hero { padding: 80px 6% 40px; text-align: center; }
+        .hero h1 { font-size: 48px; font-weight: 900; letter-spacing: -2px; margin-bottom: 15px; }
+        .hero p { color: #64748b; font-size: 19px; max-width: 600px; margin: auto; }
 
-        .search-container { max-width: 1100px; margin: 0 auto 50px; padding: 0 20px; }
+        /* --- Search Card --- */
+        .search-container { max-width: 1100px; margin: 0 auto 60px; padding: 0 20px; }
         .search-card {
-            background: white; padding: 25px; border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;
+            background: white; padding: 30px; border-radius: 28px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.06);
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;
             align-items: flex-end; border: 1px solid rgba(255,255,255,0.5);
         }
-        .field { display: flex; flex-direction: column; gap: 6px; }
-        .field label { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
-        select, input { height: 48px; padding: 0 12px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 600; background: #fcfcfc; outline: none; }
+        .field { display: flex; flex-direction: column; gap: 8px; }
+        .field label { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+        select, input { height: 52px; padding: 0 15px; border: 1px solid var(--border); border-radius: 14px; font-size: 15px; font-weight: 600; background: #fcfcfc; outline: none; transition: 0.2s; }
+        select:focus, input:focus { border-color: var(--primary); background: white; }
 
-        .btn-search { height: 48px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .btn-search:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245, 130, 32, 0.3); }
-        .btn-more { display: block; text-align: center; margin-top: 15px; text-decoration: none; color: var(--primary); font-weight: 700; font-size: 14px; }
+        .btn-search { height: 52px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 16px; }
+        .btn-search:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(245, 130, 32, 0.3); }
 
-        /* نتائج السيارات */
-        .grid { max-width: 1300px; margin: auto; padding: 0 6% 100px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: 0.3s; position: relative; }
-        .car-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
-        .car-card img { width: 100%; height: 200px; object-fit: cover; }
-        .card-info { padding: 20px; }
-        .price { font-size: 22px; font-weight: 900; color: var(--primary); margin-top: 10px; }
+        /* --- Car Grid --- */
+        .grid { max-width: 1300px; margin: auto; padding: 0 6% 80px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        .car-card { background: white; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: 0.4s; position: relative; }
+        .car-card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        .car-card img { width: 100%; height: 220px; object-fit: cover; }
+        .card-info { padding: 25px; }
+        .card-title { font-weight: 800; font-size: 20px; margin-bottom: 5px; }
+        .card-meta { color: #94a3b8; font-size: 13px; font-weight: 600; }
+        .price { font-size: 24px; font-weight: 900; color: var(--primary); margin-top: 15px; }
 
-        /* زر المفضلة */
+        /* --- Favorite Button --- */
         .fav-btn {
             position: absolute; top: 15px; right: 15px;
-            background: rgba(255,255,255,0.85); border: none;
-            width: 35px; height: 35px; border-radius: 50%;
-            cursor: pointer; font-size: 18px; display: flex;
+            background: rgba(255,255,255,0.9); border: none;
+            width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; font-size: 20px; display: flex;
             align-items: center; justify-content: center; transition: 0.3s;
-            z-index: 10;
+            z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         .fav-btn.active { color: #ef4444; background: white; }
+
+        /* --- Footer --- */
+        footer { background: white; padding: 60px 6% 30px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+        .footer-content { max-width: 800px; margin: auto; }
+        .footer-disclaimer { font-size: 13px; color: #64748b; line-height: 1.6; margin: 20px 0; }
+        .footer-links { display: flex; justify-content: center; gap: 25px; margin-bottom: 30px; }
+        .footer-links a { text-decoration: none; color: var(--dark); font-weight: 700; font-size: 14px; }
     </style>
 </head>
 <body>
 
 <header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div class="nav-actions">
-        <a href="manage.html" class="btn">Mitt Garage</a>
-        <a href="login.html" class="btn btn-login" id="authLink">Logga in</a>
-        <a href="sell.html" class="btn btn-sell">Sälj bil</a>
-    </div>
-</header>
-
-<section class="hero">
-    <h1>Hitta din nästa bil.</h1>
-    <p>Sveriges modernaste marknadsplats.</p>
-</section>
-
-<div class="search-container">
-    <div class="search-card">
-        <div class="field">
-            <label>Märke</label>
-            <select id="brandSelect"><option value="all">Alla märken</option></select>
-        </div>
-        <div class="field">
-            <label>Pris (Från)</label>
-            <input type="number" id="minPrice" placeholder="Från kr">
-        </div>
-        <div class="field">
-            <label>Pris (Till)</label>
-            <input type="number" id="maxPrice" placeholder="Till kr">
-        </div>
-        <button class="btn-search" onclick="applySearch()">SÖK</button>
-    </div>
-    <a href="filter.html" class="btn-more">⚙️ Fler filter & Karosstyp</a>
-</div>
-
-<div class="grid" id="carGrid"></div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import firebaseConfig from './firebase-config.js';
-    import { carData } from './cars-data.js';
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-    let allCars = [];
-    let currentUser = null;
-
-    // تعبئة الماركات
-    const bSel = document.getElementById('brandSelect');
-    Object.keys(carData).sort().forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
-
-    // مراقبة حالة تسجيل الدخول
-    onAuthStateChanged(auth, (user) => {
-        currentUser = user;
-        if (user) document.getElementById('authLink').innerText = "Mitt Konto";
-        load();
-    });
-
-    async function load() {
-        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
-        // التحقق من فلاتر الرابط
-        const p = new URLSearchParams(window.location.search);
-        if (p.toString()) applyDeepSearch(p);
-        else render(allCars);
-    }
-
-    function applyDeepSearch(p) {
-        const filtered = allCars.filter(c => 
-            (!p.get('brand') || p.get('brand') === 'all' || c.brand === p.get('brand')) &&
-            (!p.get('kar') || p.get('kar') === 'all' || c.bodyType === p.get('kar'))
-        );
-        render(filtered);
-    }
-
-    window.applySearch = () => {
-        const b = bSel.value;
-        const min = Number(document.getElementById('minPrice').value) || 0;
-        const max = Number(document.getElementById('maxPrice').value) || Infinity;
-        render(allCars.filter(c => (b==='all' || c.brand===b) && (Number(c.price)>=min && Number(c.price)<=max)));
-    };
-
-    window.toggleFav = (id) => {
-        if (!currentUser) {
-            alert("Vänligen logga in för att spara favoriter.");
-            window.location.href = "login.html";
-            return;
-        }
-        let favs = JSON.parse(localStorage.getItem('favCars')) || [];
-        if (favs.includes(id)) favs = favs.filter(i => i !== id);
-        else favs.push(id);
-        localStorage.setItem('favCars', JSON.stringify(favs));
-        render(allCars); // تحديث الأيقونة
-    };
-
-    function render(data) {
-        const grid = document.getElementById('carGrid');
-        const favs = JSON.parse(localStorage.getItem('favCars')) || [];
-        grid.innerHTML = data.map(c => `
-            <div class="car-card">
-                <button class="fav-btn ${favs.includes(c.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFav('${c.id}')">
-                    ${favs.includes(c.id) ? '❤️' : '🤍'}
-                </button>
-                <div onclick="location.href='details.html?id=${c.id}'">
-                    <img src="${c.images?.[0] || 'https://via.placeholder.com/400x250'}">
-                    <div class="card-info">
-                        <div style="font-weight:800; font-size:18px;">${c.brand} ${c.model || ''}</div>
-                        <div style="color:#94a3b8; font-size:12px; margin-top:5px;">${c.year} • ${c.mileage} mil</div>
-                        <div class="price">${Number(c.price).toLocaleString()} kr</div>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-</script>
-</body> <footer style="background: #fff; padding: 40px 6%; border-top: 1px solid #e2e8f0; margin-top: 50px; text-align: center;">
-    <div style="max-width: 800px; margin: auto;">
-        <h3 style="font-size: 18px; font-weight: 800; color: #0f172a;">BIL<span>HK</span></h3>
-        <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin-top: 15px;">
-            <strong>Viktig information:</strong> Vi är en annonsplattform och ansvarar inte för felaktig information eller falska annonser. Genomför aldrig betalningar utan att ha träffat säljaren och kontrollerat fordonet personligen.
-        </p>
-        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 14px; font-weight: 700;">
-            <a href="terms.html" style="color: #f58220; text-decoration: none;">Användarvillkor & Säkerhet</a>
-            <a href="mailto:support@bilmarknad-hk.se" style="color: #0f172a; text-decoration: none;">Kontakt</a>
-        </div>
-        <p style="margin-top: 30px; font-size: 11px; color: #94a3b8;">&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
-    </div>
-</footer>
-</html>
+    <a href="index.
