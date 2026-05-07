@@ -3,121 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BilMarknad-HK | Hitta din drömbil</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>BilMarknad-HK | Global Fordonsdatabas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #1a1a1a; --bg: #f4f4f4; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg); color: var(--dark); direction: ltr; }
-        
-        /* Header */
-        header { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg); color: var(--dark); }
+        header { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--dark); }
         .logo span { color: var(--primary); }
-
-        /* Search Section */
-        .search-area { background: white; padding: 30px 5%; border-bottom: 1px solid #ddd; }
-        .filter-grid { max-width: 1100px; margin: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .search-area { background: white; padding: 40px 5%; border-bottom: 1px solid #ddd; }
+        .filter-grid { max-width: 1100px; margin: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
         .filter-group { display: flex; flex-direction: column; gap: 8px; }
-        .filter-group label { font-size: 13px; font-weight: 700; color: #666; text-transform: uppercase; }
-        select, input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; outline: none; background: #fff; }
-
-        /* Body Types Icons */
-        .body-types { grid-column: 1 / -1; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
-        .type-item { text-align: center; cursor: pointer; padding: 10px; border-radius: 10px; transition: 0.2s; border: 2px solid transparent; min-width: 80px; }
-        .type-item.active { border-color: var(--primary); background: #fff5eb; }
-        .type-item img { width: 50px; display: block; margin: 0 auto 5px; }
-        .type-item span { font-size: 12px; font-weight: 600; }
-
-        /* Actions */
-        .search-actions { max-width: 1100px; margin: 30px auto 0; display: flex; justify-content: space-between; align-items: center; }
-        .btn-search { background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 6px; font-weight: 800; font-size: 18px; cursor: pointer; }
-
-        /* Results */
-        .results-section { padding: 40px 5%; max-width: 1200px; margin: auto; }
+        .filter-group label { font-size: 12px; font-weight: 700; color: #666; text-transform: uppercase; }
+        select, input { padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; background: #fff; outline: none; transition: 0.2s; }
+        select:focus { border-color: var(--primary); }
+        .btn-search { background: var(--primary); color: white; border: none; padding: 15px 50px; border-radius: 8px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+        .btn-search:hover { background: #e07210; transform: scale(1.02); }
+        .results-section { padding: 40px 5%; max-width: 1250px; margin: auto; }
         .car-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .car-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #ddd; transition: 0.3s; cursor: pointer; }
-        .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .car-card img { width: 100%; height: 180px; object-fit: cover; }
-        .car-content { padding: 15px; }
-        .price { font-size: 22px; font-weight: 800; color: var(--primary); }
+        .car-card { background: white; border-radius: 15px; overflow: hidden; border: 1px solid #ddd; cursor: pointer; transition: 0.3s; }
+        .car-card:hover { transform: translateY(-8px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .car-card img { width: 100%; height: 190px; object-fit: cover; }
+        .car-content { padding: 20px; }
+        .price { font-size: 22px; font-weight: 800; color: var(--primary); margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BILMARKNAD<span>HK</span></a>
-    <nav>
-        <a href="manage.html" style="margin-right:20px; text-decoration:none; font-weight:700; color:var(--dark);">Mitt Garage</a>
-        <a href="sell.html" style="background:var(--primary); color:white; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:700;">Sälj bil</a>
-    </nav>
+    <nav><a href="manage.html" style="text-decoration:none; font-weight:700; color:var(--dark);">Mitt Garage</a></nav>
 </header>
 
 <section class="search-area">
     <div class="filter-grid">
-        <div class="filter-group" style="grid-column: 1 / -1;">
-            <label>Sök på modell eller utrustning</label>
-            <input type="text" id="freeText" placeholder="Skriv t.ex. AWD, Dragkrok, Automat..." oninput="smartSearch()">
-        </div>
-        
         <div class="filter-group">
             <label>Märke</label>
             <select id="brandSel" onchange="updateModels()">
                 <option value="all">Alla märken</option>
-                <option value="Volvo">Volvo</option>
-                <option value="Volkswagen">Volkswagen</option>
-                <option value="BMW">BMW</option>
-                <option value="Audi">Audi</option>
-                <option value="Tesla">Tesla</option>
-                <option value="Toyota">Toyota</option>
-                <option value="Mercedes-Benz">Mercedes-Benz</option>
-            </select>
+                </select>
         </div>
 
         <div class="filter-group">
             <label>Modell</label>
             <select id="modelSel" onchange="smartSearch()">
-                <option value="all">Välj märke först</option>
+                <option value="all">Alla modeller</option>
             </select>
         </div>
 
         <div class="filter-group">
-            <label>Pris (kr)</label>
-            <div style="display:flex; gap:5px;">
-                <input type="number" id="priceFrom" placeholder="Från" oninput="smartSearch()">
-                <input type="number" id="priceTo" placeholder="Till" oninput="smartSearch()">
-            </div>
-        </div>
-
-        <div class="filter-group">
-            <label>Årsmodell</label>
-            <div style="display:flex; gap:5px;">
-                <input type="number" id="yearFrom" placeholder="Min" oninput="smartSearch()">
-                <input type="number" id="yearTo" placeholder="Max" oninput="smartSearch()">
-            </div>
-        </div>
-
-        <div class="body-types">
-            <div class="type-item" onclick="setBody('Sedan', this)">
-                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202926.png" alt="Sedan">
-                <span>Sedan</span>
-            </div>
-            <div class="type-item" onclick="setBody('SUV', this)">
-                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png" alt="SUV">
-            </div>
-            <div class="type-item" onclick="setBody('Kombi', this)">
-                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png" alt="Kombi">
-                <span>Kombi</span>
-            </div>
+            <label>Max Pris (kr)</label>
+            <input type="number" id="priceTo" placeholder="t.ex. 500000" oninput="smartSearch()">
         </div>
     </div>
-
-    <div class="search-actions">
-        <span id="resultCount" style="font-weight:700; color:#666;">Hittade 0 bilar</span>
-        <button class="btn-search" onclick="smartSearch()">SÖK BILAR</button>
-    </div>
+    <div style="text-align:center;"><button class="btn-search" onclick="smartSearch()">SÖK BILAR</button></div>
 </section>
 
 <div class="results-section">
+    <div id="resultCount" style="margin-bottom:25px; font-weight:700; font-size: 18px;">Hittade 0 bilar</div>
     <div class="car-grid" id="carGrid"></div>
 </div>
 
@@ -129,19 +72,46 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Smart Model Database
+    // داتابيس الماركات والموديلات (القديم والحديث جداً)
     const modelsData = {
-        "Volvo": ["V60", "V90", "XC40", "XC60", "XC90", "V40"],
-        "Volkswagen": ["Golf", "Passat", "Tiguan", "ID.3", "ID.4", "Polo"],
-        "BMW": ["3-serie", "5-serie", "X1", "X3", "X5", "i3"],
-        "Audi": ["A3", "A4", "A6", "Q3", "Q5", "e-tron"],
-        "Tesla": ["Model 3", "Model Y", "Model S", "Model X"],
-        "Toyota": ["Corolla", "RAV4", "Yaris", "Auris"],
-        "Mercedes-Benz": ["C-Klass", "E-Klass", "GLC", "A-Klass"]
+        "Audi": ["A1", "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q5", "Q7", "Q8", "e-tron", "RS6", "TT"],
+        "BMW": ["1-serie", "2-serie", "3-serie", "4-serie", "5-serie", "7-serie", "8-serie", "X1", "X3", "X5", "X7", "M3", "M5", "i3", "i4", "iX"],
+        "Chevrolet": ["Corvette", "Camaro", "Silverado", "Suburban", "Tahoe", "Impala", "Bolt EV"],
+        "Dodge": ["Challenger", "Charger", "Ram 1500", "Durango"],
+        "Ferrari": ["488", "812 Superfast", "F8 Tributo", "SF90", "Purosangue", "Testarossa", "F40"],
+        "Fiat": ["500", "500e", "Panda", "Tipo", "Punto"],
+        "Ford": ["Fiesta", "Focus", "Mondeo", "Mustang", "Mustang Mach-E", "Explorer", "F-150", "Ranger", "Kuga"],
+        "Honda": ["Civic", "Accord", "CR-V", "HR-V", "Jazz", "NSX"],
+        "Hyundai": ["i10", "i20", "i30", "Tucson", "Santa Fe", "IONIQ 5", "IONIQ 6", "Kona"],
+        "Jaguar": ["XF", "XJ", "F-Type", "E-Pace", "F-Pace", "I-Pace"],
+        "Kia": ["Picanto", "Ceed", "Sportage", "Sorento", "Niro", "EV6", "EV9", "Stinger"],
+        "Land Rover": ["Defender", "Discovery", "Range Rover", "Range Rover Sport", "Evoque", "Velar"],
+        "Mazda": ["Mazda2", "Mazda3", "Mazda6", "CX-3", "CX-5", "CX-30", "MX-5"],
+        "Mercedes-Benz": ["A-Klass", "C-Klass", "E-Klass", "S-Klass", "G-Klass", "GLA", "GLC", "GLE", "GLS", "EQE", "EQS", "AMG GT", "SL"],
+        "Nissan": ["Micra", "Leaf", "Juke", "Qashqai", "X-Trail", "Ariya", "GT-R", "370Z"],
+        "Peugeot": ["208", "308", "508", "2008", "3008", "5008", "Partner"],
+        "Porsche": ["911", "718 Boxster", "718 Cayman", "Panamera", "Macan", "Cayenne", "Taycan"],
+        "Renault": ["Clio", "Megane", "Captur", "Austral", "Zoe", "Espace", "Kangoo"],
+        "Skoda": ["Fabia", "Octavia", "Superb", "Kamiq", "Karoq", "Kodiaq", "Enyaq"],
+        "Tesla": ["Model 3", "Model Y", "Model S", "Model X", "Cybertruck", "Roadster"],
+        "Toyota": ["Yaris", "Corolla", "Camry", "RAV4", "C-HR", "Land Cruiser", "Hilux", "Supra", "bZ4X"],
+        "Volkswagen": ["Polo", "Golf", "Passat", "Arteon", "Tiguan", "Touareg", "ID.3", "ID.4", "ID.5", "ID.Buzz", "Beetle"],
+        "Volvo": ["V40", "V60", "V90", "XC40", "XC60", "XC90", "C40", "EX30", "EX90", "240", "740", "940"]
     };
 
     let cars = [];
-    let activeBody = 'all';
+
+    // تعبئة قائمة الماركات عند التحميل
+    function populateBrands() {
+        const brandSel = document.getElementById('brandSel');
+        const sortedBrands = Object.keys(modelsData).sort();
+        sortedBrands.forEach(brand => {
+            const opt = document.createElement('option');
+            opt.value = brand;
+            opt.innerText = brand;
+            brandSel.appendChild(opt);
+        });
+    }
 
     async function load() {
         const snap = await getDocs(collection(db, "cars"));
@@ -149,18 +119,54 @@
         smartSearch();
     }
 
-    // Update Model List based on Brand
     window.updateModels = () => {
         const brand = document.getElementById('brandSel').value;
         const modelSel = document.getElementById('modelSel');
         modelSel.innerHTML = '<option value="all">Alla modeller</option>';
         
         if (modelsData[brand]) {
-            modelsData[brand].forEach(m => {
-                modelSel.innerHTML += `<option value="${m}">${m}</option>`;
+            modelsData[brand].sort().forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.innerText = m;
+                modelSel.appendChild(opt);
             });
         }
         smartSearch();
     };
 
-    window.
+    window.smartSearch = () => {
+        const brand = document.getElementById('brandSel').value;
+        const model = document.getElementById('modelSel').value;
+        const pTo = Number(document.getElementById('priceTo').value) || Infinity;
+
+        const filtered = cars.filter(c => {
+            const mBrand = brand === 'all' || c.brand === brand;
+            const mModel = model === 'all' || c.model === model;
+            const mPrice = Number(c.price) <= pTo;
+            return mBrand && mModel && mPrice;
+        });
+
+        document.getElementById('resultCount').innerText = `Hittade ${filtered.length} bilar`;
+        render(filtered);
+    };
+
+    function render(data) {
+        const grid = document.getElementById('carGrid');
+        grid.innerHTML = data.map(c => `
+            <div class="car-card" onclick="location.href='details.html?id=${c.id}'">
+                <img src="${c.images?.[0] || 'https://via.placeholder.com/400x250'}">
+                <div class="car-content">
+                    <div style="font-weight:800; font-size: 18px;">${c.brand} ${c.model || ''}</div>
+                    <div style="color:gray; font-size:13px; margin-top:5px;">${c.year || '-'} | ${c.mileage || 0} mil</div>
+                    <div class="price">${Number(c.price).toLocaleString()} kr</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    populateBrands();
+    load();
+</script>
+</body>
+</html>
