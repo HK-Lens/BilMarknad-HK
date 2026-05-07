@@ -3,44 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detaljer | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <title>Biluppgifter | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        img { width: 100%; border-radius: 15px; height: 400px; object-fit: cover; }
-        .price { font-size: 32px; color: #2563eb; font-weight: 800; margin: 20px 0; }
-        .spec-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .spec-item { background: #f1f5f9; padding: 15px; border-radius: 10px; }
+        :root { --primary: #2563eb; --dark: #0f172a; --bg: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; color: var(--dark); }
+        header { background: white; padding: 15px 5%; border-bottom: 1px solid #e2e8f0; }
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+
+        /* معرض الصور المطور */
+        .gallery-section { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .main-img-container { position: relative; }
+        .main-img { width: 100%; height: 450px; object-fit: cover; border-radius: 15px; }
+        .thumbnails { display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; padding-bottom: 5px; }
+        .thumbnails img { width: 100px; height: 70px; object-fit: cover; border-radius: 8px; cursor: pointer; opacity: 0.6; transition: 0.3s; }
+        .thumbnails img:hover, .thumbnails img.active { opacity: 1; border: 2px solid var(--primary); }
+
+        /* أيقونة المفضلة */
+        .fav-btn { position: absolute; top: 20px; right: 20px; background: white; border: none; padding: 10px; border-radius: 50%; cursor: pointer; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        /* المواصفات */
+        .specs-card { background: white; padding: 25px; border-radius: 20px; margin-top: 20px; }
+        .specs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .spec-item { padding: 15px; background: #f1f5f9; border-radius: 12px; }
+        .spec-label { font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700; }
+        .spec-value { font-size: 16px; font-weight: 600; }
+
+        /* نموذج التواصل */
+        .contact-sidebar { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); height: fit-content; position: sticky; top: 100px; }
+        .contact-sidebar h3 { margin-top: 0; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; }
+        .send-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
-<div class="container" id="content">Laddar...</div>
+
+<header>
+    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;">← Tillbaka till sökning</a>
+</header>
+
+<div class="container" id="carDetails">
+    </div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import firebaseConfig from './firebase-config.js';
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const id = new URLSearchParams(window.location.search).get('id');
-    async function load() {
-        const snap = await getDoc(doc(db, "cars", id));
+    const carId = new URLSearchParams(window.location.search).get('id');
+
+    async function loadCar() {
+        const snap = await getDoc(doc(db, "cars", carId));
         if(snap.exists()) {
-            const c = snap.data();
-            document.getElementById('content').innerHTML = `
-                <a href="index.html">← Tillbaka</a>
-                <img src="${c.images?.[0] || ''}">
-                <h1>${c.brand}</h1>
-                <div class="price">${Number(c.price).toLocaleString()} kr</div>
-                <div class="spec-box">
-                    <div class="spec-item"><b>Modellår:</b> ${c.year || '-'}</div>
-                    <div class="spec-item"><b>Miltal:</b> ${c.mileage || 0} mil</div>
-                    <div class="spec-item"><b>RegNr:</b> ${c.regNr || '-'}</div>
-                </div>
-            `;
+            const car = snap.data();
+            render(car);
         }
     }
-    load();
+
+    function render(car) {
+        const container = document.getElementById('carDetails');
+        container.innerHTML = `
+            <div class="main-content">
+                <div class="gallery-section">
+                    <div class="main-img-container">
+                        <img src="${car.images[0]}" class="main-img" id="currentView">
+                        <button class="fav-btn" onclick="toggleFav('${carId}')" id="favStar">☆</button>
+                    </div>
+                    <div class="thumbnails">
+                        ${car.images.map((img, i) => `<img src="${img}" onclick="updateView('${img}')">`).join('')}
+                    </div>
+                </div>
+
+                <div class="specs-card">
+                    <h2>Tekniska specifikationer</h2>
+                    <div class="specs-grid">
+                        <div class="spec-item"><div class="spec-label">Märke</div><div class="spec-value">${car.brand}</div></div>
+                        <div class="spec-item"><div class="spec-label">Modellår</div><div class="spec-value">${car.year}</div></div>
+                        <div class="spec-item"><div class="spec-label">Miltal</div><div class="spec-value">${car.mileage} mil</div></div>
+                        <div class="spec-item"><div class="spec-label">Registreringsnummer</div><div class="spec-value">${car.regNr}</div></div>
+                        <div class="spec-item"><div class="spec-label">Växellåda</div><div class="spec-value">Automat</div></div>
+                        <div class="spec-item"><div class="spec-label">Drivmedel</div><div class="spec-value">Diesel</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-sidebar">
+                <h3>Intresserad?</h3>
+                <p class="price" style="font-size:28px; font-weight:800; color:var(--primary);">${Number(car.price).toLocaleString()} kr</p>
+                <hr>
+                <form id="contactForm">
+                    <label>Namn</label>
+                    <input type="text" placeholder="Ditt namn" required>
+                    <label>E-post</label>
+                    <input type="email" placeholder="Din e-postadress" required>
+                    <label>Meddelande</label>
+                    <textarea rows="4" placeholder="Jag är intresserad av denna bil..."></textarea>
+                    <button type="submit" class="send-btn">Skicka meddelande</button>
+                </form>
+            </div>
+        `;
+        checkFavStatus(carId);
+    }
+
+    // وظيفة تبديل الصور
+    window.updateView = (url) => { document.getElementById('currentView').src = url; };
+
+    // وظيفة المفضلة
+    window.toggleFav = (id) => {
+        let favs = JSON.parse(localStorage.getItem('favCars')) || [];
+        if(favs.includes(id)) {
+            favs = favs.filter(i => i !== id);
+            document.getElementById('favStar').innerText = '☆';
+        } else {
+            favs.push(id);
+            document.getElementById('favStar').innerText = '⭐';
+        }
+        localStorage.setItem('favCars', JSON.stringify(favs));
+    };
+
+    function checkFavStatus(id) {
+        const favs = JSON.parse(localStorage.getItem('favCars')) || [];
+        if(favs.includes(id)) document.getElementById('favStar').innerText = '⭐';
+    }
+
+    loadCar();
 </script>
 </body>
 </html>
