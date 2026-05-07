@@ -1,685 +1,116 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>BilMarknad-HK | Hem</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<style>
-
-:root{
-    --primary:#f58220;
-    --dark:#111827;
-    --bg:#f4f6f9;
-    --white:#ffffff;
-    --border:#e5e7eb;
-    --text:#4b5563;
-}
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    font-family:'Inter',sans-serif;
-    background:var(--bg);
-    color:var(--dark);
-}
-
-/* ================= HEADER ================= */
-
-header{
-    position:sticky;
-    top:0;
-    z-index:1000;
-
-    background:rgba(255,255,255,0.92);
-    backdrop-filter:blur(10px);
-
-    border-bottom:1px solid var(--border);
-
-    padding:16px 5%;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-
-.logo{
-    text-decoration:none;
-    font-size:28px;
-    font-weight:800;
-    color:var(--dark);
-    letter-spacing:-1px;
-}
-
-.logo span{
-    color:var(--primary);
-}
-
-.navbar{
-    display:flex;
-    align-items:center;
-    gap:14px;
-}
-
-.nav-link{
-    text-decoration:none;
-    color:var(--text);
-    font-weight:700;
-    transition:0.2s;
-}
-
-.nav-link:hover{
-    color:var(--primary);
-}
-
-/* Login Button */
-
-.btn-login{
-    background:white;
-    border:1px solid var(--border);
-
-    padding:11px 18px;
-
-    border-radius:12px;
-
-    text-decoration:none;
-    color:var(--dark);
-
-    font-weight:700;
-
-    transition:0.25s;
-}
-
-.btn-login:hover{
-    background:#f3f4f6;
-    transform:translateY(-2px);
-}
-
-/* Sell Button */
-
-.btn-sell{
-    background:linear-gradient(135deg,var(--primary),#ff9d4d);
-
-    color:white;
-
-    padding:11px 20px;
-
-    border-radius:12px;
-
-    text-decoration:none;
-
-    font-weight:800;
-
-    box-shadow:0 8px 20px rgba(245,130,32,0.25);
-
-    transition:0.25s;
-}
-
-.btn-sell:hover{
-    transform:translateY(-2px);
-}
-
-/* ================= HERO ================= */
-
-.hero{
-    padding:70px 5% 30px;
-    text-align:center;
-}
-
-.hero h1{
-    font-size:52px;
-    font-weight:800;
-    margin-bottom:12px;
-}
-
-.hero p{
-    color:#6b7280;
-    font-size:17px;
-    max-width:750px;
-    margin:auto;
-    line-height:1.6;
-}
-
-/* ================= SEARCH SECTION ================= */
-
-.search-section{
-    max-width:1300px;
-    margin:auto;
-    padding:20px 5% 40px;
-}
-
-/* Tabs */
-
-.search-tabs{
-    display:flex;
-    gap:10px;
-    margin-bottom:0;
-}
-
-.tab{
-    border:none;
-    padding:16px 24px;
-
-    border-radius:18px 18px 0 0;
-
-    background:#e9edf2;
-
-    font-weight:800;
-
-    cursor:pointer;
-
-    color:#666;
-
-    transition:0.2s;
-}
-
-.tab.active{
-    background:white;
-    color:#111827;
-}
-
-/* Search Box */
-
-.search-box{
-    background:white;
-
-    padding:30px;
-
-    border-radius:0 24px 24px 24px;
-
-    box-shadow:0 12px 40px rgba(0,0,0,0.06);
-}
-
-/* Search Grid */
-
-.search-grid{
-    display:grid;
-
-    grid-template-columns:
-    repeat(auto-fit,minmax(180px,1fr));
-
-    gap:18px;
-
-    align-items:end;
-}
-
-/* Fields */
-
-.field{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-}
-
-.field label{
-    font-size:12px;
-    font-weight:800;
-    color:#6b7280;
-    text-transform:uppercase;
-}
-
-/* Inputs */
-
-.field input,
-.field select{
-    height:54px;
-
-    border:1px solid #dfe3e8;
-
-    border-radius:14px;
-
-    padding:0 15px;
-
-    font-size:15px;
-
-    background:#fafafa;
-
-    transition:0.2s;
-}
-
-.field input:focus,
-.field select:focus{
-    outline:none;
-
-    border-color:var(--primary);
-
-    background:white;
-
-    box-shadow:0 0 0 4px rgba(245,130,32,0.12);
-}
-
-/* Search Button */
-
-.search-btn{
-    height:54px;
-
-    border:none;
-
-    border-radius:14px;
-
-    background:linear-gradient(135deg,var(--primary),#ff9d4d);
-
-    color:white;
-
-    font-size:15px;
-
-    font-weight:800;
-
-    cursor:pointer;
-
-    transition:0.25s;
-
-    box-shadow:0 10px 25px rgba(245,130,32,0.25);
-}
-
-.search-btn:hover{
-    transform:translateY(-2px);
-}
-
-/* Extra Filters */
-
-.extra-filters{
-    margin-top:24px;
-
-    display:flex;
-    flex-wrap:wrap;
-    gap:15px;
-
-    align-items:center;
-}
-
-.extra-filters a{
-    text-decoration:none;
-    color:#444;
-    font-weight:700;
-    transition:0.2s;
-}
-
-.extra-filters a:hover{
-    color:var(--primary);
-}
-
-.extra-filters span{
-    color:#bbb;
-}
-
-/* ================= RESULTS ================= */
-
-.results{
-    max-width:1300px;
-    margin:auto;
-
-    padding:20px 5% 70px;
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(auto-fill,minmax(280px,1fr));
-
-    gap:25px;
-}
-
-/* Car Card */
-
-.car-card{
-    background:white;
-
-    border-radius:22px;
-
-    overflow:hidden;
-
-    border:1px solid #eee;
-
-    cursor:pointer;
-
-    transition:0.3s;
-}
-
-.car-card:hover{
-    transform:translateY(-6px);
-
-    box-shadow:0 18px 35px rgba(0,0,0,0.08);
-}
-
-.car-card img{
-    width:100%;
-    height:200px;
-    object-fit:cover;
-}
-
-.car-body{
-    padding:18px;
-}
-
-.car-title{
-    font-size:18px;
-    font-weight:800;
-    margin-bottom:6px;
-}
-
-.car-info{
-    color:#6b7280;
-    font-size:13px;
-    margin-bottom:12px;
-}
-
-.price{
-    font-size:24px;
-    font-weight:800;
-    color:var(--primary);
-}
-
-/* ================= MOBILE ================= */
-
-@media(max-width:768px){
-
-    header{
-        flex-direction:column;
-        gap:15px;
-    }
-
-    .navbar{
-        flex-wrap:wrap;
-        justify-content:center;
-    }
-
-    .hero h1{
-        font-size:36px;
-    }
-
-    .search-box{
-        padding:20px;
-    }
-
-    .search-grid{
-        grid-template-columns:1fr;
-    }
-
-    .search-btn{
-        width:100%;
-    }
-
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BilMarknad-HK | Hem</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); }
+        header { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--dark); }
+        .logo span { color: var(--primary); }
+        
+        .search-strip { background: white; padding: 20px 5%; border-bottom: 1px solid #eee; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; align-items: flex-end; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; }
+        select, input { padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; font-size: 14px; background: #fcfcfc; }
+        
+        .btn-search { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+        .btn-filter { background: #f1f5f9; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; text-decoration: none; color: var(--dark); text-align: center; font-weight: 600; }
+
+        .results { padding: 40px 5%; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; max-width: 1400px; margin: auto; }
+        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; transition: 0.3s; cursor: pointer; }
+        .car-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+        .car-card img { width: 100%; height: 200px; object-fit: cover; }
+        .car-body { padding: 20px; }
+        .price { font-size: 22px; font-weight: 800; color: var(--primary); }
+    </style>
 </head>
-
 <body>
 
-<!-- ================= HEADER ================= -->
-
 <header>
-
-    <a href="index.html" class="logo">
-        BILMARKNAD<span>HK</span>
-    </a>
-
-    <nav class="navbar">
-
-        <a href="manage.html" class="nav-link">
-            Mitt Garage
-        </a>
-
-        <a href="login.html" class="btn-login">
-            Logga in
-        </a>
-
-        <a href="sell.html" class="btn-sell">
-            Sälj bil
-        </a>
-
+    <a href="index.html" class="logo">BILMARKNAD<span>HK</span></a>
+    <nav>
+        <a href="manage.html" style="margin-right:20px; text-decoration:none; color:var(--dark); font-weight:700;">Mitt Garage</a>
+        <a href="sell.html" style="background:var(--dark); color:white; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:700;">Sälj bil</a>
     </nav>
-
 </header>
 
-<!-- ================= HERO ================= -->
-
-<section class="hero">
-
-    <h1>Hitta din nästa bil</h1>
-
-    <p>
-        Sveriges moderna marknadsplats för nya och begagnade bilar.
-        Sök enkelt bland tusentals annonser från hela Sverige.
-    </p>
-
-</section>
-
-<!-- ================= SEARCH ================= -->
-
-<section class="search-section">
-
-    <!-- Tabs -->
-
-    <div class="search-tabs">
-
-        <button class="tab active">
-            Begagnade bilar
-        </button>
-
-        <button class="tab">
-            Nya bilar
-        </button>
-
+<div class="search-strip">
+    <div class="input-group">
+        <label>Märke</label>
+        <select id="mainBrand">
+            <option value="all">Alla märken</option>
+            <option value="Volvo">Volvo</option>
+            <option value="BMW">BMW</option>
+            <option value="Mercedes-Benz">Mercedes-Benz</option>
+            <option value="Tesla">Tesla</option>
+            <option value="Toyota">Toyota</option>
+            <option value="Volkswagen">Volkswagen</option>
+        </select>
     </div>
-
-    <!-- Search Box -->
-
-    <div class="search-box">
-
-        <div class="search-grid">
-
-            <!-- Type -->
-
-            <div class="field">
-
-                <label>Fordonstyp</label>
-
-                <select>
-                    <option>Personbil</option>
-                    <option>SUV</option>
-                    <option>Transportbil</option>
-                    <option>Elbil</option>
-                </select>
-
-            </div>
-
-            <!-- Brand -->
-
-            <div class="field">
-
-                <label>Märke</label>
-
-                <select id="mainBrand">
-
-                    <option value="all">Alla märken</option>
-
-                    <option value="Volvo">Volvo</option>
-
-                    <option value="Volkswagen">Volkswagen</option>
-
-                    <option value="BMW">BMW</option>
-
-                    <option value="Audi">Audi</option>
-
-                    <option value="Mercedes-Benz">Mercedes-Benz</option>
-
-                    <option value="Tesla">Tesla</option>
-
-                    <option value="Toyota">Toyota</option>
-
-                </select>
-
-            </div>
-
-            <!-- Model -->
-
-            <div class="field">
-
-                <label>Modell</label>
-
-                <input type="text" placeholder="Ex. XC60">
-
-            </div>
-
-            <!-- Price -->
-
-            <div class="field">
-
-                <label>Maxpris</label>
-
-                <input type="number" id="maxPrice" placeholder="300000">
-
-            </div>
-
-            <!-- Search Button -->
-
-            <button class="search-btn" onclick="fastSearch()">
-
-                🔍 SÖK
-
-            </button>
-
-        </div>
-
-        <!-- Extra Filters -->
-
-        <div class="extra-filters">
-
-            <a href="filter.html">
-                Fler filter
-            </a>
-
-            <span>|</span>
-
-            <a href="#">
-                Elbil
-            </a>
-
-            <a href="#">
-                Hybrid
-            </a>
-
-            <a href="#">
-                Automat
-            </a>
-
-            <a href="#">
-                4WD
-            </a>
-
-        </div>
-
+    <div class="input-group">
+        <label>Max Pris</label>
+        <input type="number" id="maxPrice" placeholder="Ingen gräns">
     </div>
-
-</section>
-
-<!-- ================= RESULTS ================= -->
+    <button class="btn-search" onclick="fastSearch()">SÖK</button>
+    <a href="filter.html" class="btn-filter">Fler filter</a>
+</div>
 
 <div class="results" id="carGrid"></div>
 
-<!-- ================= FIREBASE ================= -->
-
 <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import firebaseConfig from './firebase-config.js';
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let allCars = [];
 
-import {
-    getFirestore,
-    collection,
-    getDocs
-}
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    async function load() {
+        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        allCars = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+        
+        const p = new URLSearchParams(window.location.search);
+        if (p.toString()) applyDeepFilters(p);
+        else render(allCars);
+    }
 
-import firebaseConfig from './firebase-config.js';
+    window.fastSearch = () => {
+        const b = document.getElementById('mainBrand').value;
+        const max = Number(document.getElementById('maxPrice').value) || Infinity;
+        const filtered = allCars.filter(c => (b === 'all' || c.brand === b) && (Number(c.price) <= max));
+        render(filtered);
+    };
 
-const app = initializeApp(firebaseConfig);
+    function applyDeepFilters(p) {
+        const filtered = allCars.filter(c => {
+            return (!p.get('brand') || p.get('brand') === 'all' || c.brand === p.get('brand')) &&
+                   (!p.get('model') || p.get('model') === 'all' || c.model === p.get('model')) &&
+                   (!p.get('maxPrice') || Number(c.price) <= Number(p.get('maxPrice'))) &&
+                   (!p.get('kar') || p.get('kar') === 'all' || c.bodyType === p.get('kar'));
+        });
+        render(filtered);
+    }
 
-const db = getFirestore(app);
-
-let cars = [];
-
-/* ================= LOAD ================= */
-
-async function load(){
-
-    const snap = await getDocs(collection(db,"cars"));
-
-    cars = snap.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }));
-
-    render(cars);
-}
-
-/* ================= SEARCH ================= */
-
-window.fastSearch = () => {
-
-    const brand =
-        document.getElementById('mainBrand').value;
-
-    const max =
-        Number(document.getElementById('maxPrice').value)
-        || Infinity;
-
-    const filtered = cars.filter(c =>
-
-        (brand === 'all' || c.brand === brand)
-        &&
-        (Number(c.price) <= max)
-
-    );
-
-    render(filtered);
-};
-
-/* ================= RENDER ================= */
-
-function render(data){
-
-    const grid =
-        document.getElementById('carGrid');
-
-    grid.innerHTML = data.map(c => `
-
-        <div class="car-card"
-             onclick="location.href='details.html?id=${c.id}'">
-
-            <img src="${c.images?.[0] || ''}">
-
-            <div class="car-body">
-
-                <div class="car-title">
-                    ${c.brand} ${c.model || ''}
+    function render(data) {
+        const grid = document.getElementById('carGrid');
+        grid.innerHTML = data.map(c => `
+            <div class="car-card" onclick="location.href='details.html?id=${c.id}'">
+                <img src="${c.images?.[0] || ''}">
+                <div class="car-body">
+                    <div style="font-weight:800; font-size:18px;">${c.brand} ${c.model || ''}</div>
+                    <div style="color:#64748b; font-size:12px; margin:5px 0;">${c.year} • ${c.mileage} mil</div>
+                    <div class="price">${Number(c.price).toLocaleString()} kr</div>
                 </div>
-
-                <div class="car-info">
-                    ${c.year} | ${c.mileage} mil
-                </div>
-
-                <div class="price">
-                    ${Number(c.price).toLocaleString()} kr
-                </div>
-
             </div>
-
-        </div>
-
-    `).join('');
-}
-
-load();
-
+        `).join('');
+    }
+    load();
 </script>
-
 </body>
 </html>
