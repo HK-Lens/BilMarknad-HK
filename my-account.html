@@ -1,21 +1,118 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Min Sida | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); padding-bottom: 50px; }
+        header { background: white; padding: 15px 6%; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .logo { text-decoration: none; font-size: 20px; font-weight: 900; color: var(--dark); }
+        .logo span { color: var(--primary); }
+        .container { max-width: 850px; margin: auto; padding: 0 15px; }
+        .section { background: white; padding: 20px; border-radius: 20px; margin-bottom: 25px; border: 1px solid #e2e8f0; }
+        .msg-card { display: flex; gap: 15px; padding: 15px; border: 1px solid #eee; border-radius: 15px; margin-bottom: 10px; }
+        .btn-reply { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    </style>
+</head>
+<body>
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <button onclick="logout()" style="background:none; border:none; color:#ef4444; font-weight:700; cursor:pointer;">Logga ut</button>
+</header>
+
+<div class="container" style="margin-top:30px;">
+    <h1 id="name">Välkommen</h1>
+    <div class="section">
+        <h3>📩 Inbox (Meddelanden)</h3>
+        <div id="mList" style="margin-top:15px;">Laddar...</div>
+    </div>
+    <div class="section">
+        <h3>🚗 Mina annonser</h3>
+        <div id="aList" style="margin-top:15px;">Laddar...</div>
+    </div>
+</div>
+
+<div id="rModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:2000;">
+    <div style="background:white; padding:25px; border-radius:20px; width:90%; max-width:400px;">
+        <h3 id="rTitle">Svara</h3>
+        <textarea id="rTxt" style="width:100%; margin:15px 0; padding:10px; border-radius:10px;" rows="4"></textarea>
+        <button onclick="sendR()" style="width:100%; background:var(--dark); color:white; padding:12px; border-radius:10px; border:none; font-weight:700;">Skicka svar</button>
+        <button onclick="document.getElementById('rModal').style.display='none'" style="width:100%; background:none; border:none; margin-top:10px; cursor:pointer;">Avbryt</button>
+    </div>
+</div>
+
 <script type="module">
-    async function loadMessages(uid) {
-        const msgDiv = document.getElementById('messagesList');
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import firebaseConfig from './firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    let rData = {};
+
+    onAuthStateChanged(auth, user => {
+        if (!user) return window.location.href = 'login.html';
+        document.getElementById('name').innerText = "Hej, " + (user.displayName || user.email.split('@')[0]);
+        loadM(user.uid);
+        loadA(user.uid);
+    });
+
+    async function loadM(uid) {
         const q = query(collection(db, "messages"), where("recipientId", "==", uid));
         const snap = await getDocs(q);
-
-        msgDiv.innerHTML = snap.docs.sort((a,b) => b.data().timestamp - a.data().timestamp).map(d => {
+        const list = document.getElementById('mList');
+        if (snap.empty) return list.innerHTML = "Inga meddelanden.";
+        
+        list.innerHTML = snap.docs.sort((a,b)=>b.data().timestamp - a.data().timestamp).map(d => {
             const m = d.data();
             return `
-                <div class="msg-card" style="display:flex; gap:12px; padding:15px; border:1px solid #eee; border-radius:12px; margin-bottom:10px; background:white;">
-                    <img src="${m.carImage}" onerror="this.src='https://via.placeholder.com/60?text=Bil'" style="width:60px; height:60px; border-radius:8px; object-fit:cover;">
+                <div class="msg-card">
+                    <img src="${m.carImage || ''}" style="width:60px; height:60px; border-radius:10px; object-fit:cover;">
                     <div style="flex:1;">
-                        <div style="font-weight:800; font-size:13px;">${m.senderName}</div>
-                        <div style="font-size:11px; color:var(--primary); font-weight:700;">Ref: ${m.carTitle}</div>
-                        <p style="font-size:13px; color:#444; margin-top:5px;">${m.message}</p>
-                        <button onclick="openReply('${m.senderId}', '${m.carId}', '${m.carTitle}', '${m.carImage}')" style="background:none; border:none; color:var(--primary); font-weight:700; cursor:pointer; font-size:12px; margin-top:8px;">Svara ↩️</button>
+                        <div style="font-size:11px; color:var(--primary); font-weight:800;">${m.carTitle}</div>
+                        <div style="font-weight:700; font-size:14px;">Från: ${m.senderName}</div>
+                        <p style="font-size:13px; color:#444; margin:5px 0;">${m.message}</p>
+                        <button onclick="openR('${m.senderId}', '${m.carId}', '${m.carTitle}', '${m.carImage}')" class="btn-reply">Svara</button>
                     </div>
                 </div>`;
         }).join('');
     }
+
+    async function loadA(uid) {
+        const q = query(collection(db, "cars"), where("sellerId", "==", uid));
+        const snap = await getDocs(q);
+        const list = document.getElementById('aList');
+        if (snap.empty) return list.innerHTML = "Inga annonser.";
+        list.innerHTML = snap.docs.map(d => {
+            const c = d.data();
+            return `<div style="display:flex; gap:10px; border-bottom:1px solid #eee; padding:10px 0;">
+                <img src="${c.images[0]}" style="width:50px; border-radius:5px;">
+                <b>${c.brand} ${c.model}</b> - ${c.price} kr
+            </div>`;
+        }).join('');
+    }
+
+    window.openR = (to, cid, title, img) => {
+        rData = { to, cid, title, img };
+        document.getElementById('rModal').style.display = 'flex';
+    };
+
+    window.sendR = async () => {
+        const txt = document.getElementById('rTxt').value;
+        await addDoc(collection(db, "messages"), {
+            carId: rData.cid, carTitle: rData.title, carImage: rData.img,
+            senderId: auth.currentUser.uid, senderName: auth.currentUser.email.split('@')[0],
+            recipientId: rData.to, message: txt, timestamp: serverTimestamp()
+        });
+        alert("Svar skickat!"); document.getElementById('rModal').style.display='none';
+    };
+
+    window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 </script>
+</body>
+</html>
