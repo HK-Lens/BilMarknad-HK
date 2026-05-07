@@ -3,135 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BilMarknad-HK | Hitta din drömbil</title>
+    <title>BilMarknad-HK | Advanced Search</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2563eb; --dark: #0f172a; --bg: #f8fafc; --white: #ffffff; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg); color: var(--dark); line-height: 1.6; }
+        :root { --primary: #f58220; --dark: #1a1a1a; --bg: #f4f4f4; --white: #ffffff; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg); color: var(--dark); }
         
-        /* هيدر مطور مع خيارات الدخول */
-        header { 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0;
-        }
+        header { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
         .logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        .nav-links { display: flex; align-items: center; gap: 20px; }
-        .nav-links a { text-decoration: none; font-weight: 600; color: var(--dark); font-size: 14px; transition: 0.3s; }
-        .nav-links a:hover { color: var(--primary); }
-        
-        /* زر كراجي المميز */
-        .garage-btn { 
-            background: var(--primary); color: white !important; 
-            padding: 8px 18px; border-radius: 50px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+        /* منطقة البحث الذكي */
+        .search-area { background: white; padding: 30px 5%; border-bottom: 1px solid #ddd; }
+        .filter-grid { 
+            max-width: 1100px; margin: auto; display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; 
         }
 
-        .auth-btn { border: 1px solid #e2e8f0; padding: 8px 18px; border-radius: 50px; cursor: pointer; }
+        .filter-group { display: flex; flex-direction: column; gap: 8px; }
+        .filter-group label { font-size: 13px; font-weight: 700; color: #666; }
+        select, input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; outline: none; }
 
-        /* الهيرو والفلاتر */
-        .hero { background: var(--dark); padding: 60px 5% 100px; text-align: center; color: white; background-image: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1000'); background-size: cover; background-position: center; }
-        .filter-wrapper { max-width: 1100px; margin: -50px auto 40px; background: var(--white); padding: 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
-        .filter-group { display: flex; flex-direction: column; gap: 5px; }
-        select, input { padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; outline: none; }
+        /* أيقونات هياكل السيارات - تصميم Bytbil */
+        .body-types { 
+            grid-column: 1 / -1; display: flex; justify-content: center; gap: 20px; 
+            flex-wrap: wrap; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;
+        }
+        .type-item { 
+            text-align: center; cursor: pointer; padding: 10px; border-radius: 10px; 
+            transition: 0.2s; border: 2px solid transparent; min-width: 80px;
+        }
+        .type-item:hover, .type-item.active { border-color: var(--primary); background: #fff5eb; }
+        .type-item img { width: 50px; display: block; margin: 0 auto 5px; }
+        .type-item span { font-size: 12px; font-weight: 600; }
 
-        .cars-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; padding: 0 5% 60px; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; transition: 0.3s; cursor: pointer; }
-        .car-card:hover { transform: translateY(-10px); }
-        .car-card img { width: 100%; height: 200px; object-fit: cover; }
-        .car-info { padding: 20px; }
-        .price-tag { font-size: 20px; font-weight: 800; color: var(--primary); }
+        /* أزرار الأكشن */
+        .search-actions { 
+            max-width: 1100px; margin: 30px auto 0; display: flex; 
+            justify-content: space-between; align-items: center; 
+        }
+        .btn-search { 
+            background: var(--primary); color: white; border: none; 
+            padding: 15px 40px; border-radius: 6px; font-weight: 800; 
+            font-size: 18px; cursor: pointer; box-shadow: 0 4px 10px rgba(245, 130, 32, 0.3);
+        }
+
+        /* شبكة النتائج */
+        .results-section { padding: 40px 5%; max-width: 1200px; margin: auto; }
+        .car-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .car-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #ddd; transition: 0.3s; cursor: pointer; }
+        .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .car-card img { width: 100%; height: 180px; object-fit: cover; }
+        .car-content { padding: 15px; }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BILMARKNAD<span>HK</span></a>
-    
-    <div class="nav-links">
-        <a href="sell.html">Sälj bil</a>
-        <a href="manage.html" class="garage-btn" id="garageLink" style="display:none;">Mitt Garage</a>
-        <a href="login.html" class="auth-btn" id="loginBtn">Logga in</a>
-        <a href="#" class="auth-btn" id="logoutBtn" style="display:none;" onclick="logout()">Logga ut</a>
+    <div>
+        <a href="manage.html" style="margin-right:20px; text-decoration:none; font-weight:700;">Mitt Garage</a>
+        <a href="sell.html" style="background:var(--primary); color:white; padding:8px 20px; border-radius:20px; text-decoration:none; font-weight:700;">Sälj bil</a>
     </div>
 </header>
 
-<section class="hero">
-    <h1>Hitta din nästa drömbil</h1>
+<section class="search-area">
+    <div class="filter-grid">
+        <div class="filter-group" style="grid-column: 1 / -1;">
+            <label>FRITEXT (بحث حر)</label>
+            <input type="text" id="freeText" placeholder="Sök på modell, utrustning, färg..." oninput="smartSearch()">
+        </div>
+        
+        <div class="filter-group">
+            <label>MÄRKE (الماركة)</label>
+            <select id="brandSel" onchange="smartSearch()">
+                <option value="all">Alla märken</option>
+                <option value="Volvo">Volvo</option>
+                <option value="BMW">BMW</option>
+                <option value="Audi">Audi</option>
+                <option value="Tesla">Tesla</option>
+                <option value="Toyota">Toyota</option>
+                <option value="Kia">Kia</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>PRIS (السعر)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="priceFrom" placeholder="Från" oninput="smartSearch()">
+                <input type="number" id="priceTo" placeholder="Till" oninput="smartSearch()">
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label>ÅRSMODELL (الموديل)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="yearFrom" placeholder="Från" oninput="smartSearch()">
+                <input type="number" id="yearTo" placeholder="Till" oninput="smartSearch()">
+            </div>
+        </div>
+
+        <div class="body-types">
+            <div class="type-item" onclick="setBody('Sedan', this)">
+                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202926.png" alt="Sedan">
+                <span>Sedan</span>
+            </div>
+            <div class="type-item" onclick="setBody('SUV', this)">
+                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png" alt="SUV">
+                <span>SUV</span>
+            </div>
+            <div class="type-item" onclick="setBody('Kombi', this)">
+                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png" alt="Kombi">
+                <span>Kombi</span>
+            </div>
+            <div class="type-item" onclick="setBody('Cab', this)">
+                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202936.png" alt="Cab">
+                <span>Cab</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-actions">
+        <span id="resultCount" style="font-weight:700; color:#666;">Hittade 0 fordon</span>
+        <button class="btn-search" onclick="smartSearch()">VISA RESULTAT</button>
+    </div>
 </section>
 
-<div class="filter-wrapper">
-    <div class="filter-group">
-        <label style="font-size: 11px; font-weight: 700; color: #94a3b8;">MÄRKE</label>
-        <select id="brandSelect" onchange="filterData()">
-            <option value="all">Alla märken</option>
-            <option value="Volvo">Volvo</option>
-            <option value="BMW">BMW</option>
-            <option value="Tesla">Tesla</option>
-            <option value="Audi">Audi</option>
-        </select>
-    </div>
-    <div class="filter-group">
-        <label style="font-size: 11px; font-weight: 700; color: #94a3b8;">MAX PRIS</label>
-        <input type="number" id="priceInput" placeholder="kr" oninput="filterData()">
-    </div>
+<div class="results-section">
+    <div class="car-grid" id="carGrid"></div>
 </div>
-
-<div class="cars-container" id="carsContainer"></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import firebaseConfig from './firebase-config.js';
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const auth = getAuth(app);
+    let cars = [];
+    let activeBody = 'all';
 
-    let allCars = [];
-
-    // مراقبة حالة المستخدم لتغيير الهيدر
-    onAuthStateChanged(auth, user => {
-        if (user) {
-            document.getElementById('loginBtn').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = 'block';
-            document.getElementById('garageLink').style.display = 'block';
-        } else {
-            document.getElementById('loginBtn').style.display = 'block';
-            document.getElementById('logoutBtn').style.display = 'none';
-            document.getElementById('garageLink').style.display = 'none';
-        }
-    });
-
-    async function getCars() {
+    async function load() {
         const snap = await getDocs(collection(db, "cars"));
-        allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        display(allCars);
+        cars = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+        smartSearch();
     }
 
-    function display(cars) {
-        const container = document.getElementById('carsContainer');
-        container.innerHTML = cars.map(car => `
-            <div class="car-card" onclick="window.location.href='details.html?id=${car.id}'">
-                <img src="${car.images?.[0] || ''}">
-                <div class="car-info">
-                    <div style="font-weight:700; font-size:18px;">${car.brand}</div>
-                    <div style="font-size:13px; color:#64748b; margin-bottom:10px;">${car.year} | ${car.mileage} mil</div>
-                    <div class="price-tag">${Number(car.price).toLocaleString()} kr</div>
+    window.setBody = (type, el) => {
+        document.querySelectorAll('.type-item').forEach(i => i.classList.remove('active'));
+        if(activeBody === type) { activeBody = 'all'; } 
+        else { activeBody = type; el.classList.add('active'); }
+        smartSearch();
+    };
+
+    window.smartSearch = () => {
+        const text = document.getElementById('freeText').value.toLowerCase();
+        const brand = document.getElementById('brandSel').value;
+        const pFrom = document.getElementById('priceFrom').value;
+        const pTo = document.getElementById('priceTo').value;
+        const yFrom = document.getElementById('yearFrom').value;
+        const yTo = document.getElementById('yearTo').value;
+
+        const filtered = cars.filter(c => {
+            const mText = !text || c.brand.toLowerCase().includes(text) || (c.model && c.model.toLowerCase().includes(text));
+            const mBrand = brand === 'all' || c.brand === brand;
+            const mPrice = (!pFrom || c.price >= pFrom) && (!pTo || c.price <= pTo);
+            const mYear = (!yFrom || c.year >= yFrom) && (!yTo || c.year <= yTo);
+            const mBody = activeBody === 'all' || c.bodyType === activeBody;
+            return mText && mBrand && mPrice && mYear && mBody;
+        });
+
+        document.getElementById('resultCount').innerText = `Hittade ${filtered.length} fordon`;
+        render(filtered);
+    };
+
+    function render(data) {
+        const grid = document.getElementById('carGrid');
+        grid.innerHTML = data.map(c => `
+            <div class="car-card" onclick="location.href='details.html?id=${c.id}'">
+                <img src="${c.images?.[0] || ''}">
+                <div class="car-content">
+                    <div style="font-weight:800; font-size:18px;">${c.brand}</div>
+                    <div style="color:gray; font-size:13px; margin:5px 0;">${c.year} | ${c.mileage} mil</div>
+                    <div style="font-size:22px; font-weight:800; color:var(--primary);">${Number(c.price).toLocaleString()} kr</div>
                 </div>
             </div>
         `).join('');
     }
 
-    window.filterData = () => {
-        const b = document.getElementById('brandSelect').value;
-        const p = document.getElementById('priceInput').value;
-        display(allCars.filter(c => (b==='all' || c.brand===b) && (!p || Number(c.price)<=p)));
-    };
-
-    window.logout = () => signOut(auth).then(() => location.reload());
-
-    getCars();
+    load();
 </script>
+</body>
+</html>
