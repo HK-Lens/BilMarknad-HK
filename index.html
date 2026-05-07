@@ -2,212 +2,82 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BilMarknad-HK | Premium Hem</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BilMarknad-HK | Hem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --primary: #f58220; 
-            --dark: #0f172a; 
-            --bg: #f8fafc; 
-            --border: #e2e8f0; 
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); overflow-x: hidden; }
-
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type=number] { -moz-appearance: textfield; }
-
-        /* --- Header المتجاوب --- */
-        header {
-            position: sticky; top: 0; z-index: 1000;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            padding: 12px 5%; display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-        }
-        .logo { text-decoration: none; font-size: 22px; font-weight: 900; color: var(--dark); }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
+        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
-
-        .nav-actions { display: flex; gap: 8px; align-items: center; }
-        .btn { text-decoration: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 13px; transition: 0.2s; }
-        .btn-login { border: 1px solid var(--border); color: var(--dark); background: white; }
+        .nav-actions { display: flex; gap: 10px; align-items: center; }
+        .btn { text-decoration: none; padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 13px; }
+        .btn-login { border: 1px solid var(--border); color: var(--dark); }
         .btn-sell { background: var(--dark); color: white; }
-
-        /* --- Hero Section --- */
-        .hero { padding: 40px 6% 20px; text-align: center; }
-        .hero h1 { font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 10px; }
-        .hero p { color: #64748b; font-size: 16px; }
-
-        /* --- Search Card (تحسين للهاتف) --- */
-        .search-container { max-width: 1100px; margin: 0 auto 30px; padding: 0 15px; }
-        .search-card {
-            background: white; padding: 20px; border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-            display: grid; grid-template-columns: 1fr; gap: 15px; /* عمود واحد افتراضياً للهاتف */
-            border: 1px solid var(--border);
-        }
-        @media (min-width: 768px) {
-            .search-card { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-            .hero h1 { font-size: 48px; }
-        }
-
-        .field { display: flex; flex-direction: column; gap: 6px; }
-        .field label { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
-        select, input { height: 48px; padding: 0 12px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; background: #fcfcfc; outline: none; width: 100%; }
-
-        .btn-search { height: 50px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 16px; }
-
-        /* --- Car Grid --- */
-        .grid { max-width: 1300px; margin: auto; padding: 0 15px 60px; display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 600px) { .grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } }
-
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); position: relative; }
+        .hero { padding: 60px 6% 30px; text-align: center; }
+        .grid { max-width: 1300px; margin: auto; padding: 0 6% 60px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; position: relative; cursor: pointer; }
+        .car-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
         .car-card img { width: 100%; height: 200px; object-fit: cover; }
-        .card-info { padding: 15px; }
-        .card-title { font-weight: 800; font-size: 18px; }
-        .price { font-size: 20px; font-weight: 900; color: var(--primary); margin-top: 8px; }
-
-        .fav-btn { position: absolute; top: 12px; right: 12px; background: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 5; }
-        .fav-btn.active { color: #ef4444; }
-
-        /* --- Footer --- */
-        footer { background: white; padding: 40px 6%; border-top: 1px solid var(--border); text-align: center; }
-        .footer-disclaimer { font-size: 12px; color: #64748b; margin: 15px 0; line-height: 1.5; }
+        .card-info { padding: 20px; }
+        .price { font-size: 22px; font-weight: 900; color: var(--primary); }
+        footer { background: white; padding: 40px 6%; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: #64748b; }
     </style>
 </head>
 <body>
-
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
     <div class="nav-actions" id="navActions">
-        <a href="login.html" class="btn btn-login">Logga in</a>
+        <a href="login.html" class="btn btn-login">Laddar...</a>
     </div>
 </header>
-
 <section class="hero">
-    <h1>Hitta din bil.</h1>
-    <p>Premium marknadsplats i Sverige.</p>
+    <h1 style="font-size: 40px; font-weight: 900;">Hitta din nästa bil</h1>
+    <p style="color: #64748b; margin-top: 10px;">Enkel, säker och snabb bilmarknad i Sverige.</p>
+    <div style="margin-top: 30px;">
+        <a href="filter.html" style="text-decoration:none; color:var(--primary); font-weight:800;">⚙️ Avancerad sökning</a>
+    </div>
 </section>
-
-<div class="search-container">
-    <div class="search-card">
-        <div class="field">
-            <label>Märke</label>
-            <select id="brandSelect"><option value="all">Alla märken</option></select>
-        </div>
-        <div class="field">
-            <label>Pris (Från)</label>
-            <input type="number" id="minPrice" placeholder="0 kr">
-        </div>
-        <div class="field">
-            <label>Pris (Till)</label>
-            <input type="number" id="maxPrice" placeholder="Högsta">
-        </div>
-        <button class="btn-search" onclick="applySearch()">SÖK</button>
-    </div>
-    <div style="text-align: center; margin-top: 15px;">
-        <a href="filter.html" style="text-decoration:none; color:var(--primary); font-weight:700; font-size:13px;">⚙️ Avancerat filter</a>
-    </div>
-</div>
-
 <div class="grid" id="carGrid"></div>
-
 <footer>
-    <h2 class="logo" style="font-size: 18px;">BIL<span>HK</span></h2>
-    <p class="footer-disclaimer">
-        Vi är en plattform för annonser. Kontrollera alltid fordonet och papper personligen innan betalning.
-    </p>
-    <div style="display:flex; justify-content:center; gap:15px; font-size:13px;">
-        <a href="terms.html" style="color:var(--dark); text-decoration:none; font-weight:700;">Villkor</a>
-        <a href="my-account.html" style="color:var(--dark); text-decoration:none; font-weight:700;">Min Sida</a>
-    </div>
+    <p><strong>Viktig information:</strong> Vi är en annonsplattform. Kontrollera alltid fordon och dokument personligen innan köp.</p>
+    <p style="margin-top: 15px;">&copy; 2026 BilMarknad-HK</p>
 </footer>
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import firebaseConfig from './firebase-config.js';
-    import { carData } from './cars-data.js';
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
-    let allCars = [];
-    let currentUser = null;
-
-    onAuthStateChanged(auth, (user) => {
-        currentUser = user;
+    onAuthStateChanged(auth, user => {
         const nav = document.getElementById('navActions');
         if (user) {
             const name = user.displayName || user.email.split('@')[0];
-            nav.innerHTML = `
-                <a href="my-account.html" class="btn btn-login">Min Sida</a>
-                <a href="sell.html" class="btn btn-sell">Sälj</a>
-            `;
+            nav.innerHTML = `<span style="font-size:12px; font-weight:700;">Hej, ${name}!</span><a href="my-account.html" class="btn btn-login">Min Sida</a><a href="sell.html" class="btn btn-sell">Sälj bil</a>`;
         } else {
-            nav.innerHTML = `<a href="login.html" class="btn btn-login">Logga in</a>`;
+            nav.innerHTML = `<a href="login.html" class="btn btn-login">Logga in</a><a href="sell.html" class="btn btn-sell">Sälj bil</a>`;
         }
-        load();
+        loadCars();
     });
-
-    const bSel = document.getElementById('brandSelect');
-    Object.keys(carData).sort().forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
-
-    async function load() {
+    async function loadCars() {
         const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
-        allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
-        const params = new URLSearchParams(window.location.search);
-        if (params.toString()) applyUrlFilters(params);
-        else render(allCars);
-    }
-
-    window.applySearch = () => {
-        const brand = bSel.value;
-        const min = Number(document.getElementById('minPrice').value) || 0;
-        const max = Number(document.getElementById('maxPrice').value) || Infinity;
-        render(allCars.filter(c => (brand==='all' || c.brand===brand) && (Number(c.price)>=min && Number(c.price)<=max)));
-    };
-
-    function applyUrlFilters(p) {
-        const filtered = allCars.filter(c => {
-            const bMatch = !p.get('brand') || p.get('brand') === 'all' || c.brand === p.get('brand');
-            const kMatch = !p.get('kar') || p.get('kar') === 'all' || c.bodyType === p.get('kar');
-            return bMatch && kMatch;
-        });
-        render(filtered);
-    }
-
-    window.toggleFav = (id) => {
-        if (!currentUser) { alert("Logga in först!"); window.location.href="login.html"; return; }
-        let favs = JSON.parse(localStorage.getItem('favCars')) || [];
-        if (favs.includes(id)) favs = favs.filter(i => i !== id);
-        else favs.push(id);
-        localStorage.setItem('favCars', JSON.stringify(favs));
-        render(allCars);
-    };
-
-    function render(data) {
         const grid = document.getElementById('carGrid');
-        const favs = JSON.parse(localStorage.getItem('favCars')) || [];
-        grid.innerHTML = data.map(c => `
-            <div class="car-card">
-                <button class="fav-btn ${favs.includes(c.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFav('${c.id}')">
-                    ${favs.includes(c.id) ? '❤️' : '🤍'}
-                </button>
-                <div onclick="location.href='details.html?id=${c.id}'">
-                    <img src="${c.images?.[0] || ''}">
-                    <div class="card-info">
-                        <div class="card-title">${c.brand} ${c.model || ''}</div>
-                        <div style="font-size:12px; color:#94a3b8;">${c.year} • ${c.mileage} mil</div>
-                        <div class="price">${Number(c.price).toLocaleString()} kr</div>
-                    </div>
+        grid.innerHTML = snap.docs.map(doc => {
+            const c = doc.data();
+            return `<div class="car-card" onclick="location.href='details.html?id=${doc.id}'">
+                <img src="${c.images?.[0] || ''}">
+                <div class="card-info">
+                    <div style="font-weight:800; font-size:18px;">${c.brand} ${c.model}</div>
+                    <div style="font-size:12px; color:#94a3b8; margin:5px 0;">${c.year} • ${c.mileage} mil • ${c.fuelType}</div>
+                    <div class="price">${Number(c.price).toLocaleString()} kr</div>
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
     }
 </script>
 </body>
