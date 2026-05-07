@@ -1,0 +1,50 @@
+:root {
+    --primary: #f58220;
+    --dark: #111827;
+    --bg: #f4f6f9;
+    --white: #ffffff;
+    --border: #e5e7eb;
+    --text: #4b5563;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
+
+/* Header */
+header {
+    position: sticky; top: 0; z-index: 1000;
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border); padding: 16px 5%;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.logo { text-decoration: none; font-size: 28px; font-weight: 800; color: var(--dark); }
+.logo span { color: var(--primary); }
+.navbar { display: flex; align-items: center; gap: 14px; }
+.nav-link { text-decoration: none; color: var(--text); font-weight: 700; }
+.btn-login { background: white; border: 1px solid var(--border); padding: 11px 18px; border-radius: 12px; text-decoration: none; color: var(--dark); font-weight: 700; }
+.btn-sell { background: linear-gradient(135deg, var(--primary), #ff9d4d); color: white; padding: 11px 20px; border-radius: 12px; text-decoration: none; font-weight: 800; }
+
+/* Hero */
+.hero { padding: 70px 5% 30px; text-align: center; }
+.hero h1 { font-size: 52px; font-weight: 800; margin-bottom: 12px; }
+.hero p { color: #6b7280; font-size: 17px; max-width: 750px; margin: auto; }
+
+/* Search Box */
+.search-section { max-width: 1300px; margin: auto; padding: 20px 5%; }
+.search-tabs { display: flex; gap: 10px; }
+.tab { border: none; padding: 16px 24px; border-radius: 18px 18px 0 0; background: #e9edf2; font-weight: 800; cursor: pointer; color: #666; }
+.tab.active { background: white; color: var(--dark); }
+.search-box { background: white; padding: 30px; border-radius: 0 24px 24px 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.06); }
+.search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px; align-items: end; }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field label { font-size: 12px; font-weight: 800; color: #6b7280; text-transform: uppercase; }
+.field input, .field select { height: 54px; border: 1px solid #dfe3e8; border-radius: 14px; padding: 0 15px; background: #fafafa; }
+.search-btn { height: 54px; border: none; border-radius: 14px; background: var(--primary); color: white; font-weight: 800; cursor: pointer; }
+
+/* Results */
+.results { max-width: 1300px; margin: auto; padding: 40px 5%; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+.car-card { background: white; border-radius: 22px; overflow: hidden; border: 1px solid #eee; cursor: pointer; transition: 0.3s; }
+.car-card img { width: 100%; height: 200px; object-fit: cover; }
+.car-body { padding: 18px; }
+.car-title { font-size: 18px; font-weight: 800; }
+.price { font-size: 24px; font-weight: 800; color: var(--primary); }

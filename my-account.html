@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitt Konto | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
+
+        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
+        .logo span { color: var(--primary); }
+
+        .dashboard-header { background: var(--dark); color: white; padding: 50px 6%; text-align: center; }
+        .dashboard-header h1 { font-size: 32px; font-weight: 900; margin-bottom: 10px; }
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        
+        /* بطاقة السيارة في لوحة التحكم */
+        .admin-card { 
+            background: white; border-radius: 20px; padding: 20px; display: grid; 
+            grid-template-columns: 120px 1fr auto; gap: 20px; align-items: center;
+            margin-bottom: 15px; border: 1px solid var(--border); transition: 0.3s;
+        }
+        .admin-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .admin-card img { width: 120px; height: 90px; object-fit: cover; border-radius: 12px; }
+
+        .btn-group { display: flex; gap: 10px; }
+        .btn-action { 
+            padding: 10px 18px; border-radius: 10px; border: none; font-weight: 700; 
+            cursor: pointer; font-size: 13px; transition: 0.2s;
+        }
+        .btn-edit { background: #f1f5f9; color: var(--dark); }
+        .btn-edit:hover { background: #e2e8f0; }
+        .btn-delete { background: #fee2e2; color: #ef4444; }
+        .btn-delete:hover { background: #fecaca; }
+
+        /* نافذة التعديل المنبثقة (Modal) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 24px; width: 90%; max-width: 500px; }
+        .modal-header { margin-bottom: 20px; font-weight: 800; font-size: 20px; }
+        .modal-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 15px; outline: none; }
+        .modal-footer { display: flex; gap: 10px; }
+
+        .empty-state { text-align: center; padding: 50px; background: white; border-radius: 20px; border: 2px dashed var(--border); }
+        .btn-add-new { display: inline-block; background: var(--primary); color: white; padding: 12px 25px; border-radius: 12px; text-decoration: none; font-weight: 800; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <div style="display: flex; gap: 15px;">
+        <a href="add-car.html" class="btn-add-new" style="margin:0; padding:8px 15px; font-size: 13px;">+ Skapa annons</a>
+        <button onclick="logout()" style="background:none; border:none; color:#ef4444; font-weight:700; cursor:pointer;">Logga ut</button>
+    </div>
+</header>
+
+<div class="dashboard-header">
+    <h1>Mina Annonser</h1>
+    <p id="userEmail">Laddar användaruppgifter...</p>
+</div>
+
+<div class="container" id="adsList">
+    </div>
+
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <div class="modal-header">Redigera annons</div>
+        <label style="font-size:12px; font-weight:700; color:#64748b;">Nytt Pris (kr)</label>
+        <input type="number" id="editPrice" class="modal-input">
+        
+        <label style="font-size:12px; font-weight:700; color:#64748b;">Miltal (mil)</label>
+        <input type="number" id="editMileage" class="modal-input">
+
+        <div class="modal-footer">
+            <button onclick="closeModal()" style="flex:1; padding:12px; border-radius:10px; border:none; cursor:pointer;">Avbryt</button>
+            <button onclick="saveChanges()" style="flex:2; padding:12px; border-radius:10px; border:none; background:var(--dark); color:white; font-weight:700; cursor:pointer;">Spara ändringar</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import firebaseConfig from './firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let currentEditingId = null;
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "login.html";
+        } else {
+            document.getElementById('userEmail').innerText = user.email;
+            loadMyAds(user.uid);
+        }
+    });
+
+    async function loadMyAds(uid) {
+        const adsList = document.getElementById('adsList');
+        const q = query(collection(db, "cars"), where("sellerId", "==", uid));
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+            adsList.innerHTML = `
+                <div class="empty-state">
+                    <h3>Du har inga aktiva annonser än.</h3>
+                    <a href="add-car.html" class="btn-add-new">Skapa din första annons</a>
+                </div>`;
+            return;
+        }
+
+        adsList.innerHTML = snap.docs.map(d => {
+            const car = d.data();
+            return `
+                <div class="admin-card">
+                    <img src="${car.images?.[0] || 'https://via.placeholder.com/150'}">
+                    <div>
+                        <div style="font-weight:900; font-size:18px;">${car.brand} ${car.model || ''}</div>
+                        <div style="color:var(--primary); font-weight:800; margin-top:5px;">${Number(car.price).toLocaleString()} kr</div>
+                        <div style="font-size:12px; color:#64748b;">${car.year} • ${car.mileage} mil</div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-action btn-edit" onclick="openEditModal('${d.id}', ${car.price}, ${car.mileage})">Redigera</button>
+                        <button class="btn-action btn-delete" onclick="deleteAd('${d.id}')">Ta bort</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // وظيفة الحذف
+    window.deleteAd = async (id) => {
+        if (confirm("Är du säker på att du vill ta bort denna annons?")) {
+            await deleteDoc(doc(db, "cars", id));
+            location.reload();
+        }
+    };
+
+    // وظيفة التعديل
+    window.openEditModal = (id, price, mileage) => {
+        currentEditingId = id;
+        document.getElementById('editPrice').value = price;
+        document.getElementById('editMileage').value = mileage;
+        document.getElementById('editModal').style.display = 'flex';
+    };
+
+    window.closeModal = () => { document.getElementById('editModal').style.display = 'none'; };
+
+    window.saveChanges = async () => {
+        const newPrice = Number(document.getElementById('editPrice').value);
+        const newMileage = Number(document.getElementById('editMileage').value);
+        
+        await updateDoc(doc(db, "cars", currentEditingId), {
+            price: newPrice,
+            mileage: newMileage
+        });
+        
+        alert("Ändringarna har sparats!");
+        location.reload();
+    };
+
+    window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
+
+</script>
+</body>
+</html>
