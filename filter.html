@@ -5,13 +5,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Filter | BilMarknad-HK</title>
+<title>BilFilter Pro | BilMarknad-HK</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-
-/* ================= ROOT ================= */
 
 :root{
     --primary:#f58220;
@@ -19,7 +17,6 @@
     --text:#6b7280;
     --border:#e5e7eb;
     --bg:#f5f7fb;
-    --white:#ffffff;
 }
 
 *{
@@ -42,40 +39,30 @@ body{
     top:0;
     z-index:1000;
 
-    background:rgba(255,255,255,0.92);
-
-    backdrop-filter:blur(10px);
+    background:white;
 
     border-bottom:1px solid var(--border);
 
     padding:18px 25px;
 
     display:flex;
-    align-items:center;
     justify-content:space-between;
+    align-items:center;
 }
 
-.header-left{
-    display:flex;
-    align-items:center;
-    gap:15px;
+.logo{
+    font-size:28px;
+    font-weight:800;
+}
+
+.logo span{
+    color:var(--primary);
 }
 
 .close-btn{
     text-decoration:none;
-    font-size:28px;
     color:var(--dark);
-}
-
-.header h1{
-    font-size:22px;
-    font-weight:800;
-}
-
-.reset-btn{
-    color:var(--primary);
-    font-weight:700;
-    cursor:pointer;
+    font-size:26px;
 }
 
 /* ================= LAYOUT ================= */
@@ -84,9 +71,9 @@ body{
 
     display:grid;
 
-    grid-template-columns:320px 1fr;
+    grid-template-columns:340px 1fr;
 
-    min-height:calc(100vh - 80px);
+    min-height:100vh;
 }
 
 /* ================= SIDEBAR ================= */
@@ -102,10 +89,10 @@ body{
     overflow-y:auto;
 }
 
-/* ================= FILTER BLOCK ================= */
+/* ================= BLOCK ================= */
 
 .filter-block{
-    margin-bottom:30px;
+    margin-bottom:28px;
 }
 
 .filter-title{
@@ -114,19 +101,17 @@ body{
 
     font-weight:800;
 
-    text-transform:uppercase;
-
     color:#6b7280;
 
-    margin-bottom:14px;
+    text-transform:uppercase;
 
-    letter-spacing:0.5px;
+    margin-bottom:12px;
 }
 
-/* Inputs */
+/* ================= INPUTS ================= */
 
-input,
-select{
+select,
+input{
 
     width:100%;
 
@@ -138,15 +123,15 @@ select{
 
     padding:0 15px;
 
-    font-size:15px;
-
     background:#fafafa;
+
+    font-size:15px;
 
     transition:0.2s;
 }
 
-input:focus,
-select:focus{
+select:focus,
+input:focus{
 
     outline:none;
 
@@ -157,39 +142,16 @@ select:focus{
     box-shadow:0 0 0 4px rgba(245,130,32,0.12);
 }
 
-/* Double */
-
 .double{
+
     display:grid;
+
     grid-template-columns:1fr 1fr;
+
     gap:12px;
 }
 
-/* ================= CHECKBOX ================= */
-
-.checkbox-list{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-
-.checkbox-item{
-
-    display:flex;
-    align-items:center;
-    gap:10px;
-
-    font-size:15px;
-
-    cursor:pointer;
-}
-
-.checkbox-item input{
-    width:18px;
-    height:18px;
-}
-
-/* ================= BODY TYPES ================= */
+/* ================= BODY TYPE ================= */
 
 .kar-grid{
 
@@ -206,7 +168,7 @@ select:focus{
 
     border-radius:18px;
 
-    padding:18px 10px;
+    padding:18px 12px;
 
     text-align:center;
 
@@ -231,130 +193,24 @@ select:focus{
 }
 
 .kar-item img{
+
     width:55px;
+
     height:55px;
+
     object-fit:contain;
+
     margin-bottom:10px;
 }
 
 .kar-item span{
+
     font-size:14px;
+
     font-weight:700;
 }
 
-/* ================= CONTENT ================= */
-
-.content{
-    padding:30px;
-}
-
-/* Top */
-
-.topbar{
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    margin-bottom:25px;
-}
-
-.results-count{
-    font-size:24px;
-    font-weight:800;
-}
-
-.sort-select{
-    width:220px;
-}
-
-/* ================= CARDS ================= */
-
-.results{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(auto-fill,minmax(320px,1fr));
-
-    gap:24px;
-}
-
-.car-card{
-
-    background:white;
-
-    border-radius:24px;
-
-    overflow:hidden;
-
-    border:1px solid #eee;
-
-    transition:0.3s;
-
-    cursor:pointer;
-}
-
-.car-card:hover{
-
-    transform:translateY(-5px);
-
-    box-shadow:0 18px 35px rgba(0,0,0,0.08);
-}
-
-.car-card img{
-
-    width:100%;
-    height:220px;
-    object-fit:cover;
-}
-
-.car-body{
-    padding:20px;
-}
-
-.car-title{
-
-    font-size:19px;
-
-    font-weight:800;
-
-    margin-bottom:8px;
-}
-
-.car-info{
-
-    color:#6b7280;
-
-    font-size:14px;
-
-    margin-bottom:14px;
-}
-
-.price{
-
-    font-size:28px;
-
-    font-weight:800;
-
-    color:var(--primary);
-}
-
-/* ================= APPLY ================= */
-
-.bottom-bar{
-
-    position:sticky;
-    bottom:0;
-
-    background:white;
-
-    padding:18px;
-
-    border-top:1px solid var(--border);
-
-    margin-top:30px;
-}
+/* ================= BUTTON ================= */
 
 .apply-btn{
 
@@ -377,10 +233,110 @@ select:focus{
     cursor:pointer;
 
     transition:0.25s;
+
+    margin-top:20px;
 }
 
 .apply-btn:hover{
     transform:translateY(-2px);
+}
+
+/* ================= CONTENT ================= */
+
+.content{
+    padding:30px;
+}
+
+.topbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+}
+
+.results-count{
+
+    font-size:28px;
+
+    font-weight:800;
+}
+
+.results{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fill,minmax(320px,1fr));
+
+    gap:24px;
+}
+
+/* ================= CARD ================= */
+
+.car-card{
+
+    background:white;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    border:1px solid #eee;
+
+    transition:0.3s;
+
+    cursor:pointer;
+}
+
+.car-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:0 18px 35px rgba(0,0,0,0.08);
+}
+
+.car-card img{
+
+    width:100%;
+
+    height:220px;
+
+    object-fit:cover;
+}
+
+.car-body{
+    padding:20px;
+}
+
+.car-title{
+
+    font-size:20px;
+
+    font-weight:800;
+
+    margin-bottom:8px;
+}
+
+.car-info{
+
+    color:#6b7280;
+
+    font-size:14px;
+
+    margin-bottom:14px;
+}
+
+.price{
+
+    font-size:28px;
+
+    font-weight:800;
+
+    color:var(--primary);
 }
 
 /* ================= MOBILE ================= */
@@ -416,19 +372,13 @@ select:focus{
 
 <div class="header">
 
-    <div class="header-left">
-
-        <a href="index.html" class="close-btn">
-            ✕
-        </a>
-
-        <h1>Filtrera sökning</h1>
-
+    <div class="logo">
+        BILMARKNAD<span>HK</span>
     </div>
 
-    <div class="reset-btn" onclick="location.reload()">
-        Rensa filter
-    </div>
+    <a href="index.html" class="close-btn">
+        ✕
+    </a>
 
 </div>
 
@@ -440,7 +390,7 @@ select:focus{
 
     <aside class="sidebar">
 
-        <!-- Brand -->
+        <!-- BRAND -->
 
         <div class="filter-block">
 
@@ -449,12 +399,16 @@ select:focus{
             </div>
 
             <select id="brand" onchange="updateModels()">
-                <option value="all">Alla märken</option>
+
+                <option value="all">
+                    Alla märken
+                </option>
+
             </select>
 
         </div>
 
-        <!-- Model -->
+        <!-- MODEL -->
 
         <div class="filter-block">
 
@@ -472,7 +426,7 @@ select:focus{
 
         </div>
 
-        <!-- Price -->
+        <!-- PRICE -->
 
         <div class="filter-block">
 
@@ -494,7 +448,7 @@ select:focus{
 
         </div>
 
-        <!-- Year -->
+        <!-- YEAR -->
 
         <div class="filter-block">
 
@@ -516,41 +470,7 @@ select:focus{
 
         </div>
 
-        <!-- Fuel -->
-
-        <div class="filter-block">
-
-            <div class="filter-title">
-                Drivmedel
-            </div>
-
-            <div class="checkbox-list">
-
-                <label class="checkbox-item">
-                    <input type="checkbox" value="Bensin">
-                    Bensin
-                </label>
-
-                <label class="checkbox-item">
-                    <input type="checkbox" value="Diesel">
-                    Diesel
-                </label>
-
-                <label class="checkbox-item">
-                    <input type="checkbox" value="Hybrid">
-                    Hybrid
-                </label>
-
-                <label class="checkbox-item">
-                    <input type="checkbox" value="El">
-                    Elbil
-                </label>
-
-            </div>
-
-        </div>
-
-        <!-- Body -->
+        <!-- BODY -->
 
         <div class="filter-block">
 
@@ -560,8 +480,7 @@ select:focus{
 
             <div class="kar-grid">
 
-                <div class="kar-item"
-                     onclick="setKar('SUV', this)">
+                <div class="kar-item active">
 
                     <img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png">
 
@@ -569,8 +488,7 @@ select:focus{
 
                 </div>
 
-                <div class="kar-item"
-                     onclick="setKar('Sedan', this)">
+                <div class="kar-item">
 
                     <img src="https://cdn-icons-png.flaticon.com/512/3202/3202926.png">
 
@@ -578,8 +496,7 @@ select:focus{
 
                 </div>
 
-                <div class="kar-item"
-                     onclick="setKar('Kombi', this)">
+                <div class="kar-item">
 
                     <img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png">
 
@@ -587,8 +504,7 @@ select:focus{
 
                 </div>
 
-                <div class="kar-item"
-                     onclick="setKar('Coupe', this)">
+                <div class="kar-item">
 
                     <img src="https://cdn-icons-png.flaticon.com/512/744/744465.png">
 
@@ -600,17 +516,13 @@ select:focus{
 
         </div>
 
-        <!-- Button -->
+        <!-- BUTTON -->
 
-        <div class="bottom-bar">
+        <button class="apply-btn">
 
-            <button class="apply-btn" onclick="applyFilters()">
+            Visa resultat
 
-                Visa resultat
-
-            </button>
-
-        </div>
+        </button>
 
     </aside>
 
@@ -624,23 +536,55 @@ select:focus{
                 Alla bilar
             </div>
 
-            <select class="sort-select">
-
-                <option>Senaste</option>
-
-                <option>Pris stigande</option>
-
-                <option>Pris fallande</option>
-
-                <option>Årsmodell</option>
-
-            </select>
-
         </div>
 
-        <!-- Cars -->
+        <!-- RESULTS -->
 
-        <div class="results" id="results">
+        <div class="results">
+
+            <div class="car-card">
+
+                <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop">
+
+                <div class="car-body">
+
+                    <div class="car-title">
+                        Volvo XC60
+                    </div>
+
+                    <div class="car-info">
+                        2023 • Automat
+                    </div>
+
+                    <div class="price">
+                        359 000 kr
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="car-card">
+
+                <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1200&auto=format&fit=crop">
+
+                <div class="car-body">
+
+                    <div class="car-title">
+                        BMW X5 M Sport
+                    </div>
+
+                    <div class="car-info">
+                        2020 • Diesel
+                    </div>
+
+                    <div class="price">
+                        304 000 kr
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -648,114 +592,245 @@ select:focus{
 
 </div>
 
-<!-- ================= CAR DATA ================= -->
+<!-- ================= DATA ================= -->
 
 <script>
 
-/* ================= HUGE CAR DATABASE ================= */
+/* ========================================================= */
+/* ================= HUGE GLOBAL CAR DATABASE ============== */
+/* ========================================================= */
 
 const carData = {
 
-    "Audi":[
-        "80","100","A1","A3","A4","A5","A6","A7","A8",
-        "Q2","Q3","Q5","Q7","Q8",
-        "TT","R8","e-tron","RS3","RS6"
-    ],
+"Acura":[
+"CL","ILX","Integra","Legend","MDX","NSX","RDX","RL","RLX","RSX","SLX","TL","TLX","TSX","ZDX"
+],
 
-    "BMW":[
-        "1-serie","2-serie","3-serie","4-serie",
-        "5-serie","6-serie","7-serie","8-serie",
-        "X1","X3","X5","X6","X7",
-        "Z3","Z4",
-        "i3","i4","i5","i7","iX"
-    ],
+"Alfa Romeo":[
+"145","146","147","155","156","159","164","166","4C","8C","Brera","Giulia","Giulietta","GT","GTV","Mito","Spider","Stelvio","Tonale"
+],
 
-    "Mercedes-Benz":[
-        "190","A-Klass","B-Klass","C-Klass",
-        "E-Klass","S-Klass",
-        "CLA","CLS",
-        "GLA","GLB","GLC","GLE","GLS",
-        "SL","EQC","EQE","EQS"
-    ],
+"Aston Martin":[
+"Cygnet","DB11","DB12","DB7","DB9","DBS","DBX","Rapide","V8 Vantage","V12 Vantage","Vanquish","Valkyrie","Virage"
+],
 
-    "Volvo":[
-        "240","740","850",
-        "S40","S60","S80","S90",
-        "V40","V60","V70","V90",
-        "XC40","XC60","XC70","XC90",
-        "C30","EX30","EX90"
-    ],
+"Audi":[
+"80","90","100","200",
+"A1","A2","A3","A4","A5","A6","A7","A8",
+"Allroad","e-tron","Q2","Q3","Q4","Q5","Q7","Q8",
+"R8","RS3","RS4","RS5","RS6","RS7","S3","S4","S5","S6","S7","S8",
+"TT"
+],
 
-    "Volkswagen":[
-        "Golf","Passat","Polo","Touareg",
-        "Tiguan","Arteon","ID.3","ID.4",
-        "ID.7","Beetle","Scirocco"
-    ],
+"BMW":[
+"1-serie","2-serie","3-serie","4-serie",
+"5-serie","6-serie","7-serie","8-serie",
+"2002","850CSi",
+"i3","i4","i5","i7","i8","iX",
+"M2","M3","M4","M5","M8",
+"X1","X2","X3","X4","X5","X6","X7",
+"Z1","Z3","Z4","Z8"
+],
 
-    "Toyota":[
-        "Corolla","Camry","Yaris",
-        "Avensis","RAV4","Land Cruiser",
-        "Hilux","Prius","Supra",
-        "Celica","MR2","bZ4X"
-    ],
+"Bugatti":[
+"Bolide","Centodieci","Chiron","Divo","EB110","Veyron"
+],
 
-    "Tesla":[
-        "Model S","Model 3",
-        "Model X","Model Y",
-        "Cybertruck","Roadster"
-    ],
+"BYD":[
+"Atto 3","Dolphin","Han","Seal","Seagull","Song Plus","Tang","Yangwang U8"
+],
 
-    "Ford":[
-        "Fiesta","Focus","Mondeo",
-        "Mustang","Explorer","Kuga",
-        "Bronco","F-150"
-    ],
+"Cadillac":[
+"ATS","BLS","CT4","CT5","CTS","DeVille","DTS","Escalade","Fleetwood","Lyriq","SRX","XT4","XT5","XT6"
+],
 
-    "Porsche":[
-        "911","718 Cayman",
-        "718 Boxster","Panamera",
-        "Macan","Cayenne","Taycan"
-    ],
+"Chevrolet":[
+"Astro","Avalanche","Aveo","Blazer","Bolt","Camaro","Caprice","Captiva",
+"Corvette","Cruze","El Camino","Epica","Equinox","Impala","Malibu","Monte Carlo",
+"Silverado","Spark","Suburban","Tahoe","TrailBlazer","Traverse"
+],
 
-    "Ferrari":[
-        "F40","F50","Enzo",
-        "458 Italia","488 GTB",
-        "Roma","SF90","LaFerrari"
-    ]
+"Chrysler":[
+"200","300C","Crossfire","Pacifica","PT Cruiser","Sebring","Voyager"
+],
+
+"Citroën":[
+"2CV","AX","Berlingo","BX","C1","C2","C3","C4","C5","C6",
+"C8","CX","DS3","DS4","DS5","Jumper","Saxo","Visa","XM","Xsara"
+],
+
+"Dacia":[
+"Dokker","Duster","Jogger","Lodgy","Logan","Sandero","Spring"
+],
+
+"Dodge":[
+"Avenger","Caliber","Challenger","Charger","Dakota","Dart","Durango",
+"Journey","Magnum","Nitro","RAM","Viper"
+],
+
+"Ferrari":[
+"250 GTO","288 GTO","348","360 Modena","430 Scuderia",
+"458 Italia","488 GTB","512 TR","599 GTB","812 Superfast",
+"California","Enzo","F40","F50","F8 Tributo","FF",
+"LaFerrari","Portofino","Purosangue","Roma","SF90"
+],
+
+"Fiat":[
+"124","126","127","128","500","500L","500X","Bravo",
+"Cinquecento","Coupe","Croma","Doblo","Multipla","Panda","Punto","Tipo","Uno"
+],
+
+"Ford":[
+"Bronco","Capri","Cougar","EcoSport","Edge","Escape","Escort",
+"Expedition","Explorer","F-150","Falcon","Fiesta","Focus",
+"Fusion","Galaxy","GT","Ka","Kuga","Mondeo","Mustang",
+"Puma","Ranger","S-Max","Taurus","Thunderbird","Transit"
+],
+
+"Genesis":[
+"G70","G80","G90","GV60","GV70","GV80"
+],
+
+"GMC":[
+"Acadia","Canyon","Envoy","Hummer EV","Savana","Sierra","Terrain","Yukon"
+],
+
+"Honda":[
+"Accord","Civic","CR-V","CR-X","CR-Z","City","e","Element",
+"Fit","HR-V","Insight","Integra","Jazz","Legend","NSX","Odyssey",
+"Passport","Pilot","Prelude","Ridgeline","S2000","Stream"
+],
+
+"Hyundai":[
+"Accent","Atos","Azera","Bayon","Coupe","Elantra","Genesis","Getz",
+"H-1","Ioniq","Kona","Lantra","Matrix","Palisade","Pony","Santa Fe",
+"Sonata","Terracan","Tiburon","Tucson","Veloster"
+],
+
+"Jaguar":[
+"E-Pace","F-Pace","F-Type","I-Pace","S-Type","XE","XF","XJ","XK"
+],
+
+"Jeep":[
+"Cherokee","Commander","Compass","Gladiator","Grand Cherokee","Liberty",
+"Patriot","Renegade","Wagoneer","Wrangler"
+],
+
+"Kia":[
+"Carnival","Carens","Ceed","Cerato","EV6","EV9","Mohave",
+"Niro","Optima","Picanto","Proceed","Rio","Sorento","Soul","Sportage","Stinger"
+],
+
+"Lamborghini":[
+"Aventador","Countach","Diablo","Gallardo","Huracan","Murcielago","Revuelto","Urus"
+],
+
+"Land Rover":[
+"Defender","Discovery","Discovery Sport","Freelander","Range Rover",
+"Range Rover Evoque","Range Rover Sport","Range Rover Velar"
+],
+
+"Lexus":[
+"CT","ES","GS","GX","IS","LC","LFA","LS","LX","NX","RC","RX","SC","UX"
+],
+
+"Maserati":[
+"Ghibli","GranTurismo","Grecale","Levante","MC20","Quattroporte"
+],
+
+"Mazda":[
+"121","2","3","5","6","626","929","B-Series",
+"CX-3","CX-5","CX-60","CX-90","MX-3","MX-5","MX-30","RX-7","RX-8"
+],
+
+"McLaren":[
+"540C","570S","600LT","650S","675LT","720S","750S","765LT","Artura","P1","Senna"
+],
+
+"Mercedes-Benz":[
+"190","A-Klass","AMG GT","B-Klass","C-Klass","CLA","CLC","CLK","CLS",
+"E-Klass","EQB","EQC","EQE","EQS","G-Klass","GLA","GLB","GLC","GLE","GLK","GLS",
+"M-Klass","Maybach","R-Klass","S-Klass","SL","SLC","SLK","Sprinter","Vito"
+],
+
+"Mini":[
+"Clubman","Cooper","Countryman","Coupe","Paceman","Roadster"
+],
+
+"Mitsubishi":[
+"3000GT","ASX","Carisma","Colt","Eclipse","Galant","Grandis",
+"L200","Lancer","Outlander","Pajero","Space Star"
+],
+
+"Nissan":[
+"100NX","200SX","350Z","370Z","Almera","Altima","Ariya","Cube",
+"GT-R","Juke","Leaf","Maxima","Micra","Murano","Navara","Note",
+"Pathfinder","Patrol","Primera","Qashqai","Skyline","Sunny","Terrano","X-Trail"
+],
+
+"Opel":[
+"Adam","Agila","Antara","Astra","Calibra","Combo","Corsa","Frontera",
+"Grandland","Insignia","Kadett","Meriva","Mokka","Omega","Rekord","Tigra","Vectra","Zafira"
+],
+
+"Peugeot":[
+"104","106","107","108","205","206","207","208","3008","301","305","306",
+"307","308","309","405","406","407","408","5008","504","505","508","607","RCZ"
+],
+
+"Porsche":[
+"356","718 Boxster","718 Cayman","911","918 Spyder","924","928","944","959",
+"Boxster","Carrera GT","Cayenne","Cayman","Macan","Panamera","Taycan"
+],
+
+"Renault":[
+"4","5","9","11","19","21","25","Captur","Clio","Espace",
+"Kadjar","Kangoo","Koleos","Laguna","Megane","Scenic","Symbol","Talisman","Twingo","Zoe"
+],
+
+"Rolls-Royce":[
+"Cullinan","Dawn","Ghost","Phantom","Spectre","Wraith"
+],
+
+"Skoda":[
+"Citigo","Enyaq","Fabia","Favorit","Felicia","Kamiq","Karoq",
+"Kodiaq","Octavia","Rapid","Roomster","Superb","Yeti"
+],
+
+"Subaru":[
+"BRZ","Forester","Impreza","Justy","Legacy","Levorg","Outback","SVX","Tribeca","WRX","XV"
+],
+
+"Suzuki":[
+"Across","Alto","Baleno","Grand Vitara","Ignis","Jimny","Kizashi","Liana","Swift","SX4","Vitara"
+],
+
+"Tesla":[
+"Cybertruck","Model 3","Model S","Model X","Model Y","Roadster"
+],
+
+"Toyota":[
+"4Runner","Auris","Avensis","Aygo","bZ4X","Camry","Carina","Celica",
+"Corolla","Cressida","C-HR","GR86","HiAce","Hilux","Land Cruiser",
+"MR2","Prius","RAV4","Starlet","Supra","Tundra","Verso","Yaris"
+],
+
+"Volkswagen":[
+"Amarok","Arteon","Beetle","Bora","Caddy","California","CC","Corrado",
+"EOS","Fox","Golf","ID.3","ID.4","ID.5","ID.7","Jetta","Lupo","Passat",
+"Phaeton","Polo","Scirocco","Sharan","T-Cross","T-Roc","Tiguan","Touareg","Touran","Transporter","Up"
+],
+
+"Volvo":[
+"140","240","260","340","440","460","480","740","760","780","850","940","960",
+"C30","C70","EX30","EX90","P1800","S40","S60","S70","S80","S90",
+"V40","V50","V60","V70","V90",
+"XC40","XC60","XC70","XC90"
+]
 
 };
 
-/* ================= SAMPLE CARS ================= */
-
-const cars = [
-
-{
-    brand:"Volvo",
-    model:"XC60",
-    year:2023,
-    price:359000,
-    image:"https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop"
-},
-
-{
-    brand:"BMW",
-    model:"X5",
-    year:2020,
-    price:304000,
-    image:"https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1200&auto=format&fit=crop"
-},
-
-{
-    brand:"Audi",
-    model:"Q5",
-    year:2022,
-    price:259000,
-    image:"https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"
-}
-
-];
-
-/* ================= BRANDS ================= */
+/* ================= LOAD BRANDS ================= */
 
 const brandSelect =
     document.getElementById('brand');
@@ -779,21 +854,21 @@ function updateModels(){
     const brand =
         document.getElementById('brand').value;
 
-    const model =
+    const modelSelect =
         document.getElementById('model');
 
-    model.innerHTML =
+    modelSelect.innerHTML =
         '<option value="all">Alla modeller</option>';
 
     if(carData[brand]){
 
         carData[brand]
         .sort()
-        .forEach(m => {
+        .forEach(model => {
 
-            model.innerHTML += `
-                <option value="${m}">
-                    ${m}
+            modelSelect.innerHTML += `
+                <option value="${model}">
+                    ${model}
                 </option>
             `;
 
@@ -802,130 +877,6 @@ function updateModels(){
     }
 
 }
-
-/* ================= BODY TYPE ================= */
-
-let selectedKar = "all";
-
-function setKar(type, el){
-
-    document
-    .querySelectorAll('.kar-item')
-    .forEach(i => i.classList.remove('active'));
-
-    el.classList.add('active');
-
-    selectedKar = type;
-}
-
-/* ================= APPLY ================= */
-
-function applyFilters(){
-
-    const brand =
-        document.getElementById('brand').value;
-
-    const model =
-        document.getElementById('model').value;
-
-    const minPrice =
-        Number(document.getElementById('minPrice').value) || 0;
-
-    const maxPrice =
-        Number(document.getElementById('maxPrice').value) || Infinity;
-
-    const yearFrom =
-        Number(document.getElementById('yearFrom').value) || 1900;
-
-    const yearTo =
-        Number(document.getElementById('yearTo').value) || 2026;
-
-    const filtered = cars.filter(c =>
-
-        (brand === 'all' || c.brand === brand)
-
-        &&
-
-        (model === 'all' || c.model === model)
-
-        &&
-
-        (c.price >= minPrice)
-
-        &&
-
-        (c.price <= maxPrice)
-
-        &&
-
-        (c.year >= yearFrom)
-
-        &&
-
-        (c.year <= yearTo)
-
-    );
-
-    render(filtered);
-
-}
-
-/* ================= RENDER ================= */
-
-function render(data){
-
-    const results =
-        document.getElementById('results');
-
-    if(data.length === 0){
-
-        results.innerHTML = `
-            <div style="
-                background:white;
-                padding:40px;
-                border-radius:24px;
-                text-align:center;
-                font-size:18px;
-                font-weight:700;
-            ">
-                Inga bilar hittades
-            </div>
-        `;
-
-        return;
-    }
-
-    results.innerHTML = data.map(c => `
-
-        <div class="car-card">
-
-            <img src="${c.image}">
-
-            <div class="car-body">
-
-                <div class="car-title">
-                    ${c.brand} ${c.model}
-                </div>
-
-                <div class="car-info">
-                    ${c.year}
-                </div>
-
-                <div class="price">
-                    ${c.price.toLocaleString()} kr
-                </div>
-
-            </div>
-
-        </div>
-
-    `).join('');
-
-}
-
-/* ================= INIT ================= */
-
-render(cars);
 
 </script>
 
