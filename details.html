@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fordonsdetaljer | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
+
+        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+        .logo { text-decoration: none; font-size: 22px; font-weight: 900; color: var(--dark); }
+        .logo span { color: var(--primary); }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 6%; display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; }
+
+        .gallery-card { background: white; padding: 20px; border-radius: 20px; border: 1px solid var(--border); }
+        .main-img { width: 100%; height: 450px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
+        .thumbnails { display: flex; gap: 10px; overflow-x: auto; }
+        .thumbnails img { width: 100px; height: 70px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; }
+        .thumbnails img:hover { border-color: var(--primary); }
+
+        .info-card { background: white; padding: 30px; border-radius: 20px; border: 1px solid var(--border); position: sticky; top: 100px; }
+        .price-tag { font-size: 32px; font-weight: 900; color: var(--primary); margin-bottom: 10px; }
+        .title { font-size: 26px; font-weight: 800; margin-bottom: 20px; }
+
+        .specs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .spec-item { background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #f1f5f9; }
+        .spec-label { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
+        .spec-val { font-size: 14px; font-weight: 700; }
+
+        .btn-fav { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; background: white; font-weight: 700; cursor: pointer; margin-bottom: 15px; transition: 0.3s; }
+        .btn-contact { width: 100%; background: var(--dark); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+
+        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <a href="index.html" style="text-decoration:none; font-weight:700; color:var(--dark);">← Tillbaka</a>
+</header>
+
+<div class="container" id="detailsBox">
+    <p>Laddar...</p>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import firebaseConfig from './firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    
+    let currentUser = null;
+    const carId = new URLSearchParams(window.location.search).get('id');
+
+    onAuthStateChanged(auth, (user) => {
+        currentUser = user;
+        load();
+    });
+
+    async function load() {
+        if (!carId) return;
+        const snap = await getDoc(doc(db, "cars", carId));
+        if (snap.exists()) render(snap.data());
+    }
+
+    window.toggleFav = () => {
+        if (!currentUser) {
+            alert("Du måste logga in för att spara favoriter.");
+            window.location.href = "login.html";
+            return;
+        }
+        let favs = JSON.parse(localStorage.getItem('favCars')) || [];
+        if (favs.includes(carId)) favs = favs.filter(i => i !== carId);
+        else favs.push(carId);
+        localStorage.setItem('favCars', JSON.stringify(favs));
+        load(); // إعادة التحميل لتحديث الزر
+    };
+
+    function render(car) {
+        const box = document.getElementById('detailsBox');
+        const favs = JSON.parse(localStorage.getItem('favCars')) || [];
+        const isFav = favs.includes(carId);
+        const images = car.images || [];
+
+        box.innerHTML = `
+            <div class="gallery-section">
+                <div class="gallery-card">
+                    <img id="mainView" class="main-img" src="${images[0]}">
+                    <div class="thumbnails">
+                        ${images.map(img => `<img src="${img}" onclick="document.getElementById('mainView').src='${img}'">`).join('')}
+                    </div>
+                </div>
+                <div style="margin-top:30px; background:white; padding:30px; border-radius:20px; border:1px solid var(--border);">
+                    <h3 style="margin-bottom:15px; font-weight:800;">Beskrivning</h3>
+                    <p style="color:#4b5563;">${car.description || 'Ingen beskrivning tillgänglig.'}</p>
+                </div>
+            </div>
+            <div class="info-section">
+                <div class="info-card">
+                    <div class="price-tag">${Number(car.price).toLocaleString()} kr</div>
+                    <h1 class="title">${car.brand} ${car.model || ''}</h1>
+                    <div class="specs">
+                        <div class="spec-item"><div class="spec-label">År</div><div class="spec-val">${car.year}</div></div>
+                        <div class="spec-item"><div class="spec-label">Mil</div><div class="spec-val">${car.mileage}</div></div>
+                        <div class="spec-item"><div class="spec-label">Drivmedel</div><div class="spec-val">${car.fuelType || '-'}</div></div>
+                        <div class="spec-item"><div class="spec-label">Växellåda</div><div class="spec-val">Automat</div></div>
+                    </div>
+                    <button class="btn-fav" id="favBtn" onclick="toggleFav()" style="color: ${isFav ? '#ef4444' : 'black'}">
+                        ${isFav ? '❤️ Sparad' : '☆ Spara i favoriter'}
+                    </button>
+                    <button class="btn-contact">Kontakta säljaren</button>
+                </div>
+            </div>
+        `;
+    }
+</script>
+</body> <footer style="background: #fff; padding: 40px 6%; border-top: 1px solid #e2e8f0; margin-top: 50px; text-align: center;">
+    <div style="max-width: 800px; margin: auto;">
+        <h3 style="font-size: 18px; font-weight: 800; color: #0f172a;">BIL<span>HK</span></h3>
+        <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin-top: 15px;">
+            <strong>Viktig information:</strong> Vi är en annonsplattform och ansvarar inte för felaktig information eller falska annonser. Genomför aldrig betalningar utan att ha träffat säljaren och kontrollerat fordonet personligen.
+        </p>
+        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 14px; font-weight: 700;">
+            <a href="terms.html" style="color: #f58220; text-decoration: none;">Användarvillkor & Säkerhet</a>
+            <a href="mailto:support@bilmarknad-hk.se" style="color: #0f172a; text-decoration: none;">Kontakt</a>
+        </div>
+        <p style="margin-top: 30px; font-size: 11px; color: #94a3b8;">&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
+    </div>
+</footer><div style="background: #fff1f2; border: 1px solid #fecdd3; padding: 15px; border-radius: 12px; margin: 20px 0;">
+    <h4 style="color: #be123c; font-size: 13px; font-weight: 800; margin-bottom: 5px;">⚠️ SÄKERHETSTIPS</h4>
+    <p style="font-size: 12px; color: #9f1239; line-height: 1.4; margin: 0;">
+        Köp aldrig bilen osett. Kontrollera alltid ägare och dokument via Transportstyrelsen innan betalning. Vi ansvarar inte för fel i annonsen.
+    </p>
+</div>
+</html>
