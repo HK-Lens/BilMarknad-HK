@@ -9,7 +9,7 @@
         :root { --primary: #2563eb; --dark: #0f172a; --bg: #f8fafc; --white: #ffffff; }
         body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg); color: var(--dark); line-height: 1.6; }
         
-        /* هيدر عصري */
+        /* هيدر مطور مع خيارات الدخول */
         header { 
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
             padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
@@ -18,161 +18,120 @@
         .logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        /* منطقة الهيرو */
-        .hero { 
-            background: var(--dark); padding: 60px 5% 100px; text-align: center; color: white;
-            background-image: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1000');
-            background-size: cover; background-position: center;
-        }
-        .hero h1 { font-size: 38px; font-weight: 800; margin-bottom: 10px; }
-
-        /* حاوية الفلاتر الأنيقة */
-        .filter-wrapper {
-            max-width: 1100px; margin: -50px auto 40px; background: var(--white);
-            padding: 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;
-        }
-        .filter-group { display: flex; flex-direction: column; gap: 8px; }
-        .filter-group label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-        select, input { 
-            padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; 
-            font-size: 14px; background: #fcfcfc; outline: none; transition: 0.2s;
-        }
-        select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
-
-        /* شبكة السيارات */
-        .main-grid { padding: 0 5% 60px; max-width: 1300px; margin: auto; }
-        .cars-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        .nav-links { display: flex; align-items: center; gap: 20px; }
+        .nav-links a { text-decoration: none; font-weight: 600; color: var(--dark); font-size: 14px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--primary); }
         
-        .car-card { 
-            background: white; border-radius: 20px; overflow: hidden; 
-            border: 1px solid #e2e8f0; transition: 0.3s ease; cursor: pointer;
+        /* زر كراجي المميز */
+        .garage-btn { 
+            background: var(--primary); color: white !important; 
+            padding: 8px 18px; border-radius: 50px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
         }
-        .car-card:hover { transform: translateY(-10px); box-shadow: 0 20px 30px rgba(0,0,0,0.05); }
+
+        .auth-btn { border: 1px solid #e2e8f0; padding: 8px 18px; border-radius: 50px; cursor: pointer; }
+
+        /* الهيرو والفلاتر */
+        .hero { background: var(--dark); padding: 60px 5% 100px; text-align: center; color: white; background-image: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1000'); background-size: cover; background-position: center; }
+        .filter-wrapper { max-width: 1100px; margin: -50px auto 40px; background: var(--white); padding: 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        .filter-group { display: flex; flex-direction: column; gap: 5px; }
+        select, input { padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; outline: none; }
+
+        .cars-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; padding: 0 5% 60px; }
+        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; transition: 0.3s; cursor: pointer; }
+        .car-card:hover { transform: translateY(-10px); }
         .car-card img { width: 100%; height: 200px; object-fit: cover; }
         .car-info { padding: 20px; }
-        .car-brand { font-size: 18px; font-weight: 700; margin-bottom: 5px; }
-        .car-specs { font-size: 13px; color: #64748b; margin-bottom: 15px; }
-        .price-tag { font-size: 22px; font-weight: 800; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
-        
-        .view-link { background: var(--dark); color: white; padding: 8px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; }
+        .price-tag { font-size: 20px; font-weight: 800; color: var(--primary); }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BILMARKNAD<span>HK</span></a>
-    <nav>
-        <a href="sell.html" style="text-decoration:none; font-weight:700; color:var(--primary);">Sälj din bil</a>
-    </nav>
+    
+    <div class="nav-links">
+        <a href="sell.html">Sälj bil</a>
+        <a href="manage.html" class="garage-btn" id="garageLink" style="display:none;">Mitt Garage</a>
+        <a href="login.html" class="auth-btn" id="loginBtn">Logga in</a>
+        <a href="#" class="auth-btn" id="logoutBtn" style="display:none;" onclick="logout()">Logga ut</a>
+    </div>
 </header>
 
 <section class="hero">
     <h1>Hitta din nästa drömbil</h1>
-    <p>Utforska Sveriges mest moderna marknadsplats för bilar</p>
 </section>
 
 <div class="filter-wrapper">
     <div class="filter-group">
-        <label>Märke (الماركة)</label>
+        <label style="font-size: 11px; font-weight: 700; color: #94a3b8;">MÄRKE</label>
         <select id="brandSelect" onchange="filterData()">
             <option value="all">Alla märken</option>
             <option value="Volvo">Volvo</option>
-            <option value="Volkswagen">Volkswagen</option>
             <option value="BMW">BMW</option>
-            <option value="Audi">Audi</option>
-            <option value="Mercedes-Benz">Mercedes-Benz</option>
-            <option value="Toyota">Toyota</option>
             <option value="Tesla">Tesla</option>
-            <option value="Kia">Kia</option>
-            <option value="Skoda">Skoda</option>
-            <option value="Ford">Ford</option>
-            <option value="Peugeot">Peugeot</option>
-            <option value="Renault">Renault</option>
-            <option value="Hyundai">Hyundai</option>
-            <option value="Nissan">Nissan</option>
+            <option value="Audi">Audi</option>
         </select>
     </div>
     <div class="filter-group">
-        <label>Modellår</label>
-        <select id="yearSelect" onchange="filterData()">
-            <option value="all">Alla år</option>
-            <option value="2024">2024</option>
-            <option value="2023">2023</option>
-            <option value="2022">2022</option>
-            <option value="2021">2021</option>
-            <option value="2020">2020</option>
-            <option value="2019">2019</option>
-            <option value="2018">2018</option>
-        </select>
-    </div>
-    <div class="filter-group">
-        <label>Miltal (Max mil)</label>
-        <input type="number" id="mileageInput" placeholder="t.ex. 10000" oninput="filterData()">
-    </div>
-    <div class="filter-group">
-        <label>Max Pris (kr)</label>
-        <input type="number" id="priceInput" placeholder="t.ex. 300000" oninput="filterData()">
+        <label style="font-size: 11px; font-weight: 700; color: #94a3b8;">MAX PRIS</label>
+        <input type="number" id="priceInput" placeholder="kr" oninput="filterData()">
     </div>
 </div>
 
-<main class="main-grid">
-    <div class="cars-container" id="carsContainer">
-        </div>
-</main>
+<div class="cars-container" id="carsContainer"></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import firebaseConfig from './firebase-config.js';
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
+
     let allCars = [];
 
+    // مراقبة حالة المستخدم لتغيير الهيدر
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'block';
+            document.getElementById('garageLink').style.display = 'block';
+        } else {
+            document.getElementById('loginBtn').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'none';
+            document.getElementById('garageLink').style.display = 'none';
+        }
+    });
+
     async function getCars() {
-        const querySnapshot = await getDocs(collection(db, "cars"));
-        allCars = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        displayCars(allCars);
+        const snap = await getDocs(collection(db, "cars"));
+        allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        display(allCars);
     }
 
-    function displayCars(cars) {
+    function display(cars) {
         const container = document.getElementById('carsContainer');
-        if (cars.length === 0) {
-            container.innerHTML = '<p style="text-align:center; grid-column:1/-1; color:#94a3b8;">Inga bilar hittades.</p>';
-            return;
-        }
         container.innerHTML = cars.map(car => `
             <div class="car-card" onclick="window.location.href='details.html?id=${car.id}'">
-                <img src="${car.images?.[0] || 'https://via.placeholder.com/400x250?text=Ingen+bild'}" alt="Bil">
+                <img src="${car.images?.[0] || ''}">
                 <div class="car-info">
-                    <div class="car-brand">${car.brand}</div>
-                    <div class="car-specs">📅 ${car.year || 'N/A'} | 🛣️ ${car.mileage || 0} mil | 🏷️ ${car.regNr || 'N/A'}</div>
-                    <div class="price-tag">
-                        <span>${Number(car.price).toLocaleString()} kr</span>
-                        <span class="view-link">Visa</span>
-                    </div>
+                    <div style="font-weight:700; font-size:18px;">${car.brand}</div>
+                    <div style="font-size:13px; color:#64748b; margin-bottom:10px;">${car.year} | ${car.mileage} mil</div>
+                    <div class="price-tag">${Number(car.price).toLocaleString()} kr</div>
                 </div>
             </div>
         `).join('');
     }
 
     window.filterData = () => {
-        const brand = document.getElementById('brandSelect').value;
-        const year = document.getElementById('yearSelect').value;
-        const mileage = document.getElementById('mileageInput').value;
-        const price = document.getElementById('priceInput').value;
-
-        const filtered = allCars.filter(car => {
-            return (brand === 'all' || car.brand === brand) &&
-                   (year === 'all' || car.year == year) &&
-                   (!mileage || Number(car.mileage) <= Number(mileage)) &&
-                   (!price || Number(car.price) <= Number(price));
-        });
-        displayCars(filtered);
+        const b = document.getElementById('brandSelect').value;
+        const p = document.getElementById('priceInput').value;
+        display(allCars.filter(c => (b==='all' || c.brand===b) && (!p || Number(c.price)<=p)));
     };
+
+    window.logout = () => signOut(auth).then(() => location.reload());
 
     getCars();
 </script>
-</body>
-</html>
