@@ -2,143 +2,190 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Fordonsdetaljer | BilMarknad-HK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding-bottom: 50px; }
 
-        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
         .logo { text-decoration: none; font-size: 22px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 6%; display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; }
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 1fr; gap: 30px; }
+        @media (min-width: 850px) { .container { grid-template-columns: 1.8fr 1fr; } }
 
-        .gallery-card { background: white; padding: 20px; border-radius: 20px; border: 1px solid var(--border); }
-        .main-img { width: 100%; height: 450px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
-        .thumbnails { display: flex; gap: 10px; overflow-x: auto; }
-        .thumbnails img { width: 100px; height: 70px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; }
-        .thumbnails img:hover { border-color: var(--primary); }
-
-        .info-card { background: white; padding: 30px; border-radius: 20px; border: 1px solid var(--border); position: sticky; top: 100px; }
+        /* معرض الصور */
+        .gallery { background: #eee; border-radius: 24px; overflow: hidden; position: relative; height: 300px; }
+        @media (min-width: 600px) { .gallery { height: 450px; } }
+        .gallery img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .info-card { background: white; padding: 25px; border-radius: 24px; border: 1px solid var(--border); }
         .price-tag { font-size: 32px; font-weight: 900; color: var(--primary); margin-bottom: 10px; }
-        .title { font-size: 26px; font-weight: 800; margin-bottom: 20px; }
+        .car-title { font-size: 24px; font-weight: 900; margin-bottom: 5px; }
+        .car-meta { color: #64748b; font-size: 15px; font-weight: 600; margin-bottom: 20px; }
 
-        .specs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
-        .spec-item { background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #f1f5f9; }
-        .spec-label { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
-        .spec-val { font-size: 14px; font-weight: 700; }
+        /* شبكة المواصفات التقنية */
+        .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
+        .spec-item { background: var(--bg); padding: 15px; border-radius: 14px; border: 1px solid var(--border); }
+        .spec-item label { display: block; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
+        .spec-item span { font-size: 14px; font-weight: 700; }
 
-        .btn-fav { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; background: white; font-weight: 700; cursor: pointer; margin-bottom: 15px; transition: 0.3s; }
-        .btn-contact { width: 100%; background: var(--dark); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 800; cursor: pointer; }
-
-        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+        /* صندوق التواصل */
+        .contact-box { background: white; padding: 25px; border-radius: 24px; border: 1px solid var(--border); position: sticky; top: 100px; }
+        .btn-contact { width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; }
+        
+        textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; font-size: 14px; margin-bottom: 15px; outline: none; background: #fcfcfc; }
+        
+        .safety-warning { background: #fff7ed; border: 1px solid #ffedd5; padding: 15px; border-radius: 12px; font-size: 12px; color: #9a3412; margin-top: 20px; line-height: 1.5; }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <a href="index.html" style="text-decoration:none; font-weight:700; color:var(--dark);">← Tillbaka</a>
+    <div id="navActions"></div>
 </header>
 
-<div class="container" id="detailsBox">
-    <p>Laddar...</p>
+<div class="container" id="detailsContainer">
+    <p style="text-align:center; grid-column: 1/-1; padding: 50px;">Laddar fordonsuppgifter...</p>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import firebaseConfig from './firebase-config.js';
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
-    
-    let currentUser = null;
-    const carId = new URLSearchParams(window.location.search).get('id');
 
-    onAuthStateChanged(auth, (user) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const carId = urlParams.get('id');
+    let currentUser = null;
+
+    onAuthStateChanged(auth, user => {
         currentUser = user;
-        load();
+        const nav = document.getElementById('navActions');
+        if (user) {
+            nav.innerHTML = `<a href="my-account.html" style="text-decoration:none; font-weight:700; color:var(--dark); font-size:13px;">Min Sida</a>`;
+        } else {
+            nav.innerHTML = `<a href="login.html" style="text-decoration:none; font-weight:700; color:var(--dark); font-size:13px;">Logga in</a>`;
+        }
     });
 
-    async function load() {
+    async function loadCarDetails() {
         if (!carId) return;
-        const snap = await getDoc(doc(db, "cars", carId));
-        if (snap.exists()) render(snap.data());
+        const docRef = doc(db, "cars", carId);
+        const snap = await getDoc(docRef);
+
+        if (snap.exists()) {
+            const car = snap.data();
+            renderDetails(car);
+        } else {
+            document.getElementById('detailsContainer').innerHTML = "<p>Bilen hittades inte.</p>";
+        }
     }
 
-    window.toggleFav = () => {
+    function renderDetails(car) {
+        const container = document.getElementById('detailsContainer');
+        
+        // التحقق من إخفاء رقم الهاتف
+        const phoneHtml = (!car.hidePhone && car.phone) ? `
+            <a href="tel:${car.phone}" class="btn-contact" style="background: #22c55e; color: white;">📞 Ring säljaren</a>
+            <a href="https://wa.me/${car.phone.replace(/\s+/g, '')}" class="btn-contact" style="background: #25d366; color: white;">💬 WhatsApp</a>
+        ` : `<p style="text-align:center; font-size:12px; color:#94a3b8; margin-bottom:15px;">Säljaren föredrar internmeddelanden.</p>`;
+
+        container.innerHTML = `
+            <div>
+                <div class="gallery">
+                    <img src="${car.images?.[0] || 'https://via.placeholder.com/800x500'}" alt="Bilbild">
+                </div>
+
+                <div class="info-card" style="margin-top: 25px;">
+                    <div class="price-tag">${Number(car.price).toLocaleString()} kr</div>
+                    <h1 class="car-title">${car.brand} ${car.model || ''}</h1>
+                    <div class="car-meta">${car.year} • ${car.mileage} mil • ${car.regNr || 'Reg-nr dolt'}</div>
+                    
+                    <div class="specs-grid">
+                        <div class="spec-item"><label>Växellåda</label><span>${car.transmission || '-'}</span></div>
+                        <div class="spec-item"><label>Drivmedel</label><span>${car.fuelType || '-'}</span></div>
+                        <div class="spec-item"><label>Karosstyp</label><span>${car.bodyType || '-'}</span></div>
+                        <div class="spec-item"><label>Effekt</label><span>${car.power ? car.power + ' hk' : '-'}</span></div>
+                    </div>
+
+                    <div class="section-title" style="font-weight:900; margin-bottom:10px;">Beskrivning</div>
+                    <p style="line-height:1.6; color:#475569;">${car.description || 'Ingen beskrivning tillgänglig.'}</p>
+                </div>
+            </div>
+
+            <aside>
+                <div class="contact-box">
+                    <h3 style="margin-bottom:20px; font-weight:900;">Intresserad?</h3>
+                    
+                    ${phoneHtml}
+
+                    <div style="margin: 20px 0; text-align: center; border-top: 1px solid var(--border); padding-top: 20px;">
+                        <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Skicka internmeddelande</span>
+                    </div>
+
+                    <form id="contactForm">
+                        <textarea id="msgText" rows="4" placeholder="Skriv ditt meddelande till säljaren här..." required></textarea>
+                        <button type="submit" id="sendMsgBtn" class="btn-contact" style="background: var(--dark); color: white;">Skicka meddelande</button>
+                    </form>
+
+                    <div class="safety-warning">
+                        <strong>Säkerhetstips:</strong> Träffa alltid säljaren personligen och kontrollera bilen samt alla dokument innan betalning. Vi ansvarar inte för annonsens innehåll.
+                    </div>
+                </div>
+            </aside>
+        `;
+
+        // ربط فورم المراسلة
+        document.getElementById('contactForm').onsubmit = (e) => sendInternalMessage(e, car);
+    }
+
+    async function sendInternalMessage(e, car) {
+        e.preventDefault();
         if (!currentUser) {
-            alert("Du måste logga in för att spara favoriter.");
+            alert("Logga in först för att skicka meddelanden.");
             window.location.href = "login.html";
             return;
         }
-        let favs = JSON.parse(localStorage.getItem('favCars')) || [];
-        if (favs.includes(carId)) favs = favs.filter(i => i !== carId);
-        else favs.push(carId);
-        localStorage.setItem('favCars', JSON.stringify(favs));
-        load(); // إعادة التحميل لتحديث الزر
-    };
 
-    function render(car) {
-        const box = document.getElementById('detailsBox');
-        const favs = JSON.parse(localStorage.getItem('favCars')) || [];
-        const isFav = favs.includes(carId);
-        const images = car.images || [];
+        const btn = document.getElementById('sendMsgBtn');
+        const text = document.getElementById('msgText').value;
 
-        box.innerHTML = `
-            <div class="gallery-section">
-                <div class="gallery-card">
-                    <img id="mainView" class="main-img" src="${images[0]}">
-                    <div class="thumbnails">
-                        ${images.map(img => `<img src="${img}" onclick="document.getElementById('mainView').src='${img}'">`).join('')}
-                    </div>
-                </div>
-                <div style="margin-top:30px; background:white; padding:30px; border-radius:20px; border:1px solid var(--border);">
-                    <h3 style="margin-bottom:15px; font-weight:800;">Beskrivning</h3>
-                    <p style="color:#4b5563;">${car.description || 'Ingen beskrivning tillgänglig.'}</p>
-                </div>
-            </div>
-            <div class="info-section">
-                <div class="info-card">
-                    <div class="price-tag">${Number(car.price).toLocaleString()} kr</div>
-                    <h1 class="title">${car.brand} ${car.model || ''}</h1>
-                    <div class="specs">
-                        <div class="spec-item"><div class="spec-label">År</div><div class="spec-val">${car.year}</div></div>
-                        <div class="spec-item"><div class="spec-label">Mil</div><div class="spec-val">${car.mileage}</div></div>
-                        <div class="spec-item"><div class="spec-label">Drivmedel</div><div class="spec-val">${car.fuelType || '-'}</div></div>
-                        <div class="spec-item"><div class="spec-label">Växellåda</div><div class="spec-val">Automat</div></div>
-                    </div>
-                    <button class="btn-fav" id="favBtn" onclick="toggleFav()" style="color: ${isFav ? '#ef4444' : 'black'}">
-                        ${isFav ? '❤️ Sparad' : '☆ Spara i favoriter'}
-                    </button>
-                    <button class="btn-contact">Kontakta säljaren</button>
-                </div>
-            </div>
-        `;
+        btn.disabled = true;
+        btn.innerText = "Skickar...";
+
+        try {
+            await addDoc(collection(db, "messages"), {
+                carId: carId,
+                carTitle: `${car.brand} ${car.model}`,
+                senderId: currentUser.uid,
+                senderName: currentUser.displayName || currentUser.email.split('@')[0],
+                senderEmail: currentUser.email,
+                recipientId: car.sellerId, // هذا هو معرف البائع المخزن في الإعلان
+                message: text,
+                timestamp: serverTimestamp()
+            });
+
+            alert("Meddelandet har skickats till säljarens inkorg!");
+            document.getElementById('contactForm').reset();
+        } catch (err) {
+            alert("Ett fel uppstod. Försök igen.");
+            console.error(err);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Skicka meddelande";
+        }
     }
+
+    loadCarDetails();
 </script>
-</body> <footer style="background: #fff; padding: 40px 6%; border-top: 1px solid #e2e8f0; margin-top: 50px; text-align: center;">
-    <div style="max-width: 800px; margin: auto;">
-        <h3 style="font-size: 18px; font-weight: 800; color: #0f172a;">BIL<span>HK</span></h3>
-        <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin-top: 15px;">
-            <strong>Viktig information:</strong> Vi är en annonsplattform och ansvarar inte för felaktig information eller falska annonser. Genomför aldrig betalningar utan att ha träffat säljaren och kontrollerat fordonet personligen.
-        </p>
-        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 14px; font-weight: 700;">
-            <a href="terms.html" style="color: #f58220; text-decoration: none;">Användarvillkor & Säkerhet</a>
-            <a href="mailto:support@bilmarknad-hk.se" style="color: #0f172a; text-decoration: none;">Kontakt</a>
-        </div>
-        <p style="margin-top: 30px; font-size: 11px; color: #94a3b8;">&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
-    </div>
-</footer><div style="background: #fff1f2; border: 1px solid #fecdd3; padding: 15px; border-radius: 12px; margin: 20px 0;">
-    <h4 style="color: #be123c; font-size: 13px; font-weight: 800; margin-bottom: 5px;">⚠️ SÄKERHETSTIPS</h4>
-    <p style="font-size: 12px; color: #9f1239; line-height: 1.4; margin: 0;">
-        Köp aldrig bilen osett. Kontrollera alltid ägare och dokument via Transportstyrelsen innan betalning. Vi ansvarar inte för fel i annonsen.
-    </p>
-</div>
+</body>
 </html>
