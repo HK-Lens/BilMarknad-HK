@@ -5,11 +5,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Bilfilter | BilMarknad-HK</title>
+<title>Filter | BilMarknad-HK</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+
+/* ================= ROOT ================= */
 
 :root{
     --primary:#f58220;
@@ -17,6 +19,7 @@
     --text:#6b7280;
     --border:#e5e7eb;
     --bg:#f5f7fb;
+    --white:#ffffff;
 }
 
 *{
@@ -39,7 +42,9 @@ body{
     top:0;
     z-index:1000;
 
-    background:white;
+    background:rgba(255,255,255,0.92);
+
+    backdrop-filter:blur(10px);
 
     border-bottom:1px solid var(--border);
 
@@ -59,7 +64,7 @@ body{
 .close-btn{
     text-decoration:none;
     font-size:28px;
-    color:#111;
+    color:var(--dark);
 }
 
 .header h1{
@@ -81,7 +86,7 @@ body{
 
     grid-template-columns:320px 1fr;
 
-    min-height:calc(100vh - 75px);
+    min-height:calc(100vh - 80px);
 }
 
 /* ================= SIDEBAR ================= */
@@ -100,7 +105,7 @@ body{
 /* ================= FILTER BLOCK ================= */
 
 .filter-block{
-    margin-bottom:28px;
+    margin-bottom:30px;
 }
 
 .filter-title{
@@ -120,18 +125,18 @@ body{
 
 /* Inputs */
 
-select,
-input{
+input,
+select{
 
     width:100%;
 
-    height:52px;
+    height:54px;
 
     border:1px solid var(--border);
 
     border-radius:14px;
 
-    padding:0 14px;
+    padding:0 15px;
 
     font-size:15px;
 
@@ -140,8 +145,8 @@ input{
     transition:0.2s;
 }
 
-select:focus,
-input:focus{
+input:focus,
+select:focus{
 
     outline:none;
 
@@ -152,7 +157,7 @@ input:focus{
     box-shadow:0 0 0 4px rgba(245,130,32,0.12);
 }
 
-/* Double Inputs */
+/* Double */
 
 .double{
     display:grid;
@@ -201,7 +206,7 @@ input:focus{
 
     border-radius:18px;
 
-    padding:18px 12px;
+    padding:18px 10px;
 
     text-align:center;
 
@@ -222,7 +227,7 @@ input:focus{
 
     background:#fff5eb;
 
-    box-shadow:0 8px 20px rgba(245,130,32,0.15);
+    box-shadow:0 8px 20px rgba(245,130,32,0.14);
 }
 
 .kar-item img{
@@ -243,7 +248,7 @@ input:focus{
     padding:30px;
 }
 
-/* Top Bar */
+/* Top */
 
 .topbar{
 
@@ -443,13 +448,8 @@ input:focus{
                 Märke
             </div>
 
-            <select>
-                <option>Alla märken</option>
-                <option>Volvo</option>
-                <option>BMW</option>
-                <option>Audi</option>
-                <option>Mercedes-Benz</option>
-                <option>Tesla</option>
+            <select id="brand" onchange="updateModels()">
+                <option value="all">Alla märken</option>
             </select>
 
         </div>
@@ -462,8 +462,13 @@ input:focus{
                 Modell
             </div>
 
-            <input type="text"
-                   placeholder="Ex. XC60">
+            <select id="model">
+
+                <option value="all">
+                    Alla modeller
+                </option>
+
+            </select>
 
         </div>
 
@@ -478,9 +483,11 @@ input:focus{
             <div class="double">
 
                 <input type="number"
+                       id="minPrice"
                        placeholder="Från">
 
                 <input type="number"
+                       id="maxPrice"
                        placeholder="Till">
 
             </div>
@@ -498,30 +505,12 @@ input:focus{
             <div class="double">
 
                 <input type="number"
-                       placeholder="2018">
+                       id="yearFrom"
+                       placeholder="1990">
 
                 <input type="number"
-                       placeholder="2025">
-
-            </div>
-
-        </div>
-
-        <!-- Mileage -->
-
-        <div class="filter-block">
-
-            <div class="filter-title">
-                Mätarställning
-            </div>
-
-            <div class="double">
-
-                <input type="number"
-                       placeholder="0">
-
-                <input type="number"
-                       placeholder="15000">
+                       id="yearTo"
+                       placeholder="2026">
 
             </div>
 
@@ -538,47 +527,23 @@ input:focus{
             <div class="checkbox-list">
 
                 <label class="checkbox-item">
-                    <input type="checkbox">
+                    <input type="checkbox" value="Bensin">
                     Bensin
                 </label>
 
                 <label class="checkbox-item">
-                    <input type="checkbox">
+                    <input type="checkbox" value="Diesel">
                     Diesel
                 </label>
 
                 <label class="checkbox-item">
-                    <input type="checkbox">
+                    <input type="checkbox" value="Hybrid">
                     Hybrid
                 </label>
 
                 <label class="checkbox-item">
-                    <input type="checkbox">
-                    El
-                </label>
-
-            </div>
-
-        </div>
-
-        <!-- Gearbox -->
-
-        <div class="filter-block">
-
-            <div class="filter-title">
-                Växellåda
-            </div>
-
-            <div class="checkbox-list">
-
-                <label class="checkbox-item">
-                    <input type="checkbox">
-                    Automatisk
-                </label>
-
-                <label class="checkbox-item">
-                    <input type="checkbox">
-                    Manuell
+                    <input type="checkbox" value="El">
+                    Elbil
                 </label>
 
             </div>
@@ -590,12 +555,13 @@ input:focus{
         <div class="filter-block">
 
             <div class="filter-title">
-                Karosserier
+                Karosseri
             </div>
 
             <div class="kar-grid">
 
-                <div class="kar-item active">
+                <div class="kar-item"
+                     onclick="setKar('SUV', this)">
 
                     <img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png">
 
@@ -603,7 +569,8 @@ input:focus{
 
                 </div>
 
-                <div class="kar-item">
+                <div class="kar-item"
+                     onclick="setKar('Sedan', this)">
 
                     <img src="https://cdn-icons-png.flaticon.com/512/3202/3202926.png">
 
@@ -611,7 +578,8 @@ input:focus{
 
                 </div>
 
-                <div class="kar-item">
+                <div class="kar-item"
+                     onclick="setKar('Kombi', this)">
 
                     <img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png">
 
@@ -619,7 +587,8 @@ input:focus{
 
                 </div>
 
-                <div class="kar-item">
+                <div class="kar-item"
+                     onclick="setKar('Coupe', this)">
 
                     <img src="https://cdn-icons-png.flaticon.com/512/744/744465.png">
 
@@ -631,47 +600,13 @@ input:focus{
 
         </div>
 
-        <!-- Extra -->
-
-        <div class="filter-block">
-
-            <div class="filter-title">
-                Övrigt
-            </div>
-
-            <div class="checkbox-list">
-
-                <label class="checkbox-item">
-                    <input type="checkbox">
-                    Gratis CARFAX
-                </label>
-
-                <label class="checkbox-item">
-                    <input type="checkbox">
-                    4WD
-                </label>
-
-                <label class="checkbox-item">
-                    <input type="checkbox">
-                    Privatleasing
-                </label>
-
-                <label class="checkbox-item">
-                    <input type="checkbox">
-                    Dragkrok
-                </label>
-
-            </div>
-
-        </div>
-
         <!-- Button -->
 
         <div class="bottom-bar">
 
-            <button class="apply-btn">
+            <button class="apply-btn" onclick="applyFilters()">
 
-                Sök 80 631 fordon
+                Visa resultat
 
             </button>
 
@@ -683,12 +618,10 @@ input:focus{
 
     <main class="content">
 
-        <!-- Top -->
-
         <div class="topbar">
 
             <div class="results-count">
-                80 631 fordon
+                Alla bilar
             </div>
 
             <select class="sort-select">
@@ -701,87 +634,13 @@ input:focus{
 
                 <option>Årsmodell</option>
 
-                <option>Körsträcka</option>
-
             </select>
 
         </div>
 
         <!-- Cars -->
 
-        <div class="results">
-
-            <!-- Card -->
-
-            <div class="car-card">
-
-                <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop">
-
-                <div class="car-body">
-
-                    <div class="car-title">
-                        Volvo XC60 Recharge
-                    </div>
-
-                    <div class="car-info">
-                        2023 • 5 200 mil • Automat
-                    </div>
-
-                    <div class="price">
-                        359 000 kr
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Card -->
-
-            <div class="car-card">
-
-                <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1200&auto=format&fit=crop">
-
-                <div class="car-body">
-
-                    <div class="car-title">
-                        BMW 520d M Sport
-                    </div>
-
-                    <div class="car-info">
-                        2020 • 13 800 mil • Diesel
-                    </div>
-
-                    <div class="price">
-                        304 800 kr
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Card -->
-
-            <div class="car-card">
-
-                <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop">
-
-                <div class="car-body">
-
-                    <div class="car-title">
-                        Audi Q4 e-tron
-                    </div>
-
-                    <div class="car-info">
-                        2022 • 12 600 mil • Elbil
-                    </div>
-
-                    <div class="price">
-                        259 900 kr
-                    </div>
-
-                </div>
-
-            </div>
+        <div class="results" id="results">
 
         </div>
 
@@ -789,6 +648,286 @@ input:focus{
 
 </div>
 
+<!-- ================= CAR DATA ================= -->
+
+<script>
+
+/* ================= HUGE CAR DATABASE ================= */
+
+const carData = {
+
+    "Audi":[
+        "80","100","A1","A3","A4","A5","A6","A7","A8",
+        "Q2","Q3","Q5","Q7","Q8",
+        "TT","R8","e-tron","RS3","RS6"
+    ],
+
+    "BMW":[
+        "1-serie","2-serie","3-serie","4-serie",
+        "5-serie","6-serie","7-serie","8-serie",
+        "X1","X3","X5","X6","X7",
+        "Z3","Z4",
+        "i3","i4","i5","i7","iX"
+    ],
+
+    "Mercedes-Benz":[
+        "190","A-Klass","B-Klass","C-Klass",
+        "E-Klass","S-Klass",
+        "CLA","CLS",
+        "GLA","GLB","GLC","GLE","GLS",
+        "SL","EQC","EQE","EQS"
+    ],
+
+    "Volvo":[
+        "240","740","850",
+        "S40","S60","S80","S90",
+        "V40","V60","V70","V90",
+        "XC40","XC60","XC70","XC90",
+        "C30","EX30","EX90"
+    ],
+
+    "Volkswagen":[
+        "Golf","Passat","Polo","Touareg",
+        "Tiguan","Arteon","ID.3","ID.4",
+        "ID.7","Beetle","Scirocco"
+    ],
+
+    "Toyota":[
+        "Corolla","Camry","Yaris",
+        "Avensis","RAV4","Land Cruiser",
+        "Hilux","Prius","Supra",
+        "Celica","MR2","bZ4X"
+    ],
+
+    "Tesla":[
+        "Model S","Model 3",
+        "Model X","Model Y",
+        "Cybertruck","Roadster"
+    ],
+
+    "Ford":[
+        "Fiesta","Focus","Mondeo",
+        "Mustang","Explorer","Kuga",
+        "Bronco","F-150"
+    ],
+
+    "Porsche":[
+        "911","718 Cayman",
+        "718 Boxster","Panamera",
+        "Macan","Cayenne","Taycan"
+    ],
+
+    "Ferrari":[
+        "F40","F50","Enzo",
+        "458 Italia","488 GTB",
+        "Roma","SF90","LaFerrari"
+    ]
+
+};
+
+/* ================= SAMPLE CARS ================= */
+
+const cars = [
+
+{
+    brand:"Volvo",
+    model:"XC60",
+    year:2023,
+    price:359000,
+    image:"https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop"
+},
+
+{
+    brand:"BMW",
+    model:"X5",
+    year:2020,
+    price:304000,
+    image:"https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1200&auto=format&fit=crop"
+},
+
+{
+    brand:"Audi",
+    model:"Q5",
+    year:2022,
+    price:259000,
+    image:"https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"
+}
+
+];
+
+/* ================= BRANDS ================= */
+
+const brandSelect =
+    document.getElementById('brand');
+
+Object.keys(carData)
+.sort()
+.forEach(brand => {
+
+    brandSelect.innerHTML += `
+        <option value="${brand}">
+            ${brand}
+        </option>
+    `;
+
+});
+
+/* ================= UPDATE MODELS ================= */
+
+function updateModels(){
+
+    const brand =
+        document.getElementById('brand').value;
+
+    const model =
+        document.getElementById('model');
+
+    model.innerHTML =
+        '<option value="all">Alla modeller</option>';
+
+    if(carData[brand]){
+
+        carData[brand]
+        .sort()
+        .forEach(m => {
+
+            model.innerHTML += `
+                <option value="${m}">
+                    ${m}
+                </option>
+            `;
+
+        });
+
+    }
+
+}
+
+/* ================= BODY TYPE ================= */
+
+let selectedKar = "all";
+
+function setKar(type, el){
+
+    document
+    .querySelectorAll('.kar-item')
+    .forEach(i => i.classList.remove('active'));
+
+    el.classList.add('active');
+
+    selectedKar = type;
+}
+
+/* ================= APPLY ================= */
+
+function applyFilters(){
+
+    const brand =
+        document.getElementById('brand').value;
+
+    const model =
+        document.getElementById('model').value;
+
+    const minPrice =
+        Number(document.getElementById('minPrice').value) || 0;
+
+    const maxPrice =
+        Number(document.getElementById('maxPrice').value) || Infinity;
+
+    const yearFrom =
+        Number(document.getElementById('yearFrom').value) || 1900;
+
+    const yearTo =
+        Number(document.getElementById('yearTo').value) || 2026;
+
+    const filtered = cars.filter(c =>
+
+        (brand === 'all' || c.brand === brand)
+
+        &&
+
+        (model === 'all' || c.model === model)
+
+        &&
+
+        (c.price >= minPrice)
+
+        &&
+
+        (c.price <= maxPrice)
+
+        &&
+
+        (c.year >= yearFrom)
+
+        &&
+
+        (c.year <= yearTo)
+
+    );
+
+    render(filtered);
+
+}
+
+/* ================= RENDER ================= */
+
+function render(data){
+
+    const results =
+        document.getElementById('results');
+
+    if(data.length === 0){
+
+        results.innerHTML = `
+            <div style="
+                background:white;
+                padding:40px;
+                border-radius:24px;
+                text-align:center;
+                font-size:18px;
+                font-weight:700;
+            ">
+                Inga bilar hittades
+            </div>
+        `;
+
+        return;
+    }
+
+    results.innerHTML = data.map(c => `
+
+        <div class="car-card">
+
+            <img src="${c.image}">
+
+            <div class="car-body">
+
+                <div class="car-title">
+                    ${c.brand} ${c.model}
+                </div>
+
+                <div class="car-info">
+                    ${c.year}
+                </div>
+
+                <div class="price">
+                    ${c.price.toLocaleString()} kr
+                </div>
+
+            </div>
+
+        </div>
+
+    `).join('');
+
+}
+
+/* ================= INIT ================= */
+
+render(cars);
+
+</script>
+
 </body>
 </html>
-```2
