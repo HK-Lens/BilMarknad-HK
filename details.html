@@ -2,190 +2,77 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fordonsdetaljer | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detaljer | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding-bottom: 50px; }
-
-        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .logo { text-decoration: none; font-size: 22px; font-weight: 900; color: var(--dark); }
-        .logo span { color: var(--primary); }
-
-        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 1fr; gap: 30px; }
-        @media (min-width: 850px) { .container { grid-template-columns: 1.8fr 1fr; } }
-
-        /* معرض الصور */
-        .gallery { background: #eee; border-radius: 24px; overflow: hidden; position: relative; height: 300px; }
-        @media (min-width: 600px) { .gallery { height: 450px; } }
-        .gallery img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .info-card { background: white; padding: 25px; border-radius: 24px; border: 1px solid var(--border); }
-        .price-tag { font-size: 32px; font-weight: 900; color: var(--primary); margin-bottom: 10px; }
-        .car-title { font-size: 24px; font-weight: 900; margin-bottom: 5px; }
-        .car-meta { color: #64748b; font-size: 15px; font-weight: 600; margin-bottom: 20px; }
-
-        /* شبكة المواصفات التقنية */
-        .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
-        .spec-item { background: var(--bg); padding: 15px; border-radius: 14px; border: 1px solid var(--border); }
-        .spec-item label { display: block; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
-        .spec-item span { font-size: 14px; font-weight: 700; }
-
-        /* صندوق التواصل */
-        .contact-box { background: white; padding: 25px; border-radius: 24px; border: 1px solid var(--border); position: sticky; top: 100px; }
-        .btn-contact { width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; }
-        
-        textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; font-size: 14px; margin-bottom: 15px; outline: none; background: #fcfcfc; }
-        
-        .safety-warning { background: #fff7ed; border: 1px solid #ffedd5; padding: 15px; border-radius: 12px; font-size: 12px; color: #9a3412; margin-top: 20px; line-height: 1.5; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); padding-bottom: 50px; }
+        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr; gap: 25px; }
+        @media (min-width: 800px) { .container { grid-template-columns: 1.5fr 1fr; } }
+        .main-img { width: 100%; border-radius: 20px; height: 400px; object-fit: cover; }
+        .card { background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
+        .btn-contact { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
-
-<header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div id="navActions"></div>
-</header>
-
-<div class="container" id="detailsContainer">
-    <p style="text-align:center; grid-column: 1/-1; padding: 50px;">Laddar fordonsuppgifter...</p>
-</div>
-
+<header><a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark);">BIL<span>HK</span></a></header>
+<div class="container" id="details">Laddar...</div>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import firebaseConfig from './firebase-config.js';
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const carId = urlParams.get('id');
+    const carId = new URLSearchParams(window.location.search).get('id');
     let currentUser = null;
+    let currentCar = null;
 
-    onAuthStateChanged(auth, user => {
-        currentUser = user;
-        const nav = document.getElementById('navActions');
-        if (user) {
-            nav.innerHTML = `<a href="my-account.html" style="text-decoration:none; font-weight:700; color:var(--dark); font-size:13px;">Min Sida</a>`;
-        } else {
-            nav.innerHTML = `<a href="login.html" style="text-decoration:none; font-weight:700; color:var(--dark); font-size:13px;">Logga in</a>`;
-        }
-    });
+    onAuthStateChanged(auth, user => { currentUser = user; load(); });
 
-    async function loadCarDetails() {
-        if (!carId) return;
-        const docRef = doc(db, "cars", carId);
-        const snap = await getDoc(docRef);
-
-        if (snap.exists()) {
-            const car = snap.data();
-            renderDetails(car);
-        } else {
-            document.getElementById('detailsContainer').innerHTML = "<p>Bilen hittades inte.</p>";
-        }
-    }
-
-    function renderDetails(car) {
-        const container = document.getElementById('detailsContainer');
-        
-        // التحقق من إخفاء رقم الهاتف
-        const phoneHtml = (!car.hidePhone && car.phone) ? `
-            <a href="tel:${car.phone}" class="btn-contact" style="background: #22c55e; color: white;">📞 Ring säljaren</a>
-            <a href="https://wa.me/${car.phone.replace(/\s+/g, '')}" class="btn-contact" style="background: #25d366; color: white;">💬 WhatsApp</a>
-        ` : `<p style="text-align:center; font-size:12px; color:#94a3b8; margin-bottom:15px;">Säljaren föredrar internmeddelanden.</p>`;
-
-        container.innerHTML = `
+    async function load() {
+        const snap = await getDoc(doc(db, "cars", carId));
+        if (!snap.exists()) return;
+        currentCar = snap.data();
+        const c = currentCar;
+        document.getElementById('details').innerHTML = `
             <div>
-                <div class="gallery">
-                    <img src="${car.images?.[0] || 'https://via.placeholder.com/800x500'}" alt="Bilbild">
-                </div>
-
-                <div class="info-card" style="margin-top: 25px;">
-                    <div class="price-tag">${Number(car.price).toLocaleString()} kr</div>
-                    <h1 class="car-title">${car.brand} ${car.model || ''}</h1>
-                    <div class="car-meta">${car.year} • ${car.mileage} mil • ${car.regNr || 'Reg-nr dolt'}</div>
-                    
-                    <div class="specs-grid">
-                        <div class="spec-item"><label>Växellåda</label><span>${car.transmission || '-'}</span></div>
-                        <div class="spec-item"><label>Drivmedel</label><span>${car.fuelType || '-'}</span></div>
-                        <div class="spec-item"><label>Karosstyp</label><span>${car.bodyType || '-'}</span></div>
-                        <div class="spec-item"><label>Effekt</label><span>${car.power ? car.power + ' hk' : '-'}</span></div>
-                    </div>
-
-                    <div class="section-title" style="font-weight:900; margin-bottom:10px;">Beskrivning</div>
-                    <p style="line-height:1.6; color:#475569;">${car.description || 'Ingen beskrivning tillgänglig.'}</p>
+                <img src="${c.images?.[0]}" class="main-img">
+                <div class="card" style="margin-top:20px;">
+                    <h1 style="font-size:28px; font-weight:900;">${c.brand} ${c.model}</h1>
+                    <div style="font-size:32px; color:var(--primary); font-weight:900; margin:10px 0;">${Number(c.price).toLocaleString()} kr</div>
+                    <p>${c.description}</p>
                 </div>
             </div>
-
             <aside>
-                <div class="contact-box">
-                    <h3 style="margin-bottom:20px; font-weight:900;">Intresserad?</h3>
-                    
-                    ${phoneHtml}
-
-                    <div style="margin: 20px 0; text-align: center; border-top: 1px solid var(--border); padding-top: 20px;">
-                        <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Skicka internmeddelande</span>
-                    </div>
-
-                    <form id="contactForm">
-                        <textarea id="msgText" rows="4" placeholder="Skriv ditt meddelande till säljaren här..." required></textarea>
-                        <button type="submit" id="sendMsgBtn" class="btn-contact" style="background: var(--dark); color: white;">Skicka meddelande</button>
-                    </form>
-
-                    <div class="safety-warning">
-                        <strong>Säkerhetstips:</strong> Träffa alltid säljaren personligen och kontrollera bilen samt alla dokument innan betalning. Vi ansvarar inte för annonsens innehåll.
+                <div class="card">
+                    <h3>Kontakta säljaren</h3>
+                    ${(!c.hidePhone && c.phone) ? `<a href="tel:${c.phone}" class="btn-contact" style="background:#22c55e; color:white; display:block; text-align:center; text-decoration:none;">📞 Ring ${c.phone}</a>` : ''}
+                    <div style="margin-top:20px;">
+                        <textarea id="msgText" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;" rows="4" placeholder="Skriv ett internt meddelande..."></textarea>
+                        <button onclick="sendMsg()" id="sendBtn" class="btn-contact" style="background:var(--dark); color:white;">Skicka till Inkorg</button>
                     </div>
                 </div>
-            </aside>
-        `;
-
-        // ربط فورم المراسلة
-        document.getElementById('contactForm').onsubmit = (e) => sendInternalMessage(e, car);
+            </aside>`;
     }
 
-    async function sendInternalMessage(e, car) {
-        e.preventDefault();
-        if (!currentUser) {
-            alert("Logga in först för att skicka meddelanden.");
-            window.location.href = "login.html";
-            return;
-        }
-
-        const btn = document.getElementById('sendMsgBtn');
+    window.sendMsg = async () => {
+        if (!currentUser) return alert("Logga in först!");
         const text = document.getElementById('msgText').value;
-
+        const btn = document.getElementById('sendBtn');
         btn.disabled = true;
-        btn.innerText = "Skickar...";
-
         try {
             await addDoc(collection(db, "messages"), {
-                carId: carId,
-                carTitle: `${car.brand} ${car.model}`,
-                senderId: currentUser.uid,
-                senderName: currentUser.displayName || currentUser.email.split('@')[0],
-                senderEmail: currentUser.email,
-                recipientId: car.sellerId, // هذا هو معرف البائع المخزن في الإعلان
-                message: text,
-                timestamp: serverTimestamp()
+                carId: carId, carTitle: `${currentCar.brand} ${currentCar.model}`, carImage: currentCar.images[0],
+                senderId: currentUser.uid, senderName: currentUser.displayName || currentUser.email.split('@')[0], senderEmail: currentUser.email,
+                recipientId: currentCar.sellerId, message: text, timestamp: serverTimestamp()
             });
-
-            alert("Meddelandet har skickats till säljarens inkorg!");
-            document.getElementById('contactForm').reset();
-        } catch (err) {
-            alert("Ett fel uppstod. Försök igen.");
-            console.error(err);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "Skicka meddelande";
-        }
-    }
-
-    loadCarDetails();
+            alert("Meddelande skickat!");
+        } catch (e) { alert("Fel!"); } finally { btn.disabled = false; }
+    };
 </script>
 </body>
 </html>
