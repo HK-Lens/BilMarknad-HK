@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Filtrera sökning | BilMarknad-HK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -14,171 +14,152 @@
             --border: #e2e8f0;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding-bottom: 100px; }
 
-        /* إخفاء أسهم الأرقام */
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
         /* --- Header --- */
-        .filter-header {
-            padding: 20px 6%;
-            border-bottom: 1px solid var(--border);
+        .header {
+            padding: 15px 5%; border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center;
             position: sticky; top: 0; background: white; z-index: 100;
         }
-        .close-btn { text-decoration: none; color: var(--dark); font-size: 28px; font-weight: 300; }
-        .reset-btn { color: var(--primary); font-weight: 700; cursor: pointer; font-size: 14px; }
+        .header h2 { font-size: 18px; font-weight: 800; }
+        .close-btn { text-decoration: none; color: var(--dark); font-size: 24px; }
+        .reset-link { color: var(--primary); font-weight: 700; font-size: 13px; cursor: pointer; }
 
-        .content { padding: 30px 6%; max-width: 650px; margin: auto; }
-        
-        .section-title {
-            font-size: 11px; font-weight: 800; text-transform: uppercase;
-            color: #94a3b8; margin: 25px 0 12px; letter-spacing: 0.05em;
-        }
+        .content { padding: 20px 5%; max-width: 600px; margin: auto; }
+        .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 25px 0 12px; letter-spacing: 0.05em; }
 
-        /* --- Fields --- */
+        /* --- Inputs --- */
         .select-box, .input-box {
-            width: 100%; padding: 16px; border: 1px solid var(--border);
-            border-radius: 14px; font-size: 16px; background: var(--light-bg);
-            margin-bottom: 15px; outline: none; transition: 0.2s; font-weight: 500;
+            width: 100%; padding: 14px; border: 1px solid var(--border);
+            border-radius: 12px; font-size: 15px; background: var(--light-bg);
+            margin-bottom: 12px; outline: none; font-weight: 500;
         }
-        .select-box:focus, .input-box:focus { border-color: var(--primary); background: white; }
 
-        /* --- Karosserityp --- */
-        .karosseri-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+        /* --- Grid Selection (Karosserityp) --- */
+        .option-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .opt-item {
+            border: 1px solid var(--border); border-radius: 12px; padding: 12px 5px;
+            text-align: center; cursor: pointer; background: var(--light-bg); transition: 0.2s;
         }
-        .kar-item {
-            border: 1px solid var(--border); border-radius: 16px; padding: 15px;
-            text-align: center; cursor: pointer; transition: 0.3s; background: var(--light-bg);
-        }
-        .kar-item img { width: 48px; height: 48px; object-fit: contain; margin-bottom: 8px; opacity: 0.8; }
-        .kar-item span { font-size: 12px; font-weight: 600; display: block; color: #64748b; }
-        .kar-item:hover { border-color: var(--primary); }
-        .kar-item.active { border-color: var(--primary); background: #fff5eb; box-shadow: 0 0 0 1px var(--primary); }
-        .kar-item.active img { opacity: 1; }
-        .kar-item.active span { color: var(--primary); }
+        .opt-item img { width: 40px; height: 30px; object-fit: contain; margin-bottom: 6px; opacity: 0.7; }
+        .opt-item span { font-size: 11px; font-weight: 600; display: block; color: #64748b; }
+        .opt-item.active { border-color: var(--primary); background: #fff5eb; }
+        .opt-item.active span { color: var(--primary); }
+        .opt-item.active img { opacity: 1; }
 
-        /* --- Footer Action --- */
-        .footer-action {
+        /* --- Tags Selection (Drivmedel & Växellåda) --- */
+        .tag-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag-item {
+            padding: 10px 18px; border: 1px solid var(--border); border-radius: 50px;
+            font-size: 13px; font-weight: 600; cursor: pointer; background: var(--light-bg);
+        }
+        .tag-item.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+        /* --- Footer --- */
+        .footer {
             position: fixed; bottom: 0; left: 0; width: 100%;
-            background: white; padding: 20px 6%;
-            border-top: 1px solid var(--border); box-sizing: border-box;
+            background: white; padding: 15px 5%; border-top: 1px solid var(--border);
         }
-        .btn-apply {
+        .apply-btn {
             width: 100%; background: var(--primary); color: white; border: none;
-            padding: 18px; border-radius: 50px; font-weight: 800; font-size: 18px;
-            cursor: pointer; box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2);
-            transition: 0.3s;
+            padding: 16px; border-radius: 50px; font-weight: 800; font-size: 16px; box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2);
         }
-        .btn-apply:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
-    <div class="filter-header">
+    <div class="header">
         <a href="index.html" class="close-btn">✕</a>
-        <h2 style="font-size: 18px; font-weight: 800;">Filtrera sökning</h2>
-        <span class="reset-btn" onclick="location.reload()">Rensa allt</span>
+        <h2>Filtrera</h2>
+        <span class="reset-link" onclick="location.reload()">Rensa</span>
     </div>
 
     <div class="content">
         <div class="section-title">Fordon</div>
-        <select id="brand" class="select-box" onchange="updateModels()">
-            <option value="all">Alla märken</option>
-        </select>
-
-        <select id="model" class="select-box">
-            <option value="all">Alla modeller</option>
-        </select>
+        <select id="brand" class="select-box" onchange="updateModels()"><option value="all">Alla märken</option></select>
+        <select id="model" class="select-box"><option value="all">Alla modeller</option></select>
 
         <div class="section-title">Karosserityp</div>
-        <div class="karosseri-grid">
-            <div class="kar-item" onclick="setKar('Sedan', this)">
-                <img src="https://cdn-icons-png.flaticon.com/512/18042/18042004.png" alt="Sedan">
-                <span>Sedan</span>
-            </div>
-            <div class="kar-item" id="suvItem" onclick="setKar('SUV', this)">
-                <img src="https://cdn-icons-png.flaticon.com/512/4391/4391474.png" alt="SUV">
-                <span>SUV</span>
-            </div>
-            <div class="kar-item" onclick="setKar('Kombi', this)">
-                <img src="https://cdn-icons-png.flaticon.com/512/2736/2736781.png" alt="Kombi">
-                <span>Kombi</span>
-            </div>
+        <div class="option-grid" id="karGrid">
+            <div class="opt-item" onclick="setOpt('kar', 'Sedan', this)"><img src="https://cdn-icons-png.flaticon.com/512/18042/18042004.png"><span>Sedan</span></div>
+            <div class="opt-item" onclick="setOpt('kar', 'Kombi', this)"><img src="https://cdn-icons-png.flaticon.com/512/2736/2736781.png"><span>Kombi</span></div>
+            <div class="opt-item" onclick="setOpt('kar', 'SUV', this)"><img src="https://cdn-icons-png.flaticon.com/512/4391/4391474.png"><span>SUV</span></div>
+            <div class="opt-item" onclick="setOpt('kar', 'Halvkombi', this)"><img src="https://cdn-icons-png.flaticon.com/512/5038/5038865.png"><span>Halvkombi</span></div>
+            <div class="opt-item" onclick="setOpt('kar', 'Coupé', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202935.png"><span>Coupé</span></div>
+            <div class="opt-item" onclick="setOpt('kar', 'Cabriolet', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202939.png"><span>Cabriolet</span></div>
+            <div class="opt-item" onclick="setOpt('kar', 'Transportbil', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png"><span>Transport</span></div>
         </div>
 
-        <div class="section-title">Pris (kr)</div>
+        <div class="section-title">Drivmedel</div>
+        <div class="tag-group" id="fuelGroup">
+            <div class="tag-item" onclick="setTag('fuel', 'Bensin', this)">Bensin</div>
+            <div class="tag-item" onclick="setTag('fuel', 'Diesel', this)">Diesel</div>
+            <div class="tag-item" onclick="setTag('fuel', 'El', this)">El</div>
+            <div class="tag-item" onclick="setTag('fuel', 'Hybrid', this)">Hybrid / Laddhybrid</div>
+        </div>
+
+        <div class="section-title">Växellåda</div>
+        <div class="tag-group" id="gearGroup">
+            <div class="tag-item" onclick="setTag('gear', 'Automat', this)">Automat</div>
+            <div class="tag-item" onclick="setTag('gear', 'Manuell', this)">Manuell</div>
+        </div>
+
+        <div class="section-title">Pris & Miltal</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <input type="number" id="minPrice" class="input-box" placeholder="Lägsta pris">
-            <input type="number" id="maxPrice" class="input-box" placeholder="Högsta pris">
+            <input type="number" id="minPrice" class="input-box" placeholder="Pris från">
+            <input type="number" id="maxPrice" class="input-box" placeholder="Pris till">
         </div>
-
-        <div class="section-title">Miltal (mil)</div>
-        <input type="number" id="maxMileage" class="input-box" placeholder="Max miltal">
-
+        <input type="number" id="maxMileage" class="input-box" placeholder="Max miltal (mil)">
     </div>
 
-    <div class="footer-action">
-        <button class="btn-apply" onclick="apply()">Visa bilar</button>
+    <div class="footer">
+        <button class="apply-btn" onclick="applyFilters()">Visa resultat</button>
     </div>
 
     <script type="module">
         import { carData } from './cars-data.js';
 
-        const bSel = document.getElementById('brand');
-        const mSel = document.getElementById('model');
-        let selectedKar = 'all';
+        let filters = { brand: 'all', model: 'all', kar: 'all', fuel: 'all', gear: 'all' };
 
-        function initBrands() {
-            Object.keys(carData).sort().forEach(brand => {
-                const opt = document.createElement('option');
-                opt.value = brand;
-                opt.textContent = brand;
-                bSel.appendChild(opt);
-            });
-        }
+        // تعبئة الماركات
+        const bSel = document.getElementById('brand');
+        Object.keys(carData).sort().forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
 
         window.updateModels = () => {
-            const brand = bSel.value;
+            const mSel = document.getElementById('model');
             mSel.innerHTML = '<option value="all">Alla modeller</option>';
-            if (carData[brand]) {
-                carData[brand].sort().forEach(model => {
-                    const opt = document.createElement('option');
-                    opt.value = model;
-                    opt.textContent = model;
-                    mSel.appendChild(opt);
-                });
-            }
+            if(carData[bSel.value]) carData[bSel.value].sort().forEach(m => mSel.innerHTML += `<option value="${m}">${m}</option>`);
         };
 
-        window.setKar = (type, el) => {
-            const isActive = el.classList.contains('active');
-            document.querySelectorAll('.kar-item').forEach(i => i.classList.remove('active'));
-            
-            if (isActive) {
-                selectedKar = 'all';
-            } else {
-                selectedKar = type;
-                el.classList.add('active');
-            }
+        window.setOpt = (key, val, el) => {
+            document.querySelectorAll('#karGrid .opt-item').forEach(i => i.classList.remove('active'));
+            filters[key] = (filters[key] === val) ? 'all' : val;
+            if(filters[key] !== 'all') el.classList.add('active');
         };
 
-        window.apply = () => {
+        window.setTag = (key, val, el) => {
+            const group = key === 'fuel' ? '#fuelGroup' : '#gearGroup';
+            document.querySelectorAll(`${group} .tag-item`).forEach(i => i.classList.remove('active'));
+            filters[key] = (filters[key] === val) ? 'all' : val;
+            if(filters[key] !== 'all') el.classList.add('active');
+        };
+
+        window.applyFilters = () => {
             const params = new URLSearchParams({
+                ...filters,
                 brand: bSel.value,
-                model: mSel.value,
-                kar: selectedKar,
+                model: document.getElementById('model').value,
                 minPrice: document.getElementById('minPrice').value,
                 maxPrice: document.getElementById('maxPrice').value,
                 maxMileage: document.getElementById('maxMileage').value
             });
             window.location.href = `index.html?${params.toString()}`;
         };
-
-        initBrands();
     </script>
 </body>
 </html>
