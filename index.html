@@ -2,89 +2,151 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <title>BilMarknad-HK | Hem</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BilMarknad-HK | Köp & Sälj</title>
     <style>
-        body { font-family: sans-serif; margin: 0; background: #f0f2f5; }
-        header { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .user-menu { position: relative; cursor: pointer; }
-        .dropdown { display: none; position: absolute; right: 0; top: 30px; background: white; border: 1px solid #ccc; border-radius: 5px; width: 160px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 1000; }
-        .dropdown a { display: block; padding: 10px; text-decoration: none; color: #333; font-size: 14px; }
-        .dropdown a:hover { background: #f8f9fa; }
-        .btn-login { background: #007bff; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; }
+        :root { --primary: #007bff; --dark: #343a40; --light: #f8f9fa; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #eef2f7; }
+        
+        /* الهيدر */
+        header { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 24px; font-weight: bold; color: var(--primary); text-decoration: none; }
+        
+        /* منطقة البحث */
+        .search-section { background: var(--dark); padding: 40px 5%; text-align: center; color: white; }
+        .search-container { max-width: 800px; margin: auto; display: flex; gap: 10px; }
+        input[type="text"] { flex: 1; padding: 12px; border-radius: 5px; border: none; font-size: 16px; }
+        
+        /* شبكة السيارات */
+        .container { padding: 30px 5%; }
+        .car-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        
+        /* بطاقة السيارة */
+        .car-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .car-card:hover { transform: translateY(-5px); }
+        .car-card img { width: 100%; height: 180px; object-fit: cover; }
+        .car-info { padding: 15px; }
+        .car-info h3 { margin: 0; font-size: 18px; color: var(--dark); }
+        .car-info .price { color: var(--primary); font-size: 20px; font-weight: bold; margin: 10px 0; }
+        .car-info .details { font-size: 14px; color: #666; }
+
+        /* القائمة المنسدلة */
+        .user-menu { position: relative; }
+        .dropdown { display: none; position: absolute; right: 0; top: 35px; background: white; border-radius: 8px; width: 180px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; }
+        .dropdown a { display: block; padding: 12px; text-decoration: none; color: #333; font-size: 14px; border-bottom: 1px solid #eee; }
+        .dropdown a:hover { background: #f1f1f1; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo"><strong>BilMarknad-HK</strong></div>
-    
+    <a href="index.html" class="logo">BilMarknad-HK</a>
     <div id="authArea">
-        <a href="login.html" id="loginLink" class="btn-login">Logga in</a>
+        <a href="login.html" id="loginLink" style="text-decoration: none; color: var(--primary); font-weight: bold;">Logga in</a>
         <div class="user-menu" id="userMenu" style="display:none;">
-            <span id="userNameDisplay" onclick="toggleDropdown()">Användare ▾</span>
+            <span id="userNameDisplay" onclick="toggleDropdown()" style="cursor:pointer; font-weight: bold;">Användare ▾</span>
             <div class="dropdown" id="dropdownContent">
                 <a href="manage.html">Mina Annonser</a>
                 <a href="sell.html">Sälj din bil</a>
-                <a href="#" id="logoutBtn" style="color: #dc3545; border-top: 1px solid #eee;">Logga ut</a>
+                <a href="#" id="logoutBtn" style="color: #dc3545;">Logga ut</a>
             </div>
         </div>
     </div>
 </header>
 
-<main style="padding: 20px; text-align: center;">
-    <h1>Välkommen till BilMarknad-HK</h1>
-    <p>Här kan du hitta eller sälja din bil enkelt.</p>
-</main>
+<section class="search-section">
+    <h1>Hitta din drömbil</h1>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Sök på märke eller registreringsnummer (t.ex. Volvo)..." onkeyup="filterCars()">
+    </div>
+</section>
+
+<div class="container">
+    <div class="car-grid" id="carGrid">
+        <p id="loadingMsg">Laddar bilar...</p>
+    </div>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import firebaseConfig from './firebase-config.js';
 
     const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
     const auth = getAuth(app);
 
-    // مراقبة حالة تسجيل الدخول
+    let allCars = []; // لتخزين البيانات محلياً للبحث السريع
+
+    // 1. جلب السيارات من Firebase وعرضها
+    async function fetchCars() {
+        try {
+            const querySnapshot = await getDocs(collection(db, "cars"));
+            const carGrid = document.getElementById('carGrid');
+            carGrid.innerHTML = "";
+            allCars = [];
+
+            querySnapshot.forEach((doc) => {
+                const car = doc.data();
+                allCars.push(car);
+                renderCarCard(car);
+            });
+        } catch (e) {
+            console.error("Error fetching cars: ", e);
+        }
+    }
+
+    function renderCarCard(car) {
+        const carGrid = document.getElementById('carGrid');
+        const card = document.createElement('div');
+        card.className = 'car-card';
+        card.innerHTML = `
+            <img src="${car.images && car.images[0] ? car.images[0] : 'https://via.placeholder.com/300x180?text=Ingen+bild'}" alt="Car">
+            <div class="car-info">
+                <h3>${car.brand}</h3>
+                <div class="details">RegNr: ${car.regNr}</div>
+                <div class="price">${Number(car.price).toLocaleString()} SEK</div>
+                <button style="width:100%; padding:8px; border:none; background:var(--primary); color:white; border-radius:5px; cursor:pointer;">Visa detaljer</button>
+            </div>
+        `;
+        carGrid.appendChild(card);
+    }
+
+    // 2. وظيفة البحث والتصفية
+    window.filterCars = () => {
+        const term = document.getElementById('searchInput').value.toLowerCase();
+        const carGrid = document.getElementById('carGrid');
+        carGrid.innerHTML = "";
+        
+        const filtered = allCars.filter(car => 
+            car.brand.toLowerCase().includes(term) || 
+            car.regNr.toLowerCase().includes(term)
+        );
+
+        filtered.forEach(car => renderCarCard(car));
+    };
+
+    // 3. إدارة حالة المستخدم
     onAuthStateChanged(auth, (user) => {
         const loginLink = document.getElementById('loginLink');
         const userMenu = document.getElementById('userMenu');
-        const userNameDisplay = document.getElementById('userNameDisplay');
-
         if (user) {
             loginLink.style.display = 'none';
             userMenu.style.display = 'block';
-            userNameDisplay.innerText = user.displayName + " ▾";
-        } else {
-            loginLink.style.display = 'block';
-            userMenu.style.display = 'none';
+            document.getElementById('userNameDisplay').innerText = user.displayName + " ▾";
         }
     });
 
-    // وظيفة القائمة المنسدلة
     window.toggleDropdown = () => {
         const dropdown = document.getElementById('dropdownContent');
         dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
     };
 
-    // تسجيل الخروج
-    document.getElementById('logoutBtn').onclick = async (e) => {
-        e.preventDefault();
-        try {
-            await signOut(auth);
-            alert("Du har loggat ut!");
-            window.location.reload();
-        } catch (error) {
-            console.error("Logout Error", error);
-        }
-    };
+    document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => window.location.reload());
 
-    // إغلاق القائمة عند الضغط في الخارج
-    window.onclick = (event) => {
-        if (!event.target.matches('#userNameDisplay')) {
-            const dropdown = document.getElementById('dropdownContent');
-            if (dropdown) dropdown.style.display = 'none';
-        }
-    };
+    // تشغيل جلب البيانات عند فتح الصفحة
+    fetchCars();
 </script>
 </body>
 </html>
