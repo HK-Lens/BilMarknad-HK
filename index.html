@@ -7,21 +7,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #1a1a1a; --bg: #f8fafc; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); }
-        header { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--dark); }
+        
+        header { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
         .logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        /* بار البحث البسيط */
-        .search-bar-container { background: white; padding: 20px 5%; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #eee; }
-        .search-input { flex: 1; padding: 15px; border: 1px solid #ddd; border-radius: 50px; font-size: 16px; outline: none; }
-        .filter-trigger { background: #f4f4f4; padding: 12px 25px; border-radius: 50px; text-decoration: none; color: var(--dark); font-weight: 700; display: flex; align-items: center; gap: 8px; border: 1px solid #ddd; }
+        /* بار البحث الرئيسي المدمج */
+        .search-strip { background: white; padding: 20px 5%; border-bottom: 1px solid #eee; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; align-items: flex-end; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; }
+        select, input { padding: 12px; border: 1px solid #ccc; border-radius: 8px; outline: none; font-size: 14px; }
+        
+        .btn-search { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        .btn-filter { background: #f4f4f4; border: 1px solid #ddd; padding: 12px; border-radius: 8px; text-decoration: none; color: var(--dark); text-align: center; font-weight: 600; }
 
-        .results { padding: 40px 5%; max-width: 1200px; margin: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .car-card { background: white; border-radius: 15px; overflow: hidden; border: 1px solid #ddd; cursor: pointer; transition: 0.3s; }
+        .results { padding: 40px 5%; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; max-width: 1300px; margin: auto; }
+        .car-card { background: white; border-radius: 15px; overflow: hidden; border: 1px solid #ddd; transition: 0.3s; cursor: pointer; }
+        .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .car-card img { width: 100%; height: 180px; object-fit: cover; }
-        .car-content { padding: 15px; }
-        .price { font-size: 22px; font-weight: 800; color: var(--primary); }
+        .car-body { padding: 15px; }
+        .price { font-size: 20px; font-weight: 800; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -29,14 +35,35 @@
 <header>
     <a href="index.html" class="logo">BILMARKNAD<span>HK</span></a>
     <nav>
-        <a href="manage.html" style="margin-right:20px; text-decoration:none; font-weight:700; color:var(--dark);">Mitt Garage</a>
-        <a href="sell.html" style="background:var(--primary); color:white; padding:8px 20px; border-radius:20px; text-decoration:none; font-weight:700;">Sälj bil</a>
+        <a href="manage.html" style="margin-right:20px; text-decoration:none; color:var(--dark); font-weight:700;">Mitt Garage</a>
+        <a href="sell.html" style="background:var(--dark); color:white; padding:8px 15px; border-radius:8px; text-decoration:none;">Sälj bil</a>
     </nav>
 </header>
 
-<div class="search-bar-container">
-    <input type="text" id="mainSearch" class="search-input" placeholder="Sök märke, modell eller sökord..." oninput="instantSearch()">
-    <a href="filter.html" class="filter-trigger">⚙️ Anpassa sökning</a>
+<div class="search-strip">
+    <div class="input-group">
+        <label>Märke</label>
+        <select id="mainBrand">
+            <option value="all">Alla märken</option>
+            <option value="Volvo">Volvo</option>
+            <option value="Volkswagen">Volkswagen</option>
+            <option value="BMW">BMW</option>
+            <option value="Audi">Audi</option>
+            <option value="Mercedes-Benz">Mercedes-Benz</option>
+            <option value="Tesla">Tesla</option>
+            <option value="Toyota">Toyota</option>
+        </select>
+    </div>
+    <div class="input-group">
+        <label>Pris från</label>
+        <input type="number" id="minPrice" placeholder="0 kr">
+    </div>
+    <div class="input-group">
+        <label>Pris till</label>
+        <input type="number" id="maxPrice" placeholder="Ingen gräns">
+    </div>
+    <button class="btn-search" onclick="fastSearch()">SÖK</button>
+    <a href="filter.html" class="btn-filter">Fler filter</a>
 </div>
 
 <div class="results" id="carGrid"></div>
@@ -48,52 +75,54 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    let allCars = [];
+    let cars = [];
 
     async function load() {
         const snap = await getDocs(collection(db, "cars"));
-        allCars = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+        cars = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
         
-        // التحقق مما إذا كان المستخدم قادماً من صفحة الفلتر
-        const params = new URLSearchParams(window.location.search);
-        if(params.toString()) {
-            applyUrlFilters(params);
-        } else {
-            render(allCars);
-        }
+        // التحقق من وجود فلاتر قادمة من صفحة filter.html
+        const p = new URLSearchParams(window.location.search);
+        if (p.toString()) applyDeepFilters(p);
+        else render(cars);
     }
 
-    function applyUrlFilters(p) {
-        const brand = p.get('brand');
-        const model = p.get('model');
-        const kar = p.get('kar');
-        
-        const filtered = allCars.filter(c => {
-            return (!brand || brand === 'all' || c.brand === brand) &&
-                   (!model || model === 'all' || c.model === model) &&
-                   (!kar || kar === 'all' || c.karosseri === kar);
+    window.fastSearch = () => {
+        const b = document.getElementById('mainBrand').value;
+        const min = Number(document.getElementById('minPrice').value) || 0;
+        const max = Number(document.getElementById('maxPrice').value) || Infinity;
+
+        const filtered = cars.filter(c => 
+            (b === 'all' || c.brand === b) && 
+            (Number(c.price) >= min) && 
+            (Number(c.price) <= max)
+        );
+        render(filtered);
+    };
+
+    function applyDeepFilters(p) {
+        const filtered = cars.filter(c => {
+            return (!p.get('brand') || p.get('brand') === 'all' || c.brand === p.get('brand')) &&
+                   (!p.get('model') || p.get('model') === 'all' || c.model === p.get('model')) &&
+                   (!p.get('maxPrice') || Number(c.price) <= Number(p.get('maxPrice'))) &&
+                   (!p.get('kar') || p.get('kar') === 'all' || c.karosseri === p.get('kar'));
         });
         render(filtered);
     }
 
-    window.instantSearch = () => {
-        const val = document.getElementById('mainSearch').value.toLowerCase();
-        render(allCars.filter(c => c.brand.toLowerCase().includes(val) || c.model?.toLowerCase().includes(val)));
-    };
-
     function render(data) {
-        document.getElementById('carGrid').innerHTML = data.map(c => `
+        const grid = document.getElementById('carGrid');
+        grid.innerHTML = data.map(c => `
             <div class="car-card" onclick="location.href='details.html?id=${c.id}'">
                 <img src="${c.images?.[0] || ''}">
-                <div class="car-content">
-                    <div style="font-weight:800; font-size:18px;">${c.brand} ${c.model || ''}</div>
-                    <div style="color:gray; font-size:13px; margin:5px 0;">${c.year} | ${c.mileage} mil</div>
+                <div class="car-body">
+                    <div style="font-weight:800;">${c.brand} ${c.model || ''}</div>
+                    <div style="color:gray; font-size:12px; margin:5px 0;">${c.year} | ${c.mileage} mil</div>
                     <div class="price">${Number(c.price).toLocaleString()} kr</div>
                 </div>
             </div>
         `).join('');
     }
-
     load();
 </script>
 </body>
