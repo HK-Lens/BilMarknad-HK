@@ -1,255 +1,684 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BilMarknad-HK | Hem</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #f58220;
-            --dark: #111827;
-            --bg: #f4f6f9;
-            --white: #ffffff;
-            --border: #e5e7eb;
-            --text: #4b5563;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<title>BilMarknad-HK | Hem</title>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--dark);
-        }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-        /* ================= HEADER (ثابت) ================= */
-        header {
-            position: sticky; top: 0; z-index: 1000;
-            background: rgba(255,255,255,0.92);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 5%;
-            display: flex; align-items: center; justify-content: space-between;
-        }
+<style>
 
-        .logo {
-            text-decoration: none; font-size: 28px; font-weight: 800;
-            color: var(--dark); letter-spacing: -1px;
-        }
+:root{
+    --primary:#f58220;
+    --dark:#111827;
+    --bg:#f4f6f9;
+    --white:#ffffff;
+    --border:#e5e7eb;
+    --text:#4b5563;
+}
 
-        .logo span { color: var(--primary); }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        .navbar { display: flex; align-items: center; gap: 14px; }
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--dark);
+}
 
-        .nav-link {
-            text-decoration: none; color: var(--text);
-            font-weight: 700; transition: 0.2s;
-        }
+/* ================= HEADER ================= */
 
-        .btn-login {
-            background: white; border: 1px solid var(--border);
-            padding: 11px 18px; border-radius: 12px;
-            text-decoration: none; color: var(--dark); font-weight: 700;
-        }
+header{
+    position:sticky;
+    top:0;
+    z-index:1000;
 
-        .btn-sell {
-            background: linear-gradient(135deg, var(--primary), #ff9d4d);
-            color: white; padding: 11px 20px; border-radius: 12px;
-            text-decoration: none; font-weight: 800;
-            box-shadow: 0 8px 20px rgba(245,130,32,0.25);
-        }
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(10px);
 
-        /* ================= HERO (ثابت) ================= */
-        .hero { padding: 60px 5% 20px; text-align: center; }
-        .hero h1 { font-size: 48px; font-weight: 800; margin-bottom: 12px; }
-        .hero p { color: #6b7280; font-size: 17px; max-width: 700px; margin: auto; }
+    border-bottom:1px solid var(--border);
 
-        /* ================= SEARCH SECTION (واجهة البحث الثابتة) ================= */
-        .search-section { max-width: 1200px; margin: auto; padding: 20px 5% 40px; }
-        
-        .search-tabs { display: flex; gap: 5px; }
-        .tab {
-            border: none; padding: 14px 22px; border-radius: 14px 14px 0 0;
-            background: #e2e8f0; font-weight: 800; cursor: pointer; color: #64748b;
-        }
-        .tab.active { background: white; color: var(--dark); }
+    padding:16px 5%;
 
-        .search-box {
-            background: white; padding: 30px; border-radius: 0 20px 20px 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
 
-        .search-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px; align-items: end;
-        }
+.logo{
+    text-decoration:none;
+    font-size:28px;
+    font-weight:800;
+    color:var(--dark);
+    letter-spacing:-1px;
+}
 
-        .field { display: flex; flex-direction: column; gap: 8px; }
-        .field label { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
+.logo span{
+    color:var(--primary);
+}
 
-        .field select, .field input {
-            height: 50px; border: 1px solid var(--border); border-radius: 12px;
-            padding: 0 15px; font-size: 15px; background: #fcfcfc;
-        }
+.navbar{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
 
-        .search-btn {
-            height: 50px; border: none; border-radius: 12px;
-            background: var(--dark); color: white; font-weight: 800;
-            cursor: pointer; transition: 0.3s;
-        }
+.nav-link{
+    text-decoration:none;
+    color:var(--text);
+    font-weight:700;
+    transition:0.2s;
+}
 
-        .search-btn:hover { background: var(--primary); }
+.nav-link:hover{
+    color:var(--primary);
+}
 
-        .extra-filters { margin-top: 20px; display: flex; gap: 15px; font-size: 14px; }
-        .extra-filters a { text-decoration: none; color: var(--primary); font-weight: 700; }
+/* Login Button */
 
-        /* ================= RESULTS GRID ================= */
-        .results {
-            max-width: 1200px; margin: auto; padding: 20px 5% 80px;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px;
-        }
+.btn-login{
+    background:white;
+    border:1px solid var(--border);
 
-        .car-card {
-            background: white; border-radius: 20px; overflow: hidden;
-            border: 1px solid var(--border); cursor: pointer; transition: 0.3s;
-        }
+    padding:11px 18px;
 
-        .car-card img { width: 100%; height: 190px; object-fit: cover; }
-        .car-body { padding: 18px; }
-        .car-title { font-size: 18px; font-weight: 800; margin-bottom: 5px; }
-        .car-info { color: #64748b; font-size: 13px; margin-bottom: 12px; }
-        .price { font-size: 22px; font-weight: 800; color: var(--primary); }
+    border-radius:12px;
 
-        @media(max-width: 768px) {
-            .hero h1 { font-size: 32px; }
-            .search-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+    text-decoration:none;
+    color:var(--dark);
+
+    font-weight:700;
+
+    transition:0.25s;
+}
+
+.btn-login:hover{
+    background:#f3f4f6;
+    transform:translateY(-2px);
+}
+
+/* Sell Button */
+
+.btn-sell{
+    background:linear-gradient(135deg,var(--primary),#ff9d4d);
+
+    color:white;
+
+    padding:11px 20px;
+
+    border-radius:12px;
+
+    text-decoration:none;
+
+    font-weight:800;
+
+    box-shadow:0 8px 20px rgba(245,130,32,0.25);
+
+    transition:0.25s;
+}
+
+.btn-sell:hover{
+    transform:translateY(-2px);
+}
+
+/* ================= HERO ================= */
+
+.hero{
+    padding:70px 5% 30px;
+    text-align:center;
+}
+
+.hero h1{
+    font-size:52px;
+    font-weight:800;
+    margin-bottom:12px;
+}
+
+.hero p{
+    color:#6b7280;
+    font-size:17px;
+    max-width:750px;
+    margin:auto;
+    line-height:1.6;
+}
+
+/* ================= SEARCH SECTION ================= */
+
+.search-section{
+    max-width:1300px;
+    margin:auto;
+    padding:20px 5% 40px;
+}
+
+/* Tabs */
+
+.search-tabs{
+    display:flex;
+    gap:10px;
+    margin-bottom:0;
+}
+
+.tab{
+    border:none;
+    padding:16px 24px;
+
+    border-radius:18px 18px 0 0;
+
+    background:#e9edf2;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    color:#666;
+
+    transition:0.2s;
+}
+
+.tab.active{
+    background:white;
+    color:#111827;
+}
+
+/* Search Box */
+
+.search-box{
+    background:white;
+
+    padding:30px;
+
+    border-radius:0 24px 24px 24px;
+
+    box-shadow:0 12px 40px rgba(0,0,0,0.06);
+}
+
+/* Search Grid */
+
+.search-grid{
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(180px,1fr));
+
+    gap:18px;
+
+    align-items:end;
+}
+
+/* Fields */
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.field label{
+    font-size:12px;
+    font-weight:800;
+    color:#6b7280;
+    text-transform:uppercase;
+}
+
+/* Inputs */
+
+.field input,
+.field select{
+    height:54px;
+
+    border:1px solid #dfe3e8;
+
+    border-radius:14px;
+
+    padding:0 15px;
+
+    font-size:15px;
+
+    background:#fafafa;
+
+    transition:0.2s;
+}
+
+.field input:focus,
+.field select:focus{
+    outline:none;
+
+    border-color:var(--primary);
+
+    background:white;
+
+    box-shadow:0 0 0 4px rgba(245,130,32,0.12);
+}
+
+/* Search Button */
+
+.search-btn{
+    height:54px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:linear-gradient(135deg,var(--primary),#ff9d4d);
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:0.25s;
+
+    box-shadow:0 10px 25px rgba(245,130,32,0.25);
+}
+
+.search-btn:hover{
+    transform:translateY(-2px);
+}
+
+/* Extra Filters */
+
+.extra-filters{
+    margin-top:24px;
+
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+
+    align-items:center;
+}
+
+.extra-filters a{
+    text-decoration:none;
+    color:#444;
+    font-weight:700;
+    transition:0.2s;
+}
+
+.extra-filters a:hover{
+    color:var(--primary);
+}
+
+.extra-filters span{
+    color:#bbb;
+}
+
+/* ================= RESULTS ================= */
+
+.results{
+    max-width:1300px;
+    margin:auto;
+
+    padding:20px 5% 70px;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fill,minmax(280px,1fr));
+
+    gap:25px;
+}
+
+/* Car Card */
+
+.car-card{
+    background:white;
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    border:1px solid #eee;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+.car-card:hover{
+    transform:translateY(-6px);
+
+    box-shadow:0 18px 35px rgba(0,0,0,0.08);
+}
+
+.car-card img{
+    width:100%;
+    height:200px;
+    object-fit:cover;
+}
+
+.car-body{
+    padding:18px;
+}
+
+.car-title{
+    font-size:18px;
+    font-weight:800;
+    margin-bottom:6px;
+}
+
+.car-info{
+    color:#6b7280;
+    font-size:13px;
+    margin-bottom:12px;
+}
+
+.price{
+    font-size:24px;
+    font-weight:800;
+    color:var(--primary);
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:768px){
+
+    header{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    .navbar{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    .hero h1{
+        font-size:36px;
+    }
+
+    .search-box{
+        padding:20px;
+    }
+
+    .search-grid{
+        grid-template-columns:1fr;
+    }
+
+    .search-btn{
+        width:100%;
+    }
+
+}
+
+</style>
 </head>
 
 <body>
 
+<!-- ================= HEADER ================= -->
+
 <header>
-    <a href="index.html" class="logo">BILMARKNAD<span>HK</span></a>
+
+    <a href="index.html" class="logo">
+        BILMARKNAD<span>HK</span>
+    </a>
+
     <nav class="navbar">
-        <a href="manage.html" class="nav-link">Mitt Garage</a>
-        <a href="login.html" class="btn-login" id="authBtn">Logga in</a>
-        <a href="sell.html" class="btn-sell">Sälj bil</a>
+
+        <a href="manage.html" class="nav-link">
+            Mitt Garage
+        </a>
+
+        <a href="login.html" class="btn-login">
+            Logga in
+        </a>
+
+        <a href="sell.html" class="btn-sell">
+            Sälj bil
+        </a>
+
     </nav>
+
 </header>
 
+<!-- ================= HERO ================= -->
+
 <section class="hero">
+
     <h1>Hitta din nästa bil</h1>
-    <p>Sveriges moderna marknadsplats för nya och begagnade bilar.</p>
+
+    <p>
+        Sveriges moderna marknadsplats för nya och begagnade bilar.
+        Sök enkelt bland tusentals annonser från hela Sverige.
+    </p>
+
 </section>
+
+<!-- ================= SEARCH ================= -->
 
 <section class="search-section">
+
+    <!-- Tabs -->
+
     <div class="search-tabs">
-        <button class="tab active">Begagnade bilar</button>
-        <button class="tab">Nya bilar</button>
+
+        <button class="tab active">
+            Begagnade bilar
+        </button>
+
+        <button class="tab">
+            Nya bilar
+        </button>
+
     </div>
+
+    <!-- Search Box -->
 
     <div class="search-box">
+
         <div class="search-grid">
+
+            <!-- Type -->
+
             <div class="field">
+
+                <label>Fordonstyp</label>
+
+                <select>
+                    <option>Personbil</option>
+                    <option>SUV</option>
+                    <option>Transportbil</option>
+                    <option>Elbil</option>
+                </select>
+
+            </div>
+
+            <!-- Brand -->
+
+            <div class="field">
+
                 <label>Märke</label>
-                <select id="brandSelect">
+
+                <select id="mainBrand">
+
                     <option value="all">Alla märken</option>
+
+                    <option value="Volvo">Volvo</option>
+
+                    <option value="Volkswagen">Volkswagen</option>
+
+                    <option value="BMW">BMW</option>
+
+                    <option value="Audi">Audi</option>
+
+                    <option value="Mercedes-Benz">Mercedes-Benz</option>
+
+                    <option value="Tesla">Tesla</option>
+
+                    <option value="Toyota">Toyota</option>
+
                 </select>
+
             </div>
 
+            <!-- Model -->
+
             <div class="field">
+
                 <label>Modell</label>
-                <select id="modelSelect">
-                    <option value="all">Alla modeller</option>
-                </select>
+
+                <input type="text" placeholder="Ex. XC60">
+
             </div>
+
+            <!-- Price -->
 
             <div class="field">
+
                 <label>Maxpris</label>
-                <input type="number" id="maxPrice" placeholder="Ex. 200 000">
+
+                <input type="number" id="maxPrice" placeholder="300000">
+
             </div>
 
-            <button class="search-btn" onclick="applySearch()">SÖK BILAR</button>
+            <!-- Search Button -->
+
+            <button class="search-btn" onclick="fastSearch()">
+
+                🔍 SÖK
+
+            </button>
+
         </div>
+
+        <!-- Extra Filters -->
 
         <div class="extra-filters">
-            <a href="filter.html">⚙️ Fler filter</a>
-            <a href="#">Elbil</a>
-            <a href="#">Hybrid</a>
+
+            <a href="filter.html">
+                Fler filter
+            </a>
+
+            <span>|</span>
+
+            <a href="#">
+                Elbil
+            </a>
+
+            <a href="#">
+                Hybrid
+            </a>
+
+            <a href="#">
+                Automat
+            </a>
+
+            <a href="#">
+                4WD
+            </a>
+
         </div>
+
     </div>
+
 </section>
 
-<div class="results" id="carGrid">
-    </div>
+<!-- ================= RESULTS ================= -->
+
+<div class="results" id="carGrid"></div>
+
+<!-- ================= FIREBASE ================= -->
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import firebaseConfig from './firebase-config.js';
-    import { carData } from './cars-data.js'; // استيراد قاعدة بيانات الماركات
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    let allCars = [];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
-    // 1. إعداد قائمة الماركات والموديلات الذكية
-    const brandSelect = document.getElementById('brandSelect');
-    const modelSelect = document.getElementById('modelSelect');
+import {
+    getFirestore,
+    collection,
+    getDocs
+}
+from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    Object.keys(carData).sort().forEach(brand => {
-        brandSelect.innerHTML += `<option value="${brand}">${brand}</option>`;
-    });
+import firebaseConfig from './firebase-config.js';
 
-    brandSelect.onchange = () => {
-        const brand = brandSelect.value;
-        modelSelect.innerHTML = '<option value="all">Alla modeller</option>';
-        if (carData[brand]) {
-            carData[brand].sort().forEach(model => {
-                modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
-            });
-        }
-    };
+const app = initializeApp(firebaseConfig);
 
-    // 2. تحميل البيانات من Firebase
-    async function load() {
-        const snap = await getDocs(collection(db, "cars"));
-        allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        render(allCars);
-    }
+const db = getFirestore(app);
 
-    // 3. وظيفة البحث
-    window.applySearch = () => {
-        const brand = brandSelect.value;
-        const model = modelSelect.value;
-        const max = Number(document.getElementById('maxPrice').value) || Infinity;
+let cars = [];
 
-        const filtered = allCars.filter(c => 
-            (brand === 'all' || c.brand === brand) &&
-            (model === 'all' || c.model === model) &&
-            (Number(c.price) <= max)
-        );
-        render(filtered);
-    };
+/* ================= LOAD ================= */
 
-    // 4. عرض البطاقات (التصميم ثابت هنا)
-    function render(data) {
-        const grid = document.getElementById('carGrid');
-        grid.innerHTML = data.map(c => `
-            <div class="car-card" onclick="location.href='details.html?id=${c.id}'">
-                <img src="${c.images?.[0] || 'https://via.placeholder.com/400x250'}">
-                <div class="car-body">
-                    <div class="car-title">${c.brand} ${c.model || ''}</div>
-                    <div class="car-info">${c.year} | ${c.mileage} mil</div>
-                    <div class="price">${Number(c.price).toLocaleString()} kr</div>
+async function load(){
+
+    const snap = await getDocs(collection(db,"cars"));
+
+    cars = snap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+
+    render(cars);
+}
+
+/* ================= SEARCH ================= */
+
+window.fastSearch = () => {
+
+    const brand =
+        document.getElementById('mainBrand').value;
+
+    const max =
+        Number(document.getElementById('maxPrice').value)
+        || Infinity;
+
+    const filtered = cars.filter(c =>
+
+        (brand === 'all' || c.brand === brand)
+        &&
+        (Number(c.price) <= max)
+
+    );
+
+    render(filtered);
+};
+
+/* ================= RENDER ================= */
+
+function render(data){
+
+    const grid =
+        document.getElementById('carGrid');
+
+    grid.innerHTML = data.map(c => `
+
+        <div class="car-card"
+             onclick="location.href='details.html?id=${c.id}'">
+
+            <img src="${c.images?.[0] || ''}">
+
+            <div class="car-body">
+
+                <div class="car-title">
+                    ${c.brand} ${c.model || ''}
                 </div>
-            </div>
-        `).join('');
-    }
 
-    load();
+                <div class="car-info">
+                    ${c.year} | ${c.mileage} mil
+                </div>
+
+                <div class="price">
+                    ${Number(c.price).toLocaleString()} kr
+                </div>
+
+            </div>
+
+        </div>
+
+    `).join('');
+}
+
+load();
+
 </script>
 
 </body>
