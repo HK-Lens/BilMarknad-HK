@@ -3,92 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BilMarknad-HK | Advanced Search</title>
+    <title>BilMarknad-HK | Hitta din drömbil</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f58220; --dark: #1a1a1a; --bg: #f4f4f4; --white: #ffffff; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg); color: var(--dark); }
+        :root { --primary: #f58220; --dark: #1a1a1a; --bg: #f4f4f4; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg); color: var(--dark); direction: ltr; }
         
+        /* Header */
         header { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
         .logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        /* منطقة البحث الذكي */
+        /* Search Section */
         .search-area { background: white; padding: 30px 5%; border-bottom: 1px solid #ddd; }
-        .filter-grid { 
-            max-width: 1100px; margin: auto; display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; 
-        }
-
+        .filter-grid { max-width: 1100px; margin: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
         .filter-group { display: flex; flex-direction: column; gap: 8px; }
-        .filter-group label { font-size: 13px; font-weight: 700; color: #666; }
-        select, input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; outline: none; }
+        .filter-group label { font-size: 13px; font-weight: 700; color: #666; text-transform: uppercase; }
+        select, input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; outline: none; background: #fff; }
 
-        /* أيقونات هياكل السيارات - تصميم Bytbil */
-        .body-types { 
-            grid-column: 1 / -1; display: flex; justify-content: center; gap: 20px; 
-            flex-wrap: wrap; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;
-        }
-        .type-item { 
-            text-align: center; cursor: pointer; padding: 10px; border-radius: 10px; 
-            transition: 0.2s; border: 2px solid transparent; min-width: 80px;
-        }
-        .type-item:hover, .type-item.active { border-color: var(--primary); background: #fff5eb; }
+        /* Body Types Icons */
+        .body-types { grid-column: 1 / -1; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+        .type-item { text-align: center; cursor: pointer; padding: 10px; border-radius: 10px; transition: 0.2s; border: 2px solid transparent; min-width: 80px; }
+        .type-item.active { border-color: var(--primary); background: #fff5eb; }
         .type-item img { width: 50px; display: block; margin: 0 auto 5px; }
         .type-item span { font-size: 12px; font-weight: 600; }
 
-        /* أزرار الأكشن */
-        .search-actions { 
-            max-width: 1100px; margin: 30px auto 0; display: flex; 
-            justify-content: space-between; align-items: center; 
-        }
-        .btn-search { 
-            background: var(--primary); color: white; border: none; 
-            padding: 15px 40px; border-radius: 6px; font-weight: 800; 
-            font-size: 18px; cursor: pointer; box-shadow: 0 4px 10px rgba(245, 130, 32, 0.3);
-        }
+        /* Actions */
+        .search-actions { max-width: 1100px; margin: 30px auto 0; display: flex; justify-content: space-between; align-items: center; }
+        .btn-search { background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 6px; font-weight: 800; font-size: 18px; cursor: pointer; }
 
-        /* شبكة النتائج */
+        /* Results */
         .results-section { padding: 40px 5%; max-width: 1200px; margin: auto; }
         .car-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
         .car-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #ddd; transition: 0.3s; cursor: pointer; }
         .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .car-card img { width: 100%; height: 180px; object-fit: cover; }
         .car-content { padding: 15px; }
+        .price { font-size: 22px; font-weight: 800; color: var(--primary); }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BILMARKNAD<span>HK</span></a>
-    <div>
-        <a href="manage.html" style="margin-right:20px; text-decoration:none; font-weight:700;">Mitt Garage</a>
-        <a href="sell.html" style="background:var(--primary); color:white; padding:8px 20px; border-radius:20px; text-decoration:none; font-weight:700;">Sälj bil</a>
-    </div>
+    <nav>
+        <a href="manage.html" style="margin-right:20px; text-decoration:none; font-weight:700; color:var(--dark);">Mitt Garage</a>
+        <a href="sell.html" style="background:var(--primary); color:white; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:700;">Sälj bil</a>
+    </nav>
 </header>
 
 <section class="search-area">
     <div class="filter-grid">
         <div class="filter-group" style="grid-column: 1 / -1;">
-            <label>FRITEXT (بحث حر)</label>
-            <input type="text" id="freeText" placeholder="Sök på modell, utrustning, färg..." oninput="smartSearch()">
+            <label>Sök på modell eller utrustning</label>
+            <input type="text" id="freeText" placeholder="Skriv t.ex. AWD, Dragkrok, Automat..." oninput="smartSearch()">
         </div>
         
         <div class="filter-group">
-            <label>MÄRKE (الماركة)</label>
-            <select id="brandSel" onchange="smartSearch()">
+            <label>Märke</label>
+            <select id="brandSel" onchange="updateModels()">
                 <option value="all">Alla märken</option>
                 <option value="Volvo">Volvo</option>
+                <option value="Volkswagen">Volkswagen</option>
                 <option value="BMW">BMW</option>
                 <option value="Audi">Audi</option>
                 <option value="Tesla">Tesla</option>
                 <option value="Toyota">Toyota</option>
-                <option value="Kia">Kia</option>
+                <option value="Mercedes-Benz">Mercedes-Benz</option>
             </select>
         </div>
 
         <div class="filter-group">
-            <label>PRIS (السعر)</label>
+            <label>Modell</label>
+            <select id="modelSel" onchange="smartSearch()">
+                <option value="all">Välj märke först</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Pris (kr)</label>
             <div style="display:flex; gap:5px;">
                 <input type="number" id="priceFrom" placeholder="Från" oninput="smartSearch()">
                 <input type="number" id="priceTo" placeholder="Till" oninput="smartSearch()">
@@ -96,10 +89,10 @@
         </div>
 
         <div class="filter-group">
-            <label>ÅRSMODELL (الموديل)</label>
+            <label>Årsmodell</label>
             <div style="display:flex; gap:5px;">
-                <input type="number" id="yearFrom" placeholder="Från" oninput="smartSearch()">
-                <input type="number" id="yearTo" placeholder="Till" oninput="smartSearch()">
+                <input type="number" id="yearFrom" placeholder="Min" oninput="smartSearch()">
+                <input type="number" id="yearTo" placeholder="Max" oninput="smartSearch()">
             </div>
         </div>
 
@@ -110,22 +103,17 @@
             </div>
             <div class="type-item" onclick="setBody('SUV', this)">
                 <img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png" alt="SUV">
-                <span>SUV</span>
             </div>
             <div class="type-item" onclick="setBody('Kombi', this)">
                 <img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png" alt="Kombi">
                 <span>Kombi</span>
             </div>
-            <div class="type-item" onclick="setBody('Cab', this)">
-                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202936.png" alt="Cab">
-                <span>Cab</span>
-            </div>
         </div>
     </div>
 
     <div class="search-actions">
-        <span id="resultCount" style="font-weight:700; color:#666;">Hittade 0 fordon</span>
-        <button class="btn-search" onclick="smartSearch()">VISA RESULTAT</button>
+        <span id="resultCount" style="font-weight:700; color:#666;">Hittade 0 bilar</span>
+        <button class="btn-search" onclick="smartSearch()">SÖK BILAR</button>
     </div>
 </section>
 
@@ -140,6 +128,18 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // Smart Model Database
+    const modelsData = {
+        "Volvo": ["V60", "V90", "XC40", "XC60", "XC90", "V40"],
+        "Volkswagen": ["Golf", "Passat", "Tiguan", "ID.3", "ID.4", "Polo"],
+        "BMW": ["3-serie", "5-serie", "X1", "X3", "X5", "i3"],
+        "Audi": ["A3", "A4", "A6", "Q3", "Q5", "e-tron"],
+        "Tesla": ["Model 3", "Model Y", "Model S", "Model X"],
+        "Toyota": ["Corolla", "RAV4", "Yaris", "Auris"],
+        "Mercedes-Benz": ["C-Klass", "E-Klass", "GLC", "A-Klass"]
+    };
+
     let cars = [];
     let activeBody = 'all';
 
@@ -149,49 +149,18 @@
         smartSearch();
     }
 
-    window.setBody = (type, el) => {
-        document.querySelectorAll('.type-item').forEach(i => i.classList.remove('active'));
-        if(activeBody === type) { activeBody = 'all'; } 
-        else { activeBody = type; el.classList.add('active'); }
+    // Update Model List based on Brand
+    window.updateModels = () => {
+        const brand = document.getElementById('brandSel').value;
+        const modelSel = document.getElementById('modelSel');
+        modelSel.innerHTML = '<option value="all">Alla modeller</option>';
+        
+        if (modelsData[brand]) {
+            modelsData[brand].forEach(m => {
+                modelSel.innerHTML += `<option value="${m}">${m}</option>`;
+            });
+        }
         smartSearch();
     };
 
-    window.smartSearch = () => {
-        const text = document.getElementById('freeText').value.toLowerCase();
-        const brand = document.getElementById('brandSel').value;
-        const pFrom = document.getElementById('priceFrom').value;
-        const pTo = document.getElementById('priceTo').value;
-        const yFrom = document.getElementById('yearFrom').value;
-        const yTo = document.getElementById('yearTo').value;
-
-        const filtered = cars.filter(c => {
-            const mText = !text || c.brand.toLowerCase().includes(text) || (c.model && c.model.toLowerCase().includes(text));
-            const mBrand = brand === 'all' || c.brand === brand;
-            const mPrice = (!pFrom || c.price >= pFrom) && (!pTo || c.price <= pTo);
-            const mYear = (!yFrom || c.year >= yFrom) && (!yTo || c.year <= yTo);
-            const mBody = activeBody === 'all' || c.bodyType === activeBody;
-            return mText && mBrand && mPrice && mYear && mBody;
-        });
-
-        document.getElementById('resultCount').innerText = `Hittade ${filtered.length} fordon`;
-        render(filtered);
-    };
-
-    function render(data) {
-        const grid = document.getElementById('carGrid');
-        grid.innerHTML = data.map(c => `
-            <div class="car-card" onclick="location.href='details.html?id=${c.id}'">
-                <img src="${c.images?.[0] || ''}">
-                <div class="car-content">
-                    <div style="font-weight:800; font-size:18px;">${c.brand}</div>
-                    <div style="color:gray; font-size:13px; margin:5px 0;">${c.year} | ${c.mileage} mil</div>
-                    <div style="font-size:22px; font-weight:800; color:var(--primary);">${Number(c.price).toLocaleString()} kr</div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    load();
-</script>
-</body>
-</html>
+    window.
