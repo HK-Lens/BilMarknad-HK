@@ -1,26 +1,94 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detaljer | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); padding-bottom: 50px; }
+        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .logo { text-decoration: none; font-size: 20px; font-weight: 900; color: var(--dark); }
+        .logo span { color: var(--primary); }
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 1fr; gap: 30px; }
+        @media (min-width: 800px) { .container { grid-template-columns: 1.6fr 1fr; } }
+        .card { background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
+        .btn-contact { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; margin-top: 10px; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+<header><a href="index.html" class="logo">BIL<span>HK</span></a></header>
+<div class="container" id="details">Laddar uppgifter...</div>
+
 <script type="module">
-    // ... (أكواد الاستيراد والتعريف) ...
-    window.sendInternalMessage = async (e, car) => {
-        e.preventDefault();
-        if (!currentUser) { alert("Logga in först!"); return; }
-        const text = document.getElementById('msgText').value;
-        const btn = document.getElementById('sendMsgBtn');
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import firebaseConfig from './firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const carId = new URLSearchParams(window.location.search).get('id');
+    let currentUser = null;
+    let car = null;
+
+    onAuthStateChanged(auth, user => { currentUser = user; load(); });
+
+    async function load() {
+        const snap = await getDoc(doc(db, "cars", carId));
+        if (!snap.exists()) return;
+        car = snap.data();
+        
+        const phoneSection = (!car.hidePhone && car.phone) ? `
+            <a href="tel:${car.phone}" class="btn-contact" style="background:#22c55e; color:white;">📞 Ring ${car.phone}</a>
+            <a href="https://wa.me/${car.phone.replace(/\s+/g,'')}" class="btn-contact" style="background:#25d366; color:white;">💬 WhatsApp</a>
+        ` : `<p style="text-align:center; font-size:12px; color:#94a3b8;">Endast internmeddelanden</p>`;
+
+        document.getElementById('details').innerHTML = `
+            <div>
+                <img src="${car.images?.[0]}" style="width:100%; border-radius:20px; height:350px; object-fit:cover;">
+                <div class="card" style="margin-top:20px;">
+                    <h1 style="font-weight:900;">${car.brand} ${car.model}</h1>
+                    <div style="font-size:28px; color:var(--primary); font-weight:900; margin:10px 0;">${Number(car.price).toLocaleString()} kr</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
+                        <div style="background:#f1f5f9; padding:10px; border-radius:10px;"><b>År:</b> ${car.year}</div>
+                        <div style="background:#f1f5f9; padding:10px; border-radius:10px;"><b>Mil:</b> ${car.mileage}</div>
+                        <div style="background:#f1f5f9; padding:10px; border-radius:10px;"><b>Bränsle:</b> ${car.fuelType}</div>
+                        <div style="background:#f1f5f9; padding:10px; border-radius:10px;"><b>Reg-nr:</b> ${car.regNr}</div>
+                    </div>
+                    <p style="line-height:1.6;">${car.description}</p>
+                </div>
+            </div>
+            <aside>
+                <div class="card">
+                    <h3 style="margin-bottom:15px;">Kontakta säljaren</h3>
+                    ${phoneSection}
+                    <div style="margin-top:20px; border-top:1px solid #eee; padding-top:20px;">
+                        <textarea id="msg" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;" rows="4" placeholder="Fråga säljaren något..."></textarea>
+                        <button onclick="send()" id="sBtn" class="btn-contact" style="background:var(--dark); color:white;">Skicka meddelande</button>
+                    </div>
+                </div>
+            </aside>`;
+    }
+
+    window.send = async () => {
+        if (!currentUser) return alert("Logga in först!");
+        const txt = document.getElementById('msg').value;
+        const btn = document.getElementById('sBtn');
         btn.disabled = true;
 
         try {
             await addDoc(collection(db, "messages"), {
-                carId: carId,
-                carTitle: `${car.brand} ${car.model}`,
-                carImage: car.images?.[0] || '', // التأكد من إرسال الصورة
-                senderId: currentUser.uid,
-                senderName: currentUser.displayName || currentUser.email.split('@')[0],
-                senderEmail: currentUser.email,
-                recipientId: car.sellerId,
-                message: text,
-                timestamp: serverTimestamp()
+                carId: carId, carTitle: `${car.brand} ${car.model}`, carImage: car.images[0],
+                senderId: currentUser.uid, senderName: currentUser.displayName || currentUser.email.split('@')[0], senderEmail: currentUser.email,
+                recipientId: car.sellerId, message: txt, timestamp: serverTimestamp()
             });
-            alert("Meddelande skickat!");
-            document.getElementById('contactForm').reset();
-        } catch (err) { alert("Error!"); } finally { btn.disabled = false; }
+            alert("Skickat!");
+            document.getElementById('msg').value = "";
+        } catch (e) { alert("Fel!"); } finally { btn.disabled = false; }
     };
 </script>
+</body>
+</html>
