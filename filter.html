@@ -6,99 +6,101 @@
     <title>Sökfilter | BilMarknad-HK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f58220; --dark: #1a1a1a; --bg: #ffffff; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); }
-        .filter-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: white; z-index: 100; }
-        .close-btn { text-decoration: none; font-size: 24px; color: var(--dark); font-weight: 300; }
+        :root { --primary: #f58220; --dark: #1a1a1a; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: #fff; padding-bottom: 100px; }
+        .header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 100; }
+        .content { padding: 20px; max-width: 600px; margin: auto; }
+        .label { font-size: 12px; font-weight: 800; text-transform: uppercase; color: #666; margin: 20px 0 10px; }
+        select, input { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; margin-bottom: 15px; outline: none; }
         
-        .filter-content { padding: 20px; max-width: 600px; margin: auto; }
-        .section-title { font-size: 14px; font-weight: 800; text-transform: uppercase; color: #666; margin: 25px 0 15px; letter-spacing: 1px; }
-        
-        .select-box { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; background: #f9f9f9; margin-bottom: 15px; outline: none; }
-        
-        /* أيقونات الهيكل */
-        .karosseri-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .kar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .kar-item { border: 1px solid #ddd; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .kar-item img { width: 40px; margin-bottom: 8px; }
-        .kar-item span { font-size: 12px; font-weight: 600; display: block; }
-        .kar-item.active { border-color: var(--primary); background: #fff5eb; box-shadow: 0 0 0 1px var(--primary); }
+        .kar-item.active { border-color: var(--primary); background: #fff5eb; }
+        .kar-item img { width: 40px; margin-bottom: 5px; }
 
-        .footer-action { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; }
+        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; }
         .btn-apply { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: 800; font-size: 18px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="filter-header">
-    <a href="index.html" class="close-btn">✕</a>
-    <h2 style="margin:0; font-size:18px;">Sökfilter</h2>
-    <span style="color:var(--primary); font-weight:700; cursor:pointer;" onclick="reset()">Rensa</span>
+<div class="header">
+    <a href="index.html" style="text-decoration:none; color:#000; font-size:24px;">✕</a>
+    <h2 style="margin:0; font-size:18px;">Filtrera sökning</h2>
+    <span style="color:var(--primary); font-weight:700;" onclick="location.reload()">Rensa</span>
 </div>
 
-<div class="filter-content">
-    <div class="section-title">Fordon</div>
-    <select id="brandSel" class="select-box" onchange="updateModels()">
+<div class="content">
+    <div class="label">Märke & Modell</div>
+    <select id="brand" onchange="updateModels()">
         <option value="all">Alla märken</option>
         <option value="Volvo">Volvo</option>
-        <option value="Mercedes-Benz">Mercedes-Benz</option>
         <option value="BMW">BMW</option>
+        <option value="Mercedes-Benz">Mercedes-Benz</option>
         <option value="Audi">Audi</option>
         <option value="Tesla">Tesla</option>
         <option value="Volkswagen">Volkswagen</option>
+        <option value="Toyota">Toyota</option>
+    </select>
+    <select id="model"><option value="all">Alla modeller</option></select>
+
+    <div class="label">Pris (kr)</div>
+    <input type="number" id="maxPrice" placeholder="Maxpris">
+
+    <div class="label">Årsmodell</div>
+    <div style="display:flex; gap:10px;">
+        <input type="number" id="yFrom" placeholder="Från">
+        <input type="number" id="yTo" placeholder="Till">
+    </div>
+
+    <div class="label">Drivmedel</div>
+    <select id="fuel">
+        <option value="all">Alla</option>
+        <option value="Bensin">Bensin</option>
+        <option value="Diesel">Diesel</option>
+        <option value="El">El</option>
+        <option value="Hybrid">Laddhybrid</option>
     </select>
 
-    <select id="modelSel" class="select-box">
-        <option value="all">Alla modeller</option>
-    </select>
-
-    <div class="section-title">Karosserityp</div>
-    <div class="karosseri-grid">
+    <div class="label">Karosserityp</div>
+    <div class="kar-grid">
         <div class="kar-item" onclick="setKar('Sedan', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202926.png"><span>Sedan</span></div>
         <div class="kar-item" onclick="setKar('SUV', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png"><span>SUV</span></div>
         <div class="kar-item" onclick="setKar('Kombi', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png"><span>Kombi</span></div>
     </div>
+</div>
 
-    <div class="section-title">Pris & Mil</div>
-    <input type="number" id="pTo" class="select-box" placeholder="Maxpris (kr)">
-    <input type="number" id="mTo" class="select-box" placeholder="Max miltal (mil)">
-
-    <div style="height:100px;"></div> </div>
-
-<div class="footer-action">
-    <button class="btn-apply" onclick="apply()">Visa fordon</button>
+<div class="footer">
+    <button class="btn-apply" onclick="apply()">Visa resultat</button>
 </div>
 
 <script>
-    const models = {
-        "Volvo": ["V60", "XC60", "XC90"],
-        "Mercedes-Benz": ["C-Klass", "E-Klass", "GLC"],
-        "BMW": ["3-serie", "5-serie", "X5"],
-        "Tesla": ["Model 3", "Model Y"]
+    const data = {
+        "Volvo": ["V60", "V90", "XC60", "XC90"],
+        "BMW": ["3-serie", "5-serie", "X5", "i4"],
+        "Mercedes-Benz": ["C-Klass", "E-Klass", "GLC", "EQS"],
+        "Tesla": ["Model 3", "Model Y", "Model S"]
     };
 
     let selectedKar = 'all';
 
     function updateModels() {
-        const b = document.getElementById('brandSel').value;
-        const mSel = document.getElementById('modelSel');
-        mSel.innerHTML = '<option value="all">Alla modeller</option>';
-        if(models[b]) models[b].forEach(m => mSel.innerHTML += `<option value="${m}">${m}</option>`);
+        const b = document.getElementById('brand').value;
+        const m = document.getElementById('model');
+        m.innerHTML = '<option value="all">Alla modeller</option>';
+        if(data[b]) data[b].forEach(mod => m.innerHTML += `<option value="${mod}">${mod}</option>`);
     }
 
     function setKar(type, el) {
         document.querySelectorAll('.kar-item').forEach(i => i.classList.remove('active'));
-        selectedKar = type;
-        el.classList.add('active');
+        selectedKar = type; el.classList.add('active');
     }
 
     function apply() {
-        const brand = document.getElementById('brandSel').value;
-        const model = document.getElementById('modelSel').value;
-        window.location.href = `index.html?brand=${brand}&model=${model}&kar=${selectedKar}`;
-    }
-
-    function reset() {
-        location.reload();
+        const brand = document.getElementById('brand').value;
+        const model = document.getElementById('model').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        window.location.href = `index.html?brand=${brand}&model=${model}&maxPrice=${maxPrice}&kar=${selectedKar}`;
     }
 </script>
 </body>
