@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sökfilter | BilMarknad-HK</title>
+<title>Bilfilter | BilMarknad-HK</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -14,10 +14,9 @@
 :root{
     --primary:#f58220;
     --dark:#111827;
-    --text:#4b5563;
+    --text:#6b7280;
     --border:#e5e7eb;
-    --bg:#f4f6f9;
-    --white:#ffffff;
+    --bg:#f5f7fb;
 }
 
 *{
@@ -30,7 +29,6 @@ body{
     font-family:'Inter',sans-serif;
     background:var(--bg);
     color:var(--dark);
-    padding-bottom:120px;
 }
 
 /* ================= HEADER ================= */
@@ -41,97 +39,109 @@ body{
     top:0;
     z-index:1000;
 
-    background:rgba(255,255,255,0.92);
-
-    backdrop-filter:blur(10px);
+    background:white;
 
     border-bottom:1px solid var(--border);
 
-    padding:18px 20px;
+    padding:18px 25px;
 
     display:flex;
     align-items:center;
     justify-content:space-between;
 }
 
-.header h2{
-    font-size:18px;
-    font-weight:800;
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:15px;
 }
 
 .close-btn{
     text-decoration:none;
-    color:var(--dark);
     font-size:28px;
-    font-weight:300;
+    color:#111;
+}
+
+.header h1{
+    font-size:22px;
+    font-weight:800;
 }
 
 .reset-btn{
     color:var(--primary);
     font-weight:700;
     cursor:pointer;
-    transition:0.2s;
 }
 
-.reset-btn:hover{
-    opacity:0.7;
+/* ================= LAYOUT ================= */
+
+.layout{
+
+    display:grid;
+
+    grid-template-columns:320px 1fr;
+
+    min-height:calc(100vh - 75px);
 }
 
-/* ================= CONTENT ================= */
+/* ================= SIDEBAR ================= */
 
-.content{
-    max-width:760px;
-    margin:auto;
-    padding:25px 20px;
-}
+.sidebar{
 
-/* Section Card */
-
-.card{
     background:white;
-    border-radius:24px;
-    padding:24px;
-    margin-bottom:20px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.04);
+
+    border-right:1px solid var(--border);
+
+    padding:25px;
+
+    overflow-y:auto;
 }
 
-/* Labels */
+/* ================= FILTER BLOCK ================= */
 
-.label{
-    font-size:12px;
+.filter-block{
+    margin-bottom:28px;
+}
+
+.filter-title{
+
+    font-size:13px;
+
     font-weight:800;
+
     text-transform:uppercase;
+
     color:#6b7280;
-    margin-bottom:10px;
+
+    margin-bottom:14px;
+
     letter-spacing:0.5px;
 }
 
 /* Inputs */
 
-input,
-select{
+select,
+input{
 
     width:100%;
 
-    height:56px;
+    height:52px;
 
     border:1px solid var(--border);
 
-    border-radius:16px;
+    border-radius:14px;
 
-    padding:0 16px;
+    padding:0 14px;
 
     font-size:15px;
 
     background:#fafafa;
 
     transition:0.2s;
-
-    margin-bottom:14px;
 }
 
-input:focus,
-select:focus{
+select:focus,
+input:focus{
 
     outline:none;
 
@@ -144,31 +154,58 @@ select:focus{
 
 /* Double Inputs */
 
-.row{
+.double{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:14px;
+    gap:12px;
 }
 
-/* ================= BODY TYPE ================= */
+/* ================= CHECKBOX ================= */
+
+.checkbox-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.checkbox-item{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    font-size:15px;
+
+    cursor:pointer;
+}
+
+.checkbox-item input{
+    width:18px;
+    height:18px;
+}
+
+/* ================= BODY TYPES ================= */
 
 .kar-grid{
+
     display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:14px;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:12px;
 }
 
 .kar-item{
 
-    border:1px solid #e5e7eb;
+    border:1px solid var(--border);
 
-    border-radius:20px;
+    border-radius:18px;
 
-    background:white;
-
-    padding:18px 10px;
+    padding:18px 12px;
 
     text-align:center;
+
+    background:white;
 
     cursor:pointer;
 
@@ -176,8 +213,7 @@ select:focus{
 }
 
 .kar-item:hover{
-    transform:translateY(-3px);
-    box-shadow:0 10px 20px rgba(0,0,0,0.06);
+    transform:translateY(-2px);
 }
 
 .kar-item.active{
@@ -190,112 +226,176 @@ select:focus{
 }
 
 .kar-item img{
-    width:52px;
-    height:52px;
+    width:55px;
+    height:55px;
     object-fit:contain;
     margin-bottom:10px;
 }
 
 .kar-item span{
-    display:block;
     font-size:14px;
     font-weight:700;
 }
 
-/* ================= TAGS ================= */
+/* ================= CONTENT ================= */
 
-.quick-tags{
+.content{
+    padding:30px;
+}
+
+/* Top Bar */
+
+.topbar{
+
     display:flex;
-    flex-wrap:wrap;
-    gap:10px;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-bottom:25px;
 }
 
-.tag{
-
-    padding:10px 16px;
-
-    border-radius:50px;
-
-    background:#f3f4f6;
-
-    font-size:14px;
-
-    font-weight:700;
-
-    cursor:pointer;
-
-    transition:0.2s;
+.results-count{
+    font-size:24px;
+    font-weight:800;
 }
 
-.tag:hover{
-    background:#ffe7cf;
-    color:var(--primary);
+.sort-select{
+    width:220px;
 }
 
-/* ================= FOOTER ================= */
+/* ================= CARDS ================= */
 
-.footer{
+.results{
 
-    position:fixed;
-    bottom:0;
-    left:0;
+    display:grid;
 
-    width:100%;
+    grid-template-columns:
+    repeat(auto-fill,minmax(320px,1fr));
+
+    gap:24px;
+}
+
+.car-card{
 
     background:white;
 
+    border-radius:24px;
+
+    overflow:hidden;
+
+    border:1px solid #eee;
+
+    transition:0.3s;
+
+    cursor:pointer;
+}
+
+.car-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 18px 35px rgba(0,0,0,0.08);
+}
+
+.car-card img{
+
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.car-body{
+    padding:20px;
+}
+
+.car-title{
+
+    font-size:19px;
+
+    font-weight:800;
+
+    margin-bottom:8px;
+}
+
+.car-info{
+
+    color:#6b7280;
+
+    font-size:14px;
+
+    margin-bottom:14px;
+}
+
+.price{
+
+    font-size:28px;
+
+    font-weight:800;
+
+    color:var(--primary);
+}
+
+/* ================= APPLY ================= */
+
+.bottom-bar{
+
+    position:sticky;
+    bottom:0;
+
+    background:white;
+
+    padding:18px;
+
     border-top:1px solid var(--border);
 
-    padding:18px 20px;
-
-    z-index:1000;
+    margin-top:30px;
 }
 
-.footer-inner{
-    max-width:760px;
-    margin:auto;
-}
-
-/* Apply Button */
-
-.btn-apply{
+.apply-btn{
 
     width:100%;
 
-    height:60px;
+    height:58px;
 
     border:none;
 
-    border-radius:18px;
+    border-radius:16px;
 
     background:linear-gradient(135deg,var(--primary),#ff9d4d);
 
     color:white;
 
-    font-size:18px;
+    font-size:17px;
 
     font-weight:800;
 
     cursor:pointer;
 
     transition:0.25s;
-
-    box-shadow:0 12px 30px rgba(245,130,32,0.28);
 }
 
-.btn-apply:hover{
+.apply-btn:hover{
     transform:translateY(-2px);
 }
 
 /* ================= MOBILE ================= */
 
-@media(max-width:640px){
+@media(max-width:980px){
 
-    .kar-grid{
-        grid-template-columns:1fr 1fr;
+    .layout{
+        grid-template-columns:1fr;
     }
 
-    .row{
+    .sidebar{
+        border-right:none;
+        border-bottom:1px solid var(--border);
+    }
+
+    .content{
+        padding:20px;
+    }
+
+    .results{
         grid-template-columns:1fr;
     }
 
@@ -311,324 +411,384 @@ select:focus{
 
 <div class="header">
 
-    <a href="index.html" class="close-btn">
-        ✕
-    </a>
+    <div class="header-left">
 
-    <h2>Filtrera sökning</h2>
+        <a href="index.html" class="close-btn">
+            ✕
+        </a>
 
-    <span class="reset-btn" onclick="location.reload()">
-        Rensa
-    </span>
+        <h1>Filtrera sökning</h1>
+
+    </div>
+
+    <div class="reset-btn" onclick="location.reload()">
+        Rensa filter
+    </div>
 
 </div>
 
-<!-- ================= CONTENT ================= -->
+<!-- ================= LAYOUT ================= -->
 
-<div class="content">
+<div class="layout">
 
-    <!-- Brand & Model -->
+    <!-- ================= SIDEBAR ================= -->
 
-    <div class="card">
+    <aside class="sidebar">
 
-        <div class="label">
-            Märke & Modell
-        </div>
+        <!-- Brand -->
 
-        <select id="brand" onchange="updateModels()">
+        <div class="filter-block">
 
-            <option value="all">Alla märken</option>
-
-            <option value="Volvo">Volvo</option>
-
-            <option value="BMW">BMW</option>
-
-            <option value="Mercedes-Benz">Mercedes-Benz</option>
-
-            <option value="Audi">Audi</option>
-
-            <option value="Tesla">Tesla</option>
-
-            <option value="Volkswagen">Volkswagen</option>
-
-            <option value="Toyota">Toyota</option>
-
-        </select>
-
-        <select id="model">
-
-            <option value="all">
-                Alla modeller
-            </option>
-
-        </select>
-
-    </div>
-
-    <!-- Price -->
-
-    <div class="card">
-
-        <div class="label">
-            Pris (kr)
-        </div>
-
-        <input type="number"
-               id="maxPrice"
-               placeholder="Exempel: 300000">
-
-    </div>
-
-    <!-- Year -->
-
-    <div class="card">
-
-        <div class="label">
-            Årsmodell
-        </div>
-
-        <div class="row">
-
-            <input type="number"
-                   id="yFrom"
-                   placeholder="Från">
-
-            <input type="number"
-                   id="yTo"
-                   placeholder="Till">
-
-        </div>
-
-    </div>
-
-    <!-- Fuel -->
-
-    <div class="card">
-
-        <div class="label">
-            Drivmedel
-        </div>
-
-        <select id="fuel">
-
-            <option value="all">Alla</option>
-
-            <option value="Bensin">Bensin</option>
-
-            <option value="Diesel">Diesel</option>
-
-            <option value="El">El</option>
-
-            <option value="Hybrid">Laddhybrid</option>
-
-        </select>
-
-    </div>
-
-    <!-- Body Type -->
-
-    <div class="card">
-
-        <div class="label">
-            Karosserityp
-        </div>
-
-        <div class="kar-grid">
-
-            <!-- Sedan -->
-
-            <div class="kar-item"
-                 onclick="setKar('Sedan', this)">
-
-                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202926.png">
-
-                <span>Sedan</span>
-
+            <div class="filter-title">
+                Märke
             </div>
 
-            <!-- SUV -->
+            <select>
+                <option>Alla märken</option>
+                <option>Volvo</option>
+                <option>BMW</option>
+                <option>Audi</option>
+                <option>Mercedes-Benz</option>
+                <option>Tesla</option>
+            </select>
 
-            <div class="kar-item"
-                 onclick="setKar('SUV', this)">
+        </div>
 
-                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png">
+        <!-- Model -->
 
-                <span>SUV</span>
+        <div class="filter-block">
 
+            <div class="filter-title">
+                Modell
             </div>
 
-            <!-- Kombi -->
+            <input type="text"
+                   placeholder="Ex. XC60">
 
-            <div class="kar-item"
-                 onclick="setKar('Kombi', this)">
+        </div>
 
-                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png">
+        <!-- Price -->
 
-                <span>Kombi</span>
+        <div class="filter-block">
+
+            <div class="filter-title">
+                Pris
+            </div>
+
+            <div class="double">
+
+                <input type="number"
+                       placeholder="Från">
+
+                <input type="number"
+                       placeholder="Till">
 
             </div>
 
         </div>
 
-    </div>
+        <!-- Year -->
 
-    <!-- Quick Filters -->
+        <div class="filter-block">
 
-    <div class="card">
+            <div class="filter-title">
+                Årsmodell
+            </div>
 
-        <div class="label">
-            Snabbfilter
-        </div>
+            <div class="double">
 
-        <div class="quick-tags">
+                <input type="number"
+                       placeholder="2018">
 
-            <div class="tag">Elbil</div>
+                <input type="number"
+                       placeholder="2025">
 
-            <div class="tag">Hybrid</div>
-
-            <div class="tag">Automat</div>
-
-            <div class="tag">4WD</div>
-
-            <div class="tag">Nybesiktad</div>
-
-            <div class="tag">Låg miltal</div>
+            </div>
 
         </div>
 
-    </div>
+        <!-- Mileage -->
+
+        <div class="filter-block">
+
+            <div class="filter-title">
+                Mätarställning
+            </div>
+
+            <div class="double">
+
+                <input type="number"
+                       placeholder="0">
+
+                <input type="number"
+                       placeholder="15000">
+
+            </div>
+
+        </div>
+
+        <!-- Fuel -->
+
+        <div class="filter-block">
+
+            <div class="filter-title">
+                Drivmedel
+            </div>
+
+            <div class="checkbox-list">
+
+                <label class="checkbox-item">
+                    <input type="checkbox">
+                    Bensin
+                </label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox">
+                    Diesel
+                </label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox">
+                    Hybrid
+                </label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox">
+                    El
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- Gearbox -->
+
+        <div class="filter-block">
+
+            <div class="filter-title">
+                Växellåda
+            </div>
+
+            <div class="checkbox-list">
+
+                <label class="checkbox-item">
+                    <input type="checkbox">
+                    Automatisk
+                </label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox">
+                    Manuell
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- Body -->
+
+        <div class="filter-block">
+
+            <div class="filter-title">
+                Karosserier
+            </div>
+
+            <div class="kar-grid">
+
+                <div class="kar-item active">
+
+                    <img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png">
+
+                    <span>SUV</span>
+
+                </div>
+
+                <div class="kar-item">
+
+                    <img src="https://cdn-icons-png.flaticon.com/512/3202/3202926.png">
+
+                    <span>Sedan</span>
+
+                </div>
+
+                <div class="kar-item">
+
+                    <img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png">
+
+                    <span>Kombi</span>
+
+                </div>
+
+                <div class="kar-item">
+
+                    <img src="https://cdn-icons-png.flaticon.com/512/744/744465.png">
+
+                    <span>Coupe</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Extra -->
+
+        <div class="filter-block">
+
+            <div class="filter-title">
+                Övrigt
+            </div>
+
+            <div class="checkbox-list">
+
+                <label class="checkbox-item">
+                    <input type="checkbox">
+                    Gratis CARFAX
+                </label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox">
+                    4WD
+                </label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox">
+                    Privatleasing
+                </label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox">
+                    Dragkrok
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- Button -->
+
+        <div class="bottom-bar">
+
+            <button class="apply-btn">
+
+                Sök 80 631 fordon
+
+            </button>
+
+        </div>
+
+    </aside>
+
+    <!-- ================= CONTENT ================= -->
+
+    <main class="content">
+
+        <!-- Top -->
+
+        <div class="topbar">
+
+            <div class="results-count">
+                80 631 fordon
+            </div>
+
+            <select class="sort-select">
+
+                <option>Senaste</option>
+
+                <option>Pris stigande</option>
+
+                <option>Pris fallande</option>
+
+                <option>Årsmodell</option>
+
+                <option>Körsträcka</option>
+
+            </select>
+
+        </div>
+
+        <!-- Cars -->
+
+        <div class="results">
+
+            <!-- Card -->
+
+            <div class="car-card">
+
+                <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop">
+
+                <div class="car-body">
+
+                    <div class="car-title">
+                        Volvo XC60 Recharge
+                    </div>
+
+                    <div class="car-info">
+                        2023 • 5 200 mil • Automat
+                    </div>
+
+                    <div class="price">
+                        359 000 kr
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Card -->
+
+            <div class="car-card">
+
+                <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1200&auto=format&fit=crop">
+
+                <div class="car-body">
+
+                    <div class="car-title">
+                        BMW 520d M Sport
+                    </div>
+
+                    <div class="car-info">
+                        2020 • 13 800 mil • Diesel
+                    </div>
+
+                    <div class="price">
+                        304 800 kr
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Card -->
+
+            <div class="car-card">
+
+                <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop">
+
+                <div class="car-body">
+
+                    <div class="car-title">
+                        Audi Q4 e-tron
+                    </div>
+
+                    <div class="car-info">
+                        2022 • 12 600 mil • Elbil
+                    </div>
+
+                    <div class="price">
+                        259 900 kr
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
 
 </div>
-
-<!-- ================= FOOTER ================= -->
-
-<div class="footer">
-
-    <div class="footer-inner">
-
-        <button class="btn-apply" onclick="apply()">
-
-            Visa resultat
-
-        </button>
-
-    </div>
-
-</div>
-
-<!-- ================= SCRIPT ================= -->
-
-<script>
-
-const data = {
-
-    "Volvo": [
-        "V60",
-        "V90",
-        "XC60",
-        "XC90"
-    ],
-
-    "BMW": [
-        "3-serie",
-        "5-serie",
-        "X5",
-        "i4"
-    ],
-
-    "Mercedes-Benz": [
-        "C-Klass",
-        "E-Klass",
-        "GLC",
-        "EQS"
-    ],
-
-    "Tesla": [
-        "Model 3",
-        "Model Y",
-        "Model S"
-    ]
-
-};
-
-let selectedKar = 'all';
-
-/* ================= UPDATE MODELS ================= */
-
-function updateModels(){
-
-    const b =
-        document.getElementById('brand').value;
-
-    const m =
-        document.getElementById('model');
-
-    m.innerHTML =
-        '<option value="all">Alla modeller</option>';
-
-    if(data[b]){
-
-        data[b].forEach(mod =>
-
-            m.innerHTML +=
-            `<option value="${mod}">
-                ${mod}
-            </option>`
-
-        );
-
-    }
-
-}
-
-/* ================= BODY TYPE ================= */
-
-function setKar(type, el){
-
-    document
-        .querySelectorAll('.kar-item')
-        .forEach(i => i.classList.remove('active'));
-
-    selectedKar = type;
-
-    el.classList.add('active');
-
-}
-
-/* ================= APPLY ================= */
-
-function apply(){
-
-    const brand =
-        document.getElementById('brand').value;
-
-    const model =
-        document.getElementById('model').value;
-
-    const maxPrice =
-        document.getElementById('maxPrice').value;
-
-    const fuel =
-        document.getElementById('fuel').value;
-
-    const yFrom =
-        document.getElementById('yFrom').value;
-
-    const yTo =
-        document.getElementById('yTo').value;
-
-    window.location.href =
-        `index.html?brand=${brand}
-        &model=${model}
-        &maxPrice=${maxPrice}
-        &fuel=${fuel}
-        &yFrom=${yFrom}
-        &yTo=${yTo}
-        &kar=${selectedKar}`;
-
-}
-
-</script>
 
 </body>
 </html>
+```2
