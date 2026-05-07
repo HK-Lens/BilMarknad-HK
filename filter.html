@@ -1,107 +1,634 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sökfilter | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #f58220; --dark: #1a1a1a; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: #fff; padding-bottom: 100px; }
-        .header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 100; }
-        .content { padding: 20px; max-width: 600px; margin: auto; }
-        .label { font-size: 12px; font-weight: 800; text-transform: uppercase; color: #666; margin: 20px 0 10px; }
-        select, input { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; margin-bottom: 15px; outline: none; }
-        
-        .kar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .kar-item { border: 1px solid #ddd; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .kar-item.active { border-color: var(--primary); background: #fff5eb; }
-        .kar-item img { width: 40px; margin-bottom: 5px; }
 
-        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; }
-        .btn-apply { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: 800; font-size: 18px; cursor: pointer; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sökfilter | BilMarknad-HK</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --primary:#f58220;
+    --dark:#111827;
+    --text:#4b5563;
+    --border:#e5e7eb;
+    --bg:#f4f6f9;
+    --white:#ffffff;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--dark);
+    padding-bottom:120px;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    background:rgba(255,255,255,0.92);
+
+    backdrop-filter:blur(10px);
+
+    border-bottom:1px solid var(--border);
+
+    padding:18px 20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.header h2{
+    font-size:18px;
+    font-weight:800;
+}
+
+.close-btn{
+    text-decoration:none;
+    color:var(--dark);
+    font-size:28px;
+    font-weight:300;
+}
+
+.reset-btn{
+    color:var(--primary);
+    font-weight:700;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.reset-btn:hover{
+    opacity:0.7;
+}
+
+/* ================= CONTENT ================= */
+
+.content{
+    max-width:760px;
+    margin:auto;
+    padding:25px 20px;
+}
+
+/* Section Card */
+
+.card{
+    background:white;
+    border-radius:24px;
+    padding:24px;
+    margin-bottom:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.04);
+}
+
+/* Labels */
+
+.label{
+    font-size:12px;
+    font-weight:800;
+    text-transform:uppercase;
+    color:#6b7280;
+    margin-bottom:10px;
+    letter-spacing:0.5px;
+}
+
+/* Inputs */
+
+input,
+select{
+
+    width:100%;
+
+    height:56px;
+
+    border:1px solid var(--border);
+
+    border-radius:16px;
+
+    padding:0 16px;
+
+    font-size:15px;
+
+    background:#fafafa;
+
+    transition:0.2s;
+
+    margin-bottom:14px;
+}
+
+input:focus,
+select:focus{
+
+    outline:none;
+
+    border-color:var(--primary);
+
+    background:white;
+
+    box-shadow:0 0 0 4px rgba(245,130,32,0.12);
+}
+
+/* Double Inputs */
+
+.row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+}
+
+/* ================= BODY TYPE ================= */
+
+.kar-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+}
+
+.kar-item{
+
+    border:1px solid #e5e7eb;
+
+    border-radius:20px;
+
+    background:white;
+
+    padding:18px 10px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:0.25s;
+}
+
+.kar-item:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 20px rgba(0,0,0,0.06);
+}
+
+.kar-item.active{
+
+    border-color:var(--primary);
+
+    background:#fff5eb;
+
+    box-shadow:0 8px 20px rgba(245,130,32,0.15);
+}
+
+.kar-item img{
+    width:52px;
+    height:52px;
+    object-fit:contain;
+    margin-bottom:10px;
+}
+
+.kar-item span{
+    display:block;
+    font-size:14px;
+    font-weight:700;
+}
+
+/* ================= TAGS ================= */
+
+.quick-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.tag{
+
+    padding:10px 16px;
+
+    border-radius:50px;
+
+    background:#f3f4f6;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:0.2s;
+}
+
+.tag:hover{
+    background:#ffe7cf;
+    color:var(--primary);
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+
+    position:fixed;
+    bottom:0;
+    left:0;
+
+    width:100%;
+
+    background:white;
+
+    border-top:1px solid var(--border);
+
+    padding:18px 20px;
+
+    z-index:1000;
+}
+
+.footer-inner{
+    max-width:760px;
+    margin:auto;
+}
+
+/* Apply Button */
+
+.btn-apply{
+
+    width:100%;
+
+    height:60px;
+
+    border:none;
+
+    border-radius:18px;
+
+    background:linear-gradient(135deg,var(--primary),#ff9d4d);
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:0.25s;
+
+    box-shadow:0 12px 30px rgba(245,130,32,0.28);
+}
+
+.btn-apply:hover{
+    transform:translateY(-2px);
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:640px){
+
+    .kar-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .row{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
 </head>
+
 <body>
 
+<!-- ================= HEADER ================= -->
+
 <div class="header">
-    <a href="index.html" style="text-decoration:none; color:#000; font-size:24px;">✕</a>
-    <h2 style="margin:0; font-size:18px;">Filtrera sökning</h2>
-    <span style="color:var(--primary); font-weight:700;" onclick="location.reload()">Rensa</span>
+
+    <a href="index.html" class="close-btn">
+        ✕
+    </a>
+
+    <h2>Filtrera sökning</h2>
+
+    <span class="reset-btn" onclick="location.reload()">
+        Rensa
+    </span>
+
 </div>
+
+<!-- ================= CONTENT ================= -->
 
 <div class="content">
-    <div class="label">Märke & Modell</div>
-    <select id="brand" onchange="updateModels()">
-        <option value="all">Alla märken</option>
-        <option value="Volvo">Volvo</option>
-        <option value="BMW">BMW</option>
-        <option value="Mercedes-Benz">Mercedes-Benz</option>
-        <option value="Audi">Audi</option>
-        <option value="Tesla">Tesla</option>
-        <option value="Volkswagen">Volkswagen</option>
-        <option value="Toyota">Toyota</option>
-    </select>
-    <select id="model"><option value="all">Alla modeller</option></select>
 
-    <div class="label">Pris (kr)</div>
-    <input type="number" id="maxPrice" placeholder="Maxpris">
+    <!-- Brand & Model -->
 
-    <div class="label">Årsmodell</div>
-    <div style="display:flex; gap:10px;">
-        <input type="number" id="yFrom" placeholder="Från">
-        <input type="number" id="yTo" placeholder="Till">
+    <div class="card">
+
+        <div class="label">
+            Märke & Modell
+        </div>
+
+        <select id="brand" onchange="updateModels()">
+
+            <option value="all">Alla märken</option>
+
+            <option value="Volvo">Volvo</option>
+
+            <option value="BMW">BMW</option>
+
+            <option value="Mercedes-Benz">Mercedes-Benz</option>
+
+            <option value="Audi">Audi</option>
+
+            <option value="Tesla">Tesla</option>
+
+            <option value="Volkswagen">Volkswagen</option>
+
+            <option value="Toyota">Toyota</option>
+
+        </select>
+
+        <select id="model">
+
+            <option value="all">
+                Alla modeller
+            </option>
+
+        </select>
+
     </div>
 
-    <div class="label">Drivmedel</div>
-    <select id="fuel">
-        <option value="all">Alla</option>
-        <option value="Bensin">Bensin</option>
-        <option value="Diesel">Diesel</option>
-        <option value="El">El</option>
-        <option value="Hybrid">Laddhybrid</option>
-    </select>
+    <!-- Price -->
 
-    <div class="label">Karosserityp</div>
-    <div class="kar-grid">
-        <div class="kar-item" onclick="setKar('Sedan', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202926.png"><span>Sedan</span></div>
-        <div class="kar-item" onclick="setKar('SUV', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png"><span>SUV</span></div>
-        <div class="kar-item" onclick="setKar('Kombi', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png"><span>Kombi</span></div>
+    <div class="card">
+
+        <div class="label">
+            Pris (kr)
+        </div>
+
+        <input type="number"
+               id="maxPrice"
+               placeholder="Exempel: 300000">
+
     </div>
+
+    <!-- Year -->
+
+    <div class="card">
+
+        <div class="label">
+            Årsmodell
+        </div>
+
+        <div class="row">
+
+            <input type="number"
+                   id="yFrom"
+                   placeholder="Från">
+
+            <input type="number"
+                   id="yTo"
+                   placeholder="Till">
+
+        </div>
+
+    </div>
+
+    <!-- Fuel -->
+
+    <div class="card">
+
+        <div class="label">
+            Drivmedel
+        </div>
+
+        <select id="fuel">
+
+            <option value="all">Alla</option>
+
+            <option value="Bensin">Bensin</option>
+
+            <option value="Diesel">Diesel</option>
+
+            <option value="El">El</option>
+
+            <option value="Hybrid">Laddhybrid</option>
+
+        </select>
+
+    </div>
+
+    <!-- Body Type -->
+
+    <div class="card">
+
+        <div class="label">
+            Karosserityp
+        </div>
+
+        <div class="kar-grid">
+
+            <!-- Sedan -->
+
+            <div class="kar-item"
+                 onclick="setKar('Sedan', this)">
+
+                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202926.png">
+
+                <span>Sedan</span>
+
+            </div>
+
+            <!-- SUV -->
+
+            <div class="kar-item"
+                 onclick="setKar('SUV', this)">
+
+                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png">
+
+                <span>SUV</span>
+
+            </div>
+
+            <!-- Kombi -->
+
+            <div class="kar-item"
+                 onclick="setKar('Kombi', this)">
+
+                <img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png">
+
+                <span>Kombi</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Quick Filters -->
+
+    <div class="card">
+
+        <div class="label">
+            Snabbfilter
+        </div>
+
+        <div class="quick-tags">
+
+            <div class="tag">Elbil</div>
+
+            <div class="tag">Hybrid</div>
+
+            <div class="tag">Automat</div>
+
+            <div class="tag">4WD</div>
+
+            <div class="tag">Nybesiktad</div>
+
+            <div class="tag">Låg miltal</div>
+
+        </div>
+
+    </div>
+
 </div>
+
+<!-- ================= FOOTER ================= -->
 
 <div class="footer">
-    <button class="btn-apply" onclick="apply()">Visa resultat</button>
+
+    <div class="footer-inner">
+
+        <button class="btn-apply" onclick="apply()">
+
+            Visa resultat
+
+        </button>
+
+    </div>
+
 </div>
 
+<!-- ================= SCRIPT ================= -->
+
 <script>
-    const data = {
-        "Volvo": ["V60", "V90", "XC60", "XC90"],
-        "BMW": ["3-serie", "5-serie", "X5", "i4"],
-        "Mercedes-Benz": ["C-Klass", "E-Klass", "GLC", "EQS"],
-        "Tesla": ["Model 3", "Model Y", "Model S"]
-    };
 
-    let selectedKar = 'all';
+const data = {
 
-    function updateModels() {
-        const b = document.getElementById('brand').value;
-        const m = document.getElementById('model');
-        m.innerHTML = '<option value="all">Alla modeller</option>';
-        if(data[b]) data[b].forEach(mod => m.innerHTML += `<option value="${mod}">${mod}</option>`);
+    "Volvo": [
+        "V60",
+        "V90",
+        "XC60",
+        "XC90"
+    ],
+
+    "BMW": [
+        "3-serie",
+        "5-serie",
+        "X5",
+        "i4"
+    ],
+
+    "Mercedes-Benz": [
+        "C-Klass",
+        "E-Klass",
+        "GLC",
+        "EQS"
+    ],
+
+    "Tesla": [
+        "Model 3",
+        "Model Y",
+        "Model S"
+    ]
+
+};
+
+let selectedKar = 'all';
+
+/* ================= UPDATE MODELS ================= */
+
+function updateModels(){
+
+    const b =
+        document.getElementById('brand').value;
+
+    const m =
+        document.getElementById('model');
+
+    m.innerHTML =
+        '<option value="all">Alla modeller</option>';
+
+    if(data[b]){
+
+        data[b].forEach(mod =>
+
+            m.innerHTML +=
+            `<option value="${mod}">
+                ${mod}
+            </option>`
+
+        );
+
     }
 
-    function setKar(type, el) {
-        document.querySelectorAll('.kar-item').forEach(i => i.classList.remove('active'));
-        selectedKar = type; el.classList.add('active');
-    }
+}
 
-    function apply() {
-        const brand = document.getElementById('brand').value;
-        const model = document.getElementById('model').value;
-        const maxPrice = document.getElementById('maxPrice').value;
-        window.location.href = `index.html?brand=${brand}&model=${model}&maxPrice=${maxPrice}&kar=${selectedKar}`;
-    }
+/* ================= BODY TYPE ================= */
+
+function setKar(type, el){
+
+    document
+        .querySelectorAll('.kar-item')
+        .forEach(i => i.classList.remove('active'));
+
+    selectedKar = type;
+
+    el.classList.add('active');
+
+}
+
+/* ================= APPLY ================= */
+
+function apply(){
+
+    const brand =
+        document.getElementById('brand').value;
+
+    const model =
+        document.getElementById('model').value;
+
+    const maxPrice =
+        document.getElementById('maxPrice').value;
+
+    const fuel =
+        document.getElementById('fuel').value;
+
+    const yFrom =
+        document.getElementById('yFrom').value;
+
+    const yTo =
+        document.getElementById('yTo').value;
+
+    window.location.href =
+        `index.html?brand=${brand}
+        &model=${model}
+        &maxPrice=${maxPrice}
+        &fuel=${fuel}
+        &yFrom=${yFrom}
+        &yTo=${yTo}
+        &kar=${selectedKar}`;
+
+}
+
 </script>
+
 </body>
 </html>
