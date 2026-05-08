@@ -11,6 +11,7 @@ const firebaseConfig = {
     appId: "1:284008879407:web:66bee60b51ec277e8dbdda"
 };
 
+// تهيئة Firebase مرة واحدة فقط لكل الموقع
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
