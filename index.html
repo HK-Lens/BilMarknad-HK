@@ -1,16 +1,10 @@
 <!DOCTYPE html>
 <html lang="sv">
-    <header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div class="nav-actions">
-        <a href="sell.html" class="btn-sell">Sälj din bil</a>
-        <a href="login.html" class="link-login" id="authButton">Logga in</a>
-    </div>
-</header>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BilHK | Hitta din bil</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -18,12 +12,15 @@
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
+    
     <div class="nav-links">
         <a href="sell.html" style="background:var(--primary); color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700;">Sälj din bil</a>
+        <a href="login.html" class="link-login" id="authButton" style="margin-left: 15px; text-decoration: none; font-weight: 700; color: var(--dark);">Logga in</a>
     </div>
 </header>
 
 <div class="container">
+    
     <div class="category-bar" id="categoryBar">
         <button class="cat-btn active" data-type="all">Alla</button>
         <button class="cat-btn" data-type="Sedan">Sedan</button>
@@ -35,13 +32,14 @@
 
     <div class="search-card">
         <div class="search-grid">
+            
             <div class="search-col">
                 <div class="field-group">
-                    <label>Märke</label>
+                    <label>Märke (الماركة)</label>
                     <select id="brandSelect"><option value="all">Alla märken</option></select>
                 </div>
                 <div class="field-group">
-                    <label>Modell</label>
+                    <label>Modell (الموديل)</label>
                     <select id="modelSelect"><option value="all">Alla modeller</option></select>
                 </div>
             </div>
@@ -71,52 +69,73 @@
         <button class="btn-search-submit" id="searchBtn">Visa resultat</button>
     </div>
 
-    <div class="cars-grid" id="carsGrid">
-        </div>
+    <div class="cars-grid" id="carsGrid"></div>
 </div>
 
 <script type="module">
-    import { db } from './firebase-config.js';
+    // استيراد الأدوات اللازمة من Firebase وملفات المشروع
+    import { db, auth } from './firebase-config.js';
     import { carData } from './cars-data.js';
     import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    let selectedCategory = 'all';
+    let selectedCategory = 'all'; // متغير لتخزين الفئة المختارة حالياً
     const bSel = document.getElementById('brandSelect');
     const mSel = document.getElementById('modelSelect');
+    const authBtn = document.getElementById('authButton');
 
-    // 1. تعبئة الماركات وتحديث الموديلات
-    Object.keys(carData).sort().forEach(b => {
-        bSel.innerHTML += `<option value="${b}">${b}</option>`;
+    // 1. مراقبة حالة تسجيل الدخول وتغيير رابط الهيدر
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            authBtn.textContent = "Mitt Konto";
+            authBtn.href = "my-account.html";
+        } else {
+            authBtn.textContent = "Logga in";
+            authBtn.href = "login.html";
+        }
     });
 
+    // 2. تعبئة قائمة الماركات (الشركات) من ملف cars-data.js
+    Object.keys(carData).sort().forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b; opt.textContent = b;
+        bSel.appendChild(opt);
+    });
+
+    // 3. تحديث الموديلات تلقائياً عند اختيار شركة معينة
     bSel.onchange = () => {
         mSel.innerHTML = '<option value="all">Alla modeller</option>';
         if (carData[bSel.value]) {
-            carData[bSel.value].forEach(m => mSel.innerHTML += `<option value="${m}">${m}</option>`);
+            carData[bSel.value].forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m; opt.textContent = m;
+                mSel.appendChild(opt);
+            });
         }
     };
 
-    // 2. التحكم في أزرار الفئات الأفقية
+    // 4. التحكم في أزرار الفئات (تغيير الزر النشط والبحث الفوري)
     document.querySelectorAll('.cat-btn').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             selectedCategory = btn.getAttribute('data-type');
-            performSearch(); // تحديث فوري عند الضغط على الفئة
+            performSearch(); 
         };
     });
 
-    // 3. وظيفة البحث والفلترة من Firebase
+    // 5. وظيفة جلب البيانات والفلترة من Firebase
     async function performSearch() {
         const grid = document.getElementById('carsGrid');
-        grid.innerHTML = "<p>Söker...</p>";
+        grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Söker...</p>";
 
         try {
+            // جلب كافة السيارات مرتبة حسب الأحدث
             const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
             const snap = await getDocs(q);
             const allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-            // الحصول على قيم المدخلات
+            // جلب قيم الفلاتر من المدخلات
             const filters = {
                 brand: bSel.value,
                 model: mSel.value,
@@ -126,7 +145,7 @@
                 maxM: Number(document.getElementById('maxMil').value) || Infinity
             };
 
-            // تطبيق الفلترة برمجياً
+            // تطبيق منطق الفلترة برمجياً (Client-side filtering)
             const filtered = allCars.filter(c => {
                 const catMatch = (selectedCategory === 'all' || c.bodyType === selectedCategory);
                 const brandMatch = (filters.brand === 'all' || c.brand === filters.brand);
@@ -137,15 +156,16 @@
                 return catMatch && brandMatch && modelMatch && priceMatch && milMatch;
             });
 
-            // عرض النتائج
+            // إظهار رسالة في حال عدم وجود نتائج
             if (filtered.length === 0) {
                 grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga bilar hittades för denna sökning.</p>";
                 return;
             }
 
+            // بناء وعرض بطاقات السيارات
             grid.innerHTML = filtered.map(c => `
                 <div class="car-card" onclick="window.location.href='details.html?id=${c.id}'">
-                    <img src="${c.images ? c.images[0] : 'placeholder.jpg'}">
+                    <img src="${c.images && c.images.length > 0 ? c.images[0] : 'placeholder.jpg'}" alt="Bil">
                     <div class="card-content">
                         <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
                         <div class="car-title">${c.brand} ${c.model}</div>
@@ -157,13 +177,15 @@
             `).join('');
 
         } catch (error) {
-            console.error("Error:", error);
-            grid.innerHTML = "<p>Ett fel uppstod.</p>";
+            console.error("Firebase Error:", error);
+            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Ett fel uppstod vid laddning av data.</p>";
         }
     }
 
+    // ربط زر البحث بالوظيفة البرمجية وتحميل البيانات عند أول فتح للصفحة
     document.getElementById('searchBtn').onclick = performSearch;
-    performSearch(); // تحميل السيارات عند فتح الصفحة لأول مرة
+    performSearch();
 </script>
+
 </body>
 </html>
