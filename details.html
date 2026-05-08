@@ -1,86 +1,139 @@
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import firebaseConfig from './firebase-config.js';
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fordonsdetaljer | BilHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .details-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; }
+        
+        /* معرض الصور */
+        .main-image { width: 100%; height: 500px; border-radius: 15px; object-fit: cover; background: #eee; }
+        .thumbnails { display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; }
+        .thumb { width: 100px; height: 70px; border-radius: 8px; cursor: pointer; object-fit: cover; opacity: 0.6; transition: 0.3s; }
+        .thumb.active { opacity: 1; border: 2px solid var(--primary); }
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+        /* معلومات السيارة */
+        .info-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); height: fit-content; sticky; top: 100px; }
+        .detail-price { font-size: 36px; font-weight: 900; color: var(--dark); margin-bottom: 10px; }
+        .detail-title { font-size: 24px; font-weight: 700; color: #4b5563; margin-bottom: 20px; }
+        
+        .specs-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
+        .spec-item { display: flex; flex-direction: column; gap: 5px; }
+        .spec-label { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
+        .spec-value { font-weight: 700; font-size: 15px; }
 
-    const carId = new URLSearchParams(window.location.search).get('id');
-    let user = null;
-    let car = null;
+        .description-box { background: white; padding: 30px; border-radius: 20px; margin-top: 30px; line-height: 1.8; }
+        .btn-contact { width: 100%; padding: 15px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; }
 
-    onAuthStateChanged(auth, u => {
-        user = u;
-        loadCarData(); 
-    });
+        @media (max-width: 900px) { .details-container { grid-template-columns: 1fr; } .main-image { height: 300px; } }
+    </style>
+</head>
+<body>
 
-    async function loadCarData() {
-        if (!carId) return;
-        try {
-            const snap = await getDoc(doc(db, "cars", carId));
-            if (snap.exists()) {
-                car = snap.data();
-                renderPage(); // استدعاء دالة العرض بعد التأكد من وجود البيانات
-            } else {
-                document.getElementById('details').innerHTML = "Bilen hittades inte.";
-            }
-        } catch (e) {
-            console.error("Error loading car:", e);
-        }
-    }
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;"><i class="fa-solid fa-arrow-left"></i> Tillbaka</a>
+</header>
 
-    function renderPage() {
-        const div = document.getElementById('details');
-        if (!car) return; // منع الانهيار في حال كانت البيانات فارغة
+<div id="loader" style="text-align:center; padding:100px;">Laddar information...</div>
 
-        div.innerHTML = `
-            <div>
-                <img src="${car.images ? car.images[0] : ''}" style="width:100%; border-radius:20px; height:400px; object-fit:cover;">
-                <div style="background:white; padding:25px; border-radius:20px; margin-top:20px; border:1px solid #eee;">
-                    <h1 style="font-weight:900;">${car.brand} ${car.model || ''}</h1>
-                    <div style="font-size:28px; color:#f58220; font-weight:900; margin:10px 0;">${Number(car.price).toLocaleString()} kr</div>
-                    <p>${car.description || ''}</p>
-                </div>
+<div class="details-container" id="detailsPage" style="display:none;">
+    <div class="main-content">
+        <img id="primaryImg" class="main-image" src="" alt="Bil">
+        <div class="thumbnails" id="thumbGallery"></div>
+
+        <div class="description-box">
+            <h3 style="margin-bottom:15px; font-weight:800;">Beskrivning</h3>
+            <p id="carDesc" style="color:#4b5563;"></p>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="info-card">
+            <div class="detail-price" id="carPrice"></div>
+            <h1 class="detail-title" id="carFullTitle"></h1>
+            
+            <div class="specs-list">
+                <div class="spec-item"><span class="spec-label">Modellår</span><span class="spec-value" id="carYear"></span></div>
+                <div class="spec-item"><span class="spec-label">Miltal</span><span class="spec-value" id="carMil"></span></div>
+                <div class="spec-item"><span class="spec-label">Växellåda</span><span class="spec-value" id="carTrans"></span></div>
+                <div class="spec-item"><span class="spec-label">Drivmedel</span><span class="spec-value" id="carFuel"></span></div>
             </div>
-            <aside>
-                <div style="background:white; padding:25px; border-radius:20px; border:1px solid #eee; position:sticky; top:100px;">
-                    <h3 style="margin-bottom:15px;">Intresserad?</h3>
-                    <textarea id="msg" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;" rows="4" placeholder="Skriv ett meddelande..."></textarea>
-                    <button onclick="sendMsg()" id="cBtn" style="width:100%; background:#0f172a; color:white; padding:15px; border-radius:12px; border:none; font-weight:800; cursor:pointer;">Starta chatt</button>
-                </div>
-            </aside>`;
-    }
 
-    window.sendMsg = async () => {
-        if (!user) return alert("Logga in först!");
-        const input = document.getElementById('msg');
-        const text = input.value.trim();
-        if (!text || !car) return;
+            <a href="#" id="callSeller" class="btn-contact">
+                <i class="fa-solid fa-phone"></i> Kontakta Säljaren
+            </a>
+            <p style="text-align:center; font-size:12px; color:gray; margin-top:15px;">Säljare: <span id="sellerEmail"></span></p>
+        </div>
+    </div>
+</div>
 
-        const btn = document.getElementById('cBtn');
-        btn.disabled = true;
-        const chatId = `${user.uid}_${car.sellerId}_${carId}`;
+<script type="module">
+    import { db } from './firebase-config.js';
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // 1. الحصول على ID السيارة من الرابط
+    const urlParams = new URLSearchParams(window.location.search);
+    const carId = urlParams.get('id');
+
+    async function loadCarDetails() {
+        if (!carId) {
+            document.body.innerHTML = "<h1>Bil-ID saknas!</h1>";
+            return;
+        }
 
         try {
-            await addDoc(collection(db, "messages"), {
-                chatId: chatId,
-                participants: [user.uid, car.sellerId],
-                carId: carId,
-                carTitle: car.brand + " " + (car.model || ''),
-                carImage: car.images ? car.images[0] : '',
-                senderId: user.uid,
-                senderName: user.email.split('@')[0],
-                recipientId: car.sellerId,
-                message: text,
-                timestamp: serverTimestamp()
-            });
-            window.location.href = "my-account.html?chat=" + chatId;
-        } catch (e) {
-            alert("Error: " + e.message);
-            btn.disabled = false;
+            const docRef = doc(db, "cars", carId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const car = docSnap.data();
+
+                // تعبئة البيانات
+                document.getElementById('carPrice').textContent = `${Number(car.price).toLocaleString()} kr`;
+                document.getElementById('carFullTitle').textContent = `${car.brand} ${car.model}`;
+                document.getElementById('carYear').textContent = car.year;
+                document.getElementById('carMil').textContent = `${car.mileage} mil`;
+                document.getElementById('carFuel').textContent = car.fuelType;
+                document.getElementById('carTrans').textContent = car.transmission || 'Automat';
+                document.getElementById('carDesc').textContent = car.description || 'Ingen beskrivning tillgänglig.';
+                document.getElementById('sellerEmail').textContent = car.sellerEmail;
+                document.getElementById('callSeller').href = `mailto:${car.sellerEmail}`;
+
+                // التعامل مع الصور
+                const images = car.images || ['placeholder.jpg'];
+                const mainImg = document.getElementById('primaryImg');
+                mainImg.src = images[0];
+
+                const thumbBox = document.getElementById('thumbGallery');
+                thumbBox.innerHTML = images.map((img, index) => `
+                    <img src="${img}" class="thumb ${index === 0 ? 'active' : ''}" onclick="changeImg('${img}', this)">
+                `).join('');
+
+                // إظهار الصفحة وإخفاء اللودر
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('detailsPage').style.display = 'grid';
+            } else {
+                document.body.innerHTML = "<h1>Hittade inte bilen.</h1>";
+            }
+        } catch (err) {
+            console.error(err);
+            document.body.innerHTML = "<h1>Ett fel uppstod.</h1>";
         }
+    }
+
+    // وظيفة تغيير الصورة عند الضغط على المصغرات
+    window.changeImg = (url, el) => {
+        document.getElementById('primaryImg').src = url;
+        document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
     };
+
+    loadCarDetails();
 </script>
+</body>
+</html>
