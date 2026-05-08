@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BilHK | Hitta din nästa bil</title>
+    <title>BilHK | Sök Bil</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,107 +11,118 @@
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div class="nav-actions">
-        <a href="sell.html" class="btn-sell">Sälj din bil</a>
-        <a href="login.html" class="link-login" id="userStatus">Logga in</a>
+    <div>
+        <a href="sell.html" style="background:var(--primary); color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700;">Sälj din bil</a>
     </div>
 </header>
 
 <section class="hero-search">
-    <div class="search-tabs">
-        <button class="tab active">Alla bilar</button>
-        <button class="tab">Personbil</button>
-        <button class="tab">Elbilar</button>
-    </div>
     <div class="search-container">
         <div class="search-grid">
             <div class="field-group">
-                <label>Märke</label>
-                <select id="brandSearch"><option value="all">Alla märken</option></select>
+                <label>Märke (الماركة)</label>
+                <select id="brandSelect"><option value="all">Alla märken</option></select>
             </div>
             <div class="field-group">
-                <label>Max Pris (kr)</label>
-                <input type="number" id="priceSearch" placeholder="t.ex. 250 000">
+                <label>Modell (الموديل)</label>
+                <select id="modelSelect"><option value="all">Alla modeller</option></select>
+            </div>
+
+            <div class="field-group">
+                <label>Lägsta Pris (أقل سعر)</label>
+                <input type="number" id="minPrice" placeholder="kr">
             </div>
             <div class="field-group">
-                <label>Max mil</label>
-                <input type="number" id="mileageSearch" placeholder="t.ex. 10 000">
+                <label>Högsta Pris (أقصى سعر)</label>
+                <input type="number" id="maxPrice" placeholder="kr">
             </div>
-            <button class="btn-search" id="execSearch">Sök bilar</button>
+
+            <div class="field-group">
+                <label>Minst Mil (أقل ممشى)</label>
+                <input type="number" id="minMil" placeholder="mil">
+            </div>
+            <div class="field-group">
+                <label>Max Mil (أقصى ممشى)</label>
+                <input type="number" id="maxMil" placeholder="mil">
+            </div>
+
+            <button class="btn-search-full" id="searchBtn">Sök bilar</button>
         </div>
     </div>
 </section>
 
-<main class="container">
-    <div class="section-header">
-        <h2>Aktuella annonser</h2>
-        <span id="carCount">Laddar...</span>
-    </div>
-    <div class="cars-grid" id="carsGrid">
-        </div>
-</main>
+<section class="cars-section">
+    <div class="cars-grid" id="carsGrid"></div>
+</section>
 
 <script type="module">
-    import { db, auth } from './firebase-config.js';
-    import { collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { db } from './firebase-config.js';
+    import { carData } from './cars-data.js';
+    import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // تحديث حالة تسجيل الدخول في الهيدر
-    onAuthStateChanged(auth, (user) => {
-        if (user) document.getElementById('userStatus').textContent = "Mitt Konto";
+    const bSel = document.getElementById('brandSelect');
+    const mSel = document.getElementById('modelSelect');
+
+    // تعبئة الماركات
+    Object.keys(carData).sort().forEach(b => {
+        bSel.innerHTML += `<option value="${b}">${b}</option>`;
     });
 
-    // جلب البيانات وعرضها
-    async function fetchCars(filters = null) {
-        const grid = document.getElementById('carsGrid');
-        grid.innerHTML = '<div class="loader">Hämtar bilar...</div>';
-        
-        try {
-            let q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
-            const snap = await getDocs(q);
-            let cars = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
-
-            // تطبيق الفلترة يدوياً للسرعة
-            if(filters) {
-                if(filters.brand !== 'all') cars = cars.filter(c => c.brand === filters.brand);
-                if(filters.price) cars = cars.filter(c => c.price <= filters.price);
-                if(filters.mileage) cars = cars.filter(c => c.mileage <= filters.mileage);
-            }
-
-            document.getElementById('carCount').textContent = `${cars.length} bilar hittades`;
-            
-            grid.innerHTML = cars.map(c => `
-                <div class="car-card" onclick="window.location.href='details.html?id=${c.id}'">
-                    <div class="img-badge">${c.year}</div>
-                    <img src="${c.images ? c.images[0] : 'placeholder.jpg'}" alt="${c.brand}">
-                    <div class="card-info">
-                        <div class="price-main">${Number(c.price).toLocaleString()} kr</div>
-                        <h3 class="car-name">${c.brand} ${c.model}</h3>
-                        <div class="specs-row">
-                            <span>${c.mileage} mil</span> • 
-                            <span>${c.fuelType || 'Bensin'}</span> • 
-                            <span>${c.transmission || 'Automat'}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        } catch (err) {
-            grid.innerHTML = "Ett fel uppstod vid laddning.";
-            console.error(err);
+    // تحديث الموديلات عند اختيار ماركة
+    bSel.onchange = () => {
+        mSel.innerHTML = '<option value="all">Alla modeller</option>';
+        if (carData[bSel.value]) {
+            carData[bSel.value].forEach(m => {
+                mSel.innerHTML += `<option value="${m}">${m}</option>`;
+            });
         }
-    }
-
-    // زر البحث
-    document.getElementById('execSearch').onclick = () => {
-        const filters = {
-            brand: document.getElementById('brandSearch').value,
-            price: Number(document.getElementById('priceSearch').value),
-            mileage: Number(document.getElementById('mileageSearch').value)
-        };
-        fetchCars(filters);
     };
 
-    fetchCars();
+    async function loadCars(filters = null) {
+        const grid = document.getElementById('carsGrid');
+        grid.innerHTML = "Laddar...";
+        
+        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        let cars = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+
+        // نظام الفلترة المركب
+        if(filters) {
+            if(filters.brand !== 'all') cars = cars.filter(c => c.brand === filters.brand);
+            if(filters.model !== 'all') cars = cars.filter(c => c.model === filters.model);
+            if(filters.minPrice) cars = cars.filter(c => c.price >= filters.minPrice);
+            if(filters.maxPrice) cars = cars.filter(c => c.price <= filters.maxPrice);
+            if(filters.minMil) cars = cars.filter(c => c.mileage >= filters.minMil);
+            if(filters.maxMil) cars = cars.filter(c => c.mileage <= filters.maxMil);
+        }
+
+        grid.innerHTML = cars.map(c => `
+            <div class="car-card" onclick="window.location.href='details.html?id=${c.id}'">
+                <img src="${c.images ? c.images[0] : 'placeholder.jpg'}">
+                <div class="card-info">
+                    <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
+                    <div class="car-desc">${c.brand} ${c.model}</div>
+                    <div class="specs-row">
+                        <span>${c.year}</span> • <span>${c.mileage} mil</span> • <span>${c.fuelType}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    document.getElementById('searchBtn').onclick = () => {
+        const filters = {
+            brand: bSel.value,
+            model: mSel.value,
+            minPrice: Number(document.getElementById('minPrice').value),
+            maxPrice: Number(document.getElementById('maxPrice').value),
+            minMil: Number(document.getElementById('minMil').value),
+            maxMil: Number(document.getElementById('maxMil').value)
+        };
+        loadCars(filters);
+    };
+
+    loadCars();
 </script>
 </body>
 </html>
