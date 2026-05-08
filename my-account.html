@@ -10,66 +10,63 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Header & Logo */
-        header { height: 65px; background: white; padding: 0 5%; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; z-index: 1000; }
+        /* الهيدر الثابت */
+        header { height: 65px; background: white; padding: 0 5%; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; z-index: 1001; }
         .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        /* Navigation Tabs */
-        .account-nav { background: white; display: flex; justify-content: center; gap: 10px; padding: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-        .nav-btn { padding: 10px 20px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; background: #f1f5f9; color: #64748b; transition: 0.3s; }
+        /* قائمة التحكم العلوي */
+        .dashboard-nav { background: white; padding: 10px 5%; border-bottom: 1px solid var(--border); display: flex; gap: 10px; flex-shrink: 0; overflow-x: auto; }
+        .nav-btn { padding: 10px 20px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; background: #f1f5f9; color: #64748b; white-space: nowrap; transition: 0.3s; }
         .nav-btn.active { background: var(--dark); color: white; }
-        .nav-btn.logout { color: #ef4444; background: #fee2e2; }
+        .nav-btn.logout { color: #ef4444; background: #fee2e2; margin-left: auto; }
 
-        /* Main Content Area */
-        main { flex: 1; overflow: hidden; }
-        .page-section { display: none; height: 100%; overflow-y: auto; padding: 20px 5%; }
-        .page-section.active { display: block; }
+        /* الحاوية الرئيسية */
+        main { flex: 1; overflow: hidden; position: relative; }
+        .page-content { display: none; height: 100%; overflow-y: auto; padding: 20px 5%; }
+        .page-content.active { display: block; }
 
-        /* My Ads Grid */
+        /* المنشورات (إعلاناتي) */
         .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .my-ad-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
-        .my-ad-card img { width: 100%; height: 160px; object-fit: cover; }
-        .ad-actions { padding: 15px; display: flex; gap: 10px; margin-top: auto; }
-        .btn-delete { background: #fee2e2; color: #ef4444; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 700; }
+        .my-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); position: relative; }
+        .my-card img { width: 100%; height: 160px; object-fit: cover; }
+        .my-card-info { padding: 15px; }
+        .my-card-btns { padding: 0 15px 15px; display: flex; gap: 10px; }
+        .btn-del { flex: 1; background: #fee2e2; color: #ef4444; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; }
 
-        /* Messenger Interface (WhatsApp Style) */
-        .messenger { display: flex; height: 100%; background: white; border-radius: 20px; overflow: hidden; margin: 0 auto; max-width: 1200px; }
-        .chat-sidebar { width: 350px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #fcfcfc; }
+        /* نظام المراسلة (Messenger UI) */
+        .messenger { display: flex; height: 100%; background: white; overflow: hidden; position: relative; }
+        .inbox-sidebar { width: 350px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #fff; }
         .chat-list { flex: 1; overflow-y: auto; }
         
-        .chat-view { flex: 1; display: flex; flex-direction: column; background: #e5ddd5; /* WhatsApp background color */ position: relative; }
+        .chat-view { flex: 1; display: flex; flex-direction: column; background: #e5ddd5; position: relative; }
         
-        /* Chat Items in Sidebar */
-        .chat-item { padding: 15px; display: flex; gap: 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; position: relative; }
+        /* عناصر قائمة المحادثات */
+        .chat-item { padding: 15px; display: flex; gap: 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; transition: 0.2s; }
         .chat-item.active { background: #fff5eb; border-left: 4px solid var(--primary); }
-        .chat-item img { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; }
-        .chat-item-info { flex: 1; overflow: hidden; }
-        .chat-item-name { font-weight: 800; font-size: 14px; color: var(--dark); margin-bottom: 3px; }
-        .chat-item-msg { font-size: 12px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-item img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; }
 
-        /* Chat Header (Car Info) */
+        /* هيدر الدردشة (معلومات السيارة) */
         .chat-header { padding: 10px 20px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; cursor: pointer; z-index: 10; }
         .chat-header img { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; }
-        .chat-header h4 { font-size: 14px; font-weight: 800; }
+        .chat-header h4 { font-size: 14px; font-weight: 900; }
         .chat-header p { font-size: 11px; color: var(--primary); font-weight: 700; }
 
-        /* Message Bubbles */
+        /* منطقة الرسائل */
         .msg-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
-        .bubble { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 14px; line-height: 1.4; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
         .bubble.me { align-self: flex-end; background: #dcf8c6; border-top-right-radius: 2px; }
         .bubble.them { align-self: flex-start; background: white; border-top-left-radius: 2px; }
 
-        /* Message Input */
-        .input-area { padding: 15px; background: #f0f0f0; display: flex; gap: 10px; align-items: center; }
-        .input-area input { flex: 1; padding: 12px 18px; border-radius: 25px; border: none; outline: none; font-size: 14px; }
-        .btn-send { background: #075e54; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; }
+        /* صندوق الإدخال */
+        .input-box { padding: 15px; background: #f0f0f0; display: flex; gap: 10px; align-items: center; }
+        .input-box input { flex: 1; padding: 12px 18px; border-radius: 25px; border: none; outline: none; font-size: 15px; }
+        .btn-send { background: #075e54; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
 
-        /* Responsive Mobile Messenger */
+        /* للهاتف */
         @media (max-width: 750px) {
-            .messenger { border-radius: 0; }
-            .chat-sidebar { width: 100%; }
-            .chat-view { display: none; position: fixed; top: 125px; left: 0; width: 100%; height: calc(100vh - 125px); z-index: 500; }
+            .inbox-sidebar { width: 100%; }
+            .chat-view { display: none; position: fixed; top: 120px; left: 0; width: 100%; height: calc(100vh - 120px); z-index: 500; }
             .chat-view.active { display: flex; }
         }
     </style>
@@ -78,31 +75,31 @@
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div style="font-weight: 800; font-size: 14px;" id="userDisplay">...</div>
+    <div id="uName" style="font-weight: 800; font-size: 14px; color: var(--dark);">...</div>
 </header>
 
-<nav class="account-nav">
-    <button class="nav-btn active" id="btn-ads" onclick="showSection('ads')">📦 Mina annonser</button>
-    <button class="nav-btn" id="btn-chat" onclick="showSection('chat')">💬 Meddelanden</button>
-    <button class="nav-btn logout" onclick="logout()">🚪 Logga ut</button>
+<nav class="dashboard-nav">
+    <button class="nav-btn active" id="tab-ads" onclick="changeTab('ads')"> المنشورات</button>
+    <button class="nav-btn" id="tab-chat" onclick="changeTab('chat')"> صندوق البريد</button>
+    <button class="nav-btn logout" onclick="logout()">تسجيل الخروج</button>
 </nav>
 
 <main>
-    <section id="ads-section" class="page-section active">
-        <h2 style="margin-bottom: 20px; letter-spacing: -0.5px;">Mina bilar</h2>
-        <div id="myAdsGrid" class="ads-grid">Laddar bilar...</div>
+    <section id="ads-content" class="page-content active">
+        <h2 style="margin-bottom: 20px;">Mina annonser</h2>
+        <div id="adsGrid" class="ads-grid">Hämtar dina annonser...</div>
     </section>
 
-    <section id="chat-section" class="page-section" style="padding: 0; height: 100%;">
+    <section id="chat-content" class="page-content" style="padding: 0;">
         <div class="messenger">
-            <div class="chat-sidebar">
+            <div class="inbox-sidebar">
                 <div style="padding: 20px; font-weight: 900; border-bottom: 1px solid #eee;">Inkorg</div>
-                <div class="chat-list" id="chatsList">Laddar meddelanden...</div>
+                <div id="conversations" class="chat-list">Laddar meddelanden...</div>
             </div>
-            <div class="chat-view" id="chatWindow">
-                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#94a3b8; text-align:center; padding:20px;">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3063/3063822.png" width="80" style="opacity: 0.1; margin-bottom: 15px;">
-                    <p>Välj en konversation för att börja chatta</p>
+            <div id="chatRoom" class="chat-view">
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#94a3b8; padding:20px; text-align:center;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3063/3063822.png" width="70" style="opacity:0.1; margin-bottom:15px;">
+                    <p>Välj en konversation för att se meddelanden</p>
                 </div>
             </div>
         </div>
@@ -119,56 +116,56 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     let currentUser = null;
-    let activeChatId = null;
-    let unsubscribeMessages = null;
+    let currentChatId = null;
+    let chatUnsubscribe = null;
 
     onAuthStateChanged(auth, user => {
         if (!user) window.location.href = 'login.html';
         currentUser = user;
-        document.getElementById('userDisplay').innerText = `Hej, ${user.displayName || user.email.split('@')[0]}`;
-        loadMyAds();
+        document.getElementById('uName').innerText = user.displayName || user.email.split('@')[0];
+        loadAds();
         listenToConversations();
     });
 
-    // 1. تبديل الأقسام (Ads vs Chat)
-    window.showSection = (section) => {
+    // تبديل الأقسام
+    window.changeTab = (type) => {
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-' + section).classList.add('active');
-        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-        document.getElementById(section + '-section').classList.add('active');
+        document.getElementById('tab-' + type).classList.add('active');
+        document.querySelectorAll('.page-content').forEach(s => s.classList.remove('active'));
+        document.getElementById(type + '-content').classList.add('active');
     };
 
-    // 2. تحميل إعلاناتي الشخصية
-    async function loadMyAds() {
-        const grid = document.getElementById('myAdsGrid');
+    // 1. تحميل المنشورات
+    async function loadAds() {
+        const grid = document.getElementById('adsGrid');
         const q = query(collection(db, "cars"), where("sellerId", "==", currentUser.uid));
         const snap = await getDocs(q);
 
         if (snap.empty) {
-            grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; padding:50px; color:#94a3b8;'>Du har inte publicerat några bilar än.</p>";
+            grid.innerHTML = "<p style='color:#999; padding:20px;'>Du har inga annonser än.</p>";
             return;
         }
 
         grid.innerHTML = snap.docs.map(d => {
             const c = d.data();
             return `
-                <div class="my-ad-card">
+                <div class="my-card">
                     <img src="${c.images[0]}">
-                    <div style="padding:15px;">
+                    <div class="my-card-info">
                         <h4 style="font-weight:900;">${c.brand} ${c.model}</h4>
                         <div style="color:var(--primary); font-weight:800; margin-top:5px;">${Number(c.price).toLocaleString()} kr</div>
                     </div>
-                    <div class="ad-actions">
-                        <button class="btn-delete" onclick="deleteAd('${d.id}')">Ta bort annons</button>
+                    <div class="my-card-btns">
+                        <button class="btn-del" onclick="deleteAd('${d.id}')">Radera annons</button>
                     </div>
                 </div>
             `;
         }).join('');
     }
 
-    // 3. الاستماع للمحادثات (Inbox Sidebar)
+    // 2. الاستماع للمحادثات (صندوق الوارد)
     function listenToConversations() {
-        const list = document.getElementById('chatsList');
+        const list = document.getElementById('conversations');
         const q = query(collection(db, "messages"), 
                   where("participants", "array-contains", currentUser.uid),
                   orderBy("timestamp", "desc"));
@@ -182,72 +179,69 @@
 
             const chats = Object.values(unique);
             if (chats.length === 0) {
-                list.innerHTML = "<p style='padding:20px; color:#999; font-size:13px; text-align:center;'>Inga meddelanden än.</p>";
+                list.innerHTML = "<p style='padding:20px; color:#999; text-align:center;'>Inga meddelanden.</p>";
                 return;
             }
 
-            list.innerHTML = chats.map(c => {
-                const otherParty = c.senderId === currentUser.uid ? 'Jag' : c.senderName;
-                return `
-                    <div class="chat-item ${activeChatId === c.chatId ? 'active' : ''}" onclick="openChat('${c.chatId}', '${c.carId}', '${c.carTitle}', '${c.carImage}')">
-                        <img src="${c.carImage}">
-                        <div class="chat-item-info">
-                            <div class="chat-item-name">${otherParty}</div>
-                            <div class="chat-item-msg">${c.carTitle}: ${c.message}</div>
-                        </div>
+            list.innerHTML = chats.map(c => `
+                <div class="chat-item ${currentChatId === c.chatId ? 'active' : ''}" onclick="openChat('${c.chatId}', '${c.carId}', '${c.carTitle}', '${c.carImage}')">
+                    <img src="${c.carImage}">
+                    <div style="flex:1; overflow:hidden;">
+                        <div class="chat-item-name">${c.senderId === currentUser.uid ? 'Jag' : c.senderName}</div>
+                        <div class="chat-item-last-msg">${c.carTitle}: ${c.message}</div>
                     </div>
-                `;
-            }).join('');
+                </div>
+            `).join('');
         });
     }
 
-    // 4. فتح غرفة الدردشة (WhatsApp UI)
+    // 3. فتح غرفة الدردشة (WhatsApp Style)
     window.openChat = (chatId, carId, carTitle, carImage) => {
-        activeChatId = chatId;
-        const chatWindow = document.getElementById('chatWindow');
-        chatWindow.classList.add('active');
+        currentChatId = chatId;
+        const room = document.getElementById('chatRoom');
+        room.classList.add('active');
 
-        if (unsubscribeMessages) unsubscribeMessages();
+        if (chatUnsubscribe) chatUnsubscribe();
 
-        chatWindow.innerHTML = `
+        room.innerHTML = `
             <div class="chat-header" onclick="location.href='details.html?id=${carId}'">
                 <img src="${carImage}">
                 <div>
                     <h4>${carTitle}</h4>
-                    <p>Se hela annonsen ➔</p>
+                    <p>Se annonsen ➔</p>
                 </div>
-                <button onclick="event.stopPropagation(); document.getElementById('chatWindow').classList.remove('active')" style="margin-left:auto; border:none; background:none; font-size:24px; cursor:pointer;">✕</button>
+                <button onclick="event.stopPropagation(); document.getElementById('chatRoom').classList.remove('active')" style="margin-left:auto; border:none; background:none; font-size:24px;">✕</button>
             </div>
-            <div class="msg-area" id="msgArea">Laddar...</div>
-            <div class="input-area">
-                <input type="text" id="msgIn" placeholder="Skriv ett meddelande..." onkeypress="if(event.key==='Enter') sendMsg()">
+            <div id="messagesArea" class="msg-area">Laddar...</div>
+            <div class="input-box">
+                <input type="text" id="chatInput" placeholder="Skriv ett meddelande..." onkeypress="if(event.key==='Enter') sendMsg()">
                 <button class="btn-send" onclick="sendMsg()">➤</button>
             </div>
         `;
 
         const q = query(collection(db, "messages"), where("chatId", "==", chatId), orderBy("timestamp", "asc"));
-        unsubscribeMessages = onSnapshot(q, (snapshot) => {
-            const area = document.getElementById('msgArea');
-            area.innerHTML = snapshot.docs.map(doc => {
-                const m = doc.data();
+        chatUnsubscribe = onSnapshot(q, (snap) => {
+            const area = document.getElementById('messagesArea');
+            area.innerHTML = snap.docs.map(d => {
+                const m = d.data();
                 return `<div class="bubble ${m.senderId === currentUser.uid ? 'me' : 'them'}">${m.message}</div>`;
             }).join('');
             area.scrollTop = area.scrollHeight;
         });
-    }
+    };
 
-    // 5. إرسال الرسالة
+    // 4. إرسال رسالة
     window.sendMsg = async () => {
-        const input = document.getElementById('msgIn');
-        if (!input.value.trim() || !activeChatId) return;
+        const input = document.getElementById('chatInput');
+        if (!input.value.trim()) return;
 
-        const parts = activeChatId.split('_');
-        const recipientId = (parts[0] === currentUser.uid) ? parts[1] : parts[0];
+        const p = currentChatId.split('_');
+        const recipient = (p[0] === currentUser.uid) ? p[1] : p[0];
 
         await addDoc(collection(db, "messages"), {
-            chatId: activeChatId,
-            participants: [currentUser.uid, recipientId],
-            carId: activeChatId.split('_')[2],
+            chatId: currentChatId,
+            participants: [currentUser.uid, recipient],
+            carId: p[2],
             carTitle: document.querySelector('.chat-header h4').innerText,
             carImage: document.querySelector('.chat-header img').src,
             senderId: currentUser.uid,
@@ -261,7 +255,7 @@
     window.deleteAd = async (id) => {
         if (confirm("Vill du verkligen ta bort denna annons?")) {
             await deleteDoc(doc(db, "cars", id));
-            loadMyAds();
+            loadAds();
         }
     };
 
