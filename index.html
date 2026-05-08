@@ -30,7 +30,6 @@
             min-height: 100vh; 
         }
 
-        /* Information Banner */
         .under-construction-banner {
             background-color: #fef3c7; color: #92400e; padding: 12px;
             text-align: center; font-weight: 700; font-size: 13px;
@@ -48,7 +47,6 @@
         .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); letter-spacing: -1px; }
         .logo span { color: var(--primary); }
 
-        /* Notification Icon Styling */
         .nav-links { display: flex; align-items: center; gap: 15px; }
         .nav-icon-link { 
             position: relative; 
@@ -69,15 +67,15 @@
 
         .container { max-width: 1200px; margin: 30px auto; padding: 0 6%; flex: 1; }
 
-        /* Search Section */
+        /* --- قسم البحث المطور --- */
         .search-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 40px; }
-        .search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .field-group label { display: block; font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
-        select, input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; outline: none; background: #fafafa; }
+        .search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        .field-group label { display: block; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
+        select, input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; outline: none; background: #fafafa; }
         .btn-search-submit { width: 100%; background: var(--dark); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 20px; transition: 0.3s; }
         .btn-search-submit:hover { background: var(--primary); }
 
-        /* Cars Grid - 3 per row */
+        /* --- الشبكة (Grid) --- */
         .cars-grid { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
@@ -92,27 +90,11 @@
         .car-title { font-size: 16px; font-weight: 700; margin: 5px 0; }
         .car-meta { font-size: 13px; color: var(--text-muted); }
 
-        /* Disclaimer Section */
         .disclaimer-bar {
-            background: #fff1f2;
-            border: 1px solid #fda4af;
-            color: #9f1239;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 40px;
-            font-size: 12px;
-            line-height: 1.6;
+            background: #fff1f2; border: 1px solid #fda4af; color: #9f1239; padding: 20px; border-radius: 12px; margin-top: 40px; font-size: 12px; line-height: 1.6;
         }
 
-        footer {
-            text-align: center;
-            padding: 40px 6%;
-            margin-top: 40px;
-            background-color: white;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-            font-size: 13px;
-        }
+        footer { text-align: center; padding: 40px 6%; margin-top: 40px; background-color: white; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 13px; }
 
         @media (max-width: 992px) { .cars-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .cars-grid { grid-template-columns: 1fr; } }
@@ -131,7 +113,6 @@
                 <span>📩</span>
                 <span id="msgBadge" class="notification-badge">0</span>
             </a>
-            
             <a href="sell.html" style="background:var(--primary); color:white; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:800; font-size: 13px;">Sälj din bil</a>
             <a href="login.html" id="authButton" style="text-decoration: none; font-weight: 700; color: var(--dark); font-size: 13px;">Logga in</a>
         </div>
@@ -149,18 +130,36 @@
                     <select id="modelSelect"><option value="all">Alla modeller</option></select>
                 </div>
                 <div class="field-group">
-                    <label>Högsta pris</label>
-                    <input type="number" id="maxPrice" placeholder="kr">
+                    <label>Högsta pris (kr)</label>
+                    <input type="number" id="maxPrice" placeholder="t.ex. 200000">
+                </div>
+                <div class="field-group">
+                    <label>Årsmodell från</label>
+                    <input type="number" id="minYear" placeholder="2020">
+                </div>
+                <div class="field-group">
+                    <label>Drivmedel</label>
+                    <select id="fuelSelect">
+                        <option value="all">Alla</option>
+                        <option value="El">El</option>
+                        <option value="Bensin">Bensin</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label>Max mil</label>
+                    <input type="number" id="maxMileage" placeholder="t.ex. 10000">
                 </div>
             </div>
             <button class="btn-search-submit" id="searchBtn">Sök bilar</button>
         </div>
 
-        <h2 style="margin-bottom: 25px; font-size: 22px; font-weight: 900;">Senaste annonserna</h2>
+        <h2 id="resultTitle" style="margin-bottom: 25px; font-size: 22px; font-weight: 900;">Senaste annonserna</h2>
         <div class="cars-grid" id="carsGrid"></div>
 
         <div class="disclaimer-bar">
-            <strong>Juridisk information:</strong> BilMarknad-HK är en oberoende annonsplattform. Vi tar inget ansvar för felaktig information i annonser, fordonens skick eller transaktioner mellan köpare och säljare. Vi rekommenderar alltid att kontrollera fordonets historik och genomföra en fysisk besiktning före köp. Betala aldrig i förskott.
+            <strong>Juridisk information:</strong> BilMarknad-HK är en oberoende annonsplattform. Vi tar inget ansvar för felaktig information. Betala aldrig i förskott.
         </div>
     </div>
 
@@ -189,13 +188,7 @@
                 authBtn.href = "my-account.html";
                 msgLink.style.display = "flex";
 
-                // Listen for unread messages (Real-time)
-                const qMsg = query(
-                    collection(db, "messages"), 
-                    where("receiverId", "==", user.uid), 
-                    where("read", "==", false)
-                );
-                
+                const qMsg = query(collection(db, "messages"), where("receiverId", "==", user.uid), where("read", "==", false));
                 onSnapshot(qMsg, (snapshot) => {
                     if (snapshot.size > 0) {
                         msgBadge.innerText = snapshot.size;
@@ -207,7 +200,7 @@
             }
         });
 
-        // Initialize Search Filters
+        // Search Setup
         Object.keys(carData).sort().forEach(b => {
             const opt = document.createElement('option');
             opt.value = b; opt.textContent = b;
@@ -225,26 +218,41 @@
             }
         };
 
-        async function loadLatestCars() {
+        // البحث الدقيق (Filtering)
+        async function loadCars() {
             const grid = document.getElementById('carsGrid');
-            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Laddar bilar...</p>";
+            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Laddar...</p>";
 
             try {
                 const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
                 const snap = await getDocs(q);
                 let cars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                cars.sort((a, b) => Number(b.year) - Number(a.year));
-                const top6 = cars.slice(0, 6);
+                // تطبيق الفلاتر
+                const brand = bSel.value;
+                const model = mSel.value;
+                const price = document.getElementById('maxPrice').value;
+                const year = document.getElementById('minYear').value;
+                const fuel = document.getElementById('fuelSelect').value;
+                const mileage = document.getElementById('maxMileage').value;
 
-                if (top6.length === 0) {
-                    grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga bilar hittades.</p>";
+                let filtered = cars.filter(c => {
+                    return (brand === 'all' || c.brand === brand) &&
+                           (model === 'all' || c.model === model) &&
+                           (!price || Number(c.price) <= Number(price)) &&
+                           (!year || Number(c.year) >= Number(year)) &&
+                           (fuel === 'all' || c.fuelType === fuel) &&
+                           (!mileage || Number(c.mileage) <= Number(mileage));
+                });
+
+                if (filtered.length === 0) {
+                    grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Hittade inga bilar.</p>";
                     return;
                 }
 
-                grid.innerHTML = top6.map(c => `
+                grid.innerHTML = filtered.map(c => `
                     <div class="car-card" onclick="window.location.href='details.html?id=${c.id}'">
-                        <img src="${c.images && c.images.length > 0 ? c.images[0] : 'placeholder.jpg'}" alt="${c.brand}">
+                        <img src="${c.images?.[0] || 'placeholder.jpg'}" loading="lazy">
                         <div class="card-content">
                             <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
                             <div class="car-title">${c.brand} ${c.model}</div>
@@ -253,14 +261,11 @@
                     </div>
                 `).join('');
 
-            } catch (error) {
-                console.error(error);
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Kunde inte ladda bilar.</p>";
-            }
+            } catch (e) { grid.innerHTML = "Ett fel uppstod."; }
         }
 
-        document.getElementById('searchBtn').onclick = loadLatestCars;
-        loadLatestCars();
+        document.getElementById('searchBtn').onclick = loadCars;
+        loadCars();
     </script>
 </body>
 </html>
