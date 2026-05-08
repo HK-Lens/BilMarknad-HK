@@ -1,10 +1,9 @@
-// firebase-config.js
 const firebaseConfig = {
-    apiKey: "AIzaSyDCsMbG5pT3y6MC6b05LEdFoByWM1nT7NY",
-    authDomain: "bilmarknad-hk.firebaseapp.com",
-    projectId: "bilmarknad-hk",
-    storageBucket: "bilmarknad-hk.firebasestorage.app",
-    appId: "1:284008879407:web:66bee60b51ec277e8dbdda"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_ID",
+  appId: "YOUR_APP_ID"
 };
-
 export default firebaseConfig;
