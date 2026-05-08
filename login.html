@@ -3,79 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logga in | BilHK</title>
+    <title>Logga in / Registrera | BilHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* تنسيقات خاصة بصفحة تسجيل الدخول */
-        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #f0f2f5; }
-        .login-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        .form-group { text-align: left; margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #64748b; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; }
-        .btn-login-submit { width: 100%; padding: 14px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .divider { margin: 25px 0; border-top: 1px solid #e2e8f0; position: relative; }
-        .divider span { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: white; padding: 0 10px; font-size: 12px; color: #94a3b8; }
-        .btn-google { width: 100%; padding: 12px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f0f2f5; }
+        .auth-card { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        
+        /* تبديل بين دخول وتسجيل */
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; background: #f1f5f9; padding: 5px; border-radius: 12px; }
+        .auth-tab { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; background: none; color: #64748b; }
+        .auth-tab.active { background: white; color: var(--dark); shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; font-size: 12px; font-weight: 800; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; }
+        
+        /* خيارات نوع الحساب */
+        .type-selector { display: flex; gap: 10px; margin: 10px 0 20px 0; }
+        .type-btn { flex: 1; padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; text-align: center; font-size: 13px; font-weight: 700; background: #f8fafc; }
+        .type-btn.selected { border-color: var(--primary); background: #fff7ed; color: var(--primary); }
+        input[type="radio"] { display: none; }
+
+        #companyExtraFields { display: none; margin-top: 10px; }
+        .btn-auth { width: 100%; padding: 15px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="login-card">
-    <a href="index.html" class="logo" style="margin-bottom: 20px; display: block; text-decoration: none;">BIL<span>HK</span></a>
-    <h2 style="margin-bottom: 30px;">Välkommen tillbaka</h2>
+<div class="auth-card">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <a href="index.html" class="logo">BIL<span>HK</span></a>
+    </div>
+
+    <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Logga in</button>
+        <button class="auth-tab" onclick="switchTab('register')">Skapa konto</button>
+    </div>
 
     <form id="loginForm">
         <div class="form-group">
-            <label>E-post (البريد الإلكتروني)</label>
-            <input type="email" id="email" required placeholder="din@epost.se">
+            <label>E-post</label>
+            <input type="email" id="loginEmail" required placeholder="din@epost.se">
         </div>
         <div class="form-group">
-            <label>Lösenord (كلمة المرور)</label>
-            <input type="password" id="password" required placeholder="••••••••">
+            <label>Lösenord</label>
+            <input type="password" id="loginPass" required placeholder="••••••••">
         </div>
-        <button type="submit" class="btn-login-submit">Logga in</button>
+        <button type="submit" class="btn-auth">Logga in</button>
     </form>
 
-    <div class="divider"><span>Eller</span></div>
+    <form id="registerForm" style="display: none;">
+        <div class="form-group">
+            <label>E-post</label>
+            <input type="email" id="regEmail" required placeholder="din@epost.se">
+        </div>
+        <div class="form-group">
+            <label>Lösenord</label>
+            <input type="password" id="regPass" required placeholder="Minst 6 tecken">
+        </div>
 
-    <button class="btn-google" id="googleBtn">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
-        Logga in med Google
-    </button>
+        <label style="font-size: 12px; font-weight: 800; color: #64748b;">KONTOTYP (نوع الحساب)</label>
+        <div class="type-selector">
+            <label class="type-btn selected" id="labelPrivate">
+                <input type="radio" name="accType" value="private" checked onclick="toggleFields(false)"> Privat (خاص)
+            </label>
+            <label class="type-btn" id="labelCompany">
+                <input type="radio" name="accType" value="company" onclick="toggleFields(true)"> Företag (شركة)
+            </label>
+        </div>
+
+        <div id="companyExtraFields">
+            <div class="form-group">
+                <label>Företagsnamn (اسم الشركة)</label>
+                <input type="text" id="compName">
+            </div>
+            <div class="form-group">
+                <label>Webbplats (الموقع الإلكتروني)</label>
+                <input type="url" id="compWeb" placeholder="https://...">
+            </div>
+        </div>
+
+        <button type="submit" class="btn-auth" style="background: var(--primary);">Registrera dig</button>
+    </form>
 </div>
 
 <script type="module">
-    // استيراد auth و googleProvider من ملف الإعدادات المركزي الذي أصلحناه
-    import { auth, googleProvider } from './firebase-config.js';
-    import { signInWithEmailAndPassword, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { auth, db } from './firebase-config.js';
+    import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // 1. منطق تسجيل الدخول بالبريد الإلكتروني
+    // التبديل بين الواجهات
+    window.switchTab = (type) => {
+        const isLogin = type === 'login';
+        document.getElementById('loginForm').style.display = isLogin ? 'block' : 'none';
+        document.getElementById('registerForm').style.display = isLogin ? 'none' : 'block';
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', (t.innerText.includes('Logga') && isLogin) || (t.innerText.includes('Skapa') && !isLogin)));
+    };
+
+    window.toggleFields = (isCompany) => {
+        document.getElementById('companyExtraFields').style.display = isCompany ? 'block' : 'none';
+        document.getElementById('labelCompany').classList.toggle('selected', isCompany);
+        document.getElementById('labelPrivate').classList.toggle('selected', !isCompany);
+    };
+
+    // 1. تسجيل الدخول العادي
     document.getElementById('loginForm').onsubmit = async (e) => {
         e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            // التوجيه للصفحة الرئيسية بعد النجاح
-            window.location.href = "index.html"; 
-        } catch (error) {
-            console.error("Login Error:", error.code);
-            alert("خطأ: تأكد من البريد الإلكتروني وكلمة المرور.");
-        }
+            await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPass').value);
+            window.location.href = "index.html";
+        } catch (err) { alert("Fel vid inloggning: " + err.message); }
     };
 
-    // 2. منطق تسجيل الدخول عبر Google
-    document.getElementById('googleBtn').onclick = async () => {
+    // 2. إنشاء حساب جديد مع حفظ نوع الحساب في Firestore
+    document.getElementById('registerForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('regEmail').value;
+        const pass = document.getElementById('regPass').value;
+        const type = document.querySelector('input[name="accType"]:checked').value;
+
         try {
-            await signInWithPopup(auth, googleProvider);
+            const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+            const user = userCred.user;
+
+            // حفظ بيانات المستخدم في مجموعة "users" لكي نتذكر نوع حسابه دائماً
+            await setDoc(doc(db, "users", user.uid), {
+                email: email,
+                userType: type,
+                companyName: type === 'company' ? document.getElementById('compName').value : "",
+                website: type === 'company' ? document.getElementById('compWeb').value : "",
+                createdAt: new Date()
+            });
+
+            alert("Konto skapat!");
             window.location.href = "index.html";
-        } catch (error) {
-            alert("حدث خطأ أثناء تسجيل الدخول بجوجل.");
-        }
+        } catch (err) { alert("Fel vid registrering: " + err.message); }
     };
 </script>
-
 </body>
 </html>
