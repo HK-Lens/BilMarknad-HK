@@ -11,43 +11,32 @@
         header { background: white; padding: 15px 6%; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         .logo { text-decoration: none; font-size: 22px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
-        .container { max-width: 700px; margin: 30px auto; background: white; padding: 35px; border-radius: 28px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
-        input, select, textarea { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 15px; outline: none; font-size: 15px; }
-        .btn-pub { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: 800; font-size: 18px; cursor: pointer; }
+        .container { max-width: 650px; margin: 30px auto; background: white; padding: 30px; border-radius: 28px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
+        input, select, textarea { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 15px; outline: none; }
+        .btn-pub { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: 800; cursor: pointer; }
     </style>
 </head>
 <body>
 <header><a href="index.html" class="logo">BIL<span>HK</span></a></header>
 <div class="container">
-    <h1 style="text-align:center; margin-bottom:30px; font-weight:900;">Publicera Annons</h1>
-    <div style="display:flex; gap:10px; margin-bottom:20px;">
-        <input type="text" id="reg" placeholder="Reg-nr (ABC123)" style="border:2px solid var(--dark); font-weight:900; text-align:center; font-size:20px;">
-        <button onclick="fetchInfo()" id="fBtn" style="padding:0 25px; border-radius:12px; background:var(--dark); color:white; border:none; cursor:pointer; font-weight:700;">Hämta</button>
+    <h1 style="text-align:center; margin-bottom:25px; font-weight:900;">Publicera annons</h1>
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <input type="text" id="reg" placeholder="Reg-nr (ABC123)" style="border:2px solid var(--dark); font-weight:900; text-align:center;">
+        <button onclick="fetchInfo()" id="fBtn" style="padding:0 20px; border-radius:12px; background:var(--dark); color:white; border:none; cursor:pointer;">Hämta</button>
     </div>
     <form id="sellForm">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-            <select id="brand"><option value="">Märke</option></select>
-            <input type="text" id="model" placeholder="Modell">
+        <select id="brand" required><option value="">Välj märke</option></select>
+        <input type="text" id="model" placeholder="Modell" required>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
             <input type="number" id="year" placeholder="Årsmodell">
             <input type="number" id="mil" placeholder="Miltal (mil)">
         </div>
-        <select id="fuel">
-            <option value="Bensin">Bensin</option><option value="Diesel">Diesel</option>
-            <option value="El">El</option><option value="Hybrid">Hybrid</option>
-        </select>
-        <input type="number" id="price" placeholder="Pris (kr)" required style="font-weight:900; color:var(--primary); font-size:20px;">
-        <div style="background:#fcfcfc; padding:20px; border-radius:15px; border:1px solid #eee; margin-bottom:15px;">
-            <label style="font-size:11px; font-weight:800; color:#94a3b8;">KONTAKTMETOD</label>
-            <input type="tel" id="phone" placeholder="Telefonnummer" style="margin-top:10px;">
-            <label style="font-size:14px; font-weight:600; cursor:pointer;"><input type="checkbox" id="hideP"> Dölj telefonnummer (Använd endast internmeddelanden)</label>
-        </div>
-        <textarea id="desc" rows="5" placeholder="Beskriv bilens skick, utrustning..."></textarea>
-        <label style="font-size:11px; font-weight:800; color:#94a3b8;">BILDER (MAX 10)</label>
-        <input type="file" id="pics" multiple required style="margin-top:5px;">
+        <input type="number" id="price" placeholder="Pris (kr)" required>
+        <textarea id="desc" rows="4" placeholder="Beskriv bilen..."></textarea>
+        <input type="file" id="pics" multiple required>
         <button type="submit" class="btn-pub" id="subBtn">Publicera nu</button>
     </form>
 </div>
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -61,6 +50,7 @@
     const storage = getStorage(app);
     const auth = getAuth(app);
     let user = null;
+
     onAuthStateChanged(auth, u => { if(!u) window.location.href='login.html'; else user = u; });
 
     const bSel = document.getElementById('brand');
@@ -72,7 +62,7 @@
         setTimeout(() => {
             document.getElementById('brand').value = "Volvo";
             document.getElementById('model').value = "XC60";
-            document.getElementById('year').value = 2021;
+            document.getElementById('year').value = 2022;
             btn.innerText = "Klar!"; btn.style.background = "#22c55e";
         }, 800);
     };
@@ -80,7 +70,7 @@
     document.getElementById('sellForm').onsubmit = async (e) => {
         e.preventDefault();
         const sub = document.getElementById('subBtn');
-        sub.disabled = true; sub.innerText = "Laddar upp...";
+        sub.disabled = true; sub.innerText = "Publicerar...";
         const files = document.getElementById('pics').files;
         try {
             const urls = [];
@@ -93,13 +83,12 @@
                 regNr: document.getElementById('reg').value.toUpperCase(),
                 brand: bSel.value, model: document.getElementById('model').value,
                 year: Number(document.getElementById('year').value), mileage: Number(document.getElementById('mil').value),
-                fuelType: document.getElementById('fuel').value, price: Number(document.getElementById('price').value),
-                phone: document.getElementById('phone').value, hidePhone: document.getElementById('hideP').checked,
+                price: Number(document.getElementById('price').value),
                 description: document.getElementById('desc').value, images: urls,
                 sellerId: user.uid, createdAt: serverTimestamp()
             });
             window.location.href = 'index.html';
-        } catch (e) { alert("Fel!"); sub.disabled = false; }
+        } catch (e) { alert("Fel vid uppladdning!"); sub.disabled = false; sub.innerText = "Publicera nu"; }
     };
 </script>
 </body>
