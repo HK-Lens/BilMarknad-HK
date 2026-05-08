@@ -2,75 +2,80 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Logga in | BILHK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logga in | BilHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .google-btn { width: 100%; background: white; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-top: 15px; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
-        .google-btn:active { background: #f8fafc; }
+        /* تنسيقات خاصة بصفحة تسجيل الدخول */
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #f0f2f5; }
+        .login-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #64748b; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; }
+        .btn-login-submit { width: 100%; padding: 14px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .divider { margin: 25px 0; border-top: 1px solid #e2e8f0; position: relative; }
+        .divider span { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: white; padding: 0 10px; font-size: 12px; color: #94a3b8; }
+        .btn-google { width: 100%; padding: 12px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <h1 style="font-size:20px; text-align:center; margin-bottom:25px;">Välkommen</h1>
-    
+<div class="login-card">
+    <a href="index.html" class="logo" style="margin-bottom: 20px; display: block; text-decoration: none;">BIL<span>HK</span></a>
+    <h2 style="margin-bottom: 30px;">Välkommen tillbaka</h2>
+
     <form id="loginForm">
-        <input type="email" id="email" placeholder="Din e-postadress" required>
-        <input type="password" id="password" placeholder="Lösenord" required>
-        <button type="submit" class="btn-primary" id="loginBtn">Logga in</button>
+        <div class="form-group">
+            <label>E-post (البريد الإلكتروني)</label>
+            <input type="email" id="email" required placeholder="din@epost.se">
+        </div>
+        <div class="form-group">
+            <label>Lösenord (كلمة المرور)</label>
+            <input type="password" id="password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-login-submit">Logga in</button>
     </form>
 
-    <div style="margin:20px 0; text-align:center; color:#94a3b8; font-size:14px;">eller</div>
+    <div class="divider"><span>Eller</span></div>
 
-    <button class="google-btn" id="googleBtn">
-        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" width="20">
+    <button class="btn-google" id="googleBtn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
         Logga in med Google
     </button>
-    
-    <p style="margin-top:25px; text-align:center; font-size:13px; color:#64748b;">
-        Har du inget konto? <a href="signup.html" style="color:var(--primary); text-decoration:none; font-weight:700;">Skapa ett här</a>
-    </p>
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import firebaseConfig from './firebase-config.js';
+    // استيراد auth و googleProvider من ملف الإعدادات المركزي الذي أصلحناه
+    import { auth, googleProvider } from './firebase-config.js';
+    import { signInWithEmailAndPassword, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    // معالجة نتيجة العودة من جوجل (حل مشكلة الفشل)
-    getRedirectResult(auth).then((result) => {
-        if (result) window.location.href = "index.html";
-    }).catch((error) => {
-        console.error(error);
-        if (error.code !== 'auth/popup-closed-by-user') {
-            alert("Fel vid inloggning: " + error.message);
-        }
-    });
-
+    // 1. منطق تسجيل الدخول بالبريد الإلكتروني
     document.getElementById('loginForm').onsubmit = async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('loginBtn');
-        btn.innerText = "Loggar in...";
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
         try {
-            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
-            window.location.href = "index.html";
+            await signInWithEmailAndPassword(auth, email, password);
+            // التوجيه للصفحة الرئيسية بعد النجاح
+            window.location.href = "index.html"; 
         } catch (error) {
-            alert("Fel: " + error.message);
-            btn.innerText = "Logga in";
+            console.error("Login Error:", error.code);
+            alert("خطأ: تأكد من البريد الإلكتروني وكلمة المرور.");
         }
     };
 
-    document.getElementById('googleBtn').onclick = () => {
-        // استخدام Redirect بدلاً من Popup لضمان العمل على Xiaomi والأندرويد
-        signInWithRedirect(auth, provider);
+    // 2. منطق تسجيل الدخول عبر Google
+    document.getElementById('googleBtn').onclick = async () => {
+        try {
+            await signInWithPopup(auth, googleProvider);
+            window.location.href = "index.html";
+        } catch (error) {
+            alert("حدث خطأ أثناء تسجيل الدخول بجوجل.");
+        }
     };
 </script>
+
 </body>
 </html>
