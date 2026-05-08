@@ -24,7 +24,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        body { background-color: var(--bg); color: var(--text-main); }
+        body { background-color: var(--bg); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
 
         /* رسالة التنبيه العائمة في المنتصف العلوي */
         .under-construction-banner {
@@ -46,7 +46,7 @@
         .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); letter-spacing: -1px; }
         .logo span { color: var(--primary); }
 
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 6%; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 6%; flex: 1; }
 
         .category-bar { display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto; padding: 5px 0; }
         .cat-btn { padding: 10px 20px; border: 1px solid var(--border); background: white; border-radius: 50px; cursor: pointer; font-weight: 600; font-size: 14px; white-space: nowrap; transition: 0.2s; }
@@ -68,6 +68,24 @@
         .price-tag { font-size: 20px; font-weight: 800; color: var(--dark); }
         .car-title { font-size: 16px; font-weight: 700; margin: 5px 0; }
         .car-meta { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+        /* الفوتر المحدث */
+        footer {
+            text-align: center;
+            padding: 40px 6%;
+            margin-top: 50px;
+            background-color: white;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .footer-links { margin-top: 10px; }
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            margin: 0 10px;
+        }
 
         @media (max-width: 600px) { .under-construction-banner { font-size: 11px; padding: 8px 15px; } }
     </style>
@@ -116,6 +134,13 @@
 
         <div class="cars-grid" id="carsGrid"></div>
     </div>
+
+    <footer>
+        <p>&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
+        <div class="footer-links">
+            <a href="terms.html">Användarvillkor & Friskrivning</a>
+        </div>
+    </footer>
 
     <script type="module">
         import { db, auth } from './firebase-config.js';
@@ -175,7 +200,6 @@
 
                 const maxP = Number(document.getElementById('maxPrice').value) || Infinity;
 
-                // 1. الفلترة
                 let filtered = allCars.filter(c => {
                     const catMatch = (selectedCategory === 'all' || c.bodyType === selectedCategory);
                     const brandMatch = (bSel.value === 'all' || c.brand === bSel.value);
@@ -184,10 +208,7 @@
                     return catMatch && brandMatch && modelMatch && priceMatch;
                 });
 
-                // 2. الترتيب حسب سنة الصنع (الأحدث أولاً)
                 filtered.sort((a, b) => Number(b.year) - Number(a.year));
-
-                // 3. عرض أول 6 سيارات فقط
                 const limitedCars = filtered.slice(0, 6);
 
                 if (limitedCars.length === 0) {
