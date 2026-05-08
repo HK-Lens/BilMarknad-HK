@@ -2,125 +2,66 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BilMarknad-HK | Premium Hem</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BilMarknad | Hem</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <style>
-        .hero { padding: 50px 6% 20px; text-align: center; }
-        .hero h1 { font-size: 38px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 10px; }
-        .search-card {
-            background: white; padding: 25px; border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px;
-            align-items: flex-end; border: 1px solid var(--border);
-        }
-        .grid { max-width: 1300px; margin: auto; padding: 0 5% 100px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: 0.3s; position: relative; }
-        .car-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.05); }
-        .car-card img { width: 100%; height: 200px; object-fit: cover; }
-        .fav-btn { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.9); border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; font-size: 18px; }
-        .fav-btn.active { color: #ef4444; }
-    </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div style="display:flex; gap:10px; align-items:center;">
-        <a href="my-account.html" style="text-decoration:none; font-weight:700; color:var(--dark); font-size:13px;">Min Sida</a>
-        <a href="login.html" id="authLink" class="btn-primary" style="padding:8px 15px; font-size:12px; width:auto;">Logga in</a>
-    </div>
+    <nav>
+        <a href="sell.html" class="btn-primary">Sälj din bil</a>
+        <a href="login.html" style="margin-left:20px; text-decoration:none; color:inherit;">Logga in</a>
+    </nav>
 </header>
 
-<section class="hero">
-    <h1>Hitta din nästa bil.</h1>
-    <p style="color:#64748b;">Sveriges modernaste marknadsplats.</p>
-</section>
-
-<div style="max-width:1100px; margin:0 auto 40px; padding:0 20px;">
-    <div class="search-card">
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <label style="font-size:10px; font-weight:800; color:#94a3b8; text-transform:uppercase;">Märke</label>
-            <select id="brandSelect"><option value="all">Alla märken</option></select>
+<div class="container">
+    <h1 style="margin-bottom:30px;">Alla bilar till salu</h1>
+    <div class="cars-grid" id="carsGrid">
         </div>
-        <input type="number" id="minPrice" placeholder="Från kr">
-        <input type="number" id="maxPrice" placeholder="Till kr">
-        <button class="btn-primary" onclick="applySearch()" style="padding:0; height:48px;">SÖK</button>
-    </div>
 </div>
 
-<div class="grid" id="carGrid"></div>
-
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import firebaseConfig from './firebase-config.js';
-    import { carData } from './cars-data.js';
+    import { db } from './firebase-config.js';
+    import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-    let allCars = [];
-    let currentUser = null;
+    async function loadCars() {
+        const grid = document.getElementById('carsGrid');
+        try {
+            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+                grid.innerHTML = "<p>Inga bilar hittades.</p>";
+                return;
+            }
 
-    // Popullera märken
-    const bSel = document.getElementById('brandSelect');
-    if (carData) {
-        Object.keys(carData).sort().forEach(b => {
-            bSel.innerHTML += `<option value="${b}">${b}</option>`;
-        });
-    }
-
-    onAuthStateChanged(auth, (user) => {
-        currentUser = user;
-        if (user) document.getElementById('authLink').innerText = "Konto";
-        load();
-    });
-
-    async function load() {
-        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        render(allCars);
-    }
-
-    window.applySearch = () => {
-        const b = bSel.value;
-        const min = Number(document.getElementById('minPrice').value) || 0;
-        const max = Number(document.getElementById('maxPrice').value) || Infinity;
-        render(allCars.filter(c => (b==='all' || c.brand===b) && (Number(c.price)>=min && Number(c.price)<=max)));
-    };
-
-    window.toggleFav = (id) => {
-        if (!currentUser) return location.href = "login.html";
-        let favs = JSON.parse(localStorage.getItem('favCars')) || [];
-        if (favs.includes(id)) favs = favs.filter(i => i !== id);
-        else favs.push(id);
-        localStorage.setItem('favCars', JSON.stringify(favs));
-        render(allCars);
-    };
-
-    function render(data) {
-        const grid = document.getElementById('carGrid');
-        const favs = JSON.parse(localStorage.getItem('favCars')) || [];
-        grid.innerHTML = data.map(c => `
-            <div class="car-card">
-                <button class="fav-btn ${favs.includes(c.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFav('${c.id}')">
-                    ${favs.includes(c.id) ? '❤️' : '🤍'}
-                </button>
-                <div onclick="location.href='details.html?id=${c.id}'">
-                    <img src="${c.images?.[0] || 'https://via.placeholder.com/400x250'}">
-                    <div style="padding:15px;">
-                        <div style="font-weight:800; font-size:16px;">${c.brand} ${c.model || ''}</div>
-                        <div style="color:#94a3b8; font-size:11px; margin-top:4px;">${c.year} • ${c.mileage} mil</div>
-                        <div style="font-size:18px; font-weight:900; color:var(--primary); margin-top:8px;">${Number(c.price).toLocaleString()} kr</div>
+            grid.innerHTML = querySnapshot.docs.map(doc => {
+                const c = doc.data();
+                return `
+                    <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
+                        <img src="${c.images ? c.images[0] : 'placeholder.jpg'}" alt="${c.brand}">
+                        <div class="card-content">
+                            <div class="card-price">${Number(c.price).toLocaleString()} kr</div>
+                            <div class="card-title">${c.brand} ${c.model}</div>
+                            <div class="card-meta">
+                                <span>${c.year}</span> • 
+                                <span>${c.mileage} mil</span> • 
+                                <span>${c.fuelType}</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        `).join('');
+                `;
+            }).join('');
+        } catch (error) {
+            console.error("Error loading cars:", error);
+            grid.innerHTML = "<p>Ett fel uppstod vid laddning.</p>";
+        }
     }
+
+    loadCars();
 </script>
 </body>
 </html>
