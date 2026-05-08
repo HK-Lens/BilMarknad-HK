@@ -58,7 +58,6 @@
                         <div style="background:#f1f5f9; padding:15px; border-radius:15px;"><b>Bränsle:</b> ${car.fuelType}</div>
                         <div style="background:#f1f5f9; padding:15px; border-radius:15px;"><b>Reg-nr:</b> ${car.regNr}</div>
                     </div>
-                    <h3 style="margin-bottom:10px;">Beskrivning</h3>
                     <p style="line-height:1.7; color:#475569;">${car.description}</p>
                 </div>
             </div>
@@ -68,25 +67,35 @@
                     ${phoneSect}
                     <div style="margin-top:25px; border-top:1px solid #eee; padding-top:25px;">
                         <textarea id="msg" style="width:100%; padding:15px; border-radius:15px; border:1px solid #ddd; outline:none;" rows="5" placeholder="Skriv ett meddelande..."></textarea>
-                        <button onclick="sendMsg()" id="sBtn" class="btn-contact" style="background:var(--dark); color:white;">Skicka till Inkorg</button>
+                        <button onclick="startChat()" id="sBtn" class="btn-contact" style="background:var(--dark); color:white;">Starta chatt</button>
                     </div>
                 </div>
             </aside>`;
     }
 
-    window.sendMsg = async () => {
+    window.startChat = async () => {
         if (!currentUser) { alert("Vänligen logga in!"); return; }
         const btn = document.getElementById('sBtn');
+        const text = document.getElementById('msg').value;
+        if(!text) return alert("Skriv ett meddelande!");
+        
         btn.disabled = true;
         try {
+            // "chatID" فريد يجمع (المشتري + البائع + السيارة) لفتح غرفة واحدة فقط
+            const chatId = `${currentUser.uid}_${car.sellerId}_${carId}`;
             await addDoc(collection(db, "messages"), {
-                carId: carId, carTitle: `${car.brand} ${car.model}`, carImage: car.images[0],
-                senderId: currentUser.uid, senderName: currentUser.displayName || currentUser.email.split('@')[0], senderEmail: currentUser.email,
-                recipientId: car.sellerId, message: document.getElementById('msg').value, timestamp: serverTimestamp()
+                chatId: chatId,
+                carId: carId,
+                carTitle: `${car.brand} ${car.model}`,
+                carImage: car.images[0],
+                senderId: currentUser.uid,
+                senderName: currentUser.displayName || currentUser.email.split('@')[0],
+                recipientId: car.sellerId,
+                message: text,
+                timestamp: serverTimestamp()
             });
-            alert("Meddelande skickat!");
-            document.getElementById('msg').value = "";
-        } catch (e) { alert("Fel!"); } finally { btn.disabled = false; }
+            window.location.href = "my-account.html?chat=" + chatId;
+        } catch (e) { alert("Fel!"); btn.disabled = false; }
     };
 </script>
 </body>
