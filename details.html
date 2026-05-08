@@ -7,19 +7,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); margin: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
         header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1.6fr 1fr; gap: 30px; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1.6fr 1fr; gap: 30px; flex: 1; }
         
-        /* الصور والمعلومات الأساسية */
         .main-image { width: 100%; height: 450px; border-radius: 20px; object-fit: cover; background: #eee; }
         .price-tag { font-size: 38px; font-weight: 900; margin: 20px 0 10px; }
         .car-heading { font-size: 24px; color: #64748b; margin-bottom: 30px; }
 
-        /* جداول البيانات التقنية (Technical Data) */
         .specs-section { background: white; border-radius: 20px; padding: 30px; border: 1px solid var(--border); margin-bottom: 20px; }
         .specs-section h2 { font-size: 18px; margin-bottom: 20px; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 5px; }
         
@@ -28,18 +26,13 @@
         .tech-label { color: #94a3b8; font-size: 14px; }
         .tech-value { font-weight: 700; font-size: 14px; }
 
-        /* بطاقة التواصل */
         .contact-sidebar { position: sticky; top: 100px; }
         .seller-box { background: var(--dark); color: white; padding: 30px; border-radius: 24px; text-align: center; }
         .btn-call { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; margin-top: 15px; }
+
+        footer { text-align: center; padding: 40px 6%; background-color: white; border-top: 1px solid var(--border); color: #64748b; font-size: 13px; width: 100%; }
     </style>
 </head>
-    <footer style="text-align: center; padding: 40px 6%; margin-top: 50px; background-color: white; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 13px; width: 100%;">
-    <p>&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
-    <div style="margin-top: 10px;">
-        <a href="terms.html" style="color: #f58220; text-decoration: none; font-weight: 700;">Användarvillkor & Säkerhet</a>
-    </div>
-</footer>
 <body>
 
 <header>
@@ -49,6 +42,13 @@
 <div class="container" id="detailsPage">
     </div>
 
+<footer>
+    <p>&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
+    <div style="margin-top: 10px;">
+        <a href="terms.html" style="color: #f58220; text-decoration: none; font-weight: 700;">Användarvillkor & Säkerhet</a>
+    </div>
+</footer>
+
 <script type="module">
     import { db } from './firebase-config.js';
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -56,6 +56,7 @@
     const carId = new URLSearchParams(window.location.search).get('id');
 
     async function loadData() {
+        if (!carId) return;
         const snap = await getDoc(doc(db, "cars", carId));
         if (snap.exists()) {
             const c = snap.data();
