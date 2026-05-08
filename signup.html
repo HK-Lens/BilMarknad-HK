@@ -4,33 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skapa konto | BILHK</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f4f6f9; --border: #e5e7eb; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        
+        .auth-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); width: 100%; max-width: 450px; text-align: center; border: 1px solid var(--border); }
+        .logo { text-decoration: none; font-size: 32px; font-weight: 900; color: var(--dark); margin-bottom: 20px; display: block; }
+        .logo span { color: var(--primary); }
+        
+        h2 { font-size: 20px; margin-bottom: 25px; color: var(--dark); }
+        
+        .form-group { text-align: left; margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px; }
+        input { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f9fafb; font-size: 14px; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--primary); background: white; }
+        
+        .btn-primary { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn-primary:hover { background: #e07210; transform: translateY(-2px); }
+        .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+
+        .link-alt { margin-top: 25px; font-size: 14px; color: #64748b; }
+        .link-alt a { color: var(--primary); text-decoration: none; font-weight: 700; }
+    </style>
 </head>
 <body>
-<div class="container">
+
+<div class="auth-card">
     <a href="index.html" class="logo">BIL<span>HK</span></a>
     <h2>Skapa nytt konto</h2>
-    <input type="email" id="email" placeholder="E-post">
-    <input type="password" id="pass" placeholder="Lösenord">
-    <button class="btn-primary" id="regBtn">Registrera dig</button>
+    
+    <form id="regForm">
+        <div class="form-group">
+            <label>E-postadress</label>
+            <input type="email" id="email" placeholder="Din e-post" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Lösenord</label>
+            <input type="password" id="pass" placeholder="Minst 6 tecken" required>
+        </div>
+
+        <button type="submit" class="btn-primary" id="regBtn">Registrera dig</button>
+    </form>
+
     <p class="link-alt">Har du redan ett konto? <a href="login.html">Logga in</a></p>
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import firebaseConfig from './firebase-config.js';
+    import { auth, db } from './firebase-config.js';
+    import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    const regForm = document.getElementById('regForm');
+    const regBtn = document.getElementById('regBtn');
 
-    document.getElementById('regBtn').onclick = async () => {
-        const e = document.getElementById('email').value;
-        const p = document.getElementById('pass').value;
+    regForm.onsubmit = async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('pass').value;
+
+        regBtn.disabled = true;
+        regBtn.innerText = "Skapar konto...";
+
         try {
-            await createUserWithEmailAndPassword(auth, e, p);
+            // 1. إنشاء الحساب في Firebase Auth
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // 2. إنشاء مستند للمستخدم في Firestore لحفظ بياناته لاحقاً
+            await setDoc(doc(db, "users", user.uid), {
+                email: email,
+                userType: "private", // افتراضي خاص، يمكن للمستخدم تعديله لاحقاً
+                createdAt: serverTimestamp(),
+                lastLogin: serverTimestamp()
+            });
+
+            alert("Konto skapat!");
             location.href = "index.html";
-        } catch (err) { alert(err.message); }
+        } catch (err) {
+            console.error(err);
+            alert("Fel: " + err.message);
+            regBtn.disabled = false;
+            regBtn.innerText = "Registrera dig";
+        }
     };
 </script>
 </body>
