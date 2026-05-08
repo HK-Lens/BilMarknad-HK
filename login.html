@@ -2,78 +2,75 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logga in | BilMarknad-HK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Logga in | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f0f2f5; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        
-        .login-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        .logo { font-size: 24px; font-weight: 900; color: var(--dark); margin-bottom: 30px; text-decoration: none; display: block; }
-        .logo span { color: var(--primary); }
-        
-        h1 { font-size: 20px; font-weight: 800; margin-bottom: 25px; }
-        input { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 15px; outline: none; font-size: 15px; }
-        
-        .btn-login { width: 100%; background: var(--dark); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        
-        .google-btn { width: 100%; background: white; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-top: 15px; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .google-btn { width: 100%; background: white; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-top: 15px; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .google-btn:active { background: #f8fafc; }
     </style>
 </head>
 <body>
 
-<div class="login-card">
+<div class="container">
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <h1>Logga in</h1>
+    <h1 style="font-size:20px; text-align:center; margin-bottom:25px;">Välkommen</h1>
     
     <form id="loginForm">
         <input type="email" id="email" placeholder="Din e-postadress" required>
         <input type="password" id="password" placeholder="Lösenord" required>
-        <button type="submit" class="btn-login">Logga in</button>
+        <button type="submit" class="btn-primary" id="loginBtn">Logga in</button>
     </form>
+
+    <div style="margin:20px 0; text-align:center; color:#94a3b8; font-size:14px;">eller</div>
 
     <button class="google-btn" id="googleBtn">
         <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" width="20">
         Logga in med Google
     </button>
     
-    <p style="margin-top: 20px; font-size: 13px; color: #64748b;">
-        Har du inget konto? <a href="#" style="color: var(--primary); text-decoration: none; font-weight: 700;">Skapa ett här</a>
+    <p style="margin-top:25px; text-align:center; font-size:13px; color:#64748b;">
+        Har du inget konto? <a href="signup.html" style="color:var(--primary); text-decoration:none; font-weight:700;">Skapa ett här</a>
     </p>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import firebaseConfig from './firebase-config.js';
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
+    // معالجة نتيجة العودة من جوجل (حل مشكلة الفشل)
+    getRedirectResult(auth).then((result) => {
+        if (result) window.location.href = "index.html";
+    }).catch((error) => {
+        console.error(error);
+        if (error.code !== 'auth/popup-closed-by-user') {
+            alert("Fel vid inloggning: " + error.message);
+        }
+    });
+
     document.getElementById('loginForm').onsubmit = async (e) => {
         e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const btn = document.getElementById('loginBtn');
+        btn.innerText = "Loggar in...";
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
             window.location.href = "index.html";
         } catch (error) {
             alert("Fel: " + error.message);
+            btn.innerText = "Logga in";
         }
     };
 
-    document.getElementById('googleBtn').onclick = async () => {
-        try {
-            await signInWithPopup(auth, provider);
-            window.location.href = "index.html";
-        } catch (error) {
-            alert("Inloggning misslyckades.");
-        }
+    document.getElementById('googleBtn').onclick = () => {
+        // استخدام Redirect بدلاً من Popup لضمان العمل على Xiaomi والأندرويد
+        signInWithRedirect(auth, provider);
     };
 </script>
-
 </body>
 </html>
