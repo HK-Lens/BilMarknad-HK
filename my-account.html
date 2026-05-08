@@ -7,57 +7,69 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f0f2f5; --border: #e2e8f0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* الشعار والناف بار */
+        /* Header & Logo */
         header { height: 65px; background: white; padding: 0 5%; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; z-index: 1000; }
         .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        /* أزرار التحكم الرئيسية */
+        /* Navigation Tabs */
         .account-nav { background: white; display: flex; justify-content: center; gap: 10px; padding: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-        .nav-btn { padding: 10px 20px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; background: #f8fafc; color: #64748b; transition: 0.3s; }
+        .nav-btn { padding: 10px 20px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; background: #f1f5f9; color: #64748b; transition: 0.3s; }
         .nav-btn.active { background: var(--dark); color: white; }
         .nav-btn.logout { color: #ef4444; background: #fee2e2; }
 
-        /* الحاوية الرئيسية للأقسام */
-        main { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        /* Main Content Area */
+        main { flex: 1; overflow: hidden; }
         .page-section { display: none; height: 100%; overflow-y: auto; padding: 20px 5%; }
         .page-section.active { display: block; }
 
-        /* تصميم الإعلانات المنشورة */
+        /* My Ads Grid */
         .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .my-ad-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
+        .my-ad-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
         .my-ad-card img { width: 100%; height: 160px; object-fit: cover; }
-        .ad-actions { padding: 15px; display: flex; gap: 10px; }
-        .btn-edit { flex: 1; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        .btn-delete { background: #fee2e2; color: #ef4444; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
+        .ad-actions { padding: 15px; display: flex; gap: 10px; margin-top: auto; }
+        .btn-delete { background: #fee2e2; color: #ef4444; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 700; }
 
-        /* تصميم نظام المراسلة (واتساب ستايل) */
-        .messenger { display: flex; height: 100%; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .chat-sidebar { width: 320px; border-right: 1px solid var(--border); overflow-y: auto; background: #fcfcfc; }
-        .chat-view { flex: 1; display: flex; flex-direction: column; background: #e5ddd5; }
+        /* Messenger Interface (WhatsApp Style) */
+        .messenger { display: flex; height: 100%; background: white; border-radius: 20px; overflow: hidden; margin: 0 auto; max-width: 1200px; }
+        .chat-sidebar { width: 350px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #fcfcfc; }
+        .chat-list { flex: 1; overflow-y: auto; }
         
-        .chat-item { padding: 15px; display: flex; gap: 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
+        .chat-view { flex: 1; display: flex; flex-direction: column; background: #e5ddd5; /* WhatsApp background color */ position: relative; }
+        
+        /* Chat Items in Sidebar */
+        .chat-item { padding: 15px; display: flex; gap: 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; position: relative; }
         .chat-item.active { background: #fff5eb; border-left: 4px solid var(--primary); }
-        .chat-item img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; }
+        .chat-item img { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; }
+        .chat-item-info { flex: 1; overflow: hidden; }
+        .chat-item-name { font-weight: 800; font-size: 14px; color: var(--dark); margin-bottom: 3px; }
+        .chat-item-msg { font-size: 12px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .chat-header { padding: 10px 20px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .chat-header:hover { background: #fdfdfd; }
+        /* Chat Header (Car Info) */
+        .chat-header { padding: 10px 20px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; cursor: pointer; z-index: 10; }
         .chat-header img { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; }
+        .chat-header h4 { font-size: 14px; font-weight: 800; }
+        .chat-header p { font-size: 11px; color: var(--primary); font-weight: 700; }
 
-        .msg-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { max-width: 75%; padding: 10px 15px; border-radius: 12px; font-size: 14px; position: relative; }
+        /* Message Bubbles */
+        .msg-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .bubble { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 14px; line-height: 1.4; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .bubble.me { align-self: flex-end; background: #dcf8c6; border-top-right-radius: 2px; }
         .bubble.them { align-self: flex-start; background: white; border-top-left-radius: 2px; }
 
-        .input-area { padding: 15px; background: #f0f0f0; display: flex; gap: 10px; }
-        .input-area input { flex: 1; padding: 12px; border-radius: 25px; border: none; outline: none; }
+        /* Message Input */
+        .input-area { padding: 15px; background: #f0f0f0; display: flex; gap: 10px; align-items: center; }
+        .input-area input { flex: 1; padding: 12px 18px; border-radius: 25px; border: none; outline: none; font-size: 14px; }
+        .btn-send { background: #075e54; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; }
 
+        /* Responsive Mobile Messenger */
         @media (max-width: 750px) {
+            .messenger { border-radius: 0; }
             .chat-sidebar { width: 100%; }
-            .chat-view { display: none; position: fixed; top: 120px; left: 0; width: 100%; height: calc(100vh - 120px); z-index: 500; }
+            .chat-view { display: none; position: fixed; top: 125px; left: 0; width: 100%; height: calc(100vh - 125px); z-index: 500; }
             .chat-view.active { display: flex; }
         }
     </style>
@@ -66,27 +78,31 @@
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <span id="userName" style="font-weight: 700; font-size: 14px; color: var(--dark);"></span>
+    <div style="font-weight: 800; font-size: 14px;" id="userDisplay">...</div>
 </header>
 
 <nav class="account-nav">
-    <button class="nav-btn active" onclick="showSection('ads', this)">📦 Mina annonser</button>
-    <button class="nav-btn" onclick="showSection('chat', this)">💬 Meddelanden</button>
+    <button class="nav-btn active" id="btn-ads" onclick="showSection('ads')">📦 Mina annonser</button>
+    <button class="nav-btn" id="btn-chat" onclick="showSection('chat')">💬 Meddelanden</button>
     <button class="nav-btn logout" onclick="logout()">🚪 Logga ut</button>
 </nav>
 
 <main>
     <section id="ads-section" class="page-section active">
-        <h2 style="margin-bottom: 20px;">Mina publicerade fordon</h2>
-        <div id="myAdsGrid" class="ads-grid">Laddar dina annonser...</div>
+        <h2 style="margin-bottom: 20px; letter-spacing: -0.5px;">Mina bilar</h2>
+        <div id="myAdsGrid" class="ads-grid">Laddar bilar...</div>
     </section>
 
-    <section id="chat-section" class="page-section">
+    <section id="chat-section" class="page-section" style="padding: 0; height: 100%;">
         <div class="messenger">
-            <div class="chat-sidebar" id="chatsList">Laddar محادثات...</div>
+            <div class="chat-sidebar">
+                <div style="padding: 20px; font-weight: 900; border-bottom: 1px solid #eee;">Inkorg</div>
+                <div class="chat-list" id="chatsList">Laddar meddelanden...</div>
+            </div>
             <div class="chat-view" id="chatWindow">
-                <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#94a3b8;">
-                    Välj en chatt för att svara
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#94a3b8; text-align:center; padding:20px;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3063/3063822.png" width="80" style="opacity: 0.1; margin-bottom: 15px;">
+                    <p>Välj en konversation för att börja chatta</p>
                 </div>
             </div>
         </div>
@@ -104,32 +120,32 @@
     const auth = getAuth(app);
     let currentUser = null;
     let activeChatId = null;
-    let unsubscribeChat = null;
+    let unsubscribeMessages = null;
 
     onAuthStateChanged(auth, user => {
         if (!user) window.location.href = 'login.html';
         currentUser = user;
-        document.getElementById('userName').innerText = user.displayName || user.email.split('@')[0];
+        document.getElementById('userDisplay').innerText = `Hej, ${user.displayName || user.email.split('@')[0]}`;
         loadMyAds();
-        listenToInbox();
+        listenToConversations();
     });
 
-    // تبديل الأقسام
-    window.showSection = (section, btn) => {
+    // 1. تبديل الأقسام (Ads vs Chat)
+    window.showSection = (section) => {
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        document.getElementById('btn-' + section).classList.add('active');
         document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
         document.getElementById(section + '-section').classList.add('active');
     };
 
-    // 1. تحميل المنشورات (إعلاناتي)
+    // 2. تحميل إعلاناتي الشخصية
     async function loadMyAds() {
         const grid = document.getElementById('myAdsGrid');
         const q = query(collection(db, "cars"), where("sellerId", "==", currentUser.uid));
         const snap = await getDocs(q);
 
         if (snap.empty) {
-            grid.innerHTML = "<p>Du har inga annonser än.</p>";
+            grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; padding:50px; color:#94a3b8;'>Du har inte publicerat några bilar än.</p>";
             return;
         }
 
@@ -143,89 +159,94 @@
                         <div style="color:var(--primary); font-weight:800; margin-top:5px;">${Number(c.price).toLocaleString()} kr</div>
                     </div>
                     <div class="ad-actions">
-                        <button class="btn-edit" onclick="location.href='sell.html?edit=${d.id}'">Redigera</button>
-                        <button class="btn-delete" onclick="deleteAd('${d.id}')">🗑️</button>
+                        <button class="btn-delete" onclick="deleteAd('${d.id}')">Ta bort annons</button>
                     </div>
                 </div>
             `;
         }).join('');
     }
 
-    // 2. نظام البريد الوارد (Inbox)
-    function listenToInbox() {
+    // 3. الاستماع للمحادثات (Inbox Sidebar)
+    function listenToConversations() {
         const list = document.getElementById('chatsList');
-        const q = query(collection(db, "messages"), where("participants", "array-contains", currentUser.uid), orderBy("timestamp", "desc"));
+        const q = query(collection(db, "messages"), 
+                  where("participants", "array-contains", currentUser.uid),
+                  orderBy("timestamp", "desc"));
 
-        onSnapshot(q, (snap) => {
+        onSnapshot(q, (snapshot) => {
             const unique = {};
-            snap.docs.forEach(doc => {
-                const m = doc.data();
-                if (!unique[m.chatId]) unique[m.chatId] = m;
+            snapshot.docs.forEach(doc => {
+                const data = doc.data();
+                if (!unique[data.chatId]) unique[data.chatId] = data;
             });
 
             const chats = Object.values(unique);
             if (chats.length === 0) {
-                list.innerHTML = "<p style='padding:20px; color:#999;'>Inga meddelanden.</p>";
+                list.innerHTML = "<p style='padding:20px; color:#999; font-size:13px; text-align:center;'>Inga meddelanden än.</p>";
                 return;
             }
 
-            list.innerHTML = chats.map(c => `
-                <div class="chat-item ${activeChatId === c.chatId ? 'active' : ''}" onclick="openChat('${c.chatId}', '${c.carId}', '${c.carTitle}', '${c.carImage}')">
-                    <img src="${c.carImage}">
-                    <div style="flex:1; overflow:hidden;">
-                        <div style="font-weight:800; font-size:14px;">${c.senderId === currentUser.uid ? 'Jag' : c.senderName}</div>
-                        <div style="font-size:12px; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.message}</div>
+            list.innerHTML = chats.map(c => {
+                const otherParty = c.senderId === currentUser.uid ? 'Jag' : c.senderName;
+                return `
+                    <div class="chat-item ${activeChatId === c.chatId ? 'active' : ''}" onclick="openChat('${c.chatId}', '${c.carId}', '${c.carTitle}', '${c.carImage}')">
+                        <img src="${c.carImage}">
+                        <div class="chat-item-info">
+                            <div class="chat-item-name">${otherParty}</div>
+                            <div class="chat-item-msg">${c.carTitle}: ${c.message}</div>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         });
     }
 
-    // 3. فتح المحادثة (WhatsApp UI)
+    // 4. فتح غرفة الدردشة (WhatsApp UI)
     window.openChat = (chatId, carId, carTitle, carImage) => {
         activeChatId = chatId;
-        const view = document.getElementById('chatWindow');
-        view.classList.add('active');
+        const chatWindow = document.getElementById('chatWindow');
+        chatWindow.classList.add('active');
 
-        if (unsubscribeChat) unsubscribeChat();
+        if (unsubscribeMessages) unsubscribeMessages();
 
-        view.innerHTML = `
+        chatWindow.innerHTML = `
             <div class="chat-header" onclick="location.href='details.html?id=${carId}'">
                 <img src="${carImage}">
                 <div>
                     <h4>${carTitle}</h4>
-                    <p>Se annonsen ➔</p>
+                    <p>Se hela annonsen ➔</p>
                 </div>
-                <button onclick="event.stopPropagation(); document.getElementById('chatWindow').classList.remove('active')" style="margin-left:auto; border:none; background:none; font-size:20px;">✕</button>
+                <button onclick="event.stopPropagation(); document.getElementById('chatWindow').classList.remove('active')" style="margin-left:auto; border:none; background:none; font-size:24px; cursor:pointer;">✕</button>
             </div>
-            <div class="msg-area" id="msgContainer">Laddar...</div>
+            <div class="msg-area" id="msgArea">Laddar...</div>
             <div class="input-area">
-                <input type="text" id="msgInput" placeholder="Skriv ett svar..." onkeypress="if(event.key==='Enter') send()">
-                <button onclick="send()" style="background:var(--primary); color:white; border:none; width:40px; height:40px; border-radius:50%; cursor:pointer;">➤</button>
+                <input type="text" id="msgIn" placeholder="Skriv ett meddelande..." onkeypress="if(event.key==='Enter') sendMsg()">
+                <button class="btn-send" onclick="sendMsg()">➤</button>
             </div>
         `;
 
         const q = query(collection(db, "messages"), where("chatId", "==", chatId), orderBy("timestamp", "asc"));
-        unsubscribeChat = onSnapshot(q, (snap) => {
-            const container = document.getElementById('msgContainer');
-            container.innerHTML = snap.docs.map(d => {
-                const m = d.data();
+        unsubscribeMessages = onSnapshot(q, (snapshot) => {
+            const area = document.getElementById('msgArea');
+            area.innerHTML = snapshot.docs.map(doc => {
+                const m = doc.data();
                 return `<div class="bubble ${m.senderId === currentUser.uid ? 'me' : 'them'}">${m.message}</div>`;
             }).join('');
-            container.scrollTop = container.scrollHeight;
+            area.scrollTop = area.scrollHeight;
         });
-    };
+    }
 
-    window.send = async () => {
-        const input = document.getElementById('msgInput');
-        if (!input.value.trim()) return;
+    // 5. إرسال الرسالة
+    window.sendMsg = async () => {
+        const input = document.getElementById('msgIn');
+        if (!input.value.trim() || !activeChatId) return;
 
         const parts = activeChatId.split('_');
-        const recipient = (parts[0] === currentUser.uid) ? parts[1] : parts[0];
+        const recipientId = (parts[0] === currentUser.uid) ? parts[1] : parts[0];
 
         await addDoc(collection(db, "messages"), {
             chatId: activeChatId,
-            participants: [currentUser.uid, recipient],
+            participants: [currentUser.uid, recipientId],
             carId: activeChatId.split('_')[2],
             carTitle: document.querySelector('.chat-header h4').innerText,
             carImage: document.querySelector('.chat-header img').src,
@@ -238,7 +259,7 @@
     };
 
     window.deleteAd = async (id) => {
-        if (confirm("Vill du ta bort annonsen?")) {
+        if (confirm("Vill du verkligen ta bort denna annons?")) {
             await deleteDoc(doc(db, "cars", id));
             loadMyAds();
         }
