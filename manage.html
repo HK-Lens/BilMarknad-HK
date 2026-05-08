@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
         header { background: white; padding: 15px 6%; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
         .logo { text-decoration: none; font-size: 22px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
@@ -17,12 +17,16 @@
         .tab-btn { padding: 15px 30px; border: none; border-radius: 50px; cursor: pointer; font-weight: 700; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; }
         .tab-btn.active { background: var(--primary); color: white; }
 
-        .grid { max-width: 1200px; margin: 40px auto; padding: 0 6%; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; position: relative; }
+        .grid { max-width: 1200px; margin: 40px auto; padding: 0 6%; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; flex: 1; }
+        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; position: relative; transition: 0.3s; }
+        .car-card:hover { transform: translateY(-5px); }
         .car-card img { width: 100%; height: 180px; object-fit: cover; }
         .card-info { padding: 15px; }
         .badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: 700; }
-        .btn-delete { width: 100%; background: #fee2e2; color: #ef4444; border: none; padding: 10px; font-weight: 700; cursor: pointer; }
+        .btn-delete { width: 100%; background: #fee2e2; color: #ef4444; border: none; padding: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-delete:hover { background: #fecaca; }
+
+        footer { background: #fff; padding: 40px 6%; border-top: 1px solid #e2e8f0; margin-top: 50px; text-align: center; }
     </style>
 </head>
 <body>
@@ -42,17 +46,29 @@
     <button class="tab-btn" onclick="switchTab('mine', this)">Mina annonser</button>
 </div>
 
-<div class="grid" id="displayGrid"></div>
+<div class="grid" id="displayGrid">
+    <p style="text-align:center; grid-column: 1/-1;">Laddar data...</p>
+</div>
+
+<footer>
+    <div style="max-width: 800px; margin: auto;">
+        <h3 style="font-size: 18px; font-weight: 800; color: #0f172a;">BIL<span>HK</span></h3>
+        <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin-top: 15px;">
+            <strong>Viktig information:</strong> Vi är en annonsplattform och ansvarar inte för felaktig information eller falska annonser. Genomför aldrig betalningar utan att ha träffat säljaren och kontrollerat fordonet personligen.
+        </p>
+        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 14px; font-weight: 700;">
+            <a href="terms.html" style="color: #f58220; text-decoration: none;">Användarvillkor & Säkerhet</a>
+            <a href="mailto:support@bilmarknad-hk.se" style="color: #0f172a; text-decoration: none;">Kontakt</a>
+        </div>
+        <p style="margin-top: 30px; font-size: 11px; color: #94a3b8;">&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
+    </div>
+</footer>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import firebaseConfig from './firebase-config.js';
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    // استيراد الإعدادات من ملفك الموحد
+    import { db, auth } from './firebase-config.js';
+    import { collection, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     let allCars = [];
     let currentUser = null;
@@ -68,11 +84,18 @@
     });
 
     async function loadData() {
-        const snap = await getDocs(collection(db, "cars"));
-        allCars = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        showFavs();
+        try {
+            const snap = await getDocs(collection(db, "cars"));
+            allCars = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            // نتحقق من التبويب النشط حالياً عند التحميل
+            const activeTab = document.querySelector('.tab-btn.active').innerText;
+            if (activeTab === 'Sparade bilar') showFavs(); else showMine();
+        } catch (error) {
+            console.error("Error loading cars:", error);
+        }
     }
 
+    // تصدير الدالة للنافذة العامة لتعمل مع onclick في HTML
     window.switchTab = (type, btn) => {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -87,43 +110,43 @@
     }
 
     function showMine() {
+        if (!currentUser) return;
         const mine = allCars.filter(c => c.sellerId === currentUser.uid);
         render(mine, true);
     }
 
     function render(data, isMine) {
         const grid = document.getElementById('displayGrid');
+        if (data.length === 0) {
+            grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 40px; color: #64748b;">Inga bilar hittades här.</p>`;
+            return;
+        }
         grid.innerHTML = data.map(c => `
             <div class="car-card">
-                <span class="badge">${isMine ? 'Min annons' : 'Sparad'}</span>
-                <img src="${c.images?.[0] || ''}" onclick="location.href='details.html?id=${c.id}'">
-                <div class="card-info">
-                    <div style="font-weight:800;">${c.brand} ${c.model || ''}</div>
-                    <div style="color:var(--primary); font-weight:800; margin-top:5px;">${Number(c.price).toLocaleString()} kr</div>
+                <span class="badge" style="background: ${isMine ? '#f58220' : 'rgba(0,0,0,0.6)'}">${isMine ? 'Min annons' : 'Sparad'}</span>
+                <img src="${c.images?.[0] || 'placeholder.jpg'}" onclick="location.href='details.html?id=${c.id}'">
+                <div class="card-info" onclick="location.href='details.html?id=${c.id}'">
+                    <div style="font-weight:800; font-size: 16px;">${c.brand} ${c.model || ''}</div>
+                    <div style="color:var(--primary); font-weight:800; margin-top:5px; font-size: 18px;">${Number(c.price).toLocaleString()} kr</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 5px;">${c.year} • ${c.mileage} mil</div>
                 </div>
-                ${isMine ? `<button class="btn-delete" onclick="deleteAd('${c.id}')">Ta bort</button>` : ''}
+                ${isMine ? `<button class="btn-delete" onclick="event.stopPropagation(); deleteAd('${c.id}')">Ta bort annons</button>` : ''}
             </div>
         `).join('');
     }
 
+    // تصدير دالة الحذف للنافذة العامة
     window.deleteAd = async (id) => {
         if (confirm("Vill du ta bort denna annons permanent?")) {
-            await deleteDoc(doc(db, "cars", id));
-            location.reload();
+            try {
+                await deleteDoc(doc(db, "cars", id));
+                alert("Annonsen har raderats.");
+                location.reload();
+            } catch (error) {
+                alert("Ett fel uppstod vid radering.");
+            }
         }
     };
 </script>
-</body> <footer style="background: #fff; padding: 40px 6%; border-top: 1px solid #e2e8f0; margin-top: 50px; text-align: center;">
-    <div style="max-width: 800px; margin: auto;">
-        <h3 style="font-size: 18px; font-weight: 800; color: #0f172a;">BIL<span>HK</span></h3>
-        <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin-top: 15px;">
-            <strong>Viktig information:</strong> Vi är en annonsplattform och ansvarar inte för felaktig information eller falska annonser. Genomför aldrig betalningar utan att ha träffat säljaren och kontrollerat fordonet personligen.
-        </p>
-        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 14px; font-weight: 700;">
-            <a href="terms.html" style="color: #f58220; text-decoration: none;">Användarvillkor & Säkerhet</a>
-            <a href="mailto:support@bilmarknad-hk.se" style="color: #0f172a; text-decoration: none;">Kontakt</a>
-        </div>
-        <p style="margin-top: 30px; font-size: 11px; color: #94a3b8;">&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
-    </div>
-</footer>
+</body>
 </html>
