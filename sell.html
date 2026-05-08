@@ -3,43 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sälj bil | BILHK</title>
+    <title>Sälj din bil | BILHK</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="container">
-    <h1>Sälj din bil</h1>
-    <input id="brand" placeholder="Märke">
-    <input id="model" placeholder="Modell">
-    <input id="price" type="number" placeholder="Pris (kr)">
-    <textarea id="desc" placeholder="Beskrivning"></textarea>
-    <input id="imgUrl" placeholder="Bild URL (tills vidare)">
-    <button onclick="postAd()">Publicera</button>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <h2>Lägg till annons</h2>
+    <input type="text" id="brand" placeholder="Märke (t.ex. Volvo)">
+    <input type="text" id="model" placeholder="Modell (t.ex. V60)">
+    <input type="number" id="price" placeholder="Pris (kr)">
+    <textarea id="desc" rows="4" placeholder="Berätta om bilen..."></textarea>
+    <input type="text" id="img" placeholder="Bild URL">
+    <button class="btn-primary" id="postBtn">Publicera annons</button>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import firebaseConfig from './firebase-config.js';
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
+    let userUid = "";
 
-    window.postAd = async () => {
-        const user = auth.currentUser;
-        if(!user) return alert("Logga in!");
-        await addDoc(collection(db, "cars"), {
-            brand: document.getElementById('brand').value,
-            model: document.getElementById('model').value,
-            price: document.getElementById('price').value,
-            description: document.getElementById('desc').value,
-            images: [document.getElementById('imgUrl').value],
-            sellerId: user.uid,
-            createdAt: serverTimestamp()
-        });
-        alert("Klart!"); location.href='index.html';
+    onAuthStateChanged(auth, u => {
+        if(!u) location.href = 'login.html';
+        userUid = u.uid;
+    });
+
+    document.getElementById('postBtn').onclick = async () => {
+        const btn = document.getElementById('postBtn');
+        btn.disabled = true;
+        btn.innerText = "Publicerar...";
+        
+        try {
+            await addDoc(collection(db, "cars"), {
+                brand: document.getElementById('brand').value,
+                model: document.getElementById('model').value,
+                price: document.getElementById('price').value,
+                description: document.getElementById('desc').value,
+                images: [document.getElementById('img').value],
+                sellerId: userUid,
+                createdAt: serverTimestamp()
+            });
+            location.href = "index.html";
+        } catch (e) { alert(e.message); btn.disabled = false; }
     };
 </script>
 </body>
