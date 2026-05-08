@@ -3,55 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BilHK | Sök Bil</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>BilHK | Premium Sök</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div>
-        <a href="sell.html" style="background:var(--primary); color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700;">Sälj din bil</a>
-    </div>
+    <a href="sell.html" style="background:var(--primary); color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700;">Sälj din bil</a>
 </header>
 
 <section class="hero-search">
-    <div class="search-container">
-        <div class="search-grid">
-            <div class="field-group">
-                <label>Märke (الماركة)</label>
-                <select id="brandSelect"><option value="all">Alla märken</option></select>
-            </div>
-            <div class="field-group">
-                <label>Modell (الموديل)</label>
-                <select id="modelSelect"><option value="all">Alla modeller</option></select>
-            </div>
-
-            <div class="field-group">
-                <label>Lägsta Pris (أقل سعر)</label>
-                <input type="number" id="minPrice" placeholder="kr">
-            </div>
-            <div class="field-group">
-                <label>Högsta Pris (أقصى سعر)</label>
-                <input type="number" id="maxPrice" placeholder="kr">
-            </div>
-
-            <div class="field-group">
-                <label>Minst Mil (أقل ممشى)</label>
-                <input type="number" id="minMil" placeholder="mil">
-            </div>
-            <div class="field-group">
-                <label>Max Mil (أقصى ممشى)</label>
-                <input type="number" id="maxMil" placeholder="mil">
-            </div>
-
-            <button class="btn-search-full" id="searchBtn">Sök bilar</button>
-        </div>
+    <div class="body-type-filter" id="typeFilter">
+        <div class="type-item active" data-type="all"><i class="fa-solid fa-car"></i><span>Alla</span></div>
+        <div class="type-item" data-type="Sedan"><i class="fa-solid fa-car-side"></i><span>Sedan</span></div>
+        <div class="type-item" data-type="SUV"><i class="fa-solid fa-truck-monster"></i><span>SUV / 4x4</span></div>
+        <div class="type-item" data-type="Småbil"><i class="fa-solid fa-car-rear"></i><span>Småbil</span></div>
+        <div class="type-item" data-type="Minibuss"><i class="fa-solid fa-van-shuttle"></i><span>Minibuss</span></div>
+        <div class="type-item" data-type="Transportbil"><i class="fa-solid fa-truck-front"></i><span>Transport</span></div>
     </div>
-</section>
 
-<section class="cars-section">
+    <div class="search-container">
+        <div class="search-grid-main">
+            <div class="search-col">
+                <div class="field-group">
+                    <label>Märke</label>
+                    <select id="brandSelect"><option value="all">Alla märken</option></select>
+                </div>
+                <div class="field-group">
+                    <label>Modell</label>
+                    <select id="modelSelect"><option value="all">Alla modeller</option></select>
+                </div>
+            </div>
+
+            <div class="search-col">
+                <div class="field-group">
+                    <label>Pris från (أقل سعر)</label>
+                    <input type="number" id="minPrice" placeholder="kr">
+                </div>
+                <div class="field-group">
+                    <label>Pris till (أقصى سعر)</label>
+                    <input type="number" id="maxPrice" placeholder="kr">
+                </div>
+            </div>
+
+            <div class="search-col">
+                <div class="field-group">
+                    <label>Minst mil (أقل مسافة)</label>
+                    <input type="number" id="minMil" placeholder="mil">
+                </div>
+                <div class="field-group">
+                    <label>Max mil (أقصى مسافة)</label>
+                    <input type="number" id="maxMil" placeholder="mil">
+                </div>
+            </div>
+        </div>
+        <button class="btn-search-full" id="searchBtn">Visa resultat</button>
+    </div>
+
     <div class="cars-grid" id="carsGrid"></div>
 </section>
 
@@ -60,6 +70,7 @@
     import { carData } from './cars-data.js';
     import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    let selectedType = 'all';
     const bSel = document.getElementById('brandSelect');
     const mSel = document.getElementById('modelSelect');
 
@@ -68,61 +79,64 @@
         bSel.innerHTML += `<option value="${b}">${b}</option>`;
     });
 
-    // تحديث الموديلات عند اختيار ماركة
     bSel.onchange = () => {
         mSel.innerHTML = '<option value="all">Alla modeller</option>';
         if (carData[bSel.value]) {
-            carData[bSel.value].forEach(m => {
-                mSel.innerHTML += `<option value="${m}">${m}</option>`;
-            });
+            carData[bSel.value].forEach(m => mSel.innerHTML += `<option value="${m}">${m}</option>`);
         }
     };
 
-    async function loadCars(filters = null) {
+    // التحكم في شريط الأيقونات
+    document.querySelectorAll('.type-item').forEach(item => {
+        item.onclick = () => {
+            document.querySelectorAll('.type-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            selectedType = item.dataset.type;
+            executeSearch();
+        };
+    });
+
+    async function executeSearch() {
         const grid = document.getElementById('carsGrid');
-        grid.innerHTML = "Laddar...";
+        grid.innerHTML = "Söker...";
         
         const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
         let cars = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
 
-        // نظام الفلترة المركب
-        if(filters) {
-            if(filters.brand !== 'all') cars = cars.filter(c => c.brand === filters.brand);
-            if(filters.model !== 'all') cars = cars.filter(c => c.model === filters.model);
-            if(filters.minPrice) cars = cars.filter(c => c.price >= filters.minPrice);
-            if(filters.maxPrice) cars = cars.filter(c => c.price <= filters.maxPrice);
-            if(filters.minMil) cars = cars.filter(c => c.mileage >= filters.minMil);
-            if(filters.maxMil) cars = cars.filter(c => c.mileage <= filters.maxMil);
-        }
+        // الفلترة
+        const filters = {
+            brand: bSel.value,
+            model: mSel.value,
+            minP: Number(document.getElementById('minPrice').value),
+            maxP: Number(document.getElementById('maxPrice').value),
+            minM: Number(document.getElementById('minMil').value),
+            maxM: Number(document.getElementById('maxMil').value),
+            type: selectedType
+        };
+
+        if(filters.brand !== 'all') cars = cars.filter(c => c.brand === filters.brand);
+        if(filters.model !== 'all') cars = cars.filter(c => c.model === filters.model);
+        if(filters.minP) cars = cars.filter(c => c.price >= filters.minP);
+        if(filters.maxP) cars = cars.filter(c => c.price <= filters.maxP);
+        if(filters.minM) cars = cars.filter(c => c.mileage >= filters.minM);
+        if(filters.maxM) cars = cars.filter(c => c.mileage <= filters.maxM);
+        if(filters.type !== 'all') cars = cars.filter(c => c.bodyType === filters.type);
 
         grid.innerHTML = cars.map(c => `
             <div class="car-card" onclick="window.location.href='details.html?id=${c.id}'">
                 <img src="${c.images ? c.images[0] : 'placeholder.jpg'}">
                 <div class="card-info">
                     <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
-                    <div class="car-desc">${c.brand} ${c.model}</div>
-                    <div class="specs-row">
-                        <span>${c.year}</span> • <span>${c.mileage} mil</span> • <span>${c.fuelType}</span>
-                    </div>
+                    <div style="font-weight:700; margin:5px 0;">${c.brand} ${c.model}</div>
+                    <div style="font-size:12px; color:gray;">${c.year} • ${c.mileage} mil • ${c.fuelType}</div>
                 </div>
             </div>
         `).join('');
     }
 
-    document.getElementById('searchBtn').onclick = () => {
-        const filters = {
-            brand: bSel.value,
-            model: mSel.value,
-            minPrice: Number(document.getElementById('minPrice').value),
-            maxPrice: Number(document.getElementById('maxPrice').value),
-            minMil: Number(document.getElementById('minMil').value),
-            maxMil: Number(document.getElementById('maxMil').value)
-        };
-        loadCars(filters);
-    };
-
-    loadCars();
+    document.getElementById('searchBtn').onclick = executeSearch;
+    executeSearch();
 </script>
 </body>
 </html>
