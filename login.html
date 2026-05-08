@@ -6,43 +6,83 @@
     <title>Logga in | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ستايل إضافي لزر جوجل */
+        .btn-google {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            color: #444;
+            border: 1px solid #ddd;
+            border-radius: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+        .btn-google:hover { background: #f8fafc; border-color: #ccc; }
+        .btn-google img { width: 20px; }
+        .divider { margin: 20px 0; text-align: center; position: relative; color: #94a3b8; font-size: 14px; }
+        .divider::before { content: ""; position: absolute; top: 50%; left: 0; width: 42%; height: 1px; background: #e2e8f0; }
+        .divider::after { content: ""; position: absolute; top: 50%; right: 0; width: 42%; height: 1px; background: #e2e8f0; }
+    </style>
 </head>
 <body>
 
 <div class="container">
     <a href="index.html" class="logo">BIL<span>HK</span></a>
     <h2>Välkommen tillbaka</h2>
+    
     <input type="email" id="email" placeholder="E-post">
     <input type="password" id="password" placeholder="Lösenord">
     <button class="btn-primary" id="loginBtn">Logga in</button>
+
+    <div class="divider">eller</div>
+
+    <button class="btn-google" id="googleBtn">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
+        Logga in med Google
+    </button>
+
     <p class="link-alt">Har du inget konto? <a href="signup.html">Skapa ett här</a></p>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import firebaseConfig from './firebase-config.js';
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
+    // تسجيل الدخول العادي
     document.getElementById('loginBtn').addEventListener('click', async () => {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-        const btn = document.getElementById('loginBtn');
-
-        if (!email || !password) return alert("Vänligen fyll i alla fält.");
-
-        btn.innerText = "Loggar in...";
-        btn.disabled = true;
-
+        if (!email || !password) return alert("Fyll i alla fält.");
+        
         try {
             await signInWithEmailAndPassword(auth, email, password);
             window.location.href = "index.html";
         } catch (error) {
             alert("Fel: " + error.message);
-            btn.innerText = "Logga in";
-            btn.disabled = false;
+        }
+    });
+
+    // تسجيل الدخول بـ Google
+    document.getElementById('googleBtn').addEventListener('click', async () => {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            // تم تسجيل الدخول بنجاح
+            window.location.href = "index.html";
+        } catch (error) {
+            console.error(error);
+            alert("Google-inloggning misslyckades.");
         }
     });
 </script>
