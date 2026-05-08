@@ -29,7 +29,7 @@
         .thumb-item { width: 100px; height: 70px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 3px solid transparent; opacity: 0.6; transition: 0.3s; flex-shrink: 0; }
         .thumb-item.active { border-color: var(--primary); opacity: 1; }
 
-        /* --- نافذة التكبير (Zoom) --- */
+        /* --- نافذة التكبير (Zoom Mode) --- */
         .zoom-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; }
         .zoom-modal img { max-width: 90%; max-height: 85%; border-radius: 8px; }
         .zoom-ctrl { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); width: 60px; height: 60px; border-radius: 50%; font-size: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 3100; transition: 0.3s; }
@@ -46,8 +46,14 @@
         .tech-label { color: #94a3b8; font-size: 14px; }
         .tech-value { font-weight: 700; font-size: 14px; }
 
-        .seller-card { background: var(--dark); color: white; padding: 30px; border-radius: 24px; text-align: center; position: sticky; top: 100px; }
-        .btn-contact { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 800; cursor: pointer; margin-top: 15px; font-size: 16px; }
+        /* --- نظام المراسلة والجانب الأيمن --- */
+        .seller-card { background: var(--dark); color: white; padding: 30px; border-radius: 24px; position: sticky; top: 100px; }
+        .seller-card h3 { margin-bottom: 10px; }
+        .msg-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; font-family: inherit; }
+        .msg-input::placeholder { color: #94a3b8; }
+        .btn-send { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 800; cursor: pointer; margin-top: 10px; font-size: 16px; transition: 0.3s; }
+        .btn-send:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-send:disabled { background: #64748b; cursor: not-allowed; }
 
         footer { text-align: center; padding: 40px 6%; background: white; border-top: 1px solid var(--border); color: #64748b; font-size: 13px; margin-top: 40px; }
         @media (max-width: 900px) { .container { grid-template-columns: 1fr; } .gallery-container { height: 350px; } }
@@ -59,7 +65,8 @@
     <a href="index.html" class="logo">BIL<span>HK</span></a>
 </header>
 
-<div class="container" id="detailsPage"></div>
+<div class="container" id="detailsPage">
+    </div>
 
 <div id="zoomModal" class="zoom-modal">
     <span class="close-zoom" id="closeZoom">&times;</span>
@@ -73,100 +80,152 @@
 </footer>
 
 <script type="module">
-    import { db } from './firebase-config.js';
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import firebaseConfig from './firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
     const carId = new URLSearchParams(window.location.search).get('id');
     let carImages = [];
     let currentIndex = 0;
+    let carData = null;
 
     async function loadCar() {
         if (!carId) return;
         const snap = await getDoc(doc(db, "cars", carId));
         if (snap.exists()) {
-            const c = snap.data();
-            carImages = c.images || ['placeholder.jpg'];
+            carData = snap.data();
+            carImages = carData.images || ['placeholder.jpg'];
             
             document.getElementById('detailsPage').innerHTML = `
                 <div class="main-content">
                     <div class="gallery-container">
                         <button class="nav-btn prev-btn" id="prevBtn">❮</button>
-                        <img src="${carImages[0]}" class="main-slide" id="mainImg">
+                        <img src="${carImages[0]}" class="main-slide" id="mainImg" onclick="openZoom()">
                         <button class="nav-btn next-btn" id="nextBtn">❯</button>
                     </div>
                     <div class="thumb-track" id="thumbTrack">
                         ${carImages.map((img, i) => `<img src="${img}" class="thumb-item ${i===0?'active':''}" data-index="${i}">`).join('')}
                     </div>
 
-                    <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
-                    <h1 class="car-title">${c.brand} ${c.model} - ${c.year}</h1>
+                    <div class="price-tag">${Number(carData.price).toLocaleString()} kr</div>
+                    <h1 class="car-title">${carData.brand} ${carData.model} - ${carData.year}</h1>
 
                     <div class="specs-section">
                         <h2>Motor & Specifikationer</h2>
                         <div class="tech-grid">
-                            <div class="tech-item"><span class="tech-label">Bränsle</span><span class="tech-value">${c.fuelType || '-'}</span></div>
-                            <div class="tech-item"><span class="tech-label">Växellåda</span><span class="tech-value">${c.transmission || '-'}</span></div>
-                            <div class="tech-item"><span class="tech-label">Miltal</span><span class="tech-value">${c.mileage} mil</span></div>
-                            <div class="tech-item"><span class="tech-label">Färg</span><span class="tech-value">${c.color || '-'}</span></div>
+                            <div class="tech-item"><span class="tech-label">Bränsle</span><span class="tech-value">${carData.fuelType || '-'}</span></div>
+                            <div class="tech-item"><span class="tech-label">Växellåda</span><span class="tech-value">${carData.transmission || '-'}</span></div>
+                            <div class="tech-item"><span class="tech-label">Miltal</span><span class="tech-value">${carData.mileage} mil</span></div>
+                            <div class="tech-item"><span class="tech-label">Färg</span><span class="tech-value">${carData.color || '-'}</span></div>
                         </div>
                     </div>
 
                     <div class="specs-section">
                         <h2>Beskrivning</h2>
-                        <p style="line-height:1.7; white-space: pre-line;">${c.description || 'Ingen beskrivning tillgänglig.'}</p>
+                        <p style="line-height:1.7; white-space: pre-line;">${carData.description || 'Ingen beskrivning tillgänglig.'}</p>
                     </div>
                 </div>
 
                 <div class="sidebar">
                     <div class="seller-card">
                         <h3>Intresserad?</h3>
-                        <div style="font-size:24px; font-weight:900; margin:20px 0;">📞 ${c.phone || 'Dolt nummer'}</div>
-                        <button class="btn-contact" onclick="window.location.href='mailto:${c.sellerEmail}'">Skicka meddelande</button>
+                        <p style="font-size:13px; color:#94a3b8; margin-bottom:15px;">Skicka ett meddelande till säljaren</p>
+                        
+                        <form id="contactForm">
+                            <input type="text" id="senderName" class="msg-input" placeholder="Ditt namn" required>
+                            <input type="email" id="senderEmail" class="msg-input" placeholder="Din e-post" required>
+                            <textarea id="senderMsg" class="msg-input" rows="4" placeholder="Jag är intresserad av din bil..." required></textarea>
+                            <button type="submit" id="sendBtn" class="btn-send">Skicka förfrågan</button>
+                        </form>
+
+                        <div style="margin-top:25px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1);">
+                            <p style="font-size:12px; color:#94a3b8;">Säljarens telefon:</p>
+                            <div style="font-size:22px; font-weight:900; margin-top:5px;">📞 ${carData.phone || 'Dolt'}</div>
+                        </div>
                     </div>
                 </div>
             `;
-            initGallery();
+            initGalleryLogic();
+            initMessagingLogic();
         }
     }
 
-    function initGallery() {
+    function initGalleryLogic() {
         const mainImg = document.getElementById('mainImg');
         const zoomedImg = document.getElementById('zoomedImg');
         const modal = document.getElementById('zoomModal');
         const thumbs = document.querySelectorAll('.thumb-item');
 
-        const updateUI = (index) => {
+        const updateAll = (index) => {
             currentIndex = index;
-            const newSrc = carImages[currentIndex];
-            mainImg.src = newSrc;
-            zoomedImg.src = newSrc;
+            const src = carImages[currentIndex];
+            mainImg.src = src;
+            zoomedImg.src = src;
             thumbs.forEach((t, i) => t.classList.toggle('active', i === currentIndex));
         };
 
-        // أزرار التنقل الرئيسية
-        document.getElementById('prevBtn').onclick = () => updateUI((currentIndex - 1 + carImages.length) % carImages.length);
-        document.getElementById('nextBtn').onclick = () => updateUI((currentIndex + 1) % carImages.length);
+        // أحداث أزرار المعرض الرئيسي
+        document.getElementById('prevBtn').onclick = () => updateAll((currentIndex - 1 + carImages.length) % carImages.length);
+        document.getElementById('nextBtn').onclick = () => updateAll((currentIndex + 1) % carImages.length);
 
-        // أزرار تنقل التكبير
-        document.getElementById('zoomPrev').onclick = (e) => { e.stopPropagation(); updateUI((currentIndex - 1 + carImages.length) % carImages.length); };
-        document.getElementById('zoomNext').onclick = (e) => { e.stopPropagation(); updateUI((currentIndex + 1) % carImages.length); };
+        // أحداث أزرار نافذة التكبير
+        document.getElementById('zoomPrev').onclick = (e) => { e.stopPropagation(); updateAll((currentIndex - 1 + carImages.length) % carImages.length); };
+        document.getElementById('zoomNext').onclick = (e) => { e.stopPropagation(); updateAll((currentIndex + 1) % carImages.length); };
 
-        // الصور المصغرة
-        thumbs.forEach(t => t.onclick = () => updateUI(parseInt(t.dataset.index)));
+        // النقر على الصور المصغرة
+        thumbs.forEach(t => t.onclick = () => updateAll(parseInt(t.dataset.index)));
 
-        // التحكم بالمودال
-        mainImg.onclick = () => { zoomedImg.src = mainImg.src; modal.style.display = 'flex'; };
+        // فتح وإغلاق التكبير
+        window.openZoom = () => { zoomedImg.src = mainImg.src; modal.style.display = 'flex'; };
         document.getElementById('closeZoom').onclick = () => modal.style.display = 'none';
         modal.onclick = () => modal.style.display = 'none';
 
-        // الكيبورد
+        // دعم الكيبورد
         document.addEventListener('keydown', (e) => {
             if (modal.style.display === 'flex') {
-                if (e.key === "ArrowLeft") updateUI((currentIndex - 1 + carImages.length) % carImages.length);
-                if (e.key === "ArrowRight") updateUI((currentIndex + 1) % carImages.length);
+                if (e.key === "ArrowLeft") updateAll((currentIndex - 1 + carImages.length) % carImages.length);
+                if (e.key === "ArrowRight") updateAll((currentIndex + 1) % carImages.length);
                 if (e.key === "Escape") modal.style.display = 'none';
             }
         });
+    }
+
+    function initMessagingLogic() {
+        const form = document.getElementById('contactForm');
+        if (!form) return;
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            btn.innerText = "Skickar...";
+
+            try {
+                await addDoc(collection(db, "messages"), {
+                    carId: carId,
+                    carTitle: `${carData.brand} ${carData.model}`,
+                    receiverId: carData.sellerId, // صاحب الإعلان
+                    senderName: document.getElementById('senderName').value,
+                    senderEmail: document.getElementById('senderEmail').value,
+                    message: document.getElementById('senderMsg').value,
+                    createdAt: serverTimestamp(),
+                    read: false
+                });
+
+                alert("Tack! Ditt meddelande har skickats till säljaren.");
+                form.reset();
+            } catch (err) {
+                alert("Ett fel uppstod: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Skicka förfrågan";
+            }
+        };
     }
 
     loadCar();
