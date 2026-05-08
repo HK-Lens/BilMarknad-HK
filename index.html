@@ -48,6 +48,25 @@
         .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); letter-spacing: -1px; }
         .logo span { color: var(--primary); }
 
+        /* Notification Icon Styling */
+        .nav-links { display: flex; align-items: center; gap: 15px; }
+        .nav-icon-link { 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            text-decoration: none; 
+            font-size: 20px;
+            color: var(--dark);
+            transition: 0.2s;
+        }
+        .nav-icon-link:hover { transform: scale(1.1); }
+        .notification-badge { 
+            position: absolute; top: -5px; right: -8px; 
+            background: #ef4444; color: white; font-size: 10px; 
+            padding: 2px 6px; border-radius: 50%; display: none;
+            font-weight: 900; border: 2px solid white;
+        }
+
         .container { max-width: 1200px; margin: 30px auto; padding: 0 6%; flex: 1; }
 
         /* Search Section */
@@ -58,7 +77,7 @@
         .btn-search-submit { width: 100%; background: var(--dark); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 20px; transition: 0.3s; }
         .btn-search-submit:hover { background: var(--primary); }
 
-        /* Cars Grid - 3 per row as requested */
+        /* Cars Grid - 3 per row */
         .cars-grid { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
@@ -108,8 +127,13 @@
     <header>
         <a href="index.html" class="logo">BIL<span>HK</span></a>
         <div class="nav-links">
+            <a href="my-account.html" class="nav-icon-link" id="msgLink" style="display:none;" title="Mina meddelanden">
+                <span>📩</span>
+                <span id="msgBadge" class="notification-badge">0</span>
+            </a>
+            
             <a href="sell.html" style="background:var(--primary); color:white; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:800; font-size: 13px;">Sälj din bil</a>
-            <a href="login.html" id="authButton" style="margin-left: 15px; text-decoration: none; font-weight: 700; color: var(--dark); font-size: 13px;">Logga in</a>
+            <a href="login.html" id="authButton" style="text-decoration: none; font-weight: 700; color: var(--dark); font-size: 13px;">Logga in</a>
         </div>
     </header>
 
@@ -150,17 +174,36 @@
     <script type="module">
         import { db, auth } from './firebase-config.js';
         import { carData } from './cars-data.js';
-        import { collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, getDocs, query, orderBy, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const bSel = document.getElementById('brandSelect');
         const mSel = document.getElementById('modelSelect');
         const authBtn = document.getElementById('authButton');
+        const msgLink = document.getElementById('msgLink');
+        const msgBadge = document.getElementById('msgBadge');
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 authBtn.textContent = "Mitt Konto";
                 authBtn.href = "my-account.html";
+                msgLink.style.display = "flex";
+
+                // Listen for unread messages (Real-time)
+                const qMsg = query(
+                    collection(db, "messages"), 
+                    where("receiverId", "==", user.uid), 
+                    where("read", "==", false)
+                );
+                
+                onSnapshot(qMsg, (snapshot) => {
+                    if (snapshot.size > 0) {
+                        msgBadge.innerText = snapshot.size;
+                        msgBadge.style.display = "block";
+                    } else {
+                        msgBadge.style.display = "none";
+                    }
+                });
             }
         });
 
@@ -187,15 +230,11 @@
             grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Laddar bilar...</p>";
 
             try {
-                // Fetch all to sort by manufacturing year as requested
                 const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
                 const snap = await getDocs(q);
                 let cars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                // Sort by manufacturing year (Årsmodell) descending
                 cars.sort((a, b) => Number(b.year) - Number(a.year));
-                
-                // Limit to 6 cars (3x2 grid)
                 const top6 = cars.slice(0, 6);
 
                 if (top6.length === 0) {
@@ -220,11 +259,7 @@
             }
         }
 
-        document.getElementById('searchBtn').onclick = () => {
-            // Redirect to filter results or handle locally
-            loadLatestCars(); 
-        };
-
+        document.getElementById('searchBtn').onclick = loadLatestCars;
         loadLatestCars();
     </script>
 </body>
