@@ -2,99 +2,190 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <title>Sälj din bil</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sälj din bil | BilHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .form-box { background: white; padding: 40px; border-radius: 15px; max-width: 600px; margin: 40px auto; border: 1px solid var(--border); }
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: 700; }
-        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; }
+        .sell-container { max-width: 800px; margin: 40px auto; background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
+        
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        .form-group label { font-size: 13px; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .form-group input, .form-group select, .form-group textarea { 
+            padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-family: inherit; font-size: 14px;
+        }
+
+        /* تنسيق قسم نوع الحساب (شركة / خاص) */
+        .account-type-selector { display: flex; gap: 15px; margin-bottom: 25px; padding: 15px; background: #f8fafc; border-radius: 12px; }
+        .type-option { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; }
+
+        .btn-submit { 
+            width: 100%; padding: 16px; background: var(--dark); color: white; border: none; 
+            border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s;
+        }
+        .btn-submit:hover { background: var(--primary); }
+        #companyFields { display: none; } /* مخفي افتراضياً */
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="form-box">
-        <h2>Annonsera din bil</h2>
-        <form id="sellForm">
-            <div class="input-group">
-                <label>Märke (الشركة)</label>
-                <input type="text" id="brand" required>
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <a href="index.html" style="text-decoration:none; font-weight:700; color:var(--dark);">Avbryt (إلغاء)</a>
+</header>
+
+<div class="sell-container">
+    <h1 style="margin-bottom: 30px; text-align: center;">Skapa din annons</h1>
+
+    <form id="sellForm">
+        <div class="account-type-selector">
+            <label class="type-option">
+                <input type="radio" name="userType" value="private" checked onclick="toggleCompany(false)"> Privatperson (فرد)
+            </label>
+            <label class="type-option">
+                <input type="radio" name="userType" value="company" onclick="toggleCompany(true)"> Företag (شركة)
+            </label>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label>Annonsrubrik (عنوان الإعلان)</label>
+                <input type="text" id="title" placeholder="t.ex. Volvo XC60 i nyskick" required>
             </div>
-            <div class="input-group">
-                <label>Modell</label>
-                <input type="text" id="model" required>
+
+            <div class="form-group">
+                <label>Registreringsnummer (رقم اللوحة)</label>
+                <input type="text" id="plateNumber" placeholder="ABC 123">
             </div>
-            <div class="input-group">
-                <label>Pris (kr)</label>
-                <input type="number" id="price" required>
+
+            <div class="form-group">
+                <label>Märke (الماركة)</label>
+                <select id="brandSelect" required><option value="">Välj märke</option></select>
             </div>
-            <div class="input-group">
-                <label>Miltal (mil)</label>
-                <input type="number" id="mileage" required>
+            <div class="form-group">
+                <label>Modell (الموديل)</label>
+                <select id="modelSelect" required><option value="">Välj modell</option></select>
             </div>
-            <div class="input-group">
-                <label>Årsmodell</label>
-                <input type="number" id="year" required>
+
+            <div class="form-group">
+                <label>Årsmodell (سنة الصنع)</label>
+                <input type="number" id="year" placeholder="2022" required>
             </div>
-            <div class="input-group">
-                <label>Bränsle</label>
-                <select id="fuelType">
-                    <option>Bensin</option>
-                    <option>Diesel</option>
-                    <option>El</option>
-                    <option>Hybrid</option>
-                </select>
+            <div class="form-group">
+                <label>Miltal (المسافة بالـ mil)</label>
+                <input type="number" id="mileage" placeholder="t.ex. 5000" required>
             </div>
-            <div class="input-group">
-                <label>Bilder</label>
-                <input type="file" id="photos" multiple accept="image/*">
+            <div class="form-group">
+                <label>Pris (السعر kr)</label>
+                <input type="number" id="price" placeholder="kr" required>
             </div>
-            <button type="submit" class="btn-primary" style="width:100%">Publicera annons</button>
-        </form>
-    </div>
+
+            <div class="form-group">
+                <label>Telefonnummer (رقم الهاتف)</label>
+                <input type="tel" id="phone" placeholder="070-000 00 00" required>
+            </div>
+
+            <div class="form-group full-width" id="companyFields">
+                <label>Företagets webbplats (الموقع الإلكتروني للشركة)</label>
+                <input type="url" id="website" placeholder="https://www.foretag.se">
+            </div>
+
+            <div class="form-group full-width">
+                <label>Bilder (إضافة صور)</label>
+                <input type="file" id="imageFiles" multiple accept="image/*" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Ytterligare information (معلومات إضافية)</label>
+                <textarea id="description" rows="5" placeholder="Skriv mer om bilen..."></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Publicera Annons</button>
+    </form>
 </div>
 
 <script type="module">
     import { db, auth, storage } from './firebase-config.js';
+    import { carData } from './cars-data.js';
     import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
+    const bSel = document.getElementById('brandSelect');
+    const mSel = document.getElementById('modelSelect');
+
+    // تعبئة الماركات
+    Object.keys(carData).sort().forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b; opt.textContent = b;
+        bSel.appendChild(opt);
+    });
+
+    bSel.onchange = () => {
+        mSel.innerHTML = '<option value="">Välj modell</option>';
+        if (carData[bSel.value]) {
+            carData[bSel.value].forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m; opt.textContent = m;
+                mSel.appendChild(opt);
+            });
+        }
+    };
+
+    // إظهار/إخفاء خانات الشركة
+    window.toggleCompany = (show) => {
+        document.getElementById('companyFields').style.display = show ? 'block' : 'none';
+    };
+
+    // عملية النشر
     document.getElementById('sellForm').onsubmit = async (e) => {
         e.preventDefault();
-        const btn = e.target.querySelector('button');
+        const user = auth.currentUser;
+        if (!user) return alert("Du måste vara inloggad!");
+
+        const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.innerText = "Publicerar...";
 
         try {
-            const files = document.getElementById('photos').files;
+            // 1. رفع الصور
+            const files = document.getElementById('imageFiles').files;
             const imageUrls = [];
-
-            for(let file of files) {
+            for (let file of files) {
                 const sRef = ref(storage, `cars/${Date.now()}_${file.name}`);
-                await uploadBytes(sRef, file);
-                const url = await getDownloadURL(sRef);
+                const snap = await uploadBytes(sRef, file);
+                const url = await getDownloadURL(snap.ref);
                 imageUrls.push(url);
             }
 
+            // 2. حفظ البيانات في Firestore
             await addDoc(collection(db, "cars"), {
-                brand: document.getElementById('brand').value,
-                model: document.getElementById('model').value,
-                price: Number(document.getElementById('price').value),
-                mileage: Number(document.getElementById('mileage').value),
+                title: document.getElementById('title').value,
+                plateNumber: document.getElementById('plateNumber').value,
+                brand: bSel.value,
+                model: mSel.value,
                 year: Number(document.getElementById('year').value),
-                fuelType: document.getElementById('fuelType').value,
+                mileage: Number(document.getElementById('mileage').value),
+                price: Number(document.getElementById('price').value),
+                phone: document.getElementById('phone').value,
+                website: document.getElementById('website').value || "",
+                userType: document.querySelector('input[name="userType"]:checked').value,
+                description: document.getElementById('description').value,
                 images: imageUrls,
-                createdAt: serverTimestamp(),
-                sellerEmail: auth.currentUser ? auth.currentUser.email : "Gäst"
+                sellerEmail: user.email,
+                sellerId: user.uid,
+                createdAt: serverTimestamp()
             });
 
-            alert("Annons publicerad!");
+            alert("Klart! Annonsen är publicerad.");
             window.location.href = "index.html";
         } catch (err) {
-            alert("Fel: " + err.message);
+            console.error(err);
+            alert("Ett fel uppstod.");
             btn.disabled = false;
-            btn.innerText = "Publicera annons";
+            btn.innerText = "Publicera Annons";
         }
     };
 </script>
