@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logga in / Skapa konto | BilMarknad-HK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <style>
         .auth-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: #f4f6f9; }
         .auth-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); width: 100%; max-width: 480px; border: 1px solid #e5e7eb; }
         
-        /* أزرار التبديل العلوي (خاص / شركات) */
+        /* أزرار التبديل العلوي */
         .branch-toggle { display: flex; background: #f3f4f6; padding: 5px; border-radius: 12px; margin-bottom: 25px; }
         .branch-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; color: #6b7280; background: transparent; font-family: inherit; }
         .branch-btn.active { background: white; color: #111827; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -51,8 +50,8 @@
         </header>
 
         <div class="branch-toggle">
-            <button class="branch-btn active" id="btnPrivat" onclick="switchBranch('private')">Privat (خاص)</button>
-            <button class="branch-btn" id="btnCompany" onclick="switchBranch('company')">Företag (شركات)</button>
+            <button class="branch-btn active" id="btnPrivat">Privat (خاص)</button>
+            <button class="branch-btn" id="btnCompany">Företag (شركات)</button>
         </div>
 
         <button class="google-auth-btn" id="googleBtn">
@@ -100,7 +99,7 @@
 
         <div class="auth-footer">
             <span id="footerText">Har du inget konto?</span>
-            <a href="javascript:void(0)" onclick="toggleAuthMode()" id="modeLink">Skapa konto</a>
+            <a href="javascript:void(0)" id="modeLink">Skapa konto</a>
         </div>
     </div>
 </div>
@@ -114,25 +113,11 @@
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let currentBranch = 'private'; // 'private' أو 'company'
+    let currentBranch = 'private'; 
     let isLogin = true;
 
-    // 1. وظيفة تبديل الفرع (خاص / شركات)
-    window.switchBranch = (branch) => {
-        currentBranch = branch;
-        document.getElementById('btnPrivat').classList.toggle('active', branch === 'private');
-        document.getElementById('btnCompany').classList.toggle('active', branch === 'company');
-        updateUI();
-    };
-
-    // 2. وظيفة التبديل بين (تسجيل دخول / إنشاء حساب)
-    window.toggleAuthMode = () => {
-        isLogin = !isLogin;
-        updateUI();
-    };
-
-    // تحديث الواجهة بناءً على الوضع الحالي
-    function updateUI() {
+    // إصلاح مشكلة النطاق (Scope) بتصدير الوظائف للنافذة أو استخدام Event Listeners
+    const updateUI = () => {
         const title = document.getElementById('mainTitle');
         const submitBtn = document.getElementById('submitBtn');
         const footerText = document.getElementById('footerText');
@@ -154,7 +139,6 @@
             modeLink.innerText = "Logga in";
             dynamicFields.style.display = "block";
             
-            // إظهار الخانات بناءً على النوع المختار
             if (currentBranch === 'company') {
                 companyFields.style.display = "block";
                 privateNameGroup.style.display = "none";
@@ -163,13 +147,32 @@
                 privateNameGroup.style.display = "block";
             }
         }
-    }
+    };
 
-    // 3. الدخول عبر جوجل
+    // ربط الأحداث بالأزرار (أكثر أماناً من onclick في HTML)
+    document.getElementById('btnPrivat').addEventListener('click', () => {
+        currentBranch = 'private';
+        document.getElementById('btnPrivat').classList.add('active');
+        document.getElementById('btnCompany').classList.remove('active');
+        updateUI();
+    });
+
+    document.getElementById('btnCompany').addEventListener('click', () => {
+        currentBranch = 'company';
+        document.getElementById('btnCompany').classList.add('active');
+        document.getElementById('btnPrivat').classList.remove('active');
+        updateUI();
+    });
+
+    document.getElementById('modeLink').addEventListener('click', () => {
+        isLogin = !isLogin;
+        updateUI();
+    });
+
+    // الدخول عبر جوجل
     document.getElementById('googleBtn').onclick = async () => {
         try {
             const res = await signInWithPopup(auth, googleProvider);
-            // عند أول دخول، نحفظ نوع المستخدم المختار
             await setDoc(doc(db, "users", res.user.uid), {
                 email: res.user.email,
                 userType: currentBranch,
@@ -180,7 +183,7 @@
         } catch (err) { alert("Fel: " + err.message); }
     };
 
-    // 4. معالجة النموذج (بريد + كلمة مرور)
+    // معالجة النموذج
     document.getElementById('authForm').onsubmit = async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value;
@@ -197,7 +200,6 @@
                 const res = await createUserWithEmailAndPassword(auth, email, password);
                 const user = res.user;
 
-                // بيانات إضافية للحفظ في Firestore
                 const userData = {
                     email,
                     userType: currentBranch,
