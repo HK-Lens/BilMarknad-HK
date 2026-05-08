@@ -8,30 +8,35 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .auth-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: #f4f6f9; }
-        .auth-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); width: 100%; max-width: 500px; border: 1px solid #e5e7eb; }
+        .auth-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); width: 100%; max-width: 480px; border: 1px solid #e5e7eb; }
         
-        /* أزرار التبديل العلوي */
+        /* أزرار التبديل العلوي (خاص / شركات) */
         .branch-toggle { display: flex; background: #f3f4f6; padding: 5px; border-radius: 12px; margin-bottom: 25px; }
-        .branch-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; color: #6b7280; background: transparent; }
+        .branch-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; color: #6b7280; background: transparent; font-family: inherit; }
         .branch-btn.active { background: white; color: #111827; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
         /* زر جوجل */
         .google-auth-btn {
             width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px;
             background: white; color: #374151; border: 1px solid #d1d5db; padding: 12px;
-            border-radius: 10px; font-weight: 700; cursor: pointer; margin-bottom: 20px;
+            border-radius: 10px; font-weight: 700; cursor: pointer; margin-bottom: 20px; transition: 0.2s;
         }
+        .google-auth-btn:hover { background: #f9fafb; }
 
         .divider { display: flex; align-items: center; text-align: center; color: #9ca3af; font-size: 12px; margin: 20px 0; }
         .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #eee; margin: 0 10px; }
 
         .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; background: #f9fafb; font-size: 14px; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; background: #f9fafb; font-size: 14px; outline: none; transition: 0.2s; }
+        .form-group input:focus { border-color: #f58220; background: #fff; }
         
-        .company-fields { display: none; } /* مخفية افتراضياً */
+        /* تحكم في ظهور الخانات */
+        #dynamicFields { display: none; } 
+        .company-only { display: none; }
 
-        .btn-submit { width: 100%; padding: 15px; background: #f58220; color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .btn-submit { width: 100%; padding: 15px; background: #f58220; color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn-submit:hover { background: #e07210; }
         .auth-footer { margin-top: 25px; text-align: center; font-size: 14px; }
         .auth-footer a { color: #f58220; text-decoration: none; font-weight: 700; }
     </style>
@@ -46,8 +51,8 @@
         </header>
 
         <div class="branch-toggle">
-            <button class="branch-btn active" onclick="switchBranch('private', this)">Privat (خاص)</button>
-            <button class="branch-btn" onclick="switchBranch('company', this)">Företag (شركات)</button>
+            <button class="branch-btn active" id="btnPrivat" onclick="switchBranch('private')">Privat (خاص)</button>
+            <button class="branch-btn" id="btnCompany" onclick="switchBranch('company')">Företag (شركات)</button>
         </div>
 
         <button class="google-auth-btn" id="googleBtn">
@@ -60,34 +65,34 @@
         <form id="authForm">
             <div class="form-group">
                 <label>E-postadress (البريد الإلكتروني)</label>
-                <input type="email" id="email" required>
+                <input type="email" id="email" placeholder="namn@epost.se" required>
             </div>
 
-            <div id="registerFields" style="display: none;">
-                <div class="form-group private-only">
+            <div id="dynamicFields">
+                <div class="form-group" id="privateNameGroup">
                     <label>Fullständigt namn (الاسم الكامل)</label>
-                    <input type="text" id="fullName">
+                    <input type="text" id="fullName" placeholder="Förnamn Efternamn">
                 </div>
 
-                <div class="company-fields">
+                <div class="company-only" id="companyFields">
                     <div class="form-group">
                         <label>Företagsnamn (اسم الشركة)</label>
-                        <input type="text" id="companyName">
+                        <input type="text" id="companyName" placeholder="T.ex. Bilweb AB">
                     </div>
                     <div class="form-group">
-                        <label>Organisationsnummer (الرقم الضريبي/المؤسسي)</label>
+                        <label>Organisationsnummer (الرقم الضريبي)</label>
                         <input type="text" id="orgNr" placeholder="XXXXXX-XXXX">
                     </div>
                     <div class="form-group">
                         <label>Telefonnummer (رقم الهاتف)</label>
-                        <input type="tel" id="phone">
+                        <input type="tel" id="phone" placeholder="070-000 00 00">
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label>Lösenord (كلمة المرور)</label>
-                <input type="password" id="password" required>
+                <input type="password" id="password" placeholder="Minst 6 tecken" required>
             </div>
 
             <button type="submit" class="btn-submit" id="submitBtn">Logga in</button>
@@ -95,72 +100,95 @@
 
         <div class="auth-footer">
             <span id="footerText">Har du inget konto?</span>
-            <a href="javascript:void(0)" onclick="toggleMode()" id="modeLink">Skapa konto</a>
+            <a href="javascript:void(0)" onclick="toggleAuthMode()" id="modeLink">Skapa konto</a>
         </div>
     </div>
 </div>
 
 <script type="module">
     import { auth, db, googleProvider } from './firebase-config.js';
-    import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+        signInWithEmailAndPassword, 
+        createUserWithEmailAndPassword, 
+        signInWithPopup 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let currentBranch = 'private'; // 'private' أو 'company'
     let isLogin = true;
 
-    // تبديل الفرع (خاص / شركات)
-    window.switchBranch = (branch, btn) => {
+    // 1. وظيفة تبديل الفرع (خاص / شركات)
+    window.switchBranch = (branch) => {
         currentBranch = branch;
-        document.querySelectorAll('.branch-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        // إظهار/إخفاء خانات الشركة بناءً على الوضع
-        const companySection = document.querySelector('.company-fields');
-        const privateSection = document.querySelector('.private-only');
-        
-        if (branch === 'company' && !isLogin) {
-            companySection.style.display = 'block';
-            privateSection.style.display = 'none';
-        } else if (branch === 'private' && !isLogin) {
-            companySection.style.display = 'none';
-            privateSection.style.display = 'block';
-        }
+        document.getElementById('btnPrivat').classList.toggle('active', branch === 'private');
+        document.getElementById('btnCompany').classList.toggle('active', branch === 'company');
+        updateUI();
     };
 
-    // تبديل الوضع (تسجيل دخول / إنشاء حساب)
-    window.toggleMode = () => {
+    // 2. وظيفة التبديل بين (تسجيل دخول / إنشاء حساب)
+    window.toggleAuthMode = () => {
         isLogin = !isLogin;
-        document.getElementById('mainTitle').innerText = isLogin ? 'Logga in' : 'Skapa konto';
-        document.getElementById('submitBtn').innerText = isLogin ? 'Logga in' : 'Registrera dig';
-        document.getElementById('footerText').innerText = isLogin ? 'Har du inget konto?' : 'Redan medlem?';
-        document.getElementById('modeLink').innerText = isLogin ? 'Skapa konto' : 'Logga in';
-        
-        const registerFields = document.getElementById('registerFields');
-        registerFields.style.display = isLogin ? 'none' : 'block';
-        
-        // تحديث ظهور خانات الشركة عند التبديل لإنشاء حساب
-        switchBranch(currentBranch, document.querySelector('.branch-btn.active'));
+        updateUI();
     };
 
-    // الدخول عبر جوجل
+    // تحديث الواجهة بناءً على الوضع الحالي
+    function updateUI() {
+        const title = document.getElementById('mainTitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const footerText = document.getElementById('footerText');
+        const modeLink = document.getElementById('modeLink');
+        const dynamicFields = document.getElementById('dynamicFields');
+        const companyFields = document.getElementById('companyFields');
+        const privateNameGroup = document.getElementById('privateNameGroup');
+
+        if (isLogin) {
+            title.innerText = "Logga in";
+            submitBtn.innerText = "Logga in";
+            footerText.innerText = "Har du inget konto?";
+            modeLink.innerText = "Skapa konto";
+            dynamicFields.style.display = "none";
+        } else {
+            title.innerText = "Skapa konto";
+            submitBtn.innerText = "Registrera dig";
+            footerText.innerText = "Redan medlem?";
+            modeLink.innerText = "Logga in";
+            dynamicFields.style.display = "block";
+            
+            // إظهار الخانات بناءً على النوع المختار
+            if (currentBranch === 'company') {
+                companyFields.style.display = "block";
+                privateNameGroup.style.display = "none";
+            } else {
+                companyFields.style.display = "none";
+                privateNameGroup.style.display = "block";
+            }
+        }
+    }
+
+    // 3. الدخول عبر جوجل
     document.getElementById('googleBtn').onclick = async () => {
         try {
             const res = await signInWithPopup(auth, googleProvider);
-            // حفظ النوع في Firestore عند أول دخول
+            // عند أول دخول، نحفظ نوع المستخدم المختار
             await setDoc(doc(db, "users", res.user.uid), {
                 email: res.user.email,
                 userType: currentBranch,
+                displayName: res.user.displayName,
                 lastLogin: serverTimestamp()
             }, { merge: true });
             window.location.href = "index.html";
-        } catch (err) { alert(err.message); }
+        } catch (err) { alert("Fel: " + err.message); }
     };
 
-    // معالجة النموذج
+    // 4. معالجة النموذج (بريد + كلمة مرور)
     document.getElementById('authForm').onsubmit = async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+        const btn = document.getElementById('submitBtn');
+
+        btn.disabled = true;
+        btn.innerText = "Vänta...";
 
         try {
             if (isLogin) {
@@ -169,7 +197,7 @@
                 const res = await createUserWithEmailAndPassword(auth, email, password);
                 const user = res.user;
 
-                // حفظ البيانات الإضافية بناءً على النوع
+                // بيانات إضافية للحفظ في Firestore
                 const userData = {
                     email,
                     userType: currentBranch,
@@ -187,7 +215,11 @@
                 await setDoc(doc(db, "users", user.uid), userData);
             }
             window.location.href = "index.html";
-        } catch (err) { alert(err.message); }
+        } catch (err) {
+            alert("Fel: " + err.message);
+            btn.disabled = false;
+            btn.innerText = isLogin ? "Logga in" : "Registrera dig";
+        }
     };
 </script>
 </body>
