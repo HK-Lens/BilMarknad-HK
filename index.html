@@ -14,8 +14,9 @@
         .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
 
+        .nav-actions { display: flex; gap: 10px; align-items: center; }
         .btn { text-decoration: none; padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 13px; transition: 0.2s; }
-        .btn-sell { background: var(--dark); color: white; margin-left: 10px; }
+        .btn-sell { background: var(--dark); color: white; }
 
         .search-container { max-width: 1100px; margin: 30px auto; padding: 0 15px; }
         .search-card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.06); border: 1px solid var(--border); display: grid; grid-template-columns: 1fr; gap: 15px; }
@@ -62,7 +63,7 @@
         <button class="btn-search" onclick="applySearch()">SÖK BILAR</button>
     </div>
     <div style="text-align: center; margin-top: 20px;">
-        <a href="filter.html" style="text-decoration:none; color:var(--primary); font-weight:700; font-size:14px;">⚙️ Fler sökfilter (Kaross, Bränsle...)</a>
+        <a href="filter.html" style="text-decoration:none; color:var(--primary); font-weight:700; font-size:14px;">⚙️ Avancerad sökning</a>
     </div>
 </div>
 
@@ -83,9 +84,7 @@
     onAuthStateChanged(auth, user => {
         const nav = document.getElementById('navActions');
         if (user) {
-            nav.innerHTML = `
-                <a href="my-account.html" class="btn" style="border:1px solid #ddd;">Min Sida</a>
-                <a href="sell.html" class="btn btn-sell">Sälj bil</a>`;
+            nav.innerHTML = `<a href="my-account.html" class="btn" style="border:1px solid #ddd;">Min Sida</a><a href="sell.html" class="btn btn-sell">Sälj bil</a>`;
         }
         load();
     });
