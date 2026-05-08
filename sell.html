@@ -3,191 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sälj din bil | BilHK</title>
+    <title>Sälj din bil | BilMarknad-HK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <style>
-        .sell-container { max-width: 800px; margin: 40px auto; background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding: 20px; }
+        .container { max-width: 900px; margin: 40px auto; background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        h1 { text-align: center; font-weight: 900; margin-bottom: 30px; }
+        
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .full-width { grid-column: span 2; }
         
-        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        .form-group label { font-size: 13px; font-weight: 800; color: #64748b; text-transform: uppercase; }
-        .form-group input, .form-group select, .form-group textarea { 
-            padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-family: inherit; font-size: 14px;
-        }
-
-        /* تنسيق قسم نوع الحساب (شركة / خاص) */
-        .account-type-selector { display: flex; gap: 15px; margin-bottom: 25px; padding: 15px; background: #f8fafc; border-radius: 12px; }
-        .type-option { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; }
-
-        .btn-submit { 
-            width: 100%; padding: 16px; background: var(--dark); color: white; border: none; 
-            border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s;
-        }
+        .section-title { grid-column: span 2; font-weight: 800; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 20px; text-transform: uppercase; font-size: 13px; }
+        
+        .field { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 13px; font-weight: 700; color: #64748b; }
+        input, select, textarea { padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 15px; }
+        
+        .btn-submit { grid-column: span 2; background: var(--dark); color: white; padding: 18px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 20px; font-size: 16px; transition: 0.3s; }
         .btn-submit:hover { background: var(--primary); }
-        #companyFields { display: none; } /* مخفي افتراضياً */
     </style>
 </head>
 <body>
 
-<header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <a href="index.html" style="text-decoration:none; font-weight:700; color:var(--dark);">Avbryt (إلغاء)</a>
-</header>
-
-<div class="sell-container">
-    <h1 style="margin-bottom: 30px; text-align: center;">Skapa din annons</h1>
-
-    <form id="sellForm">
-        <div class="account-type-selector">
-            <label class="type-option">
-                <input type="radio" name="userType" value="private" checked onclick="toggleCompany(false)"> Privatperson (فرد)
-            </label>
-            <label class="type-option">
-                <input type="radio" name="userType" value="company" onclick="toggleCompany(true)"> Företag (شركة)
-            </label>
+<div class="container">
+    <h1>Publicera Annons</h1>
+    <form id="sellForm" class="form-grid">
+        
+        <div class="section-title">Grunduppgifter (المعلومات الأساسية)</div>
+        <div class="field">
+            <label>Märke (الماركة)</label>
+            <input type="text" id="brand" placeholder="t.ex. Volkswagen" required>
+        </div>
+        <div class="field">
+            <label>Modell (الموديل)</label>
+            <input type="text" id="model" placeholder="t.ex. ID.4" required>
+        </div>
+        <div class="field">
+            <label>Registreringsnummer (رقم اللوحة)</label>
+            <input type="text" id="regnr" placeholder="ABC 123">
+        </div>
+        <div class="field">
+            <label>Årsmodell (سنة الصنع)</label>
+            <input type="number" id="year" placeholder="2023" required>
         </div>
 
-        <div class="form-grid">
-            <div class="form-group full-width">
-                <label>Annonsrubrik (عنوان الإعلان)</label>
-                <input type="text" id="title" placeholder="t.ex. Volvo XC60 i nyskick" required>
-            </div>
-
-            <div class="form-group">
-                <label>Registreringsnummer (رقم اللوحة)</label>
-                <input type="text" id="plateNumber" placeholder="ABC 123">
-            </div>
-
-            <div class="form-group">
-                <label>Märke (الماركة)</label>
-                <select id="brandSelect" required><option value="">Välj märke</option></select>
-            </div>
-            <div class="form-group">
-                <label>Modell (الموديل)</label>
-                <select id="modelSelect" required><option value="">Välj modell</option></select>
-            </div>
-
-            <div class="form-group">
-                <label>Årsmodell (سنة الصنع)</label>
-                <input type="number" id="year" placeholder="2022" required>
-            </div>
-            <div class="form-group">
-                <label>Miltal (المسافة بالـ mil)</label>
-                <input type="number" id="mileage" placeholder="t.ex. 5000" required>
-            </div>
-            <div class="form-group">
-                <label>Pris (السعر kr)</label>
-                <input type="number" id="price" placeholder="kr" required>
-            </div>
-
-            <div class="form-group">
-                <label>Telefonnummer (رقم الهاتف)</label>
-                <input type="tel" id="phone" placeholder="070-000 00 00" required>
-            </div>
-
-            <div class="form-group full-width" id="companyFields">
-                <label>Företagets webbplats (الموقع الإلكتروني للشركة)</label>
-                <input type="url" id="website" placeholder="https://www.foretag.se">
-            </div>
-
-            <div class="form-group full-width">
-                <label>Bilder (إضافة صور)</label>
-                <input type="file" id="imageFiles" multiple accept="image/*" required>
-            </div>
-
-            <div class="form-group full-width">
-                <label>Ytterligare information (معلومات إضافية)</label>
-                <textarea id="description" rows="5" placeholder="Skriv mer om bilen..."></textarea>
-            </div>
+        <div class="section-title">Teknisk Data (البيانات التقنية)</div>
+        <div class="field">
+            <label>Drivmedel (نوع الوقود)</label>
+            <select id="fuelType">
+                <option value="El">El</option>
+                <option value="Bensin">Bensin</option>
+                <option value="Diesel">Diesel</option>
+                <option value="Hybrid">Laddhybrid</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Växellåda (ناقل الحركة)</label>
+            <select id="transmission">
+                <option value="Automat">Automat</option>
+                <option value="Manuell">Manuell</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Räckvidd WLTP - km (المدى الكهربائي)</label>
+            <input type="number" id="range" placeholder="522">
+        </div>
+        <div class="field">
+            <label>Hästkrafter (الأحصنة)</label>
+            <input type="number" id="hp" placeholder="204">
         </div>
 
-        <button type="submit" class="btn-submit" id="submitBtn">Publicera Annons</button>
+        <div class="section-title">Mått & Vikt (الأبعاد والوزن)</div>
+        <div class="field">
+            <label>Färg (اللون)</label>
+            <input type="text" id="color" placeholder="Grå">
+        </div>
+        <div class="field">
+            <label>Totalvikt - kg (الوزن الكلي)</label>
+            <input type="number" id="totalWeight" placeholder="2660">
+        </div>
+        <div class="field">
+            <label>Längd (الطول بالامتار)</label>
+            <input type="text" id="length" placeholder="4,58 m">
+        </div>
+        <div class="field">
+            <label>Antal säten (عدد المقاعد)</label>
+            <input type="number" id="seats" value="5">
+        </div>
+
+        <div class="section-title">Pris & Beskrivning</div>
+        <div class="field">
+            <label>Miltal - mil (المسافة المقطوعة)</label>
+            <input type="number" id="mileage" required>
+        </div>
+        <div class="field">
+            <label>Pris - kr (السعر)</label>
+            <input type="number" id="price" required>
+        </div>
+        <div class="field full-width">
+            <label>Beskrivning (الوصف الكامل للمواصفات)</label>
+            <textarea id="description" rows="5" placeholder="Skriv om utrustning, sommarhjul, servicehistorik..."></textarea>
+        </div>
+
+        <div class="field full-width">
+            <label>Bilder (الصور)</label>
+            <input type="file" id="photoFiles" multiple accept="image/*">
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Publicera annons</button>
     </form>
 </div>
 
 <script type="module">
-    import { db, auth, storage } from './firebase-config.js';
-    import { carData } from './cars-data.js';
+    import { db, storage } from './firebase-config.js';
     import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-    const bSel = document.getElementById('brandSelect');
-    const mSel = document.getElementById('modelSelect');
-
-    // تعبئة الماركات
-    Object.keys(carData).sort().forEach(b => {
-        const opt = document.createElement('option');
-        opt.value = b; opt.textContent = b;
-        bSel.appendChild(opt);
-    });
-
-    bSel.onchange = () => {
-        mSel.innerHTML = '<option value="">Välj modell</option>';
-        if (carData[bSel.value]) {
-            carData[bSel.value].forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m; opt.textContent = m;
-                mSel.appendChild(opt);
-            });
-        }
-    };
-
-    // إظهار/إخفاء خانات الشركة
-    window.toggleCompany = (show) => {
-        document.getElementById('companyFields').style.display = show ? 'block' : 'none';
-    };
-
-    // عملية النشر
     document.getElementById('sellForm').onsubmit = async (e) => {
         e.preventDefault();
-        const user = auth.currentUser;
-        if (!user) return alert("Du måste vara inloggad!");
-
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.innerText = "Publicerar...";
 
         try {
-            // 1. رفع الصور
-            const files = document.getElementById('imageFiles').files;
+            // رفع الصور أولاً
+            const files = document.getElementById('photoFiles').files;
             const imageUrls = [];
-            for (let file of files) {
-                const sRef = ref(storage, `cars/${Date.now()}_${file.name}`);
-                const snap = await uploadBytes(sRef, file);
-                const url = await getDownloadURL(snap.ref);
+            for(let file of files) {
+                const storageRef = ref(storage, `cars/${Date.now()}_${file.name}`);
+                await uploadBytes(storageRef, file);
+                const url = await getDownloadURL(storageRef);
                 imageUrls.push(url);
             }
 
-            // 2. حفظ البيانات في Firestore
+            // إرسال البيانات الكاملة للفيربيز
             await addDoc(collection(db, "cars"), {
-                title: document.getElementById('title').value,
-                plateNumber: document.getElementById('plateNumber').value,
-                brand: bSel.value,
-                model: mSel.value,
+                brand: document.getElementById('brand').value,
+                model: document.getElementById('model').value,
+                regnr: document.getElementById('regnr').value,
                 year: Number(document.getElementById('year').value),
+                fuelType: document.getElementById('fuelType').value,
+                transmission: document.getElementById('transmission').value,
+                range: document.getElementById('range').value,
+                hp: document.getElementById('hp').value,
+                color: document.getElementById('color').value,
+                totalWeight: document.getElementById('totalWeight').value,
+                length: document.getElementById('length').value,
+                seats: document.getElementById('seats').value,
                 mileage: Number(document.getElementById('mileage').value),
                 price: Number(document.getElementById('price').value),
-                phone: document.getElementById('phone').value,
-                website: document.getElementById('website').value || "",
-                userType: document.querySelector('input[name="userType"]:checked').value,
                 description: document.getElementById('description').value,
                 images: imageUrls,
-                sellerEmail: user.email,
-                sellerId: user.uid,
                 createdAt: serverTimestamp()
             });
 
-            alert("Klart! Annonsen är publicerad.");
+            alert("Annonsen har publicerats!");
             window.location.href = "index.html";
-        } catch (err) {
-            console.error(err);
-            alert("Ett fel uppstod.");
+        } catch (error) {
+            alert("Ett fel uppstod: " + error.message);
             btn.disabled = false;
-            btn.innerText = "Publicera Annons";
         }
     };
 </script>
+
 </body>
 </html>
