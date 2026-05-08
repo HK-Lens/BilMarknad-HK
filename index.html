@@ -1,95 +1,162 @@
-<div class="category-wrapper">
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BilHK | Hitta din bil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <div class="nav-links">
+        <a href="sell.html" style="background:var(--primary); color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700;">Sälj din bil</a>
+    </div>
+</header>
+
+<div class="container">
     <div class="category-bar" id="categoryBar">
-        <button class="cat-btn active" data-type="all"><i class="fa-solid fa-list"></i> Alla</button>
-        <button class="cat-btn" data-type="Sedan"><i class="fa-solid fa-car-side"></i> Sedan</button>
-        <button class="cat-btn" data-type="SUV"><i class="fa-solid fa-truck-monster"></i> SUV / 4x4</button>
-        <button class="cat-btn" data-type="Småbil"><i class="fa-solid fa-car-rear"></i> Småbil</button>
-        <button class="cat-btn" data-type="Minibuss"><i class="fa-solid fa-van-shuttle"></i> Minibuss</button>
-        <button class="cat-btn" data-type="Transportbil"><i class="fa-solid fa-truck-front"></i> Transport</button>
+        <button class="cat-btn active" data-type="all">Alla</button>
+        <button class="cat-btn" data-type="Sedan">Sedan</button>
+        <button class="cat-btn" data-type="SUV">SUV / 4x4</button>
+        <button class="cat-btn" data-type="Småbil">Småbil</button>
+        <button class="cat-btn" data-type="Minibuss">Minibuss</button>
+        <button class="cat-btn" data-type="Transport">Transport</button>
     </div>
-</div>
 
-<div class="search-card">
-    <div class="search-grid-main">
-        <div class="search-col">
-            <div class="field-group">
-                <label>Märke</label>
-                <select id="brandSelect"><option value="all">Alla märken</option></select>
+    <div class="search-card">
+        <div class="search-grid">
+            <div class="search-col">
+                <div class="field-group">
+                    <label>Märke</label>
+                    <select id="brandSelect"><option value="all">Alla märken</option></select>
+                </div>
+                <div class="field-group">
+                    <label>Modell</label>
+                    <select id="modelSelect"><option value="all">Alla modeller</option></select>
+                </div>
             </div>
-            <div class="field-group">
-                <label>Modell</label>
-                <select id="modelSelect"><option value="all">Alla modeller</option></select>
+
+            <div class="search-col">
+                <div class="field-group">
+                    <label>Pris från (أقل سعر)</label>
+                    <input type="number" id="minPrice" placeholder="kr">
+                </div>
+                <div class="field-group">
+                    <label>Pris till (أقصى سعر)</label>
+                    <input type="number" id="maxPrice" placeholder="kr">
+                </div>
+            </div>
+
+            <div class="search-col">
+                <div class="field-group">
+                    <label>Minst mil (أقل مسافة)</label>
+                    <input type="number" id="minMil" placeholder="mil">
+                </div>
+                <div class="field-group">
+                    <label>Max mil (أقصى مسافة)</label>
+                    <input type="number" id="maxMil" placeholder="mil">
+                </div>
             </div>
         </div>
-
-        <div class="search-col">
-            <div class="field-group">
-                <label>Pris från</label>
-                <input type="number" id="minPrice" placeholder="Minsta pris">
-            </div>
-            <div class="field-group">
-                <label>Pris till</label>
-                <input type="number" id="maxPrice" placeholder="Högsta pris">
-            </div>
-        </div>
-
-        <div class="search-col">
-            <div class="field-group">
-                <label>Minst mil</label>
-                <input type="number" id="minMil" placeholder="Från">
-            </div>
-            <div class="field-group">
-                <label>Max mil</label>
-                <input type="number" id="maxMil" placeholder="Till">
-            </div>
-        </div>
+        <button class="btn-search-submit" id="searchBtn">Visa resultat</button>
     </div>
-    <button class="btn-search-submit" style="width:100%; height:50px; margin-top:20px; background:var(--dark); color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer;" id="searchBtn">Visa bilar</button>
+
+    <div class="cars-grid" id="carsGrid">
+        </div>
 </div>
 
 <script type="module">
     import { db } from './firebase-config.js';
+    import { carData } from './cars-data.js';
     import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let selectedBodyType = 'all';
+    let selectedCategory = 'all';
+    const bSel = document.getElementById('brandSelect');
+    const mSel = document.getElementById('modelSelect');
 
-    // برمجة أزرار الفئات الأفقية
+    // 1. تعبئة الماركات وتحديث الموديلات
+    Object.keys(carData).sort().forEach(b => {
+        bSel.innerHTML += `<option value="${b}">${b}</option>`;
+    });
+
+    bSel.onchange = () => {
+        mSel.innerHTML = '<option value="all">Alla modeller</option>';
+        if (carData[bSel.value]) {
+            carData[bSel.value].forEach(m => mSel.innerHTML += `<option value="${m}">${m}</option>`);
+        }
+    };
+
+    // 2. التحكم في أزرار الفئات الأفقية
     document.querySelectorAll('.cat-btn').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            selectedBodyType = btn.dataset.type;
-            performSearch(); // تحديث النتائج فوراً
+            selectedCategory = btn.getAttribute('data-type');
+            performSearch(); // تحديث فوري عند الضغط على الفئة
         };
     });
 
+    // 3. وظيفة البحث والفلترة من Firebase
     async function performSearch() {
         const grid = document.getElementById('carsGrid');
-        grid.innerHTML = "Söker...";
-        
-        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        let cars = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+        grid.innerHTML = "<p>Söker...</p>";
 
-        // الفلترة بناءً على المدخلات والفئة المختارة
-        const f = {
-            brand: document.getElementById('brandSelect').value,
-            minP: Number(document.getElementById('minPrice').value),
-            maxP: Number(document.getElementById('maxPrice').value),
-            minM: Number(document.getElementById('minMil').value),
-            maxM: Number(document.getElementById('maxMil').value)
-        };
+        try {
+            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
+            const snap = await getDocs(q);
+            const allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        if(selectedBodyType !== 'all') cars = cars.filter(c => c.bodyType === selectedBodyType);
-        if(f.brand !== 'all') cars = cars.filter(c => c.brand === f.brand);
-        if(f.minP) cars = cars.filter(c => c.price >= f.minP);
-        if(f.maxP) cars = cars.filter(c => c.price <= f.maxP);
-        if(f.minM) cars = cars.filter(c => c.mileage >= f.minM);
-        if(f.maxM) cars = cars.filter(c => c.mileage <= f.maxM);
+            // الحصول على قيم المدخلات
+            const filters = {
+                brand: bSel.value,
+                model: mSel.value,
+                minP: Number(document.getElementById('minPrice').value) || 0,
+                maxP: Number(document.getElementById('maxPrice').value) || Infinity,
+                minM: Number(document.getElementById('minMil').value) || 0,
+                maxM: Number(document.getElementById('maxMil').value) || Infinity
+            };
 
-        // كود الـ Render هنا (نفس الكود السابق لعرض البطاقات)
-        renderCars(cars); 
+            // تطبيق الفلترة برمجياً
+            const filtered = allCars.filter(c => {
+                const catMatch = (selectedCategory === 'all' || c.bodyType === selectedCategory);
+                const brandMatch = (filters.brand === 'all' || c.brand === filters.brand);
+                const modelMatch = (filters.model === 'all' || c.model === filters.model);
+                const priceMatch = (c.price >= filters.minP && c.price <= filters.maxP);
+                const milMatch = (c.mileage >= filters.minM && c.mileage <= filters.maxM);
+                
+                return catMatch && brandMatch && modelMatch && priceMatch && milMatch;
+            });
+
+            // عرض النتائج
+            if (filtered.length === 0) {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga bilar hittades för denna sökning.</p>";
+                return;
+            }
+
+            grid.innerHTML = filtered.map(c => `
+                <div class="car-card" onclick="window.location.href='details.html?id=${c.id}'">
+                    <img src="${c.images ? c.images[0] : 'placeholder.jpg'}">
+                    <div class="card-content">
+                        <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
+                        <div class="car-title">${c.brand} ${c.model}</div>
+                        <div class="car-meta">
+                            <span>${c.year}</span> • <span>${c.mileage} mil</span> • <span>${c.fuelType}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (error) {
+            console.error("Error:", error);
+            grid.innerHTML = "<p>Ett fel uppstod.</p>";
+        }
     }
 
     document.getElementById('searchBtn').onclick = performSearch;
+    performSearch(); // تحميل السيارات عند فتح الصفحة لأول مرة
 </script>
+</body>
+</html>
