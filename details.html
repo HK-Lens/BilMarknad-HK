@@ -7,7 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
         
         header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
         .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
@@ -15,46 +16,41 @@
 
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 1.6fr 1fr; gap: 30px; flex: 1; }
 
-        /* --- نظام معرض الصور المطور --- */
-        .gallery-wrapper { position: relative; background: #000; border-radius: 20px; overflow: hidden; height: 500px; display: flex; align-items: center; justify-content: center; }
-        .main-slide { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; transition: 0.3s; }
+        /* --- معرض الصور --- */
+        .gallery-container { position: relative; background: #000; border-radius: 20px; overflow: hidden; height: 500px; display: flex; align-items: center; justify-content: center; }
+        .main-slide { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
         
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; z-index: 10; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .nav-btn:hover { background: var(--primary); color: white; }
         .prev-btn { left: 20px; }
         .next-btn { right: 20px; }
 
-        .thumb-container { display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .thumb-img { width: 100px; height: 70px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 3px solid transparent; opacity: 0.6; transition: 0.3s; }
-        .thumb-img.active { border-color: var(--primary); opacity: 1; }
+        .thumb-track { display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .thumb-item { width: 100px; height: 70px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 3px solid transparent; opacity: 0.6; transition: 0.3s; flex-shrink: 0; }
+        .thumb-item.active { border-color: var(--primary); opacity: 1; }
 
-        /* نافذة التكبير (Zoom Modal) */
-        .zoom-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-        .zoom-modal img { max-width: 95%; max-height: 90%; border-radius: 10px; }
-        .close-zoom { position: absolute; top: 30px; right: 40px; color: white; font-size: 40px; cursor: pointer; font-weight: 900; }
+        /* --- نافذة التكبير (Zoom) --- */
+        .zoom-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; }
+        .zoom-modal img { max-width: 90%; max-height: 85%; border-radius: 8px; }
+        .zoom-ctrl { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); width: 60px; height: 60px; border-radius: 50%; font-size: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 3100; transition: 0.3s; }
+        .zoom-ctrl:hover { background: var(--primary); }
+        .close-zoom { position: absolute; top: 30px; right: 40px; color: white; font-size: 40px; cursor: pointer; z-index: 3200; }
 
-        /* --- باقي تفاصيل الصفحة --- */
+        /* --- التفاصيل --- */
         .price-tag { font-size: 38px; font-weight: 900; margin: 25px 0 10px; }
-        .car-heading { font-size: 24px; color: #64748b; margin-bottom: 30px; font-weight: 600; }
-
+        .car-title { font-size: 24px; color: #64748b; margin-bottom: 30px; }
         .specs-section { background: white; border-radius: 20px; padding: 30px; border: 1px solid var(--border); margin-bottom: 20px; }
         .specs-section h2 { font-size: 18px; margin-bottom: 20px; border-bottom: 3px solid var(--primary); display: inline-block; padding-bottom: 5px; }
-        
         .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .tech-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
         .tech-label { color: #94a3b8; font-size: 14px; }
         .tech-value { font-weight: 700; font-size: 14px; }
 
-        .contact-sidebar { position: sticky; top: 100px; }
-        .seller-box { background: var(--dark); color: white; padding: 30px; border-radius: 24px; text-align: center; }
-        .btn-call { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 800; cursor: pointer; margin-top: 15px; font-size: 16px; }
+        .seller-card { background: var(--dark); color: white; padding: 30px; border-radius: 24px; text-align: center; position: sticky; top: 100px; }
+        .btn-contact { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 800; cursor: pointer; margin-top: 15px; font-size: 16px; }
 
-        footer { text-align: center; padding: 40px 6%; background-color: white; border-top: 1px solid var(--border); color: #64748b; font-size: 13px; margin-top: 40px; }
-
-        @media (max-width: 900px) {
-            .container { grid-template-columns: 1fr; }
-            .gallery-wrapper { height: 350px; }
-        }
+        footer { text-align: center; padding: 40px 6%; background: white; border-top: 1px solid var(--border); color: #64748b; font-size: 13px; margin-top: 40px; }
+        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } .gallery-container { height: 350px; } }
     </style>
 </head>
 <body>
@@ -63,19 +59,17 @@
     <a href="index.html" class="logo">BIL<span>HK</span></a>
 </header>
 
-<div class="container" id="detailsPage">
-    </div>
+<div class="container" id="detailsPage"></div>
 
-<div id="zoomModal" class="zoom-modal" onclick="this.style.display='none'">
-    <span class="close-zoom">&times;</span>
-    <img id="zoomedImg">
+<div id="zoomModal" class="zoom-modal">
+    <span class="close-zoom" id="closeZoom">&times;</span>
+    <button class="zoom-ctrl" style="left:30px;" id="zoomPrev">❮</button>
+    <img id="zoomedImg" src="">
+    <button class="zoom-ctrl" style="right:30px;" id="zoomNext">❯</button>
 </div>
 
 <footer>
     <p>&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
-    <div style="margin-top: 10px;">
-        <a href="terms.html" style="color: #f58220; text-decoration: none; font-weight: 700;">Användarvillkor & Säkerhet</a>
-    </div>
 </footer>
 
 <script type="module">
@@ -83,108 +77,99 @@
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const carId = new URLSearchParams(window.location.search).get('id');
-    let images = [];
+    let carImages = [];
     let currentIndex = 0;
 
-    async function loadData() {
+    async function loadCar() {
         if (!carId) return;
         const snap = await getDoc(doc(db, "cars", carId));
-        
         if (snap.exists()) {
             const c = snap.data();
-            images = c.images || ['placeholder.jpg'];
+            carImages = c.images || ['placeholder.jpg'];
             
             document.getElementById('detailsPage').innerHTML = `
                 <div class="main-content">
-                    <div class="gallery-wrapper">
+                    <div class="gallery-container">
                         <button class="nav-btn prev-btn" id="prevBtn">❮</button>
-                        <img src="${images[0]}" class="main-slide" id="activeImg">
+                        <img src="${carImages[0]}" class="main-slide" id="mainImg">
                         <button class="nav-btn next-btn" id="nextBtn">❯</button>
                     </div>
-                    
-                    <div class="thumb-container" id="thumbTrack">
-                        ${images.map((img, i) => `<img src="${img}" class="thumb-img ${i===0?'active':''}" data-index="${i}">`).join('')}
+                    <div class="thumb-track" id="thumbTrack">
+                        ${carImages.map((img, i) => `<img src="${img}" class="thumb-item ${i===0?'active':''}" data-index="${i}">`).join('')}
                     </div>
 
                     <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
-                    <h1 class="car-heading">${c.brand} ${c.model} - ${c.year}</h1>
+                    <h1 class="car-title">${c.brand} ${c.model} - ${c.year}</h1>
 
                     <div class="specs-section">
-                        <h2>Motor & Prestanda</h2>
+                        <h2>Motor & Specifikationer</h2>
                         <div class="tech-grid">
-                            <div class="tech-item"><span class="tech-label">Drivmedel</span><span class="tech-value">${c.fuelType || '-'}</span></div>
+                            <div class="tech-item"><span class="tech-label">Bränsle</span><span class="tech-value">${c.fuelType || '-'}</span></div>
                             <div class="tech-item"><span class="tech-label">Växellåda</span><span class="tech-value">${c.transmission || '-'}</span></div>
-                            <div class="tech-item"><span class="tech-label">Kaross</span><span class="tech-value">${c.bodyType || '-'}</span></div>
-                            <div class="tech-item"><span class="tech-label">Årsmodell</span><span class="tech-value">${c.year || '-'}</span></div>
-                        </div>
-                    </div>
-
-                    <div class="specs-section">
-                        <h2>Fordonsdata & Mått</h2>
-                        <div class="tech-grid">
                             <div class="tech-item"><span class="tech-label">Miltal</span><span class="tech-value">${c.mileage} mil</span></div>
-                            <div class="tech-item"><span class="tech-label">Svensksåld</span><span class="tech-value">${c.swedishSold ? 'Ja' : 'Nej'}</span></div>
                             <div class="tech-item"><span class="tech-label">Färg</span><span class="tech-value">${c.color || '-'}</span></div>
                         </div>
                     </div>
 
                     <div class="specs-section">
                         <h2>Beskrivning</h2>
-                        <p style="line-height:1.7; white-space: pre-line;">${c.description || 'Ingen beskrivning.'}</p>
+                        <p style="line-height:1.7; white-space: pre-line;">${c.description || 'Ingen beskrivning tillgänglig.'}</p>
                     </div>
                 </div>
 
-                <div class="contact-sidebar">
-                    <div class="seller-box">
+                <div class="sidebar">
+                    <div class="seller-card">
                         <h3>Intresserad?</h3>
-                        <p style="font-size:14px; color:#94a3b8; margin:10px 0;">Kontakta säljaren direkt för mer information.</p>
-                        <div style="font-size:24px; font-weight:900; margin:15px 0; color:#fff;">📞 ${c.phone || 'Dolt nummer'}</div>
-                        <button class="btn-call" id="msgBtn">Skicka meddelande</button>
+                        <div style="font-size:24px; font-weight:900; margin:20px 0;">📞 ${c.phone || 'Dolt nummer'}</div>
+                        <button class="btn-contact" onclick="window.location.href='mailto:${c.sellerEmail}'">Skicka meddelande</button>
                     </div>
                 </div>
             `;
-
-            setupGallery();
-            document.getElementById('msgBtn').onclick = () => window.location.href = `mailto:${c.sellerEmail}`;
+            initGallery();
         }
     }
 
-    function setupGallery() {
-        const activeImg = document.getElementById('activeImg');
-        const thumbs = document.querySelectorAll('.thumb-img');
-        const zoomModal = document.getElementById('zoomModal');
+    function initGallery() {
+        const mainImg = document.getElementById('mainImg');
         const zoomedImg = document.getElementById('zoomedImg');
+        const modal = document.getElementById('zoomModal');
+        const thumbs = document.querySelectorAll('.thumb-item');
 
-        const updateImage = (index) => {
+        const updateUI = (index) => {
             currentIndex = index;
-            activeImg.src = images[currentIndex];
+            const newSrc = carImages[currentIndex];
+            mainImg.src = newSrc;
+            zoomedImg.src = newSrc;
             thumbs.forEach((t, i) => t.classList.toggle('active', i === currentIndex));
         };
 
-        // أزرار التنقل
-        document.getElementById('prevBtn').onclick = () => {
-            currentIndex = (currentIndex - 1 + images.length) % images.length;
-            updateImage(currentIndex);
-        };
+        // أزرار التنقل الرئيسية
+        document.getElementById('prevBtn').onclick = () => updateUI((currentIndex - 1 + carImages.length) % carImages.length);
+        document.getElementById('nextBtn').onclick = () => updateUI((currentIndex + 1) % carImages.length);
 
-        document.getElementById('nextBtn').onclick = () => {
-            currentIndex = (currentIndex + 1) % images.length;
-            updateImage(currentIndex);
-        };
+        // أزرار تنقل التكبير
+        document.getElementById('zoomPrev').onclick = (e) => { e.stopPropagation(); updateUI((currentIndex - 1 + carImages.length) % carImages.length); };
+        document.getElementById('zoomNext').onclick = (e) => { e.stopPropagation(); updateUI((currentIndex + 1) % carImages.length); };
 
-        // الضغط على الصور المصغرة
-        thumbs.forEach(thumb => {
-            thumb.onclick = () => updateImage(parseInt(thumb.dataset.index));
+        // الصور المصغرة
+        thumbs.forEach(t => t.onclick = () => updateUI(parseInt(t.dataset.index)));
+
+        // التحكم بالمودال
+        mainImg.onclick = () => { zoomedImg.src = mainImg.src; modal.style.display = 'flex'; };
+        document.getElementById('closeZoom').onclick = () => modal.style.display = 'none';
+        modal.onclick = () => modal.style.display = 'none';
+
+        // الكيبورد
+        document.addEventListener('keydown', (e) => {
+            if (modal.style.display === 'flex') {
+                if (e.key === "ArrowLeft") updateUI((currentIndex - 1 + carImages.length) % carImages.length);
+                if (e.key === "ArrowRight") updateUI((currentIndex + 1) % carImages.length);
+                if (e.key === "Escape") modal.style.display = 'none';
+            }
         });
-
-        // ميزة التكبير
-        activeImg.onclick = () => {
-            zoomedImg.src = activeImg.src;
-            zoomModal.style.display = 'flex';
-        };
     }
 
-    loadData();
+    loadCar();
 </script>
 </body>
 </html>
