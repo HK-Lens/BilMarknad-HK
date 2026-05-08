@@ -1,99 +1,85 @@
-:root {
-    --primary: #f58220;
-    --dark: #111827;
-    --bg: #f4f6f9;
-    --white: #ffffff;
-    --border: #e5e7eb;
-    --text-muted: #6b7280;
+/* شريط الفئات الأفقي */
+.category-wrapper {
+    max-width: 1200px;
+    margin: 20px auto 10px;
+    padding: 0 20px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
-
-/* الهيدر */
-header {
-    background: var(--white); padding: 15px 6%;
-    border-bottom: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-    position: sticky; top: 0; z-index: 1000;
-}
-.logo { text-decoration: none; font-size: 26px; font-weight: 800; color: var(--dark); }
-.logo span { color: var(--primary); }
-
-.hero-section { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-
-/* شريط الفئات الأفقي (أزرار) */
-.body-type-filter {
+.category-bar {
     display: flex;
-    flex-direction: row; /* أفقي */
-    gap: 12px;
-    margin-bottom: 20px;
-    overflow-x: auto; /* للسماح بالتمرير في الموبايل */
-    padding-bottom: 5px;
+    flex-direction: row; /* أفقي دائماً */
+    gap: 10px;
+    overflow-x: auto; /* يسمح بالتمرير الجانبي في الجوال */
+    padding-bottom: 10px;
+    scrollbar-width: none; /* إخفاء شريط التمرير في فايرفوكس */
 }
-.type-button {
-    background: #eef2f6;
-    border: 2px solid transparent;
-    padding: 12px 20px;
-    border-radius: 12px;
+
+.category-bar::-webkit-scrollbar {
+    display: none; /* إخفاء شريط التمرير في كروم */
+}
+
+.cat-btn {
     display: flex;
     align-items: center;
-    gap: 10px;
-    cursor: pointer;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 12px 20px;
+    border-radius: 12px;
     font-weight: 700;
     font-size: 14px;
-    color: var(--dark);
+    white-space: nowrap; /* يمنع نزول النص لسطر جديد */
+    cursor: pointer;
     transition: 0.2s;
-    white-space: nowrap; /* منع انقسام النص */
+    color: var(--dark);
 }
-.type-button i { font-size: 18px; color: var(--text-muted); }
-.type-button:hover { background: #e2e8f0; }
-.type-button.active {
-    background: var(--white);
-    border-color: var(--primary);
-    color: var(--primary);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-.type-button.active i { color: var(--primary); }
 
-/* صندوق البحث - 3 أعمدة مع ترتيب رأسي للخانات */
+.cat-btn i {
+    font-size: 16px;
+    color: var(--text-muted);
+}
+
+.cat-btn:hover {
+    background: #f8fafc;
+    border-color: var(--primary);
+}
+
+.cat-btn.active {
+    background: var(--white);
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    box-shadow: 0 4px 12px rgba(245, 130, 32, 0.1);
+}
+
+.cat-btn.active i {
+    color: var(--primary);
+}
+
+/* تنسيق صندوق البحث (3 أعمدة مع ترتيب رأسي للخانات) */
 .search-card {
     background: var(--white);
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    max-width: 1200px;
+    margin: 0 auto;
 }
+
 .search-grid-main {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 أعمدة */
-    gap: 25px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
 }
-.search-column {
+
+.search-col {
     display: flex;
-    flex-direction: column; /* ترتيب الخانات تحت بعضها داخل العمود */
+    flex-direction: column; /* الخانات تحت بعضها */
     gap: 15px;
 }
 
-.field-group { display: flex; flex-direction: column; gap: 6px; }
+.field-group { display: flex; flex-direction: column; gap: 5px; }
 .field-group label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
 .field-group select, .field-group input {
     height: 48px; border: 1px solid var(--border); border-radius: 10px;
     padding: 0 15px; background: #f9fafb; font-size: 14px;
-}
-
-.btn-search-submit {
-    width: 100%; height: 55px; background: var(--dark); color: white;
-    border: none; border-radius: 12px; font-weight: 700;
-    cursor: pointer; margin-top: 25px; font-size: 16px; transition: 0.3s;
-}
-.btn-search-submit:hover { background: var(--primary); }
-
-/* شبكة عرض السيارات */
-.cars-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px; margin-top: 40px;
-}
-
-@media (max-width: 900px) {
-    .search-grid-main { grid-template-columns: 1fr; } /* عمود واحد في الموبايل */
 }
