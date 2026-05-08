@@ -7,8 +7,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding: 20px; }
-        .container { max-width: 900px; margin: 40px auto; background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* الهيدر لضمان التناسق */
+        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
+        .logo span { color: var(--primary); }
+
+        .container { max-width: 900px; margin: 40px auto; background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); flex: 1; }
+        
         h1 { text-align: center; font-weight: 900; margin-bottom: 30px; }
         
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -18,19 +28,21 @@
         
         .field { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 13px; font-weight: 700; color: #64748b; }
-        input, select, textarea { padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 15px; }
-        
+        input, select, textarea { padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 15px; outline: none; }
+        input:focus { border-color: var(--primary); }
+
         .btn-submit { grid-column: span 2; background: var(--dark); color: white; padding: 18px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 20px; font-size: 16px; transition: 0.3s; }
         .btn-submit:hover { background: var(--primary); }
+
+        footer { text-align: center; padding: 40px 6%; background-color: white; border-top: 1px solid var(--border); color: #64748b; font-size: 13px; margin-top: auto; }
+        .footer-links a { color: var(--primary); text-decoration: none; font-weight: 700; }
     </style>
 </head>
-    <footer style="text-align: center; padding: 40px 6%; margin-top: 50px; background-color: white; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 13px; width: 100%;">
-    <p>&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
-    <div style="margin-top: 10px;">
-        <a href="terms.html" style="color: #f58220; text-decoration: none; font-weight: 700;">Användarvillkor & Säkerhet</a>
-    </div>
-</footer>
 <body>
+
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+</header>
 
 <div class="container">
     <h1>Publicera Annons</h1>
@@ -121,6 +133,13 @@
     </form>
 </div>
 
+<footer>
+    <p>&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
+    <div class="footer-links" style="margin-top: 10px;">
+        <a href="terms.html">Användarvillkor & Säkerhet</a>
+    </div>
+</footer>
+
 <script type="module">
     import { db, storage } from './firebase-config.js';
     import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -133,7 +152,6 @@
         btn.innerText = "Publicerar...";
 
         try {
-            // رفع الصور أولاً
             const files = document.getElementById('photoFiles').files;
             const imageUrls = [];
             for(let file of files) {
@@ -143,7 +161,6 @@
                 imageUrls.push(url);
             }
 
-            // إرسال البيانات الكاملة للفيربيز
             await addDoc(collection(db, "cars"), {
                 brand: document.getElementById('brand').value,
                 model: document.getElementById('model').value,
@@ -169,6 +186,7 @@
         } catch (error) {
             alert("Ett fel uppstod: " + error.message);
             btn.disabled = false;
+            btn.innerText = "Publicera annons";
         }
     };
 </script>
