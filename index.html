@@ -61,34 +61,40 @@
 </section>
 
 <script type="module">
+    // استيراد قاعدة البيانات من ملف الإعداد الذي أنشأناه أعلاه
     import { db } from './firebase-config.js';
     import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    async function loadInitialCars() {
+    async function loadCars() {
         const grid = document.getElementById('carsGrid');
-        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        
-        grid.innerHTML = snap.docs.map(doc => {
-            const c = doc.data();
-            return `
-                <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
-                    <img src="${c.images ? c.images[0] : 'placeholder.jpg'}">
-                    <div class="card-info">
-                        <div class="price-main">${Number(c.price).toLocaleString()} kr</div>
-                        <div class="car-name">${c.brand} ${c.model}</div>
-                        <div class="specs-row">
-                            <span>${c.year}</span> • 
-                            <span>${c.mileage} mil</span> • 
-                            <span>${c.fuelType || 'Bensin'}</span>
+        try {
+            // جلب البيانات وترتيبها من الأحدث للأقدم
+            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
+            const querySnapshot = await getDocs(q);
+            
+            let html = "";
+            querySnapshot.forEach((doc) => {
+                const car = doc.data();
+                html += `
+                    <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
+                        <img src="${car.images ? car.images[0] : 'placeholder.jpg'}">
+                        <div class="card-info">
+                            <div class="price-main">${Number(car.price).toLocaleString()} kr</div>
+                            <div class="car-name">${car.brand} ${car.model}</div>
+                            <div class="specs-row">
+                                <span>${car.year}</span> • <span>${car.mileage} mil</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
-        }).join('');
+                `;
+            });
+            grid.innerHTML = html;
+        } catch (error) {
+            console.error("حدث خطأ أثناء جلب البيانات:", error);
+        }
     }
 
-    loadInitialCars();
+    loadCars();
 </script>
 </body>
 </html>
