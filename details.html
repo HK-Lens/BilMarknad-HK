@@ -16,10 +16,11 @@
 
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 1.6fr 1fr; gap: 30px; flex: 1; }
 
-        /* --- المعرض --- */
+        /* --- Galleri --- */
         .gallery-container { position: relative; background: #000; border-radius: 20px; overflow: hidden; height: 500px; display: flex; align-items: center; justify-content: center; }
         .main-slide { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; z-index: 10; display: flex; align-items: center; justify-content: center; }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; z-index: 10; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .nav-btn:hover { background: var(--primary); color: white; }
         .prev-btn { left: 20px; }
         .next-btn { right: 20px; }
 
@@ -27,12 +28,13 @@
         .thumb-item { width: 100px; height: 70px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 3px solid transparent; opacity: 0.6; transition: 0.3s; flex-shrink: 0; }
         .thumb-item.active { border-color: var(--primary); opacity: 1; }
 
-        /* --- نافذة التكبير --- */
+        /* --- Zoom Modal --- */
         .zoom-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; }
         .zoom-modal img { max-width: 90%; max-height: 85%; border-radius: 8px; }
-        .zoom-ctrl { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); width: 60px; height: 60px; border-radius: 50%; font-size: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 3100; }
+        .zoom-ctrl { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); width: 60px; height: 60px; border-radius: 50%; font-size: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 3100; transition: 0.3s; }
+        .zoom-ctrl:hover { background: var(--primary); }
 
-        /* --- التفاصيل --- */
+        /* --- Information --- */
         .price-tag { font-size: 38px; font-weight: 900; margin: 25px 0 10px; }
         .car-title { font-size: 24px; color: #64748b; margin-bottom: 30px; }
         .specs-section { background: white; border-radius: 20px; padding: 30px; border: 1px solid var(--border); margin-bottom: 20px; }
@@ -42,11 +44,19 @@
         .tech-label { color: #94a3b8; font-size: 14px; }
         .tech-value { font-weight: 700; font-size: 14px; }
 
+        /* --- Kontakt Form --- */
         .seller-card { background: var(--dark); color: white; padding: 30px; border-radius: 24px; position: sticky; top: 100px; }
-        .msg-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: none; background: rgba(255,255,255,0.1); color: white; font-family: inherit; }
-        .btn-send { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 800; cursor: pointer; margin-top: 10px; font-size: 16px; }
+        .msg-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: none; background: rgba(255,255,255,0.1); color: white; font-family: inherit; outline: none; }
+        .msg-input::placeholder { color: #94a3b8; }
+        .btn-send { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 800; cursor: pointer; margin-top: 10px; font-size: 16px; transition: 0.2s; }
+        .btn-send:hover { background: #e07210; }
 
         footer { text-align: center; padding: 40px 6%; background: white; border-top: 1px solid var(--border); color: #64748b; font-size: 13px; margin-top: 40px; }
+        
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+            .gallery-container { height: 350px; }
+        }
     </style>
 </head>
 <body>
@@ -67,7 +77,6 @@
 </div>
 
 <script type="module">
-    // --- الربط المصلح مع ملف الإعدادات ---
     import { db } from './firebase-config.js'; 
     import { doc, getDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -142,7 +151,6 @@
         }
     }
 
-    // منطق المعرض والتكبير
     function initGallery() {
         const mainImg = document.getElementById('mainImg');
         const zoomedImg = document.getElementById('zoomedImg');
@@ -158,33 +166,53 @@
 
         document.getElementById('prevBtn').onclick = () => update((currentIndex - 1 + carImages.length) % carImages.length);
         document.getElementById('nextBtn').onclick = () => update((currentIndex + 1) % carImages.length);
-        document.getElementById('zoomPrev').onclick = (e) => { e.stopPropagation(); update((currentIndex - 1 + carImages.length) % carImages.length); };
-        document.getElementById('zoomNext').onclick = (e) => { e.stopPropagation(); update((currentIndex + 1) % carImages.length); };
+        
+        document.getElementById('zoomPrev').onclick = (e) => { 
+            e.stopPropagation(); 
+            update((currentIndex - 1 + carImages.length) % carImages.length); 
+        };
+        document.getElementById('zoomNext').onclick = (e) => { 
+            e.stopPropagation(); 
+            update((currentIndex + 1) % carImages.length); 
+        };
 
         thumbs.forEach(t => t.onclick = () => update(parseInt(t.dataset.index)));
         mainImg.onclick = () => { zoomedImg.src = mainImg.src; modal.style.display = 'flex'; };
     }
 
-    // منطق المراسلة
     function initMessaging() {
         document.getElementById('contactForm').onsubmit = async (e) => {
             e.preventDefault();
+            
+            // تحقق أمان إضافي قبل الإرسال
+            if (!carData || !carData.sellerId) {
+                alert("Säljarens information är inte tillgänglig. Försök ladda om sidan.");
+                return;
+            }
+
             const btn = document.getElementById('sendBtn');
             btn.disabled = true;
+            btn.innerText = "Skickar...";
+
             try {
                 await addDoc(collection(db, "messages"), {
                     carId: carId,
                     carTitle: carData.brand + " " + carData.model,
-                    receiverId: carData.sellerId,
+                    receiverId: carData.sellerId, // هذا هو الحقل الذي تم إصلاحه
                     senderName: document.getElementById('senderName').value,
                     senderEmail: document.getElementById('senderEmail').value,
                     message: document.getElementById('senderMsg').value,
-                    createdAt: serverTimestamp()
+                    createdAt: serverTimestamp(),
+                    read: false
                 });
-                alert("Meddelande skickat!");
+                alert("Tack! Meddelande skickat!");
                 e.target.reset();
-            } catch (err) { alert("Fel: " + err.message); }
-            btn.disabled = false;
+            } catch (err) { 
+                alert("Fel: " + err.message); 
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Skicka meddelande";
+            }
         };
     }
 
