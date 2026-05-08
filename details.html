@@ -30,9 +30,9 @@
 
         /* --- Zoom Modal --- */
         .zoom-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; }
-        .zoom-modal img { max-width: 90%; max-height: 85%; border-radius: 8px; }
+        .zoom-modal img { max-width: 90%; max-height: 85%; border-radius: 8px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         .zoom-ctrl { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); width: 60px; height: 60px; border-radius: 50%; font-size: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 3100; transition: 0.3s; }
-        .zoom-ctrl:hover { background: var(--primary); }
+        .zoom-ctrl:hover { background: var(--primary); border-color: var(--primary); }
 
         /* --- Information --- */
         .price-tag { font-size: 38px; font-weight: 900; margin: 25px 0 10px; }
@@ -70,7 +70,7 @@
 </div>
 
 <div id="zoomModal" class="zoom-modal">
-    <span style="position:absolute; top:30px; right:40px; color:white; font-size:40px; cursor:pointer;" onclick="document.getElementById('zoomModal').style.display='none'">&times;</span>
+    <span style="position:absolute; top:30px; right:40px; color:white; font-size:40px; cursor:pointer; z-index: 3200;" onclick="document.getElementById('zoomModal').style.display='none'">&times;</span>
     <button class="zoom-ctrl" style="left:30px;" id="zoomPrev">❮</button>
     <img id="zoomedImg">
     <button class="zoom-ctrl" style="right:30px;" id="zoomNext">❯</button>
@@ -133,7 +133,7 @@
                             <form id="contactForm">
                                 <input type="text" id="senderName" class="msg-input" placeholder="Ditt namn" required>
                                 <input type="email" id="senderEmail" class="msg-input" placeholder="Din e-post" required>
-                                <textarea id="senderMsg" class="msg-input" rows="4" placeholder="Jag är intresserad..." required></textarea>
+                                <textarea id="senderMsg" class="msg-input" rows="4" placeholder="Jag är intresserاد..." required></textarea>
                                 <button type="submit" id="sendBtn" class="btn-send">Skicka meddelande</button>
                             </form>
                             <div style="margin-top:20px; font-weight:900;">📞 ${carData.phone || 'Dolt'}</div>
@@ -159,14 +159,26 @@
 
         const update = (i) => {
             currentIndex = i;
-            mainImg.src = carImages[currentIndex];
-            zoomedImg.src = carImages[currentIndex];
-            thumbs.forEach((t, idx) => t.classList.toggle('active', idx === i));
+            const newSrc = carImages[currentIndex];
+            if (mainImg) mainImg.src = newSrc;
+            if (zoomedImg) zoomedImg.src = newSrc;
+            
+            const allThumbs = document.querySelectorAll('.thumb-item');
+            allThumbs.forEach((t, idx) => t.classList.toggle('active', idx === i));
         };
 
-        document.getElementById('prevBtn').onclick = () => update((currentIndex - 1 + carImages.length) % carImages.length);
-        document.getElementById('nextBtn').onclick = () => update((currentIndex + 1) % carImages.length);
-        
+        // أزرار التنقل الرئيسية
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'prevBtn') update((currentIndex - 1 + carImages.length) % carImages.length);
+            if (e.target.id === 'nextBtn') update((currentIndex + 1) % carImages.length);
+            if (e.target.classList.contains('thumb-item')) update(parseInt(e.target.dataset.index));
+            if (e.target.id === 'mainImg') {
+                zoomedImg.src = mainImg.src;
+                modal.style.display = 'flex';
+            }
+        });
+
+        // أزرار التنقل في وضع التكبير
         document.getElementById('zoomPrev').onclick = (e) => { 
             e.stopPropagation(); 
             update((currentIndex - 1 + carImages.length) % carImages.length); 
@@ -176,44 +188,51 @@
             update((currentIndex + 1) % carImages.length); 
         };
 
-        thumbs.forEach(t => t.onclick = () => update(parseInt(t.dataset.index)));
-        mainImg.onclick = () => { zoomedImg.src = mainImg.src; modal.style.display = 'flex'; };
+        // دعم لوحة المفاتيح
+        document.addEventListener('keydown', (e) => {
+            if (modal.style.display === 'flex') {
+                if (e.key === "ArrowLeft") update((currentIndex - 1 + carImages.length) % carImages.length);
+                if (e.key === "ArrowRight") update((currentIndex + 1) % carImages.length);
+                if (e.key === "Escape") modal.style.display = 'none';
+            }
+        });
     }
 
     function initMessaging() {
-        document.getElementById('contactForm').onsubmit = async (e) => {
-            e.preventDefault();
-            
-            // تحقق أمان إضافي قبل الإرسال
-            if (!carData || !carData.sellerId) {
-                alert("Säljarens information är inte tillgänglig. Försök ladda om sidan.");
-                return;
-            }
+        document.addEventListener('submit', async (e) => {
+            if (e.target.id === 'contactForm') {
+                e.preventDefault();
+                
+                if (!carData || !carData.sellerId) {
+                    alert("Säljarens information är inte tillgänglig. Försök ladda om sidan.");
+                    return;
+                }
 
-            const btn = document.getElementById('sendBtn');
-            btn.disabled = true;
-            btn.innerText = "Skickar...";
+                const btn = document.getElementById('sendBtn');
+                btn.disabled = true;
+                btn.innerText = "Skickar...";
 
-            try {
-                await addDoc(collection(db, "messages"), {
-                    carId: carId,
-                    carTitle: carData.brand + " " + carData.model,
-                    receiverId: carData.sellerId, // هذا هو الحقل الذي تم إصلاحه
-                    senderName: document.getElementById('senderName').value,
-                    senderEmail: document.getElementById('senderEmail').value,
-                    message: document.getElementById('senderMsg').value,
-                    createdAt: serverTimestamp(),
-                    read: false
-                });
-                alert("Tack! Meddelande skickat!");
-                e.target.reset();
-            } catch (err) { 
-                alert("Fel: " + err.message); 
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Skicka meddelande";
+                try {
+                    await addDoc(collection(db, "messages"), {
+                        carId: carId,
+                        carTitle: carData.brand + " " + carData.model,
+                        receiverId: carData.sellerId,
+                        senderName: document.getElementById('senderName').value,
+                        senderEmail: document.getElementById('senderEmail').value,
+                        message: document.getElementById('senderMsg').value,
+                        createdAt: serverTimestamp(),
+                        read: false
+                    });
+                    alert("Tack! Meddelande skickat!");
+                    e.target.reset();
+                } catch (err) { 
+                    alert("Fel: " + err.message); 
+                } finally {
+                    btn.disabled = false;
+                    btn.innerText = "Skicka meddelande";
+                }
             }
-        };
+        });
     }
 
     loadCar();
