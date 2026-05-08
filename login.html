@@ -3,32 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logga in | BilHK</title>
+    <title>Logga in | BilMarknad-HK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .login-wrapper {
+        .auth-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 80vh;
+            min-height: 90vh;
             padding: 20px;
+            background: #f4f6f9;
         }
-        .login-card {
+        .auth-card {
             background: white;
             padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
             width: 100%;
-            max-width: 400px;
-            text-align: center;
-            border: 1px solid #eee;
+            max-width: 450px;
+            border: 1px solid #e5e7eb;
         }
-        .login-card h1 { font-size: 24px; font-weight: 900; margin-bottom: 10px; }
-        .login-card p { color: #666; font-size: 14px; margin-bottom: 30px; }
+        .auth-header { text-align: center; margin-bottom: 30px; }
+        .auth-header h1 { font-size: 26px; font-weight: 900; color: #111827; }
+        .auth-header p { color: #6b7280; font-size: 14px; margin-top: 8px; }
 
-        /* زر جوجل الاحترافي */
-        .google-btn {
+        /* التبديل بين خاص وشركات */
+        .user-type-toggle {
+            display: flex;
+            background: #f3f4f6;
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .type-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            background: transparent;
+            color: #6b7280;
+        }
+        .type-btn.active {
+            background: white;
+            color: #111827;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        /* زر جوجل */
+        .google-auth-btn {
             width: 100%;
             display: flex;
             align-items: center;
@@ -41,36 +68,55 @@
             border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
+            margin-bottom: 20px;
             transition: 0.2s;
-            font-size: 15px;
         }
-        .google-btn:hover { background: #f9fafb; border-color: #9ca3af; }
-        .google-btn img { width: 20px; height: 20px; }
+        .google-auth-btn:hover { background: #f9fafb; border-color: #9ca3af; }
+        .google-auth-btn img { width: 20px; height: 20px; }
 
         .divider {
-            margin: 25px 0;
             display: flex;
             align-items: center;
+            text-align: center;
             color: #9ca3af;
             font-size: 12px;
+            margin: 20px 0;
         }
         .divider::before, .divider::after {
-            content: "";
+            content: '';
             flex: 1;
-            height: 1px;
-            background: #eee;
-            margin: 0 10px;
+            border-bottom: 1px solid #eee;
         }
+        .divider:not(:empty)::before { margin-right: 10px; }
+        .divider:not(:empty)::after { margin-left: 10px; }
 
-        .input-group { text-align: left; margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: #4b5563; }
-        .input-group input {
+        .form-group { margin-bottom: 18px; text-align: left; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px; }
+        .form-group input {
             width: 100%;
             padding: 12px;
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            outline: none;
+            border-radius: 10px;
+            font-size: 15px;
+            background: #f9fafb;
         }
+
+        .btn-auth-submit {
+            width: 100%;
+            padding: 14px;
+            background: #f58220; /* لون Bytbil */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-auth-submit:hover { background: #e07210; }
+
+        .auth-footer { margin-top: 25px; font-size: 14px; text-align: center; }
+        .auth-footer a { color: #f58220; text-decoration: none; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -79,64 +125,125 @@
     <a href="index.html" class="logo">BIL<span>HK</span></a>
 </header>
 
-<div class="login-wrapper">
-    <div class="login-card">
-        <h1>Välkommen tillbaka</h1>
-        <p>Logga in för att hantera dina annonser</p>
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1 id="authTitle">Logga in</h1>
+            <p id="authDesc">Välkommen till din bilmarknad</p>
+        </div>
 
-        <button class="google-btn" id="googleBtn">
+        <div class="user-type-toggle">
+            <button class="type-btn active" onclick="setUserType('private', this)">Privatperson</button>
+            <button class="type-btn" onclick="setUserType('company', this)">Företag / Handlare</button>
+        </div>
+
+        <button class="google-auth-btn" id="googleBtn">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/layout/google.svg" alt="Google">
-            Logga in med Google
+            Fortsätt med Google
         </button>
 
-        <div class="divider">eller med e-post</div>
+        <div class="divider">eller e-post</div>
 
-        <form id="loginForm">
-            <div class="input-group">
+        <form id="authForm">
+            <div class="form-group">
                 <label>E-postadress</label>
-                <input type="email" id="email" placeholder="din@epost.se" required>
+                <input type="email" id="email" placeholder="namn@företag.se" required>
             </div>
-            <div class="input-group">
+            <div class="form-group">
                 <label>Lösenord</label>
                 <input type="password" id="password" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Logga in</button>
+            <button type="submit" class="btn-auth-submit" id="submitBtn">Logga in</button>
         </form>
 
-        <p style="margin-top: 25px; font-size: 13px;">
-            Har du inget konto? <a href="#" style="color: var(--primary); text-decoration: none; font-weight: 700;">Skapa konto</a>
-        </p>
+        <div class="auth-footer">
+            <span id="toggleText">Har du inget konto?</span> 
+            <a href="javascript:void(0)" onclick="toggleAuthMode()" id="toggleBtn">Skapa konto</a>
+        </div>
     </div>
 </div>
 
 <script type="module">
-    import { auth, googleProvider } from './firebase-config.js';
-    import { signInWithEmailAndPassword, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { auth, db, googleProvider } from './firebase-config.js';
+    import { 
+        signInWithEmailAndPassword, 
+        createUserWithEmailAndPassword, 
+        signInWithPopup,
+        updateProfile 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // تفعيل تسجيل الدخول عبر جوجل
-    const googleBtn = document.getElementById('googleBtn');
-    googleBtn.onclick = async () => {
+    let isLoginMode = true;
+    let selectedUserType = 'private'; // 'private' أو 'company'
+
+    // وظيفة تبديل نوع المستخدم (خاص / شركات)
+    window.setUserType = (type, btn) => {
+        selectedUserType = type;
+        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const desc = document.getElementById('authDesc');
+        desc.innerText = type === 'private' ? 'Logga in som privatperson' : 'Logga in som bilhandlare/företag';
+    };
+
+    // وظيفة التبديل بين تسجيل الدخول وإنشاء الحساب
+    window.toggleAuthMode = () => {
+        isLoginMode = !isLoginMode;
+        document.getElementById('authTitle').innerText = isLoginMode ? 'Logga in' : 'Skapa konto';
+        document.getElementById('submitBtn').innerText = isLoginMode ? 'Logga in' : 'Registrera dig';
+        document.getElementById('toggleText').innerText = isLoginMode ? 'Har du inget konto?' : 'Har du redan ett konto?';
+        document.getElementById('toggleBtn').innerText = isLoginMode ? 'Skapa konto' : 'Logga in';
+    };
+
+    // تسجيل الدخول عبر جوجل
+    document.getElementById('googleBtn').onclick = async () => {
         try {
-            await signInWithPopup(auth, googleProvider);
-            window.location.href = "index.html"; // التوجه للصفحة الرئيسية بعد النجاح
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+            
+            // حفظ بيانات المستخدم في Firestore إذا كان جديداً
+            await setDoc(doc(db, "users", user.uid), {
+                displayName: user.displayName,
+                email: user.email,
+                userType: selectedUserType,
+                lastLogin: serverTimestamp()
+            }, { merge: true });
+
+            window.location.href = "index.html";
         } catch (error) {
-            console.error("Google login error:", error);
-            alert("Kunde inte logga in med Google: " + error.message);
+            alert("Ett fel uppstod: " + error.message);
         }
     };
 
-    // تسجيل الدخول العادي بالبريد
-    const loginForm = document.getElementById('loginForm');
-    loginForm.onsubmit = async (e) => {
+    // معالجة النموذج (تسجيل دخول أو إنشاء حساب)
+    document.getElementById('authForm').onsubmit = async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+        const btn = document.getElementById('submitBtn');
+
+        btn.disabled = true;
+        btn.innerText = "Vänta...";
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            if (isLoginMode) {
+                await signInWithEmailAndPassword(auth, email, password);
+            } else {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // حفظ بيانات العضوية الجديدة
+                await setDoc(doc(db, "users", user.uid), {
+                    email: email,
+                    userType: selectedUserType,
+                    createdAt: serverTimestamp()
+                });
+            }
             window.location.href = "index.html";
         } catch (error) {
             alert("Fel: " + error.message);
+            btn.disabled = false;
+            btn.innerText = isLoginMode ? 'Logga in' : 'Registrera dig';
         }
     };
 </script>
