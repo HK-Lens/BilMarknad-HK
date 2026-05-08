@@ -81,7 +81,7 @@
     <nav class="nav-links">
         <a href="index.html">Hem</a>
         <a href="sell.html" class="btn-sell">Sälj bil</a>
-        <a href="#" onclick="logout()" style="color: #dc2626;">Logga ut</a>
+        <a href="#" id="logoutAction" style="color: #dc2626; text-decoration: none; font-weight: 700; font-size: 14px;">Logga ut</a>
     </nav>
 </header>
 
@@ -103,8 +103,8 @@
         <label>Miltal (mil)</label>
         <input type="number" id="editMileage">
         
-        <button class="btn" style="background: var(--primary); color: white; width: 100%; margin-bottom: 10px;" onclick="saveChanges()">Spara ändringar</button>
-        <button class="btn" style="background: #f1f5f9; width: 100%;" onclick="closeModal()">Avbryt</button>
+        <button class="btn" id="saveEditBtn" style="background: var(--primary); color: white; width: 100%; margin-bottom: 10px;">Spara ändringar</button>
+        <button class="btn" id="closeModalBtn" style="background: #f1f5f9; width: 100%;">Avbryt</button>
     </div>
 </div>
 
@@ -117,6 +117,7 @@
 
     let currentEditId = null;
 
+    // التحقق من حالة تسجيل الدخول
     onAuthStateChanged(auth, (user) => {
         if (user) {
             loadUserAds(user.uid);
@@ -126,12 +127,13 @@
         }
     });
 
+    // جلب الإعلانات الخاصة بالمستخدم
     async function loadUserAds(userId) {
         const adsContainer = document.getElementById('myAdsList');
-        const q = query(collection(db, "cars"), where("sellerId", "==", userId));
-        
         try {
+            const q = query(collection(db, "cars"), where("sellerId", "==", userId));
             const snap = await getDocs(q);
+            
             if (snap.empty) {
                 adsContainer.innerHTML = "<p style='color: #64748b;'>Du har inga aktiva annonser.</p>";
                 return;
@@ -150,95 +152,120 @@
                             </div>
                         </div>
                         <div class="actions">
-                            <button class="btn btn-edit" onclick="openEdit('${id}', ${car.price}, ${car.mileage})">Redigera</button>
-                            <button class="btn btn-delete" onclick="deleteAd('${id}')">Ta bort</button>
+                            <button class="btn btn-edit" data-id="${id}" data-price="${car.price}" data-mileage="${car.mileage}">Redigera</button>
+                            <button class="btn btn-delete" data-id="${id}">Ta bort</button>
                         </div>
                     </div>
                 `;
             }).join('');
-        } catch (err) { console.error(err); }
+
+            // إضافة أحداث الأزرار ديناميكياً
+            attachAdEvents();
+        } catch (err) { 
+            console.error(err); 
+            adsContainer.innerHTML = "Fel vid laddning.";
+        }
     }
 
+    // جلب الرسائل (إصلاح منطق الفهرس)
     async function loadMessages(userId) {
         const msgList = document.getElementById('messagesList');
         try {
-            // محاولة جلب الرسائل مرتبة، إذا فشل بسبب الـ Index نلجأ للاستعلام البسيط
             let q;
+            // محاولة الجلب بالترتيب (تتطلب فهرس)
             try {
                 q = query(
                     collection(db, "messages"), 
                     where("receiverId", "==", userId),
                     orderBy("createdAt", "desc")
                 );
-                await getDocs(q); // فحص أولي للـ Index
+                // تنفيذ جلب وهمي للتأكد من وجود الفهرس
+                const checkSnap = await getDocs(q);
+                renderMessages(checkSnap, msgList);
             } catch (indexErr) {
-                console.warn("Firebase Index missing, falling back to simple query.");
+                // إذا فشل بسبب الفهرس، نستخدم الاستعلام البسيط (بدون ترتيب)
+                console.warn("Firebase Index missing, fallback to simple query.");
                 q = query(
                     collection(db, "messages"), 
                     where("receiverId", "==", userId)
                 );
+                const snap = await getDocs(q);
+                renderMessages(snap, msgList);
             }
-
-            const snap = await getDocs(q);
-            
-            if (snap.empty) {
-                msgList.innerHTML = "<p style='color: #64748b;'>Inga meddelanden ännu.</p>";
-                return;
-            }
-
-            msgList.innerHTML = snap.docs.map(docSnap => {
-                const m = docSnap.data();
-                const date = m.createdAt ? m.createdAt.toDate().toLocaleDateString('sv-SE') : 'Nyligen';
-                return `
-                    <div class="msg-card">
-                        <div class="msg-header">
-                            <strong>${m.carTitle || 'Okänd bil'}</strong>
-                            <span>${date}</span>
-                        </div>
-                        <div class="msg-body">
-                            "${m.message}"
-                        </div>
-                        <div class="msg-footer">
-                            Från: <strong>${m.senderName}</strong> | 
-                            E-post: <a href="mailto:${m.senderEmail}" style="color:var(--primary); font-weight:700;">${m.senderEmail}</a>
-                        </div>
-                    </div>
-                `;
-            }).join('');
         } catch (err) { 
             console.error(err);
-            msgList.innerHTML = "<p>Kunde inte ladda meddelanden. Se till att du har skapat annonser med sellerId.</p>";
+            msgList.innerHTML = "<p>Kunde inte ladda meddelanden.</p>";
         }
     }
 
-    window.logout = () => {
-        signOut(auth).then(() => window.location.href = "index.html");
-    };
-
-    window.deleteAd = async (id) => {
-        if (confirm("Är du säker på att du vill ta bort annonsen?")) {
-            await deleteDoc(doc(db, "cars", id));
-            document.getElementById(`card-${id}`).remove();
+    function renderMessages(snap, container) {
+        if (snap.empty) {
+            container.innerHTML = "<p style='color: #64748b;'>Inga meddelanden ännu.</p>";
+            return;
         }
-    };
+        container.innerHTML = snap.docs.map(docSnap => {
+            const m = docSnap.data();
+            const date = m.createdAt ? m.createdAt.toDate().toLocaleDateString('sv-SE') : 'Nyligen';
+            return `
+                <div class="msg-card">
+                    <div class="msg-header">
+                        <strong>${m.carTitle || 'Förfrågan'}</strong>
+                        <span>${date}</span>
+                    </div>
+                    <div class="msg-body">"${m.message}"</div>
+                    <div class="msg-footer">
+                        Från: <strong>${m.senderName}</strong> | 
+                        E-post: <a href="mailto:${m.senderEmail}" style="color:var(--primary); font-weight:700;">${m.senderEmail}</a>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
 
-    window.openEdit = (id, price, mileage) => {
-        currentEditId = id;
-        document.getElementById('editPrice').value = price;
-        document.getElementById('editMileage').value = mileage;
-        document.getElementById('editModal').style.display = 'flex';
-    };
+    // وظائف الأزرار
+    function attachAdEvents() {
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.onclick = () => {
+                currentEditId = btn.dataset.id;
+                document.getElementById('editPrice').value = btn.dataset.price;
+                document.getElementById('editMileage').value = btn.dataset.mileage;
+                document.getElementById('editModal').style.display = 'flex';
+            };
+        });
 
-    window.closeModal = () => document.getElementById('editModal').style.display = 'none';
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.onclick = async () => {
+                const id = btn.dataset.id;
+                if (confirm("Är du säker på att du vill ta bort annonsen?")) {
+                    try {
+                        await deleteDoc(doc(db, "cars", id));
+                        document.getElementById(`card-${id}`).remove();
+                    } catch (err) { alert("Fel vid borttagning."); }
+                }
+            };
+        });
+    }
 
-    window.saveChanges = async () => {
+    // حفظ التعديلات
+    document.getElementById('saveEditBtn').onclick = async () => {
         const newPrice = Number(document.getElementById('editPrice').value);
         const newMileage = Number(document.getElementById('editMileage').value);
+        if (!newPrice || !newMileage) return alert("Fyll i alla fält.");
+        
         try {
             await updateDoc(doc(db, "cars", currentEditId), { price: newPrice, mileage: newMileage });
             alert("Uppdaterad!");
             location.reload();
-        } catch (err) { alert(err.message); }
+        } catch (err) { alert("Ett fel uppstod."); }
+    };
+
+    // إغلاق المودال وتسجيل الخروج
+    document.getElementById('closeModalBtn').onclick = () => {
+        document.getElementById('editModal').style.display = 'none';
+    };
+
+    document.getElementById('logoutAction').onclick = () => {
+        signOut(auth).then(() => window.location.href = "index.html");
     };
 </script>
 </body>
