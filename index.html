@@ -6,8 +6,6 @@
     <title>BilHK | Hitta din nästa bil</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-
     <style>
         :root {
             --primary: #f58220;
@@ -32,14 +30,12 @@
             min-height: 100vh; 
         }
 
-        /* رسالة التنبيه العائمة في المنتصف العلوي */
+        /* Information Banner */
         .under-construction-banner {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background-color: #fef3c7; color: #92400e; padding: 10px 24px;
+            background-color: #fef3c7; color: #92400e; padding: 12px;
             text-align: center; font-weight: 700; font-size: 13px;
-            border: 1px solid #f59e0b; border-radius: 50px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); z-index: 9999;
-            max-width: 90%; display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid #f59e0b;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
 
         header {
@@ -54,107 +50,109 @@
 
         .container { max-width: 1200px; margin: 30px auto; padding: 0 6%; flex: 1; }
 
-        .category-bar { display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto; padding: 5px 0; }
-        .cat-btn { padding: 10px 20px; border: 1px solid var(--border); background: white; border-radius: 50px; cursor: pointer; font-weight: 600; font-size: 14px; white-space: nowrap; transition: 0.2s; }
-        .cat-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
-
+        /* Search Section */
         .search-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 40px; }
         .search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .field-group label { display: block; font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        select, input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; outline: none; background: #fafafa; }
+        .btn-search-submit { width: 100%; background: var(--dark); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .btn-search-submit:hover { background: var(--primary); }
 
-        .field-group label { display: block; font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
-        select, input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 500; outline: none; }
+        /* Cars Grid - 3 per row as requested */
+        .cars-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 25px; 
+        }
 
-        .btn-search-submit { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-
-        .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
         .car-card { background: white; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; cursor: pointer; }
         .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .car-card img { width: 100%; height: 200px; object-fit: cover; }
         .card-content { padding: 20px; }
         .price-tag { font-size: 20px; font-weight: 800; color: var(--dark); }
         .car-title { font-size: 16px; font-weight: 700; margin: 5px 0; }
-        .car-meta { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+        .car-meta { font-size: 13px; color: var(--text-muted); }
 
-        /* الفوتر */
+        /* Disclaimer Section */
+        .disclaimer-bar {
+            background: #fff1f2;
+            border: 1px solid #fda4af;
+            color: #9f1239;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 40px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
         footer {
             text-align: center;
             padding: 40px 6%;
-            margin-top: auto;
+            margin-top: 40px;
             background-color: white;
             border-top: 1px solid var(--border);
             color: var(--text-muted);
             font-size: 13px;
         }
-        .footer-links { margin-top: 10px; }
-        .footer-links a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 700;
-            margin: 0 10px;
-        }
 
-        @media (max-width: 600px) { .under-construction-banner { font-size: 11px; padding: 8px 15px; } }
+        @media (max-width: 992px) { .cars-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .cars-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
     <div class="under-construction-banner">
-        <span>⚠️</span> الموقع تحت الإنشاء. الإعلانات حالياً للعرض فقط ولا يمكن إنشاء إعلانات حقيقية.
+        <span>⚠️</span> Webbplatsen är under uppbyggnad. Annonser är endast för visning just nu.
     </div>
 
     <header>
         <a href="index.html" class="logo">BIL<span>HK</span></a>
         <div class="nav-links">
             <a href="sell.html" style="background:var(--primary); color:white; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:800; font-size: 13px;">Sälj din bil</a>
-            <a href="login.html" class="link-login" id="authButton" style="margin-left: 15px; text-decoration: none; font-weight: 700; color: var(--dark); font-size: 13px;">Logga in</a>
+            <a href="login.html" id="authButton" style="margin-left: 15px; text-decoration: none; font-weight: 700; color: var(--dark); font-size: 13px;">Logga in</a>
         </div>
     </header>
 
     <div class="container">
-        <div class="category-bar" id="categoryBar">
-            <button class="cat-btn active" data-type="all">Alla</button>
-            <button class="cat-btn" data-type="Sedan">Sedan</button>
-            <button class="cat-btn" data-type="SUV">SUV</button>
-            <button class="cat-btn" data-type="Småbil">Småbil</button>
-            <button class="cat-btn" data-type="Minibuss">Minibuss</button>
-            <button class="cat-btn" data-type="Transport">Transport</button>
-        </div>
-
         <div class="search-card">
             <div class="search-grid">
                 <div class="field-group">
-                    <label>Märke (الماركة)</label>
+                    <label>Märke</label>
                     <select id="brandSelect"><option value="all">Alla märken</option></select>
                 </div>
                 <div class="field-group">
-                    <label>Modell (الموديل)</label>
+                    <label>Modell</label>
                     <select id="modelSelect"><option value="all">Alla modeller</option></select>
                 </div>
                 <div class="field-group">
-                    <label>Max Pris (أقصى سعر)</label>
+                    <label>Högsta pris</label>
                     <input type="number" id="maxPrice" placeholder="kr">
                 </div>
             </div>
-            <button class="btn-search-submit" id="searchBtn">Visa resultat</button>
+            <button class="btn-search-submit" id="searchBtn">Sök bilar</button>
         </div>
 
+        <h2 style="margin-bottom: 25px; font-size: 22px; font-weight: 900;">Senaste annonserna</h2>
         <div class="cars-grid" id="carsGrid"></div>
+
+        <div class="disclaimer-bar">
+            <strong>Juridisk information:</strong> BilMarknad-HK är en oberoende annonsplattform. Vi tar inget ansvar för felaktig information i annonser, fordonens skick eller transaktioner mellan köpare och säljare. Vi rekommenderar alltid att kontrollera fordonets historik och genomföra en fysisk besiktning före köp. Betala aldrig i förskott.
+        </div>
     </div>
 
     <footer>
         <p>&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
         <div class="footer-links">
-            <a href="terms.html">Användarvillkor & Friskrivning</a>
+            <a href="terms.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">Användarvillkor & Säkerhet</a>
         </div>
     </footer>
 
     <script type="module">
         import { db, auth } from './firebase-config.js';
         import { carData } from './cars-data.js';
-        import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        let selectedCategory = 'all';
         const bSel = document.getElementById('brandSelect');
         const mSel = document.getElementById('modelSelect');
         const authBtn = document.getElementById('authButton');
@@ -163,12 +161,10 @@
             if (user) {
                 authBtn.textContent = "Mitt Konto";
                 authBtn.href = "my-account.html";
-            } else {
-                authBtn.textContent = "Logga in";
-                authBtn.href = "login.html";
             }
         });
 
+        // Initialize Search Filters
         Object.keys(carData).sort().forEach(b => {
             const opt = document.createElement('option');
             opt.value = b; opt.textContent = b;
@@ -186,45 +182,30 @@
             }
         };
 
-        document.querySelectorAll('.cat-btn').forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                selectedCategory = btn.getAttribute('data-type');
-                performSearch(); 
-            };
-        });
-
-        async function performSearch() {
+        async function loadLatestCars() {
             const grid = document.getElementById('carsGrid');
-            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; font-weight:600;'>Söker...</p>";
+            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Laddar bilar...</p>";
 
             try {
+                // Fetch all to sort by manufacturing year as requested
                 const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
                 const snap = await getDocs(q);
-                let allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                let cars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                const maxP = Number(document.getElementById('maxPrice').value) || Infinity;
+                // Sort by manufacturing year (Årsmodell) descending
+                cars.sort((a, b) => Number(b.year) - Number(a.year));
+                
+                // Limit to 6 cars (3x2 grid)
+                const top6 = cars.slice(0, 6);
 
-                let filtered = allCars.filter(c => {
-                    const catMatch = (selectedCategory === 'all' || c.bodyType === selectedCategory);
-                    const brandMatch = (bSel.value === 'all' || c.brand === bSel.value);
-                    const modelMatch = (mSel.value === 'all' || c.model === mSel.value);
-                    const priceMatch = (c.price <= maxP);
-                    return catMatch && brandMatch && modelMatch && priceMatch;
-                });
-
-                filtered.sort((a, b) => Number(b.year) - Number(a.year));
-                const limitedCars = filtered.slice(0, 6);
-
-                if (limitedCars.length === 0) {
+                if (top6.length === 0) {
                     grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga bilar hittades.</p>";
                     return;
                 }
 
-                grid.innerHTML = limitedCars.map(c => `
+                grid.innerHTML = top6.map(c => `
                     <div class="car-card" onclick="window.location.href='details.html?id=${c.id}'">
-                        <img src="${c.images && c.images.length > 0 ? c.images[0] : 'placeholder.jpg'}">
+                        <img src="${c.images && c.images.length > 0 ? c.images[0] : 'placeholder.jpg'}" alt="${c.brand}">
                         <div class="card-content">
                             <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
                             <div class="car-title">${c.brand} ${c.model}</div>
@@ -235,12 +216,16 @@
 
             } catch (error) {
                 console.error(error);
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Ett fel uppstod.</p>";
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Kunde inte ladda bilar.</p>";
             }
         }
 
-        document.getElementById('searchBtn').onclick = performSearch;
-        performSearch();
+        document.getElementById('searchBtn').onclick = () => {
+            // Redirect to filter results or handle locally
+            loadLatestCars(); 
+        };
+
+        loadLatestCars();
     </script>
 </body>
 </html>
