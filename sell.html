@@ -12,7 +12,6 @@
         
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
         
-        /* الهيدر لضمان التناسق */
         header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
         .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
@@ -141,12 +140,31 @@
 </footer>
 
 <script type="module">
-    import { db, storage } from './firebase-config.js';
+    import { db, storage, auth } from './firebase-config.js';
     import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    let currentUserId = null;
+
+    // التأكد من أن المستخدم مسجل قبل النشر
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUserId = user.uid;
+        } else {
+            alert("Du måste vara inloggad för att publicera en annons.");
+            window.location.href = "login.html";
+        }
+    });
 
     document.getElementById('sellForm').onsubmit = async (e) => {
         e.preventDefault();
+        
+        if (!currentUserId) {
+            alert("Fel: Du måste logga in igen.");
+            return;
+        }
+
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.innerText = "Publicerar...";
@@ -154,6 +172,8 @@
         try {
             const files = document.getElementById('photoFiles').files;
             const imageUrls = [];
+            
+            // رفع الصور إلى Storage
             for(let file of files) {
                 const storageRef = ref(storage, `cars/${Date.now()}_${file.name}`);
                 await uploadBytes(storageRef, file);
@@ -161,6 +181,7 @@
                 imageUrls.push(url);
             }
 
+            // حفظ البيانات في Firestore مع إضافة sellerId
             await addDoc(collection(db, "cars"), {
                 brand: document.getElementById('brand').value,
                 model: document.getElementById('model').value,
@@ -178,11 +199,14 @@
                 price: Number(document.getElementById('price').value),
                 description: document.getElementById('description').value,
                 images: imageUrls,
+                sellerId: currentUserId, // الربط الضروري لظهور الإعلان في حسابك
+                sellerEmail: auth.currentUser.email,
+                phone: carData.phone || "", // تأكد من استلام الهاتف من بيانات البروفايل لاحقاً إذا لزم
                 createdAt: serverTimestamp()
             });
 
             alert("Annonsen har publicerats!");
-            window.location.href = "index.html";
+            window.location.href = "my-account.html"; // التوجه مباشرة لصفحة إعلاناتك
         } catch (error) {
             alert("Ett fel uppstod: " + error.message);
             btn.disabled = false;
