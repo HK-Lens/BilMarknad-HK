@@ -126,7 +126,6 @@
         }
     });
 
-    // --- جلب الإعلانات ---
     async function loadUserAds(userId) {
         const adsContainer = document.getElementById('myAdsList');
         const q = query(collection(db, "cars"), where("sellerId", "==", userId));
@@ -160,16 +159,26 @@
         } catch (err) { console.error(err); }
     }
 
-    // --- جلب الرسائل الواردة ---
     async function loadMessages(userId) {
         const msgList = document.getElementById('messagesList');
         try {
-            // استعلام لجلب الرسائل الموجهة لهذا المستخدم
-            const q = query(
-                collection(db, "messages"), 
-                where("receiverId", "==", userId),
-                orderBy("createdAt", "desc")
-            );
+            // محاولة جلب الرسائل مرتبة، إذا فشل بسبب الـ Index نلجأ للاستعلام البسيط
+            let q;
+            try {
+                q = query(
+                    collection(db, "messages"), 
+                    where("receiverId", "==", userId),
+                    orderBy("createdAt", "desc")
+                );
+                await getDocs(q); // فحص أولي للـ Index
+            } catch (indexErr) {
+                console.warn("Firebase Index missing, falling back to simple query.");
+                q = query(
+                    collection(db, "messages"), 
+                    where("receiverId", "==", userId)
+                );
+            }
+
             const snap = await getDocs(q);
             
             if (snap.empty) {
@@ -198,11 +207,10 @@
             }).join('');
         } catch (err) { 
             console.error(err);
-            msgList.innerHTML = "<p>Kunde inte ladda meddelanden. Se till att Index är skapat i Firebase.</p>";
+            msgList.innerHTML = "<p>Kunde inte ladda meddelanden. Se till att du har skapat annonser med sellerId.</p>";
         }
     }
 
-    // --- الوظائف العامة ---
     window.logout = () => {
         signOut(auth).then(() => window.location.href = "index.html");
     };
