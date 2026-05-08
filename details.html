@@ -1,15 +1,3 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Detaljer | BILHK</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<header><a href="index.html" class="logo">BIL<span>HK</span></a></header>
-<main id="detailsContent" class="container">Laddar uppgifter...</main>
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -19,37 +7,80 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
+
     const carId = new URLSearchParams(window.location.search).get('id');
-    let user, car;
+    let user = null;
+    let car = null;
 
-    onAuthStateChanged(auth, u => { user = u; load(); });
+    onAuthStateChanged(auth, u => {
+        user = u;
+        loadCarData(); 
+    });
 
-    async function load() {
-        const snap = await getDoc(doc(db, "cars", carId));
-        if (!snap.exists()) return;
-        car = snap.data();
-        document.getElementById('detailsContent').innerHTML = `
-            <img src="${car.images[0]}" class="main-img">
-            <div class="info-card">
-                <h1>${car.brand} ${car.model}</h1>
-                <p class="price-big">${car.price} kr</p>
-                <textarea id="msgInput" placeholder="Hej, är bilen kvar?"></textarea>
-                <button onclick="startChat()" id="sendBtn" class="btn-primary">Skicka meddelande</button>
-            </div>`;
+    async function loadCarData() {
+        if (!carId) return;
+        try {
+            const snap = await getDoc(doc(db, "cars", carId));
+            if (snap.exists()) {
+                car = snap.data();
+                renderPage(); // استدعاء دالة العرض بعد التأكد من وجود البيانات
+            } else {
+                document.getElementById('details').innerHTML = "Bilen hittades inte.";
+            }
+        } catch (e) {
+            console.error("Error loading car:", e);
+        }
     }
 
-    window.startChat = async () => {
-        if (!user) return alert("Logga in!");
-        const txt = document.getElementById('msgInput').value;
+    function renderPage() {
+        const div = document.getElementById('details');
+        if (!car) return; // منع الانهيار في حال كانت البيانات فارغة
+
+        div.innerHTML = `
+            <div>
+                <img src="${car.images ? car.images[0] : ''}" style="width:100%; border-radius:20px; height:400px; object-fit:cover;">
+                <div style="background:white; padding:25px; border-radius:20px; margin-top:20px; border:1px solid #eee;">
+                    <h1 style="font-weight:900;">${car.brand} ${car.model || ''}</h1>
+                    <div style="font-size:28px; color:#f58220; font-weight:900; margin:10px 0;">${Number(car.price).toLocaleString()} kr</div>
+                    <p>${car.description || ''}</p>
+                </div>
+            </div>
+            <aside>
+                <div style="background:white; padding:25px; border-radius:20px; border:1px solid #eee; position:sticky; top:100px;">
+                    <h3 style="margin-bottom:15px;">Intresserad?</h3>
+                    <textarea id="msg" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;" rows="4" placeholder="Skriv ett meddelande..."></textarea>
+                    <button onclick="sendMsg()" id="cBtn" style="width:100%; background:#0f172a; color:white; padding:15px; border-radius:12px; border:none; font-weight:800; cursor:pointer;">Starta chatt</button>
+                </div>
+            </aside>`;
+    }
+
+    window.sendMsg = async () => {
+        if (!user) return alert("Logga in först!");
+        const input = document.getElementById('msg');
+        const text = input.value.trim();
+        if (!text || !car) return;
+
+        const btn = document.getElementById('cBtn');
+        btn.disabled = true;
         const chatId = `${user.uid}_${car.sellerId}_${carId}`;
-        await addDoc(collection(db, "messages"), {
-            chatId, participants: [user.uid, car.sellerId],
-            carId, carTitle: car.brand, carImage: car.images[0],
-            senderId: user.uid, senderName: user.email.split('@')[0],
-            message: txt, timestamp: serverTimestamp()
-        });
-        location.href = `my-account.html?chat=${chatId}`;
+
+        try {
+            await addDoc(collection(db, "messages"), {
+                chatId: chatId,
+                participants: [user.uid, car.sellerId],
+                carId: carId,
+                carTitle: car.brand + " " + (car.model || ''),
+                carImage: car.images ? car.images[0] : '',
+                senderId: user.uid,
+                senderName: user.email.split('@')[0],
+                recipientId: car.sellerId,
+                message: text,
+                timestamp: serverTimestamp()
+            });
+            window.location.href = "my-account.html?chat=" + chatId;
+        } catch (e) {
+            alert("Error: " + e.message);
+            btn.disabled = false;
+        }
     };
 </script>
-</body>
-</html>
