@@ -3,92 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sälj bil | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); padding-bottom: 50px; }
-        header { background: white; padding: 15px 6%; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .logo { text-decoration: none; font-size: 22px; font-weight: 900; color: var(--dark); }
-        .logo span { color: var(--primary); }
-        .container { max-width: 650px; margin: 30px auto; background: white; padding: 30px; border-radius: 28px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
-        input, select, textarea { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 15px; outline: none; }
-        .btn-pub { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: 800; cursor: pointer; }
-    </style>
+    <title>Sälj bil | BILHK</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><a href="index.html" class="logo">BIL<span>HK</span></a></header>
 <div class="container">
-    <h1 style="text-align:center; margin-bottom:25px; font-weight:900;">Publicera annons</h1>
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <input type="text" id="reg" placeholder="Reg-nr (ABC123)" style="border:2px solid var(--dark); font-weight:900; text-align:center;">
-        <button onclick="fetchInfo()" id="fBtn" style="padding:0 20px; border-radius:12px; background:var(--dark); color:white; border:none; cursor:pointer;">Hämta</button>
-    </div>
-    <form id="sellForm">
-        <select id="brand" required><option value="">Välj märke</option></select>
-        <input type="text" id="model" placeholder="Modell" required>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <input type="number" id="year" placeholder="Årsmodell">
-            <input type="number" id="mil" placeholder="Miltal (mil)">
-        </div>
-        <input type="number" id="price" placeholder="Pris (kr)" required>
-        <textarea id="desc" rows="4" placeholder="Beskriv bilen..."></textarea>
-        <input type="file" id="pics" multiple required>
-        <button type="submit" class="btn-pub" id="subBtn">Publicera nu</button>
-    </form>
+    <h1>Sälj din bil</h1>
+    <input id="brand" placeholder="Märke">
+    <input id="model" placeholder="Modell">
+    <input id="price" type="number" placeholder="Pris (kr)">
+    <textarea id="desc" placeholder="Beskrivning"></textarea>
+    <input id="imgUrl" placeholder="Bild URL (tills vidare)">
+    <button onclick="postAd()">Publicera</button>
 </div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import firebaseConfig from './firebase-config.js';
-    import { carData } from './cars-data.js';
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const storage = getStorage(app);
     const auth = getAuth(app);
-    let user = null;
 
-    onAuthStateChanged(auth, u => { if(!u) window.location.href='login.html'; else user = u; });
-
-    const bSel = document.getElementById('brand');
-    Object.keys(carData).sort().forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
-
-    window.fetchInfo = () => {
-        const btn = document.getElementById('fBtn');
-        btn.innerText = "Söker...";
-        setTimeout(() => {
-            document.getElementById('brand').value = "Volvo";
-            document.getElementById('model').value = "XC60";
-            document.getElementById('year').value = 2022;
-            btn.innerText = "Klar!"; btn.style.background = "#22c55e";
-        }, 800);
-    };
-
-    document.getElementById('sellForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const sub = document.getElementById('subBtn');
-        sub.disabled = true; sub.innerText = "Publicerar...";
-        const files = document.getElementById('pics').files;
-        try {
-            const urls = [];
-            for (let f of files) {
-                const sRef = ref(storage, `cars/${Date.now()}_${f.name}`);
-                const snap = await uploadBytes(sRef, f);
-                urls.push(await getDownloadURL(snap.ref));
-            }
-            await addDoc(collection(db, "cars"), {
-                regNr: document.getElementById('reg').value.toUpperCase(),
-                brand: bSel.value, model: document.getElementById('model').value,
-                year: Number(document.getElementById('year').value), mileage: Number(document.getElementById('mil').value),
-                price: Number(document.getElementById('price').value),
-                description: document.getElementById('desc').value, images: urls,
-                sellerId: user.uid, createdAt: serverTimestamp()
-            });
-            window.location.href = 'index.html';
-        } catch (e) { alert("Fel vid uppladdning!"); sub.disabled = false; sub.innerText = "Publicera nu"; }
+    window.postAd = async () => {
+        const user = auth.currentUser;
+        if(!user) return alert("Logga in!");
+        await addDoc(collection(db, "cars"), {
+            brand: document.getElementById('brand').value,
+            model: document.getElementById('model').value,
+            price: document.getElementById('price').value,
+            description: document.getElementById('desc').value,
+            images: [document.getElementById('imgUrl').value],
+            sellerId: user.uid,
+            createdAt: serverTimestamp()
+        });
+        alert("Klart!"); location.href='index.html';
     };
 </script>
 </body>
