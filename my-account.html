@@ -2,96 +2,40 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Min Sida | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Min Sida | BILHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f0f2f5; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        /* الهيدر وشعار الموقع */
-        header { height: 65px; background: white; padding: 0 5%; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; z-index: 1000; }
-        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
+        header { height: 60px; background: white; padding: 0 5%; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+        .logo { text-decoration: none; font-size: 22px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
-
-        /* أزرار التنقل الرئيسية */
-        .tab-bar { background: white; padding: 10px 5%; display: flex; gap: 15px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-        .tab-link { padding: 10px 20px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; background: #f1f5f9; color: #64748b; transition: 0.3s; }
-        .tab-link.active { background: var(--dark); color: white; }
-        .logout-link { margin-left: auto; color: #ef4444; background: #fee2e2; }
-
-        main { flex: 1; overflow: hidden; position: relative; }
-        .content-section { display: none; height: 100%; overflow-y: auto; padding: 20px 5%; }
-        .content-section.active { display: block; }
-
-        /* تصميم قسم الإعلانات */
-        .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .ad-item { background: white; border-radius: 15px; border: 1px solid var(--border); overflow: hidden; }
-        .ad-item img { width: 100%; height: 140px; object-fit: cover; }
-        .ad-del-btn { width: 100%; padding: 10px; background: #fee2e2; color: #ef4444; border: none; font-weight: 700; cursor: pointer; }
-
-        /* تصميم صندوق البريد (Email Style) */
-        .inbox-engine { display: flex; height: 100%; background: white; overflow: hidden; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .email-list { width: 320px; border-right: 1px solid var(--border); overflow-y: auto; background: #fcfcfc; }
-        .email-view { flex: 1; display: flex; flex-direction: column; background: #ffffff; }
-        
-        .email-item { padding: 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; display: flex; gap: 12px; }
-        .email-item:hover { background: #f8fafc; }
-        .email-item.active { background: #fff5eb; border-left: 4px solid var(--primary); }
-        .email-item img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; }
-
-        .email-header { padding: 15px 25px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; background: #fafafa; }
-        .email-header h4 { font-weight: 800; font-size: 15px; }
-
-        .email-body { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 12px; background: #fdfdfd; }
-        .msg-row { max-width: 80%; padding: 12px 18px; border-radius: 15px; font-size: 14px; line-height: 1.5; }
-        .msg-row.sent { align-self: flex-end; background: var(--dark); color: white; border-bottom-right-radius: 2px; }
-        .msg-row.received { align-self: flex-start; background: #f1f5f9; color: var(--dark); border-bottom-left-radius: 2px; }
-
-        .email-footer { padding: 15px 25px; border-top: 1px solid var(--border); display: flex; gap: 12px; background: white; align-items: center; }
-        .email-footer input { flex: 1; padding: 12px 20px; border-radius: 25px; border: 1px solid var(--border); outline: none; font-size: 14px; }
-        .send-icon { background: var(--primary); color: white; border: none; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-
-        @media (max-width: 750px) {
-            .email-list { width: 100%; }
-            .email-view { display: none; position: fixed; top: 120px; left: 0; width: 100%; height: calc(100vh - 120px); z-index: 500; }
-            .email-view.active { display: flex; }
-        }
+        .tabs { background: white; display: flex; padding: 10px 5%; gap: 10px; border-bottom: 1px solid #eee; }
+        .tab-btn { padding: 10px 20px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; background: #f1f5f9; }
+        .tab-btn.active { background: var(--dark); color: white; }
+        .messenger { display: flex; flex: 1; overflow: hidden; }
+        .sidebar { width: 350px; background: white; border-right: 1px solid #eee; overflow-y: auto; }
+        .chat-view { flex: 1; display: flex; flex-direction: column; background: #e5ddd5; }
+        .chat-item { padding: 15px; display: flex; gap: 12px; cursor: pointer; border-bottom: 1px solid #f8fafc; }
+        .chat-item.active { background: #fff5eb; border-left: 4px solid var(--primary); }
+        .msg-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .bubble { max-width: 75%; padding: 10px 15px; border-radius: 12px; font-size: 14px; }
+        .bubble.me { align-self: flex-end; background: #dcf8c6; }
+        .bubble.them { align-self: flex-start; background: white; }
+        .input-bar { padding: 15px; background: #f0f0f0; display: flex; gap: 10px; }
+        .input-bar input { flex: 1; padding: 12px; border-radius: 25px; border: none; outline: none; }
+        .send-btn { background: #075e54; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; }
+        @media (max-width: 750px) { .sidebar { width: 100%; } .chat-view { display: none; position: fixed; top: 115px; left: 0; width: 100%; height: calc(100vh - 115px); } .chat-view.active { display: flex; } }
     </style>
 </head>
 <body>
-
-<header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div id="uNameDisplay" style="font-weight: 800; font-size: 14px;">...</div>
-</header>
-
-<div class="tab-bar">
-    <button class="tab-link active" id="tabAds" onclick="openSection('ads')">Mina annonser</button>
-    <button class="tab-link" id="tabInbox" onclick="openSection('inbox')">Inkorg (E-post)</button>
-    <button class="tab-link logout-link" onclick="logout()">Logga ut</button>
-</div>
-
-<main>
-    <section id="ads-area" class="content-section active">
-        <h2 style="margin-bottom: 20px;">Dina aktiva annonser</h2>
-        <div id="myAdsContainer" class="ads-grid">Laddar...</div>
-    </section>
-
-    <section id="inbox-area" class="content-section" style="padding: 0;">
-        <div class="inbox-engine">
-            <div class="email-list">
-                <div style="padding: 20px; font-weight: 900; border-bottom: 1px solid #eee;">Inkorg</div>
-                <div id="emailItems">Laddar meddelanden...</div>
-            </div>
-            <div id="emailContent" class="email-view">
-                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#94a3b8; padding:20px; text-align:center;">
-                    <p>Välj ett meddelande för att läsa och svara</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<header><a href="index.html" class="logo">BIL<span>HK</span></a><button onclick="logout()" style="border:none; background:none; color:red; font-weight:700;">Logga ut</button></header>
+<div class="tabs"><button class="tab-btn active" id="btnAds" onclick="show('ads')"> المنشورات</button><button class="tab-btn" id="btnChat" onclick="show('chat')"> البريد</button></div>
+<main style="flex:1; overflow:hidden;">
+    <section id="ads-sect" style="padding:20px; display:block; height:100%; overflow-y:auto;"><div id="adsGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">Laddar...</div></section>
+    <section id="chat-sect" style="display:none; height:100%;"><div class="messenger"><div class="sidebar" id="inbox"></div><div class="chat-view" id="chatView"><div style="margin:auto; color:#999;">Välj en chatt</div></div></div></section>
 </main>
 
 <script type="module">
@@ -103,106 +47,70 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
-    let user = null;
-    let selectedChatId = null;
-    let chatListener = null;
+    let user = null; let activeId = null; let unsub = null;
 
-    onAuthStateChanged(auth, u => {
-        if (!u) window.location.href = 'login.html';
-        user = u;
-        document.getElementById('uNameDisplay').innerText = u.displayName || u.email.split('@')[0];
-        fetchMyAds();
-        listenToInbox();
-    });
+    onAuthStateChanged(auth, u => { if(!u) window.location.href='login.html'; user = u; loadAds(); listen(); });
 
-    window.openSection = (id) => {
-        document.querySelectorAll('.tab-link').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('active');
-        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-        document.getElementById(id + '-area').classList.add('active');
+    window.show = (s) => {
+        document.getElementById('ads-sect').style.display = s === 'ads' ? 'block' : 'none';
+        document.getElementById('chat-sect').style.display = s === 'chat' ? 'flex' : 'none';
+        document.getElementById('btnAds').classList.toggle('active', s === 'ads');
+        document.getElementById('btnChat').classList.toggle('active', s === 'chat');
     };
 
-    async function fetchMyAds() {
-        const container = document.getElementById('myAdsContainer');
-        const q = query(collection(db, "cars"), where("sellerId", "==", user.uid));
-        const snap = await getDocs(q);
-        if (snap.empty) { container.innerHTML = "<p>Du har inga annonser.</p>"; return; }
-        container.innerHTML = snap.docs.map(d => `
-            <div class="ad-item">
-                <img src="${d.data().images[0]}">
-                <div style="padding:15px;"><b>${d.data().brand} ${d.data().model}</b><br>${d.data().price} kr</div>
-                <button class="ad-del-btn" onclick="deleteMyAd('${d.id}')">Radera</button>
-            </div>`).join('');
+    async function loadAds() {
+        const snap = await getDocs(query(collection(db, "cars"), where("sellerId", "==", user.uid)));
+        document.getElementById('adsGrid').innerHTML = snap.docs.map(d => `<div style="background:white; border-radius:12px; overflow:hidden; border:1px solid #eee;"><img src="${d.data().images[0]}" style="width:100%; height:120px; object-fit:cover;"><div style="padding:10px;"><b>${d.data().brand}</b><br>${d.data().price} kr<button onclick="del('${d.id}')" style="display:block; width:100%; margin-top:10px; background:#fee2e2; color:red; border:none; padding:5px; cursor:pointer;">Ta bort</button></div></div>`).join('');
     }
 
-    function listenToInbox() {
-        const list = document.getElementById('emailItems');
-        const q = query(collection(db, "messages"), where("participants", "array-contains", user.uid), orderBy("timestamp", "desc"));
-        
-        onSnapshot(q, (snap) => {
+    function listen() {
+        // إذا استمر التعليق، قم بإزالة orderBy("timestamp", "desc") مؤقتاً لتتأكد
+        const q = query(collection(db, "messages"), where("participants", "array-contains", user.uid));
+        onSnapshot(q, snap => {
             const unique = {};
             snap.docs.forEach(d => { if(!unique[d.data().chatId]) unique[d.data().chatId] = d.data(); });
-            const chats = Object.values(unique);
-            if (chats.length === 0) { list.innerHTML = "<p style='padding:20px; color:#999;'>Inga meddelanden.</p>"; return; }
-            list.innerHTML = chats.map(c => `
-                <div class="email-item ${selectedChatId === c.chatId ? 'active' : ''}" onclick="viewEmail('${c.chatId}', '${c.carId}', '${c.carTitle}', '${c.carImage}')">
-                    <img src="${c.carImage}">
-                    <div style="flex:1; overflow:hidden;">
-                        <div style="font-weight:800; font-size:13px;">${c.senderId === user.uid ? 'Jag' : c.senderName}</div>
-                        <div style="font-size:11px; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.message}</div>
-                    </div>
+            const list = document.getElementById('inbox');
+            if (snap.empty) { list.innerHTML = "<p style='padding:20px; color:#999;'>Inga meddelanden.</p>"; return; }
+            list.innerHTML = Object.values(unique).map(c => `
+                <div class="chat-item ${activeId === c.chatId ? 'active' : ''}" onclick="openChat('${c.chatId}', '${c.carId}', '${c.carTitle}', '${c.carImage}')">
+                    <img src="${c.carImage}" style="width:45px; height:45px; border-radius:8px; object-fit:cover;">
+                    <div style="flex:1; overflow:hidden;"><div style="font-weight:800; font-size:13px;">${c.senderId === user.uid ? 'Jag' : c.senderName}</div><div style="font-size:11px; color:#999; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.message}</div></div>
                 </div>`).join('');
-        });
+        }, (err) => { console.error(err); document.getElementById('inbox').innerHTML = "Fel: " + err.message; });
     }
 
-    window.viewEmail = (chatId, carId, carTitle, carImage) => {
-        selectedChatId = chatId;
-        const view = document.getElementById('emailContent');
-        view.classList.add('active');
-        if(chatListener) chatListener();
-
-        view.innerHTML = `
-            <div class="email-header" onclick="location.href='details.html?id=${carId}'" style="cursor:pointer;">
-                <img src="${carImage}" style="width:45px; height:45px; border-radius:8px; object-fit:cover;">
-                <div><h4>${carTitle}</h4><p style="font-size:11px; color:var(--primary);">Visa fordon ➔</p></div>
-                <button onclick="event.stopPropagation(); document.getElementById('emailContent').classList.remove('active')" style="margin-left:auto; border:none; background:none; font-size:20px;">✕</button>
+    window.openChat = (id, carId, title, img) => {
+        activeId = id; if(unsub) unsub();
+        document.getElementById('chatView').classList.add('active');
+        document.getElementById('chatView').innerHTML = `
+            <div style="padding:10px 20px; background:white; border-bottom:1px solid #eee; display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="location.href='details.html?id=${carId}'">
+                <img src="${img}" style="width:40px; height:40px; border-radius:5px; object-fit:cover;">
+                <b style="font-size:14px;">${title}</b>
+                <button onclick="event.stopPropagation(); document.getElementById('chatView').classList.remove('active')" style="margin-left:auto; border:none; background:none; font-size:20px;">✕</button>
             </div>
-            <div id="emailBody" class="email-body">Laddar...</div>
-            <div class="email-footer">
-                <input type="text" id="emailInput" placeholder="Skriv ett svar..." onkeypress="if(event.key==='Enter') sendReply()">
-                <button class="send-icon" onclick="sendReply()">➤</button>
-            </div>`;
-
-        const q = query(collection(db, "messages"), where("chatId", "==", chatId), orderBy("timestamp", "asc"));
-        chatListener = onSnapshot(q, snap => {
-            const body = document.getElementById('emailBody');
-            body.innerHTML = snap.docs.map(d => `
-                <div class="msg-row ${d.data().senderId === user.uid ? 'sent' : 'received'}">
-                    ${d.data().message}
-                </div>`).join('');
-            body.scrollTop = body.scrollHeight;
+            <div class="msg-area" id="msgs"></div>
+            <div class="input-bar"><input type="text" id="mIn" placeholder="Skriv..." onkeypress="if(event.key==='Enter') send()"><button onclick="send()" class="send-btn">➤</button></div>`;
+        const q = query(collection(db, "messages"), where("chatId", "==", id), orderBy("timestamp", "asc"));
+        unsub = onSnapshot(q, snap => {
+            const area = document.getElementById('msgs');
+            area.innerHTML = snap.docs.map(d => `<div class="bubble ${d.data().senderId === user.uid ? 'me' : 'them'}">${d.data().message}</div>`).join('');
+            area.scrollTop = area.scrollHeight;
         });
     };
 
-    window.sendReply = async () => {
-        const input = document.getElementById('emailInput');
-        if (!input.value.trim()) return;
-        const txt = input.value;
-        input.value = "";
-        const parts = selectedChatId.split('_');
-        const recipient = (parts[0] === user.uid) ? parts[1] : parts[0];
+    window.send = async () => {
+        const input = document.getElementById('mIn'); if(!input.value.trim()) return;
+        const txt = input.value; input.value = "";
+        const parts = activeId.split('_'); const recipient = (parts[0] === user.uid) ? parts[1] : parts[0];
         await addDoc(collection(db, "messages"), {
-            chatId: selectedChatId, participants: [user.uid, recipient],
-            carId: selectedChatId.split('_')[2], 
-            carTitle: document.querySelector('.email-header h4').innerText,
-            carImage: document.querySelector('.email-header img').src,
-            senderId: user.uid, senderName: user.email.split('@')[0],
-            message: txt, timestamp: serverTimestamp()
+            chatId: activeId, participants: [user.uid, recipient],
+            carId: parts[2], carTitle: document.querySelector('b').innerText, carImage: document.querySelector('#chatView img').src,
+            senderId: user.uid, senderName: user.email.split('@')[0], message: txt, timestamp: serverTimestamp()
         });
     };
 
-    window.deleteMyAd = async (id) => { if(confirm("Ta bort?")) { await deleteDoc(doc(db, "cars", id)); fetchMyAds(); } };
-    window.logout = () => signOut(auth).then(() => window.location.href = 'index.html');
+    window.del = async (id) => { if(confirm("Ta bort?")) { await deleteDoc(doc(db, "cars", id)); loadAds(); } };
+    window.logout = () => signOut(auth).then(() => window.location.href='index.html');
 </script>
 </body>
 </html>
