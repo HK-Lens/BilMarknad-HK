@@ -1,3 +1,4 @@
+// firebase-config.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -11,8 +12,10 @@ const firebaseConfig = {
     appId: "1:284008879407:web:66bee60b51ec277e8dbdda"
 };
 
-// تهيئة Firebase مرة واحدة فقط لكل الموقع
+// تهيئة التطبيق
 const app = initializeApp(firebaseConfig);
+
+// تصدير الخدمات جاهزة للاستخدام في أي صفحة
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
