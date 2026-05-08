@@ -2,55 +2,124 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BilMarknad-HK | Hem</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>BilMarknad-HK | Premium Hem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --white: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); overflow-x: hidden; }
-        
-        header { position: sticky; top: 0; z-index: 1100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 12px 6%; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
+
+        /* Header Modern Design */
+        header {
+            position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 12px 6%; display: flex; 
+            justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);
+        }
+        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); letter-spacing: -1px; }
         .logo span { color: var(--primary); }
 
-        .search-container { max-width: 1100px; margin: 30px auto; padding: 0 15px; }
-        .search-card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.06); border: 1px solid var(--border); display: grid; grid-template-columns: 1fr; gap: 15px; }
-        @media (min-width: 768px) { .search-card { grid-template-columns: 1.5fr 1fr 1fr auto; align-items: flex-end; } }
-        
-        select, input { height: 50px; padding: 0 15px; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; outline: none; background: #fcfcfc; width: 100%; }
-        .btn-search { height: 50px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; padding: 0 30px; }
+        .nav-actions { display: flex; gap: 10px; align-items: center; }
+        .btn { text-decoration: none; padding: 10px 18px; border-radius: 14px; font-weight: 700; font-size: 13px; transition: 0.3s; text-align: center; }
+        .btn-login { border: 1.5px solid var(--border); color: var(--dark); background: white; }
+        .btn-sell { background: var(--dark); color: white; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15); }
 
-        .grid { max-width: 1300px; margin: auto; padding: 0 15px 80px; display: grid; grid-template-columns: 1fr; gap: 25px; }
-        @media (min-width: 600px) { .grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } }
-        
-        .car-card { background: white; border-radius: 22px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: 0.4s; position: relative; }
+        /* Hero Section */
+        .hero { padding: 50px 6% 30px; text-align: center; }
+        .hero h1 { font-size: 36px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 10px; line-height: 1.1; }
+        .hero p { color: #64748b; font-size: 16px; font-weight: 500; }
+
+        /* Search Interface */
+        .search-container { max-width: 1000px; margin: 0 auto 40px; padding: 0 15px; }
+        .search-card {
+            background: white; padding: 20px; border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            display: grid; grid-template-columns: 1fr; gap: 15px;
+            border: 1px solid var(--border);
+        }
+        @media (min-width: 768px) { .search-card { grid-template-columns: 1.5fr 1fr 1fr auto; align-items: flex-end; } }
+
+        .field { display: flex; flex-direction: column; gap: 6px; }
+        .field label { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        select, input { height: 50px; padding: 0 15px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 14px; font-weight: 600; background: #fcfcfc; outline: none; transition: 0.2s; -webkit-appearance: none; }
+        select:focus, input:focus { border-color: var(--primary); background: white; }
+
+        .btn-search { height: 50px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; padding: 0 25px; }
+        .btn-search:active { transform: scale(0.96); }
+
+        .btn-more { display: block; text-align: center; margin-top: 15px; text-decoration: none; color: var(--primary); font-weight: 700; font-size: 13px; }
+
+        /* Car Grid */
+        .grid { max-width: 1300px; margin: auto; padding: 0 5% 80px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .car-card { background: white; border-radius: 22px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
         .car-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
-        .car-card img { width: 100%; height: 210px; object-fit: cover; }
-        .card-info { padding: 20px; }
-        .price { font-size: 22px; font-weight: 900; color: var(--primary); margin-top: 8px; }
+        .car-card img { width: 100%; height: 190px; object-fit: cover; background: #eee; }
+        .card-info { padding: 18px; }
+        .price { font-size: 20px; font-weight: 900; color: var(--primary); margin-top: 8px; }
+
+        .fav-btn {
+            position: absolute; top: 12px; right: 12px;
+            background: rgba(255,255,255,0.9); border: none;
+            width: 36px; height: 36px; border-radius: 50%;
+            cursor: pointer; font-size: 18px; display: flex;
+            align-items: center; justify-content: center; transition: 0.2s;
+            z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        footer { background: #fff; padding: 50px 6%; border-top: 1px solid var(--border); text-align: center; }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div id="navActions"><a href="login.html" style="text-decoration:none; color:var(--dark); font-weight:700; font-size:13px;">Logga in</a></div>
+    <div class="nav-actions">
+        <a href="login.html" class="btn btn-login" id="authLink">Logga in</a>
+        <a href="sell.html" class="btn btn-sell">Sälj bil</a>
+    </div>
 </header>
+
+<section class="hero">
+    <h1>Hitta din nästa bil.</h1>
+    <p>Sveriges modernaste marknadsplats för fordon.</p>
+</section>
 
 <div class="search-container">
     <div class="search-card">
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <label style="font-size:10px; font-weight:800; color:#94a3b8; text-transform:uppercase;">Märke</label>
+        <div class="field">
+            <label>Märke</label>
             <select id="brandSelect"><option value="all">Alla märken</option></select>
         </div>
-        <input type="number" id="minPrice" placeholder="Pris från (kr)">
-        <input type="number" id="maxPrice" placeholder="Pris till (kr)">
+        <div class="field">
+            <label>Pris (Från)</label>
+            <input type="number" id="minPrice" placeholder="Från kr">
+        </div>
+        <div class="field">
+            <label>Pris (Till)</label>
+            <input type="number" id="maxPrice" placeholder="Till kr">
+        </div>
         <button class="btn-search" onclick="applySearch()">SÖK</button>
     </div>
+    <a href="filter.html" class="btn-more">⚙️ Fler filter & Karosstyp</a>
 </div>
 
 <div class="grid" id="carGrid"></div>
+
+<footer>
+    <div style="max-width: 800px; margin: auto;">
+        <h3 style="font-size: 18px; font-weight: 900;">BIL<span>HK</span></h3>
+        <p style="font-size: 12px; color: #64748b; line-height: 1.6; margin-top: 15px;">
+            <strong>Information:</strong> Vi är en oberoende annonsplattform. Kontrollera alltid fordonet och säljarens identitet personligen före betalning.
+        </p>
+        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 13px; font-weight: 700;">
+            <a href="terms.html" style="color: var(--primary); text-decoration: none;">Villkor</a>
+            <a href="mailto:support@bilmarknad-hk.se" style="color: var(--dark); text-decoration: none;">Kontakt</a>
+        </div>
+        <p style="margin-top: 30px; font-size: 10px; color: #94a3b8;">&copy; 2026 BilMarknad-HK.</p>
+    </div>
+</footer>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -64,43 +133,67 @@
     const auth = getAuth(app);
     let allCars = [];
 
-    onAuthStateChanged(auth, user => {
-        if (user) {
-            document.getElementById('navActions').innerHTML = `
-                <a href="my-account.html" style="text-decoration:none; font-weight:700; margin-right:15px; color:var(--dark);">Min Sida</a>
-                <a href="sell.html" style="text-decoration:none; background:var(--dark); color:white; padding:8px 15px; border-radius:10px; font-weight:700;">Sälj</a>`;
-        }
+    // Popullera märken
+    const bSel = document.getElementById('brandSelect');
+    if (carData) {
+        Object.keys(carData).sort().forEach(b => {
+            const opt = document.createElement('option');
+            opt.value = b; opt.textContent = b;
+            bSel.appendChild(opt);
+        });
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) document.getElementById('authLink').innerText = "Min Sida";
         load();
     });
 
-    const bSel = document.getElementById('brandSelect');
-    Object.keys(carData).sort().forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
-
     async function load() {
         try {
-            const snap = await getDocs(query(collection(db, "cars"), orderBy("createdAt", "desc")));
+            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
+            const snap = await getDocs(q);
             allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             render(allCars);
-        } catch (e) { console.error("Firebase load error:", e); }
+        } catch (e) {
+            console.error("Error loading cars:", e);
+            document.getElementById('carGrid').innerHTML = "<p>Kunde inte ladda bilar. Kontrollera anslutningen.</p>";
+        }
     }
 
     window.applySearch = () => {
         const b = bSel.value;
         const min = Number(document.getElementById('minPrice').value) || 0;
         const max = Number(document.getElementById('maxPrice').value) || Infinity;
-        render(allCars.filter(c => (b==='all' || c.brand===b) && (c.price >= min && c.price <= max)));
+        const filtered = allCars.filter(c => 
+            (b === 'all' || c.brand === b) && 
+            (Number(c.price) >= min && Number(c.price) <= max)
+        );
+        render(filtered);
+    };
+
+    window.toggleFav = (id) => {
+        let favs = JSON.parse(localStorage.getItem('favCars')) || [];
+        if (favs.includes(id)) favs = favs.filter(i => i !== id);
+        else favs.push(id);
+        localStorage.setItem('favCars', JSON.stringify(favs));
+        render(allCars);
     };
 
     function render(data) {
         const grid = document.getElementById('carGrid');
-        if(data.length === 0) { grid.innerHTML = "<p>Inga bilar hittades.</p>"; return; }
+        const favs = JSON.parse(localStorage.getItem('favCars')) || [];
         grid.innerHTML = data.map(c => `
-            <div class="car-card" onclick="location.href='details.html?id=${c.id}'">
-                <img src="${c.images?.[0] || ''}" onerror="this.src='https://via.placeholder.com/400x250?text=Bild+saknas'">
-                <div class="card-info">
-                    <div style="font-weight:800; font-size:18px;">${c.brand} ${c.model || ''}</div>
-                    <div style="font-size:12px; color:#94a3b8; margin:5px 0;">${c.year} • ${c.mileage} mil</div>
-                    <div class="price">${Number(c.price).toLocaleString()} kr</div>
+            <div class="car-card">
+                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav('${c.id}')">
+                    ${favs.includes(c.id) ? '❤️' : '🤍'}
+                </button>
+                <div onclick="location.href='details.html?id=${c.id}'">
+                    <img src="${c.images?.[0] || 'https://via.placeholder.com/400x250'}" alt="${c.brand}">
+                    <div class="card-info">
+                        <div style="font-weight:800; font-size:17px;">${c.brand} ${c.model || ''}</div>
+                        <div style="color:#94a3b8; font-size:12px; margin-top:4px;">${c.year} • ${c.mileage} mil</div>
+                        <div class="price">${Number(c.price).toLocaleString()} kr</div>
+                    </div>
                 </div>
             </div>
         `).join('');
