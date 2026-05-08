@@ -3,131 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mitt Konto | BilHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>Mina Annonser | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        .account-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
-        .user-card { 
-            background: var(--dark); color: white; padding: 40px; 
-            border-radius: 20px; text-align: center; margin-bottom: 40px;
-        }
-        .user-card h1 { font-size: 28px; margin-bottom: 10px; }
-        .user-email { opacity: 0.8; font-size: 16px; margin-bottom: 20px; display: block; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding: 20px; }
+        .container { max-width: 1000px; margin: auto; }
+        h1 { margin-bottom: 30px; font-weight: 900; }
         
-        .btn-logout { 
-            background: #ef4444; color: white; border: none; 
-            padding: 10px 25px; border-radius: 8px; font-weight: 700; 
-            cursor: pointer; transition: 0.3s;
+        .ad-card { 
+            background: white; border-radius: 16px; padding: 20px; margin-bottom: 15px; 
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--border);
         }
-        .btn-logout:hover { background: #dc2626; }
+        .ad-info { display: flex; align-items: center; gap: 20px; }
+        .ad-img { width: 100px; height: 70px; border-radius: 8px; object-fit: cover; background: #eee; }
+        .ad-details h3 { font-size: 16px; margin-bottom: 5px; }
+        .ad-details p { font-size: 13px; color: #64748b; }
 
-        .my-ads-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .no-ads { text-align: center; padding: 50px; background: white; border-radius: 15px; color: gray; }
+        .actions { display: flex; gap: 10px; }
+        .btn { padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; font-size: 13px; }
+        .btn-edit { background: #f3f4f6; color: var(--dark); }
+        .btn-delete { background: #fee2e2; color: #dc2626; }
+        
+        /* Modal for Editing */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; }
+        .modal-content input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-<header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Tillbaka till hem</a>
-</header>
+<div class="container">
+    <h1>Hantera dina annonser (التحكم بإعلاناتي)</h1>
+    <div id="myAdsList">Laddar annonser... (جاري التحميل)</div>
+</div>
 
-<div class="account-container">
-    <div class="user-card">
-        <h1>Välkommen!</h1>
-        <span class="user-email" id="userDisplayEmail">Laddar...</span>
-        <button class="btn-logout" id="logoutBtn">Logga ut (تسجيل الخروج)</button>
-    </div>
-
-    <div class="my-ads-header">
-        <h2>Mina annonser (إعلاناتي)</h2>
-        <a href="sell.html" class="btn-sell" style="background:var(--primary); color:white; padding:8px 15px; border-radius:8px; text-decoration:none; font-size:14px;">+ Ny annons</a>
-    </div>
-
-    <div class="cars-grid" id="myCarsGrid">
-        <div class="no-ads">Hämtar dina annonser...</div>
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <h3>Redigera annons</h3>
+        <label>Pris (kr):</label>
+        <input type="number" id="editPrice">
+        <label>Miltal (mil):</label>
+        <input type="number" id="editMileage">
+        <button class="btn" style="background: var(--primary); color: white; width: 100%;" onclick="saveChanges()">Spara ändringar</button>
+        <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">Avbryt</button>
     </div>
 </div>
 
 <script type="module">
-    import { db, auth } from './firebase-config.js';
-    import { collection, getDocs, query, where, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+        collection, query, where, getDocs, doc, deleteDoc, updateDoc 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // 1. مراقبة حالة المستخدم وجلب بياناته
+    let currentEditId = null;
+
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            // إظهار البريد الإلكتروني
-            document.getElementById('userDisplayEmail').textContent = user.email;
-            // جلب الإعلانات الخاصة بهذا المستخدم فقط
-            fetchMyAds(user.email);
+            loadUserAds(user.uid);
         } else {
-            // إذا لم يكن مسجلاً، وجهه لصفحة الدخول
             window.location.href = "login.html";
         }
     });
 
-    // 2. وظيفة جلب الإعلانات الخاصة بالمستخدم
-    async function fetchMyAds(email) {
-        const grid = document.getElementById('myCarsGrid');
+    async function loadUserAds(userId) {
+        const adsContainer = document.getElementById('myAdsList');
+        // جلب الإعلانات التي يملكها هذا المستخدم فقط
+        const q = query(collection(db, "cars"), where("sellerId", "==", userId));
+        
         try {
-            const q = query(
-                collection(db, "cars"), 
-                where("sellerEmail", "==", email),
-                orderBy("createdAt", "desc")
-            );
-            const snap = await getDocs(q);
-
-            if (snap.empty) {
-                grid.innerHTML = '<div class="no-ads">Du har inga aktiva annonser än.</div>';
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                adsContainer.innerHTML = "<p>Du har inga aktiva annonser. (ليس لديك إعلانات حالية)</p>";
                 return;
             }
 
-            grid.innerHTML = snap.docs.map(doc => {
-                const c = doc.data();
-                return `
-                    <div class="car-card">
-                        <img src="${c.images ? c.images[0] : 'placeholder.jpg'}">
-                        <div class="card-content">
-                            <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
-                            <div class="car-title">${c.brand} ${c.model}</div>
-                            <div style="display:flex; gap:10px; margin-top:15px;">
-                                <button onclick="deleteAd('${doc.id}')" style="flex:1; padding:8px; background:#fee2e2; color:#ef4444; border:none; border-radius:5px; cursor:pointer; font-weight:700;">Ta bort</button>
-                                <button onclick="window.location.href='details.html?id=${doc.id}'" style="flex:1; padding:8px; background:#f1f5f9; color:#475569; border:none; border-radius:5px; cursor:pointer; font-weight:700;">Visa</button>
+            adsContainer.innerHTML = "";
+            querySnapshot.forEach((documentSnap) => {
+                const car = documentSnap.data();
+                const id = documentSnap.id;
+
+                adsContainer.innerHTML += `
+                    <div class="ad-card" id="card-${id}">
+                        <div class="ad-info">
+                            <img src="${car.images ? car.images[0] : ''}" class="ad-img">
+                            <div class="ad-details">
+                                <h3>${car.brand} ${car.model}</h3>
+                                <p>${Number(car.price).toLocaleString()} kr • ${car.mileage} mil</p>
                             </div>
+                        </div>
+                        <div class="actions">
+                            <button class="btn btn-edit" onclick="openEdit('${id}', ${car.price}, ${car.mileage})">Redigera</button>
+                            <button class="btn btn-delete" onclick="deleteAd('${id}')">Ta bort</button>
                         </div>
                     </div>
                 `;
-            }).join('');
+            });
         } catch (err) {
-            console.error(err);
-            grid.innerHTML = '<div class="no-ads">Kunde inte hämta annonser.</div>';
+            adsContainer.innerHTML = "Fel vid laddning: " + err.message;
         }
     }
 
-    // 3. وظيفة تسجيل الخروج (Logout)
-    document.getElementById('logoutBtn').onclick = async () => {
-        try {
-            await signOut(auth);
-            window.location.href = "index.html"; // العودة للرئيسية بعد الخروج
-        } catch (err) {
-            alert("Kunde inte logga ut.");
-        }
-    };
-
-    // 4. وظيفة الحذف (Global)
+    // وظيفة الحذف
     window.deleteAd = async (id) => {
-        if (confirm("Är du säker på att du vill ta bort annonsen?")) {
+        if (confirm("Vill du ta bort annonsen permanent? (هل تريد حذف الإعلان نهائياً؟)")) {
             try {
                 await deleteDoc(doc(db, "cars", id));
-                location.reload(); // تحديث الصفحة بعد الحذف
-            } catch (err) {
-                alert("Fel vid borttagning.");
-            }
+                document.getElementById(`card-${id}`).remove();
+                alert("Annonsen har tagits bort.");
+            } catch (err) { alert("Fel: " + err.message); }
         }
     };
-</script>
 
+    // وظائف التعديل
+    window.openEdit = (id, price, mileage) => {
+        currentEditId = id;
+        document.getElementById('editPrice').value = price;
+        document.getElementById('editMileage').value = mileage;
+        document.getElementById('editModal').style.display = 'flex';
+    };
+
+    window.closeModal = () => { document.getElementById('editModal').style.display = 'none'; };
+
+    window.saveChanges = async () => {
+        const newPrice = Number(document.getElementById('editPrice').value);
+        const newMileage = Number(document.getElementById('editMileage').value);
+
+        try {
+            await updateDoc(doc(db, "cars", currentEditId), {
+                price: newPrice,
+                mileage: newMileage
+            });
+            alert("Uppdaterad!");
+            location.reload(); // تحديث الصفحة لرؤية النتائج
+        } catch (err) { alert("Fel: " + err.message); }
+    };
+</script>
 </body>
 </html>
