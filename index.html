@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BilHK | Premium Sök</title>
+    <title>BilHK | Sök</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,19 +14,19 @@
     <a href="sell.html" style="background:var(--primary); color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700;">Sälj din bil</a>
 </header>
 
-<section class="hero-search">
+<section class="hero-section">
     <div class="body-type-filter" id="typeFilter">
-        <div class="type-item active" data-type="all"><i class="fa-solid fa-car"></i><span>Alla</span></div>
-        <div class="type-item" data-type="Sedan"><i class="fa-solid fa-car-side"></i><span>Sedan</span></div>
-        <div class="type-item" data-type="SUV"><i class="fa-solid fa-truck-monster"></i><span>SUV / 4x4</span></div>
-        <div class="type-item" data-type="Småbil"><i class="fa-solid fa-car-rear"></i><span>Småbil</span></div>
-        <div class="type-item" data-type="Minibuss"><i class="fa-solid fa-van-shuttle"></i><span>Minibuss</span></div>
-        <div class="type-item" data-type="Transportbil"><i class="fa-solid fa-truck-front"></i><span>Transport</span></div>
+        <button class="type-button active" data-type="all"><i class="fa-solid fa-layer-group"></i> Alla</button>
+        <button class="type-button" data-type="Sedan"><i class="fa-solid fa-car-side"></i> Sedan</button>
+        <button class="type-button" data-type="SUV"><i class="fa-solid fa-truck-monster"></i> SUV / 4x4</button>
+        <button class="type-button" data-type="Småbil"><i class="fa-solid fa-car-rear"></i> Småbil</button>
+        <button class="type-button" data-type="Minibuss"><i class="fa-solid fa-van-shuttle"></i> Minibuss</button>
+        <button class="type-button" data-type="Transportbil"><i class="fa-solid fa-truck-front"></i> Transport</button>
     </div>
 
-    <div class="search-container">
+    <div class="search-card">
         <div class="search-grid-main">
-            <div class="search-col">
+            <div class="search-column">
                 <div class="field-group">
                     <label>Märke</label>
                     <select id="brandSelect"><option value="all">Alla märken</option></select>
@@ -37,7 +37,7 @@
                 </div>
             </div>
 
-            <div class="search-col">
+            <div class="search-column">
                 <div class="field-group">
                     <label>Pris från (أقل سعر)</label>
                     <input type="number" id="minPrice" placeholder="kr">
@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <div class="search-col">
+            <div class="search-column">
                 <div class="field-group">
                     <label>Minst mil (أقل مسافة)</label>
                     <input type="number" id="minMil" placeholder="mil">
@@ -59,7 +59,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn-search-full" id="searchBtn">Visa resultat</button>
+        <button class="btn-search-submit" id="searchBtn">Visa bilar</button>
     </div>
 
     <div class="cars-grid" id="carsGrid"></div>
@@ -70,11 +70,11 @@
     import { carData } from './cars-data.js';
     import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let selectedType = 'all';
+    let currentType = 'all';
     const bSel = document.getElementById('brandSelect');
     const mSel = document.getElementById('modelSelect');
 
-    // تعبئة الماركات
+    // تعبئة قائمة الماركات
     Object.keys(carData).sort().forEach(b => {
         bSel.innerHTML += `<option value="${b}">${b}</option>`;
     });
@@ -86,17 +86,17 @@
         }
     };
 
-    // التحكم في شريط الأيقونات
-    document.querySelectorAll('.type-item').forEach(item => {
-        item.onclick = () => {
-            document.querySelectorAll('.type-item').forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-            selectedType = item.dataset.type;
-            executeSearch();
+    // التحكم بأزرار الفئات
+    document.querySelectorAll('.type-button').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('.type-button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentType = btn.dataset.type;
+            startSearch();
         };
     });
 
-    async function executeSearch() {
+    async function startSearch() {
         const grid = document.getElementById('carsGrid');
         grid.innerHTML = "Söker...";
         
@@ -104,7 +104,6 @@
         const snap = await getDocs(q);
         let cars = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
 
-        // الفلترة
         const filters = {
             brand: bSel.value,
             model: mSel.value,
@@ -112,7 +111,7 @@
             maxP: Number(document.getElementById('maxPrice').value),
             minM: Number(document.getElementById('minMil').value),
             maxM: Number(document.getElementById('maxMil').value),
-            type: selectedType
+            type: currentType
         };
 
         if(filters.brand !== 'all') cars = cars.filter(c => c.brand === filters.brand);
@@ -126,17 +125,17 @@
         grid.innerHTML = cars.map(c => `
             <div class="car-card" onclick="window.location.href='details.html?id=${c.id}'">
                 <img src="${c.images ? c.images[0] : 'placeholder.jpg'}">
-                <div class="card-info">
-                    <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
-                    <div style="font-weight:700; margin:5px 0;">${c.brand} ${c.model}</div>
-                    <div style="font-size:12px; color:gray;">${c.year} • ${c.mileage} mil • ${c.fuelType}</div>
+                <div class="card-info" style="padding:15px;">
+                    <div style="font-size:20px; font-weight:900;">${Number(c.price).toLocaleString()} kr</div>
+                    <div style="font-weight:700; color:#4b5563;">${c.brand} ${c.model}</div>
+                    <div style="font-size:12px; color:#9ca3af; margin-top:8px;">${c.year} • ${c.mileage} mil • ${c.fuelType}</div>
                 </div>
             </div>
         `).join('');
     }
 
-    document.getElementById('searchBtn').onclick = executeSearch;
-    executeSearch();
+    document.getElementById('searchBtn').onclick = startSearch;
+    startSearch();
 </script>
 </body>
 </html>
