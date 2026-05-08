@@ -8,65 +8,79 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    // الحصول على معرف السيارة من الرابط
     const carId = new URLSearchParams(window.location.search).get('id');
     let user = null;
     let car = null;
 
-    // التأكد من حالة تسجيل الدخول
     onAuthStateChanged(auth, u => {
         user = u;
-        loadCarData(); // جلب بيانات السيارة فور التأكد من المستخدم
+        loadCarData(); 
     });
 
-    // دالة جلب بيانات السيارة من قاعدة البيانات
     async function loadCarData() {
         if (!carId) return;
-        const snap = await getDoc(doc(db, "cars", carId));
-        if (snap.exists()) {
-            car = snap.data();
-            // هنا يتم عرض البيانات في الصفحة (يمكنك إضافة كود العرض هنا)
+        try {
+            const snap = await getDoc(doc(db, "cars", carId));
+            if (snap.exists()) {
+                car = snap.data();
+                renderPage(); // استدعاء دالة العرض بعد التأكد من وجود البيانات
+            } else {
+                document.getElementById('details').innerHTML = "Bilen hittades inte.";
+            }
+        } catch (e) {
+            console.error("Error loading car:", e);
         }
     }
 
-    // الدالة التي أرسلتها أنت (مدمجة ومنظمة)
+    function renderPage() {
+        const div = document.getElementById('details');
+        if (!car) return; // منع الانهيار في حال كانت البيانات فارغة
+
+        div.innerHTML = `
+            <div>
+                <img src="${car.images ? car.images[0] : ''}" style="width:100%; border-radius:20px; height:400px; object-fit:cover;">
+                <div style="background:white; padding:25px; border-radius:20px; margin-top:20px; border:1px solid #eee;">
+                    <h1 style="font-weight:900;">${car.brand} ${car.model || ''}</h1>
+                    <div style="font-size:28px; color:#f58220; font-weight:900; margin:10px 0;">${Number(car.price).toLocaleString()} kr</div>
+                    <p>${car.description || ''}</p>
+                </div>
+            </div>
+            <aside>
+                <div style="background:white; padding:25px; border-radius:20px; border:1px solid #eee; position:sticky; top:100px;">
+                    <h3 style="margin-bottom:15px;">Intresserad?</h3>
+                    <textarea id="msg" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;" rows="4" placeholder="Skriv ett meddelande..."></textarea>
+                    <button onclick="sendMsg()" id="cBtn" style="width:100%; background:#0f172a; color:white; padding:15px; border-radius:12px; border:none; font-weight:800; cursor:pointer;">Starta chatt</button>
+                </div>
+            </aside>`;
+    }
+
     window.sendMsg = async () => {
-        if (!user) {
-            alert("Logga in först!");
-            return;
-        }
-        
-        const inputField = document.getElementById('msg');
-        const text = inputField.value.trim();
-        if (!text) return;
+        if (!user) return alert("Logga in först!");
+        const input = document.getElementById('msg');
+        const text = input.value.trim();
+        if (!text || !car) return;
 
         const btn = document.getElementById('cBtn');
         btn.disabled = true;
-        btn.innerText = "Skickar...";
-
-        // معرف الغرفة: يجمع المشتري والبائع والسيارة لضمان عدم التكرار
         const chatId = `${user.uid}_${car.sellerId}_${carId}`;
 
         try {
             await addDoc(collection(db, "messages"), {
                 chatId: chatId,
-                participants: [user.uid, car.sellerId], // هذا هو مفتاح ظهور الرسالة في "Min Sida"
+                participants: [user.uid, car.sellerId],
                 carId: carId,
-                carTitle: car.brand + " " + car.model,
-                carImage: car.images[0],
+                carTitle: car.brand + " " + (car.model || ''),
+                carImage: car.images ? car.images[0] : '',
                 senderId: user.uid,
                 senderName: user.email.split('@')[0],
                 recipientId: car.sellerId,
                 message: text,
                 timestamp: serverTimestamp()
             });
-            
-            // التوجه إلى صفحة المراسلات فوراً بعد الإرسال
             window.location.href = "my-account.html?chat=" + chatId;
         } catch (e) {
-            alert("Feil: " + e.message);
+            alert("Error: " + e.message);
             btn.disabled = false;
-            btn.innerText = "Starta chatt";
         }
     };
 </script>
