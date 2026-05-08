@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mina Annonser | BilMarknad-HK</title>
+    <title>Mitt Konto | BilMarknad-HK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -39,7 +39,9 @@
         /* --- Main Content --- */
         .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
         h1 { margin-bottom: 30px; font-weight: 900; font-size: 28px; }
+        h2 { font-size: 20px; font-weight: 800; margin: 40px 0 20px; border-bottom: 3px solid var(--primary); display: inline-block; padding-bottom: 5px; }
         
+        /* --- Ads Section --- */
         .ad-card { 
             background: var(--white); border-radius: 16px; padding: 20px; margin-bottom: 15px; 
             display: flex; align-items: center; justify-content: space-between;
@@ -50,19 +52,26 @@
         .ad-details h3 { font-size: 18px; margin-bottom: 5px; color: var(--dark); }
         .ad-details p { font-size: 14px; color: #64748b; }
 
+        /* --- Messages Section --- */
+        .msg-card {
+            background: var(--white); border-radius: 16px; padding: 20px; margin-bottom: 15px;
+            border: 1px solid var(--border); border-left: 5px solid var(--primary);
+        }
+        .msg-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; color: #94a3b8; }
+        .msg-body { font-size: 15px; line-height: 1.6; margin-bottom: 15px; color: var(--dark); }
+        .msg-footer { font-size: 13px; color: #64748b; background: #f8fafc; padding: 10px; border-radius: 8px; }
+        .msg-footer strong { color: var(--dark); }
+
         .actions { display: flex; gap: 10px; }
-        .btn { padding: 10px 18px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; font-size: 13px; transition: 0.2s; }
+        .btn { padding: 10px 18px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; font-size: 13px; transition: 0.2s; font-family: inherit; }
         .btn-edit { background: #f1f5f9; color: var(--dark); }
-        .btn-edit:hover { background: #e2e8f0; }
         .btn-delete { background: #fee2e2; color: #dc2626; }
-        .btn-delete:hover { background: #fecaca; }
         
         /* --- Modal --- */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 2000; }
-        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        .modal-content h3 { margin-bottom: 20px; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; }
         .modal-content label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: #64748b; }
-        .modal-content input { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; }
+        .modal-content input { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -72,12 +81,18 @@
     <nav class="nav-links">
         <a href="index.html">Hem</a>
         <a href="sell.html" class="btn-sell">Sälj bil</a>
+        <a href="#" onclick="logout()" style="color: #dc2626;">Logga ut</a>
     </nav>
 </header>
 
 <div class="container">
-    <h1>Mina annonser</h1>
+    <h1>Välkommen till ditt konto</h1>
+
+    <h2>Mina annonser</h2>
     <div id="myAdsList">Laddar dina annonser...</div>
+
+    <h2>Mottagna förfrågningar</h2>
+    <div id="messagesList">Laddar meddelanden...</div>
 </div>
 
 <div class="modal" id="editModal">
@@ -95,40 +110,38 @@
 
 <script type="module">
     import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { 
-        collection, query, where, getDocs, doc, deleteDoc, updateDoc 
+        collection, query, where, getDocs, doc, deleteDoc, updateDoc, orderBy 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let currentEditId = null;
 
-    // التأكد من تسجيل الدخول
     onAuthStateChanged(auth, (user) => {
         if (user) {
             loadUserAds(user.uid);
+            loadMessages(user.uid);
         } else {
             window.location.href = "login.html";
         }
     });
 
+    // --- جلب الإعلانات ---
     async function loadUserAds(userId) {
         const adsContainer = document.getElementById('myAdsList');
-        // جلب السيارات التي تطابق الـ ID الخاص بك فقط
         const q = query(collection(db, "cars"), where("sellerId", "==", userId));
         
         try {
-            const querySnapshot = await getDocs(q);
-            if (querySnapshot.empty) {
-                adsContainer.innerHTML = "<p style='text-align:center; padding: 40px; color: #64748b;'>Du har inga aktiva annonser än.</p>";
+            const snap = await getDocs(q);
+            if (snap.empty) {
+                adsContainer.innerHTML = "<p style='color: #64748b;'>Du har inga aktiva annonser.</p>";
                 return;
             }
 
-            adsContainer.innerHTML = "";
-            querySnapshot.forEach((docSnap) => {
+            adsContainer.innerHTML = snap.docs.map(docSnap => {
                 const car = docSnap.data();
                 const id = docSnap.id;
-
-                adsContainer.innerHTML += `
+                return `
                     <div class="ad-card" id="card-${id}">
                         <div class="ad-info">
                             <img src="${car.images && car.images[0] ? car.images[0] : 'placeholder.jpg'}" class="ad-img">
@@ -143,25 +156,64 @@
                         </div>
                     </div>
                 `;
-            });
-        } catch (err) {
-            adsContainer.innerHTML = "Ett fel uppstod: " + err.message;
+            }).join('');
+        } catch (err) { console.error(err); }
+    }
+
+    // --- جلب الرسائل الواردة ---
+    async function loadMessages(userId) {
+        const msgList = document.getElementById('messagesList');
+        try {
+            // استعلام لجلب الرسائل الموجهة لهذا المستخدم
+            const q = query(
+                collection(db, "messages"), 
+                where("receiverId", "==", userId),
+                orderBy("createdAt", "desc")
+            );
+            const snap = await getDocs(q);
+            
+            if (snap.empty) {
+                msgList.innerHTML = "<p style='color: #64748b;'>Inga meddelanden ännu.</p>";
+                return;
+            }
+
+            msgList.innerHTML = snap.docs.map(docSnap => {
+                const m = docSnap.data();
+                const date = m.createdAt ? m.createdAt.toDate().toLocaleDateString('sv-SE') : 'Nyligen';
+                return `
+                    <div class="msg-card">
+                        <div class="msg-header">
+                            <strong>${m.carTitle || 'Okänd bil'}</strong>
+                            <span>${date}</span>
+                        </div>
+                        <div class="msg-body">
+                            "${m.message}"
+                        </div>
+                        <div class="msg-footer">
+                            Från: <strong>${m.senderName}</strong> | 
+                            E-post: <a href="mailto:${m.senderEmail}" style="color:var(--primary); font-weight:700;">${m.senderEmail}</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (err) { 
+            console.error(err);
+            msgList.innerHTML = "<p>Kunde inte ladda meddelanden. Se till att Index är skapat i Firebase.</p>";
         }
     }
 
-    // وظيفة الحذف
+    // --- الوظائف العامة ---
+    window.logout = () => {
+        signOut(auth).then(() => window.location.href = "index.html");
+    };
+
     window.deleteAd = async (id) => {
         if (confirm("Är du säker på att du vill ta bort annonsen?")) {
-            try {
-                await deleteDoc(doc(db, "cars", id));
-                document.getElementById(`card-${id}`).remove();
-            } catch (err) {
-                alert("Fel vid borttagning: " + err.message);
-            }
+            await deleteDoc(doc(db, "cars", id));
+            document.getElementById(`card-${id}`).remove();
         }
     };
 
-    // وظائف التعديل (Modal)
     window.openEdit = (id, price, mileage) => {
         currentEditId = id;
         document.getElementById('editPrice').value = price;
@@ -169,27 +221,16 @@
         document.getElementById('editModal').style.display = 'flex';
     };
 
-    window.closeModal = () => {
-        document.getElementById('editModal').style.display = 'none';
-    };
+    window.closeModal = () => document.getElementById('editModal').style.display = 'none';
 
     window.saveChanges = async () => {
         const newPrice = Number(document.getElementById('editPrice').value);
         const newMileage = Number(document.getElementById('editMileage').value);
-
-        if (!newPrice || !newMileage) return alert("Vänligen fyll i alla fält.");
-
         try {
-            const carRef = doc(db, "cars", currentEditId);
-            await updateDoc(carRef, {
-                price: newPrice,
-                mileage: newMileage
-            });
-            alert("Annonsen har uppdaterats!");
+            await updateDoc(doc(db, "cars", currentEditId), { price: newPrice, mileage: newMileage });
+            alert("Uppdaterad!");
             location.reload();
-        } catch (err) {
-            alert("Ett fel uppstod: " + err.message);
-        }
+        } catch (err) { alert(err.message); }
     };
 </script>
 </body>
