@@ -2,27 +2,49 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Logga in | BILHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container" style="max-width:400px; margin: 100px auto;">
-    <h2>Logga in</h2>
-    <input id="email" type="email" placeholder="E-post">
-    <input id="password" type="password" placeholder="Lösenord">
-    <button onclick="login()" class="btn-primary">Logga in</button>
-    <p>Har inget konto? <a href="signup.html">Skapa ett</a></p>
+
+<div class="container">
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <h2>Välkommen tillbaka</h2>
+    <input type="email" id="email" placeholder="E-post">
+    <input type="password" id="password" placeholder="Lösenord">
+    <button class="btn-primary" id="loginBtn">Logga in</button>
+    <p class="link-alt">Har du inget konto? <a href="signup.html">Skapa ett här</a></p>
 </div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import firebaseConfig from './firebase-config.js';
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    window.login = () => {
-        signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
-        .then(() => location.href='index.html').catch(e => alert(e.message));
-    };
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const btn = document.getElementById('loginBtn');
+
+        if (!email || !password) return alert("Vänligen fyll i alla fält.");
+
+        btn.innerText = "Loggar in...";
+        btn.disabled = true;
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            window.location.href = "index.html";
+        } catch (error) {
+            alert("Fel: " + error.message);
+            btn.innerText = "Logga in";
+            btn.disabled = false;
+        }
+    });
 </script>
 </body>
 </html>
