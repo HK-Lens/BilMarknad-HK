@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BilMarknad | Hem</title>
+    <title>Bytbil-Style | Hem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,57 +11,84 @@
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <nav>
-        <a href="sell.html" class="btn-primary">Sälj din bil</a>
-        <a href="login.html" style="margin-left:20px; text-decoration:none; color:inherit;">Logga in</a>
-    </nav>
+    <div class="nav-actions">
+        <a href="sell.html" class="btn-sell">Sälj din bil</a>
+        <a href="login.html" class="link-login">Logga in</a>
+    </div>
 </header>
 
-<div class="container">
-    <h1 style="margin-bottom:30px;">Alla bilar till salu</h1>
+<section class="hero-search">
+    <div class="search-tabs">
+        <button class="tab active">Alla bilar</button>
+        <button class="tab">Personbil</button>
+        <button class="tab">Transportbil</button>
+    </div>
+    <div class="search-container">
+        <div class="search-grid">
+            <div class="field-group">
+                <label>Märke</label>
+                <select id="brandSelect"><option value="all">Alla märken</option></select>
+            </div>
+            <div class="field-group">
+                <label>Modell</label>
+                <select id="modelSelect"><option value="all">Alla modeller</option></select>
+            </div>
+            <div class="field-group">
+                <label>Max Pris</label>
+                <input type="number" id="maxPrice" placeholder="t.ex. 200000">
+            </div>
+            <div class="field-group">
+                <label>Max mil</label>
+                <input type="number" id="maxMil" placeholder="t.ex. 10000">
+            </div>
+            <button class="btn-search" id="searchBtn">Visa bilar</button>
+        </div>
+    </div>
+
+    <div class="location-search">
+        <div>
+            <span style="font-weight: 800;">Sök på din ort</span>
+            <p style="font-size: 12px; color: gray;">Hitta bilar nära dig</p>
+        </div>
+        <button style="background:none; border: 1px solid #ddd; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Välj plats ↓</button>
+    </div>
+</section>
+
+<section class="cars-section">
+    <h2 style="margin-bottom: 20px; font-size: 18px;">Senaste annonserna</h2>
     <div class="cars-grid" id="carsGrid">
         </div>
-</div>
+</section>
 
 <script type="module">
     import { db } from './firebase-config.js';
     import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    async function loadCars() {
+    async function loadInitialCars() {
         const grid = document.getElementById('carsGrid');
-        try {
-            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
-            const querySnapshot = await getDocs(q);
-            
-            if (querySnapshot.empty) {
-                grid.innerHTML = "<p>Inga bilar hittades.</p>";
-                return;
-            }
-
-            grid.innerHTML = querySnapshot.docs.map(doc => {
-                const c = doc.data();
-                return `
-                    <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
-                        <img src="${c.images ? c.images[0] : 'placeholder.jpg'}" alt="${c.brand}">
-                        <div class="card-content">
-                            <div class="card-price">${Number(c.price).toLocaleString()} kr</div>
-                            <div class="card-title">${c.brand} ${c.model}</div>
-                            <div class="card-meta">
-                                <span>${c.year}</span> • 
-                                <span>${c.mileage} mil</span> • 
-                                <span>${c.fuelType}</span>
-                            </div>
+        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        
+        grid.innerHTML = snap.docs.map(doc => {
+            const c = doc.data();
+            return `
+                <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
+                    <img src="${c.images ? c.images[0] : 'placeholder.jpg'}">
+                    <div class="card-info">
+                        <div class="price-main">${Number(c.price).toLocaleString()} kr</div>
+                        <div class="car-name">${c.brand} ${c.model}</div>
+                        <div class="specs-row">
+                            <span>${c.year}</span> • 
+                            <span>${c.mileage} mil</span> • 
+                            <span>${c.fuelType || 'Bensin'}</span>
                         </div>
                     </div>
-                `;
-            }).join('');
-        } catch (error) {
-            console.error("Error loading cars:", error);
-            grid.innerHTML = "<p>Ett fel uppstod vid laddning.</p>";
-        }
+                </div>
+            `;
+        }).join('');
     }
 
-    loadCars();
+    loadInitialCars();
 </script>
 </body>
 </html>
