@@ -3,239 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fordonsdetaljer | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>Bildetaljer | BilHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
-        
-        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: #1e293b; }
+
+        header { background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 900; color: var(--dark); text-decoration: none; }
         .logo span { color: var(--primary); }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; margin-left: 20px; }
 
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 1.6fr 1fr; gap: 30px; flex: 1; }
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
 
-        /* --- Galleri --- */
-        .gallery-container { position: relative; background: #000; border-radius: 20px; overflow: hidden; height: 500px; display: flex; align-items: center; justify-content: center; }
-        .main-slide { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; z-index: 10; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .nav-btn:hover { background: var(--primary); color: white; }
-        .prev-btn { left: 20px; }
-        .next-btn { right: 20px; }
+        .car-image-box { background: var(--white); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .car-image-box img { width: 100%; height: 400px; object-fit: cover; display: block; }
 
-        .thumb-track { display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .thumb-item { width: 100px; height: 70px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 3px solid transparent; opacity: 0.6; transition: 0.3s; flex-shrink: 0; }
-        .thumb-item.active { border-color: var(--primary); opacity: 1; }
-
-        /* --- Zoom Modal --- */
-        .zoom-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; }
-        .zoom-modal img { max-width: 90%; max-height: 85%; border-radius: 8px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
-        .zoom-ctrl { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); width: 60px; height: 60px; border-radius: 50%; font-size: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 3100; transition: 0.3s; }
-        .zoom-ctrl:hover { background: var(--primary); border-color: var(--primary); }
-
-        /* --- Information --- */
-        .price-tag { font-size: 38px; font-weight: 900; margin: 25px 0 10px; }
-        .car-title { font-size: 24px; color: #64748b; margin-bottom: 30px; }
-        .specs-section { background: white; border-radius: 20px; padding: 30px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .specs-section h2 { font-size: 18px; margin-bottom: 20px; border-bottom: 3px solid var(--primary); display: inline-block; padding-bottom: 5px; }
-        .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .tech-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
-        .tech-label { color: #94a3b8; font-size: 14px; }
-        .tech-value { font-weight: 700; font-size: 14px; }
-
-        /* --- Kontakt Form --- */
-        .seller-card { background: var(--dark); color: white; padding: 30px; border-radius: 24px; position: sticky; top: 100px; }
-        .msg-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: none; background: rgba(255,255,255,0.1); color: white; font-family: inherit; outline: none; }
-        .msg-input::placeholder { color: #94a3b8; }
-        .btn-send { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 800; cursor: pointer; margin-top: 10px; font-size: 16px; transition: 0.2s; }
-        .btn-send:hover { background: #e07210; }
-
-        footer { text-align: center; padding: 40px 6%; background: white; border-top: 1px solid var(--border); color: #64748b; font-size: 13px; margin-top: 40px; }
+        .car-info { background: var(--white); padding: 30px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.05); height: fit-content; }
+        .car-price { font-size: 28px; font-weight: 900; color: var(--primary); margin-bottom: 10px; }
+        .car-title { font-size: 24px; font-weight: 800; margin-bottom: 20px; color: var(--dark); }
         
-        @media (max-width: 900px) {
-            .container { grid-template-columns: 1fr; }
-            .gallery-container { height: 350px; }
-        }
+        .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .spec-item { background: var(--bg); padding: 15px; border-radius: 10px; font-size: 14px; font-weight: 600; text-align: center; color: #475569; }
+        .spec-item span { display: block; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
+
+        .desc-box { background: var(--white); padding: 30px; border-radius: 20px; border: 1px solid var(--border); margin-top: 30px; grid-column: 1 / -1; line-height: 1.8; color: #334155; }
+        
+        .contact-btn { display: block; width: 100%; background: #25D366; color: white; border: none; padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; text-align: center; }
+        .contact-btn:hover { background: #1ebc5a; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <nav class="nav-links">
+        <a href="index.html">← Tillbaka</a>
+    </nav>
 </header>
 
-<div class="container" id="detailsPage">
-    <p style="text-align: center; grid-column: 1/-1;">Laddar fordonsdetaljer...</p>
-</div>
-
-<div id="zoomModal" class="zoom-modal">
-    <span style="position:absolute; top:30px; right:40px; color:white; font-size:40px; cursor:pointer; z-index: 3200;" onclick="document.getElementById('zoomModal').style.display='none'">&times;</span>
-    <button class="zoom-ctrl" style="left:30px;" id="zoomPrev">❮</button>
-    <img id="zoomedImg">
-    <button class="zoom-ctrl" style="right:30px;" id="zoomNext">❯</button>
+<div class="container" id="detailsContainer">
+    <div style="grid-column: 1 / -1; text-align: center; padding: 50px;">
+        <h2>Laddar bilinformation...</h2>
+    </div>
 </div>
 
 <script type="module">
-    import { db } from './firebase-config.js'; 
-    import { doc, getDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { db, auth } from './firebase-config.js';
+    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    const carId = new URLSearchParams(window.location.search).get('id');
-    let carImages = [];
-    let currentIndex = 0;
-    let carData = null;
+    let currentUser = null;
+    let currentCarData = null;
 
-    async function loadCar() {
+    onAuthStateChanged(auth, (user) => {
+        currentUser = user;
+    });
+
+    async function loadCarDetails() {
+        // استخراج معرف السيارة من الرابط (مثال: details.html?id=123)
+        const urlParams = new URLSearchParams(window.location.search);
+        const carId = urlParams.get('id');
+
         if (!carId) {
-            document.getElementById('detailsPage').innerHTML = "Fel: Inget bil-ID hittades.";
+            document.getElementById('detailsContainer').innerHTML = "<h2 style='grid-column: 1/-1; text-align:center;'>Bilen hittades inte.</h2>";
             return;
         }
 
         try {
-            const snap = await getDoc(doc(db, "cars", carId));
-            if (snap.exists()) {
-                carData = snap.data();
-                carImages = carData.images || ['placeholder.jpg'];
-                
-                document.getElementById('detailsPage').innerHTML = `
-                    <div class="main-content">
-                        <div class="gallery-container">
-                            <button class="nav-btn prev-btn" id="prevBtn">❮</button>
-                            <img src="${carImages[0]}" class="main-slide" id="mainImg">
-                            <button class="nav-btn next-btn" id="nextBtn">❯</button>
-                        </div>
-                        <div class="thumb-track" id="thumbTrack">
-                            ${carImages.map((img, i) => `<img src="${img}" class="thumb-item ${i===0?'active':''}" data-index="${i}">`).join('')}
-                        </div>
+            const docRef = doc(db, "cars", carId);
+            const docSnap = await getDoc(docRef);
 
-                        <div class="price-tag">${Number(carData.price).toLocaleString()} kr</div>
-                        <h1 class="car-title">${carData.brand} ${carData.model} - ${carData.year}</h1>
-
-                        <div class="specs-section">
-                            <h2>Specifikationer</h2>
-                            <div class="tech-grid">
-                                <div class="tech-item"><span class="tech-label">Miltal</span><span class="tech-value">${carData.mileage} mil</span></div>
-                                <div class="tech-item"><span class="tech-label">Bränsle</span><span class="tech-value">${carData.fuelType || '-'}</span></div>
-                                <div class="tech-item"><span class="tech-label">Växellåda</span><span class="tech-value">${carData.transmission || '-'}</span></div>
-                                <div class="tech-item"><span class="tech-label">Färg</span><span class="tech-value">${carData.color || '-'}</span></div>
-                            </div>
-                        </div>
-
-                        <div class="specs-section">
-                            <h2>Beskrivning</h2>
-                            <p style="line-height:1.7; white-space: pre-line;">${carData.description || 'Ingen beskrivning.'}</p>
-                        </div>
-                    </div>
-
-                    <div class="sidebar">
-                        <div class="seller-card">
-                            <h3>Kontakta säljaren</h3>
-                            <form id="contactForm">
-                                <input type="text" id="senderName" class="msg-input" placeholder="Ditt namn" required>
-                                <input type="email" id="senderEmail" class="msg-input" placeholder="Din e-post" required>
-                                <textarea id="senderMsg" class="msg-input" rows="4" placeholder="Jag är intresserاد..." required></textarea>
-                                <button type="submit" id="sendBtn" class="btn-send">Skicka meddelande</button>
-                            </form>
-                            <div style="margin-top:20px; font-weight:900;">📞 ${carData.phone || 'Dolt'}</div>
-                        </div>
-                    </div>
-                `;
-                initGallery();
-                initMessaging();
+            if (docSnap.exists()) {
+                currentCarData = docSnap.data();
+                renderCarUI(currentCarData);
             } else {
-                document.getElementById('detailsPage').innerHTML = "Bilen hittades inte.";
+                document.getElementById('detailsContainer').innerHTML = "<h2 style='grid-column: 1/-1; text-align:center;'>Bilen har tagits bort.</h2>";
             }
-        } catch (err) {
-            console.error("Firebase Error:", err);
-            document.getElementById('detailsPage').innerHTML = "Ett tekniskt fel uppstod vid laddning.";
+        } catch (error) {
+            console.error("Fel vid hämtning av bil:", error);
+            document.getElementById('detailsContainer').innerHTML = "<h2 style='grid-column: 1/-1; text-align:center;'>Ett fel uppstod.</h2>";
         }
     }
 
-    function initGallery() {
-        const mainImg = document.getElementById('mainImg');
-        const zoomedImg = document.getElementById('zoomedImg');
-        const modal = document.getElementById('zoomModal');
-        const thumbs = document.querySelectorAll('.thumb-item');
+    function renderCarUI(car) {
+        const container = document.getElementById('detailsContainer');
+        const defaultImage = "https://via.placeholder.com/800x400?text=Ingen+bild";
+        const carImg = (car.images && car.images.length > 0) ? car.images[0] : defaultImage;
 
-        const update = (i) => {
-            currentIndex = i;
-            const newSrc = carImages[currentIndex];
-            if (mainImg) mainImg.src = newSrc;
-            if (zoomedImg) zoomedImg.src = newSrc;
+        container.innerHTML = `
+            <div class="car-image-box">
+                <img src="${carImg}" alt="${car.brand} ${car.model}">
+            </div>
             
-            const allThumbs = document.querySelectorAll('.thumb-item');
-            allThumbs.forEach((t, idx) => t.classList.toggle('active', idx === i));
-        };
-
-        // أزرار التنقل الرئيسية
-        document.addEventListener('click', (e) => {
-            if (e.target.id === 'prevBtn') update((currentIndex - 1 + carImages.length) % carImages.length);
-            if (e.target.id === 'nextBtn') update((currentIndex + 1) % carImages.length);
-            if (e.target.classList.contains('thumb-item')) update(parseInt(e.target.dataset.index));
-            if (e.target.id === 'mainImg') {
-                zoomedImg.src = mainImg.src;
-                modal.style.display = 'flex';
-            }
-        });
-
-        // أزرار التنقل في وضع التكبير
-        document.getElementById('zoomPrev').onclick = (e) => { 
-            e.stopPropagation(); 
-            update((currentIndex - 1 + carImages.length) % carImages.length); 
-        };
-        document.getElementById('zoomNext').onclick = (e) => { 
-            e.stopPropagation(); 
-            update((currentIndex + 1) % carImages.length); 
-        };
-
-        // دعم لوحة المفاتيح
-        document.addEventListener('keydown', (e) => {
-            if (modal.style.display === 'flex') {
-                if (e.key === "ArrowLeft") update((currentIndex - 1 + carImages.length) % carImages.length);
-                if (e.key === "ArrowRight") update((currentIndex + 1) % carImages.length);
-                if (e.key === "Escape") modal.style.display = 'none';
-            }
-        });
-    }
-
-    function initMessaging() {
-        document.addEventListener('submit', async (e) => {
-            if (e.target.id === 'contactForm') {
-                e.preventDefault();
+            <div class="car-info">
+                <div class="car-price">${Number(car.price).toLocaleString()} kr</div>
+                <div class="car-title">${car.brand} ${car.model}</div>
                 
-                if (!carData || !carData.sellerId) {
-                    alert("Säljarens information är inte tillgänglig. Försök ladda om sidan.");
-                    return;
-                }
+                <div class="specs-grid">
+                    <div class="spec-item"><span>Årsmodell</span>${car.year || '-'}</div>
+                    <div class="spec-item"><span>Miltal</span>${car.mileage || '-'} mil</div>
+                    <div class="spec-item"><span>Drivmedel</span>${car.fuelType || '-'}</div>
+                    <div class="spec-item"><span>Växellåda</span>${car.gearbox || 'Manuell/Automat'}</div>
+                </div>
 
-                const btn = document.getElementById('sendBtn');
-                btn.disabled = true;
-                btn.innerText = "Skickar...";
+                <button class="contact-btn" id="contactSellerBtn">💬 Kontakta Säljaren</button>
+            </div>
 
-                try {
-                    await addDoc(collection(db, "messages"), {
-                        carId: carId,
-                        carTitle: carData.brand + " " + carData.model,
-                        receiverId: carData.sellerId,
-                        senderName: document.getElementById('senderName').value,
-                        senderEmail: document.getElementById('senderEmail').value,
-                        message: document.getElementById('senderMsg').value,
-                        createdAt: serverTimestamp(),
-                        read: false
-                    });
-                    alert("Tack! Meddelande skickat!");
-                    e.target.reset();
-                } catch (err) { 
-                    alert("Fel: " + err.message); 
-                } finally {
-                    btn.disabled = false;
-                    btn.innerText = "Skicka meddelande";
-                }
-            }
-        });
+            <div class="desc-box">
+                <h3 style="margin-bottom:15px; color:var(--dark);">Beskrivning</h3>
+                <p style="white-space: pre-wrap;">${car.description || 'Ingen beskrivning tillgänglig.'}</p>
+            </div>
+        `;
+
+        // ربط حدث الضغط بالزر
+        document.getElementById('contactSellerBtn').onclick = handleContactSeller;
     }
 
-    loadCar();
+    // الدالة الذكية لإنشاء الغرفة قبل تحويل المشتري
+    async function handleContactSeller() {
+        if (!currentUser) {
+            alert("Du måste logga in för att kontakta säljaren.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (currentUser.uid === currentCarData.sellerId) {
+            alert("Du kan inte skicka meddelande till din egen bil.");
+            return;
+        }
+
+        try {
+            // تغيير نص الزر أثناء التحميل
+            const btn = document.getElementById('contactSellerBtn');
+            btn.innerText = "Öppnar chatt...";
+            btn.disabled = true;
+
+            const sellerId = currentCarData.sellerId;
+            const sellerName = currentCarData.sellerName || "Säljare";
+            const carTitle = `${currentCarData.brand} ${currentCarData.model}`;
+            
+            // صناعة معرف الغرفة الموحد
+            const roomId = [currentUser.uid, sellerId].sort().join('_') + '_' + carTitle.replace(/\\s+/g, '');
+            const roomRef = doc(db, "chats", roomId);
+            const roomSnap = await getDoc(roomRef);
+
+            // إذا كانت الغرفة غير موجودة، قم بإنشائها لتتوافق مع الـ Rules
+            if (!roomSnap.exists()) {
+                await setDoc(roomRef, {
+                    users: [currentUser.uid, sellerId], // هذا ما يمنع خطأ Permissions
+                    names: [currentUser.displayName || currentUser.email.split('@')[0], sellerName],
+                    carTitle: carTitle,
+                    lastMessage: "Ny intressent för " + carTitle,
+                    updatedAt: serverTimestamp()
+                });
+            }
+
+            // التوجيه لنظام الدردشة الجديد
+            window.location.href = "messages.html";
+
+        } catch (error) {
+            console.error("Kontaktfel:", error);
+            alert("Kunde inte starta chatt: " + error.message);
+            document.getElementById('contactSellerBtn').innerText = "💬 Kontakta Säljaren";
+            document.getElementById('contactSellerBtn').disabled = false;
+        }
+    }
+
+    // تشغيل الدالة عند فتح الصفحة
+    loadCarDetails();
 </script>
 </body>
 </html>
