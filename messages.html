@@ -2,26 +2,43 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mina Meddelanden | BilHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f0f2f5; --white: #ffffff; --border: #e4e6eb; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); height: 100vh; overflow: hidden; }
-        header { background: var(--white); padding: 0 5%; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        body { background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        header { background: var(--white); padding: 0 5%; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        
+        /* شاشة الأخطاء تظهر فقط إذا كان هناك مشكلة لتتمكن من تصويرها لي */
+        #errorLog { background: #fee2e2; color: #dc2626; padding: 10px; font-size: 12px; font-weight: bold; display: none; text-align: center; }
+
         .messenger { display: grid; grid-template-columns: 350px 1fr; height: calc(100vh - 60px); }
+        @media (max-width: 768px) {
+            .messenger { grid-template-columns: 1fr; }
+            .chat-area { display: none; } /* يختفي المحادثة في الجوال حتى تختار شخص */
+            .messenger.chat-active .sidebar { display: none; }
+            .messenger.chat-active .chat-area { display: flex; }
+        }
+        
         .sidebar { background: white; border-right: 1px solid var(--border); overflow-y: auto; }
         .thread { padding: 20px; border-bottom: 1px solid #f0f2f5; cursor: pointer; border-left: 4px solid transparent; }
         .thread:hover { background: #f8f9fa; }
         .thread.active { background: #fff5ed; border-left-color: var(--primary); }
-        .chat-area { display: flex; flex-direction: column; background: #fff; }
+        .chat-area { display: flex; flex-direction: column; background: #fff; height: 100%; }
+        
+        .chat-header { padding: 15px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; font-weight: bold; }
+        .back-btn { display: none; background: #eee; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+        @media (max-width: 768px) { .back-btn { display: block; } }
+
         .msg-list { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f0f2f5; }
-        .bubble { max-width: 75%; padding: 12px; border-radius: 15px; font-size: 14px; line-height: 1.5; }
+        .bubble { max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.5; word-wrap: break-word; }
         .bubble.sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
         .bubble.received { align-self: flex-start; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-bottom-left-radius: 2px; }
-        .input-bar { padding: 20px; background: white; display: flex; gap: 10px; border-top: 1px solid var(--border); }
+        .input-bar { padding: 15px; background: white; display: flex; gap: 10px; border-top: 1px solid var(--border); }
         .input-bar input { flex: 1; padding: 14px; border-radius: 25px; border: 1px solid #ddd; outline: none; }
-        .send-btn { background: var(--dark); color: white; border: none; padding: 0 25px; border-radius: 25px; cursor: pointer; font-weight: 700; }
+        .send-btn { background: var(--dark); color: white; border: none; padding: 0 20px; border-radius: 25px; cursor: pointer; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -29,10 +46,22 @@
     <a href="index.html" style="text-decoration:none; color:black; font-weight:900; font-size:22px;">BIL<span>HK</span></a>
     <a href="my-account.html" style="text-decoration:none; font-weight:700; color:black; font-size:14px;">← Mitt Konto</a>
 </header>
-<div class="messenger">
-    <div class="sidebar" id="threadsContainer"><p style="padding:20px; text-align:center; color:#999;">Laddar data...</p></div>
-    <div class="chat-area">
-        <div id="msgList" class="msg-list"><p style="text-align:center; margin-top:100px; color:#888;">Välj en konversation</p></div>
+
+<div id="errorLog"></div>
+
+<div class="messenger" id="messengerWrap">
+    <div class="sidebar" id="threadsContainer">
+        <p style="padding:20px; text-align:center; color:#999;">Laddar meddelanden...</p>
+    </div>
+    
+    <div class="chat-area" id="chatArea">
+        <div class="chat-header" id="chatHeader" style="display:none;">
+            <button class="back-btn" onclick="closeChat()">←</button>
+            <span id="chatTitle">Samtal</span>
+        </div>
+        <div id="msgList" class="msg-list">
+            <p style="text-align:center; margin-top:50px; color:#888;">Välj en konversation</p>
+        </div>
         <div class="input-bar" id="inputArea" style="display:none;">
             <input type="text" id="msgInput" placeholder="Skriv ett svar...">
             <button id="sendBtn">Skicka</button>
@@ -41,17 +70,24 @@
 </div>
 
 <script type="module">
+    // استيراد دالة 'or' و 'where' و 'query' الأساسية لعمل الفلتر
     import { db, auth } from './firebase-config.js';
-    import { collection, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, or, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     let currentUser = null;
     let activeChat = null;
 
+    // دالة لطباعة الأخطاء على الشاشة مباشرة
+    function showError(msg) {
+        const errDiv = document.getElementById('errorLog');
+        errDiv.style.display = 'block';
+        errDiv.innerText = msg;
+    }
+
     onAuthStateChanged(auth, (user) => {
         if (user) { 
             currentUser = user; 
-            console.log("Inloggad som:", user.uid);
             loadInbox(); 
         } else { 
             window.location.href = "login.html"; 
@@ -59,84 +95,105 @@
     });
 
     function loadInbox() {
-        onSnapshot(collection(db, "messages"), (snap) => {
-            console.log("Antal meddelanden i databasen:", snap.docs.length);
-            const threads = {};
-            
-            const allMsgs = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            
-            allMsgs.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        try {
+            // هذا هو الحل السحري! نطلب من قاعدة البيانات رسائلي فقط لكي لا تمنعنا قواعد الحماية
+            const q = query(
+                collection(db, "messages"),
+                or(
+                    where("senderId", "==", currentUser.uid),
+                    where("receiverId", "==", currentUser.uid)
+                )
+            );
 
-            allMsgs.forEach(m => {
-                // حماية الكود من الرسائل التي لا تحتوي على بيانات كاملة
-                if (!m.senderId || !m.receiverId) return;
+            onSnapshot(q, (snap) => {
+                const threads = {};
+                const allMsgs = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                
+                // ترتيب الرسائل من الأحدث للأقدم برمجياً
+                allMsgs.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
-                if (m.senderId === currentUser.uid || m.receiverId === currentUser.uid) {
+                allMsgs.forEach(m => {
                     const partnerId = m.senderId === currentUser.uid ? m.receiverId : m.senderId;
-                    const safeCarTitle = m.carTitle || "Okänd Bil"; // سيارة غير معروفة إذا كان الحقل فارغاً
-                    const threadId = [m.senderId, m.receiverId].sort().join("_") + "_" + safeCarTitle;
+                    const safeTitle = m.carTitle || "Okänd bil";
+                    const threadId = [m.senderId, m.receiverId].sort().join("_") + "_" + safeTitle;
                     
                     if (!threads[threadId]) {
-                        threads[threadId] = { 
-                            id: threadId, 
-                            ...m, 
-                            carTitle: safeCarTitle,
-                            partnerId, 
-                            partnerName: m.senderId === currentUser.uid ? "Mottagare" : (m.senderName || "Användare") 
-                        };
+                        threads[threadId] = { id: threadId, ...m, partnerId, carTitle: safeTitle };
                     }
+                });
+
+                const container = document.getElementById('threadsContainer');
+                const threadValues = Object.values(threads);
+
+                if (threadValues.length === 0) {
+                    container.innerHTML = "<p style='padding:20px; text-align:center;'>Inga meddelanden ännu.</p>";
+                    return;
                 }
+
+                container.innerHTML = threadValues.map(t => `
+                    <div class="thread ${activeChat?.tid === t.id ? 'active' : ''}" onclick="openChat('${t.id}', '${t.partnerId}', '${t.carTitle}')">
+                        <strong style="display:block; margin-bottom:4px; font-size:15px;">${t.carTitle}</strong>
+                        <small style="color:#666;">${t.message ? t.message.substring(0,35) : ''}...</small>
+                    </div>`).join('');
+            }, (error) => {
+                showError("Firebase Fel: " + error.message);
             });
-
-            const container = document.getElementById('threadsContainer');
-            const threadValues = Object.values(threads);
-            console.log("Antal konversationer (Threads) hittade:", threadValues.length);
-
-            container.innerHTML = threadValues.length === 0 ? "<p style='padding:20px; text-align:center;'>Inga meddelanden hittades för dig.</p>" : threadValues.map(t => `
-                <div class="thread ${activeChat?.tid === t.id ? 'active' : ''}" onclick="openChat('${t.id}', '${t.partnerId}', '${t.carTitle}', '${t.senderEmail || t.receiverEmail}')">
-                    <strong style="display:block; margin-bottom:5px;">${t.carTitle}</strong>
-                    <small style="color:#666;">${t.message ? t.message.substring(0,35) : 'Inget text'}...</small>
-                </div>`).join('');
-        });
+        } catch(e) {
+            showError("Systemfel: " + e.message);
+        }
     }
 
-    window.openChat = (tid, pId, title, pEmail) => {
-        activeChat = { tid, pId, title, pEmail };
+    window.openChat = (tid, pId, title) => {
+        activeChat = { tid, pId, title };
         document.getElementById('inputArea').style.display = 'flex';
+        document.getElementById('chatHeader').style.display = 'flex';
+        document.getElementById('chatTitle').innerText = title;
+        document.getElementById('messengerWrap').classList.add('chat-active');
         
-        onSnapshot(collection(db, "messages"), (snap) => {
-            const msgs = snap.docs.map(d => d.data())
-                .filter(m => {
-                    if (!m.senderId || !m.receiverId) return false;
-                    const safeCarTitle = m.carTitle || "Okänd Bil";
-                    return ([m.senderId, m.receiverId].sort().join("_") + "_" + safeCarTitle) === tid;
-                });
-                
+        const q = query(
+            collection(db, "messages"),
+            or(
+                where("senderId", "==", currentUser.uid),
+                where("receiverId", "==", currentUser.uid)
+            )
+        );
+
+        onSnapshot(q, (snap) => {
+            const msgs = snap.docs.map(d => d.data()).filter(m => {
+                const safeTitle = m.carTitle || "Okänd bil";
+                return ([m.senderId, m.receiverId].sort().join("_") + "_" + safeTitle) === tid;
+            });
+            
             msgs.sort((a,b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
 
             document.getElementById('msgList').innerHTML = msgs.map(m => `
-                <div class="bubble ${m.senderId === currentUser.uid ? 'sent' : 'received'}">${m.message || ''}</div>`).join('');
-            document.getElementById('msgList').scrollTop = 9999;
+                <div class="bubble ${m.senderId === currentUser.uid ? 'sent' : 'received'}">${m.message}</div>
+            `).join('');
+            
+            const box = document.getElementById('msgList');
+            box.scrollTop = box.scrollHeight;
         });
+    };
+
+    window.closeChat = () => {
+        document.getElementById('messengerWrap').classList.remove('chat-active');
     };
 
     document.getElementById('sendBtn').onclick = async () => {
         const input = document.getElementById('msgInput');
         if (!input.value.trim()) return;
+        
         try {
             await addDoc(collection(db, "messages"), {
                 senderId: currentUser.uid, 
-                senderName: currentUser.displayName || "Säljare", 
-                senderEmail: currentUser.email || "",
                 receiverId: activeChat.pId, 
-                receiverEmail: activeChat.pEmail || "",
                 carTitle: activeChat.title, 
                 message: input.value, 
                 createdAt: serverTimestamp()
             });
             input.value = "";
         } catch(e) {
-            console.error("Kunde inte skicka:", e);
+            showError("Kunde inte skicka: " + e.message);
         }
     };
 </script>
