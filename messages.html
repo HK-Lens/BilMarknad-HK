@@ -12,163 +12,177 @@
             --bg: #f0f2f5; 
             --white: #ffffff;
             --border: #e4e6eb;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); height: 100vh; overflow: hidden; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); height: 100vh; overflow: hidden; color: var(--dark); }
 
-        /* --- Navigationsfält --- */
+        /* --- Header --- */
         header {
             background: var(--white);
-            padding: 10px 2%;
-            border-bottom: 1px solid var(--border);
+            padding: 0 4%;
+            height: 65px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 60px;
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
         }
-        .logo { text-decoration: none; font-size: 20px; font-weight: 900; color: var(--dark); }
+        .logo { text-decoration: none; font-size: 22px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
+        .back-link { text-decoration: none; color: var(--dark); font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 5px; }
 
-        /* --- Layout --- */
-        .messenger-container {
+        /* --- Main Layout --- */
+        .messenger-wrapper {
             display: grid;
-            grid-template-columns: 350px 1fr;
-            height: calc(100vh - 60px);
-            background: var(--white);
+            grid-template-columns: 360px 1fr;
+            height: calc(100vh - 65px);
         }
 
-        /* --- Vänster: Inbox Lista --- */
-        .inbox-sidebar {
+        /* --- Sidebar (Inbox) --- */
+        .sidebar {
+            background: var(--white);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
         }
-        .inbox-header { padding: 20px; font-size: 24px; font-weight: 800; border-bottom: 1px solid var(--border); }
-        
-        .thread-item {
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); }
+        .sidebar-header h1 { font-size: 24px; font-weight: 900; }
+
+        .threads-list { flex: 1; overflow-y: auto; }
+        .thread-card {
             padding: 15px 20px;
-            border-bottom: 1px solid #f0f2f5;
+            border-bottom: 1px solid #f9f9f9;
             cursor: pointer;
             transition: 0.2s;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+            position: relative;
         }
-        .thread-item:hover { background: #f5f6f7; }
-        .thread-item.active { background: #ebf5ff; border-right: 4px solid var(--primary); }
-        .thread-item .car-title { font-weight: 700; color: var(--dark); font-size: 14px; }
-        .thread-item .last-msg { font-size: 13px; color: #65676b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .thread-item .time { font-size: 11px; color: #8a8d91; align-self: flex-end; }
+        .thread-card:hover { background: #f5f6f7; }
+        .thread-card.active { background: #fff5ed; border-right: 4px solid var(--primary); }
+        
+        .thread-info { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+        .thread-car { font-weight: 800; font-size: 14px; color: var(--dark); }
+        .thread-time { font-size: 11px; color: #8a8d91; }
+        .thread-preview { font-size: 13px; color: #65676b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .thread-user { font-size: 11px; color: var(--primary); font-weight: 700; margin-top: 4px; }
 
-        /* --- Höger: Chat View --- */
-        .chat-area { display: flex; flex-direction: column; background: #fff; position: relative; }
+        /* --- Chat Area --- */
+        .chat-area { display: flex; flex-direction: column; background: #fdfdfd; }
         
         .chat-header {
             padding: 15px 25px;
+            background: var(--white);
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #fff;
         }
-        .chat-header h3 { font-size: 16px; font-weight: 800; }
+        .partner-info h3 { font-size: 16px; font-weight: 800; }
+        .partner-info span { font-size: 12px; color: #65676b; }
 
-        .messages-container {
+        .messages-viewport {
             flex: 1;
-            padding: 20px;
+            padding: 25px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            background: #f0f2f5;
+            gap: 12px;
+            background: #f0f2f5; /* خلفية المحادثة تشبه واتساب */
         }
 
-        .bubble {
+        .msg-bubble {
             max-width: 65%;
-            padding: 10px 15px;
+            padding: 12px 16px;
             border-radius: 18px;
             font-size: 14px;
-            line-height: 1.4;
+            line-height: 1.5;
             position: relative;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.05);
         }
-        .bubble.received { align-self: flex-start; background: var(--white); color: var(--dark); border-bottom-left-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .bubble.sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        .msg-bubble.received { align-self: flex-start; background: var(--white); border-bottom-left-radius: 4px; }
+        .msg-bubble.sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        
+        .msg-time { font-size: 10px; opacity: 0.6; margin-top: 5px; display: block; text-align: right; }
 
-        /* --- Input Area --- */
+        /* --- Input Bar --- */
         .input-bar {
-            padding: 15px 20px;
+            padding: 15px 25px;
             background: var(--white);
             border-top: 1px solid var(--border);
             display: flex;
-            gap: 12px;
+            gap: 15px;
             align-items: center;
         }
         .input-bar input {
             flex: 1;
-            padding: 12px 18px;
-            border-radius: 20px;
-            border: 1px solid #e4e6eb;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 1px solid var(--border);
             background: #f0f2f5;
             outline: none;
+            font-size: 14px;
         }
         .send-btn {
-            background: var(--primary);
+            background: var(--dark);
             color: white;
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* --- Empty State --- */
-        .empty-view {
+            font-size: 18px;
+            transition: 0.2s;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100%;
-            color: #8a8d91;
         }
+        .send-btn:hover { background: var(--primary); transform: scale(1.05); }
+
+        /* --- States --- */
+        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #8a8d91; text-align: center; }
+        .empty-state span { font-size: 50px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <a href="my-account.html" style="text-decoration:none; font-size:14px; color:var(--dark); font-weight:600;">Tillbaka till konto</a>
+    <a href="my-account.html" class="back-link">← Tillbaka till konto</a>
 </header>
 
-<div class="messenger-container">
-    <div class="inbox-sidebar" id="inboxList">
-        <div class="inbox-header">Chatt</div>
-        <div id="threadsContainer">
-            <p style="text-align:center; padding:20px; color:#999;">Laddar...</p>
+<div class="messenger-wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1>Chatt</h1>
         </div>
-    </div>
+        <div class="threads-list" id="threadsContainer">
+            <p style="text-align:center; padding:40px; color:#999;">Laddar konversationer...</p>
+        </div>
+    </aside>
 
-    <div class="chat-area" id="chatArea">
-        <div id="noChat" class="empty-view">
-            <p>Välj en konversation för att se meddelanden</p>
+    <main class="chat-area" id="chatArea">
+        <div id="noChatSelected" class="empty-state">
+            <span>✉️</span>
+            <p>Välj en konversation för att börja skriva</p>
         </div>
 
         <div id="activeChat" style="display:none; flex-direction:column; height:100%;">
             <div class="chat-header">
-                <div>
-                    <h3 id="currentPartnerName">Namn</h3>
-                    <span id="currentCarTitle" style="font-size:12px; color:var(--primary); font-weight:700;">Bil</span>
+                <div class="partner-info">
+                    <h3 id="chatPartnerName">Namn</h3>
+                    <span id="chatCarTitle">Bilmodell</span>
                 </div>
             </div>
-            <div class="messages-container" id="messagesDisplay"></div>
+            
+            <div class="messages-viewport" id="messageList"></div>
+            
             <div class="input-bar">
-                <input type="text" id="replyField" placeholder="Skriv ett meddelande...">
+                <input type="text" id="messageInput" placeholder="Skriv ett meddelande...">
                 <button class="send-btn" id="sendBtn">➤</button>
             </div>
         </div>
-    </div>
+    </main>
 </div>
 
 <script type="module">
@@ -177,20 +191,19 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     let currentUser = null;
-    let selectedThreadId = null;
-    let chatPartner = null;
+    let activeThreadId = null;
+    let partnerData = null;
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
-            initMessenger();
+            loadThreads();
         } else {
             window.location.href = "login.html";
         }
     });
 
-    function initMessenger() {
-        // جلب الرسائل وتنظيمها في "خيوط" محادثة
+    function loadThreads() {
         const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
         
         onSnapshot(q, (snap) => {
@@ -198,7 +211,7 @@
             snap.docs.forEach(doc => {
                 const data = doc.data();
                 if (data.senderId === currentUser.uid || data.receiverId === currentUser.uid) {
-                    // إنشاء معرف فريد يجمع بين الشخصين والسيارة
+                    // إنشاء معرف فريد يجمع الطرفين والسيارة لمنع تداخل المحادثات
                     const threadId = [data.senderId, data.receiverId].sort().join("_") + "_" + (data.carId || data.carTitle);
                     
                     if (!threads[threadId]) {
@@ -206,85 +219,84 @@
                             id: threadId,
                             carTitle: data.carTitle,
                             lastMsg: data.message,
-                            time: data.createdAt?.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                            timestamp: data.createdAt?.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
                             partnerId: data.senderId === currentUser.uid ? data.receiverId : data.senderId,
-                            partnerName: data.senderId === currentUser.uid ? "Intresserad köpare" : data.senderName,
+                            partnerName: data.senderId === currentUser.uid ? "Intresserad Köpare" : data.senderName,
                             partnerEmail: data.senderId === currentUser.uid ? data.receiverEmail : data.senderEmail
                         };
                     }
                 }
             });
 
-            renderThreads(Object.values(threads));
+            const container = document.getElementById('threadsContainer');
+            const threadArray = Object.values(threads);
+            
+            if (threadArray.length === 0) {
+                container.innerHTML = "<p style='padding:40px; text-align:center; color:#999;'>Inga meddelanden än.</p>";
+                return;
+            }
+
+            container.innerHTML = threadArray.map(t => `
+                <div class="thread-card ${activeThreadId === t.id ? 'active' : ''}" 
+                     onclick="openChat('${t.id}', '${t.partnerId}', '${t.partnerName}', '${t.carTitle}', '${t.partnerEmail}')">
+                    <div class="thread-info">
+                        <span class="thread-car">${t.carTitle}</span>
+                        <span class="thread-time">${t.timestamp || ''}</span>
+                    </div>
+                    <div class="thread-preview">${t.lastMsg}</div>
+                    <div class="thread-user">${t.partnerName}</div>
+                </div>
+            `).join('');
         });
     }
 
-    function renderThreads(threads) {
-        const container = document.getElementById('threadsContainer');
-        if (threads.length === 0) {
-            container.innerHTML = "<p style='padding:20px; text-align:center;'>Inga meddelanden än.</p>";
-            return;
-        }
+    window.openChat = (id, pId, pName, cTitle, pEmail) => {
+        activeThreadId = id;
+        partnerData = { id: pId, name: pName, title: cTitle, email: pEmail };
 
-        container.innerHTML = threads.map(t => `
-            <div class="thread-item ${selectedThreadId === t.id ? 'active' : ''}" 
-                 onclick="openChat('${t.id}', '${t.partnerId}', '${t.partnerName}', '${t.carTitle}', '${t.partnerEmail}')">
-                <div style="display:flex; justify-content:space-between;">
-                    <span class="car-title">${t.carTitle}</span>
-                    <span class="time">${t.time || ''}</span>
-                </div>
-                <div class="last-msg">${t.lastMsg}</div>
-                <div style="font-size:11px; color:#999;">${t.partnerName}</div>
-            </div>
-        `).join('');
-    }
-
-    window.openChat = (id, partnerId, partnerName, carTitle, partnerEmail) => {
-        selectedThreadId = id;
-        chatPartner = { id: partnerId, name: partnerName, title: carTitle, email: partnerEmail };
-
-        document.getElementById('noChat').style.display = 'none';
+        document.getElementById('noChatSelected').style.display = 'none';
         document.getElementById('activeChat').style.display = 'flex';
-        document.getElementById('currentPartnerName').innerText = partnerName;
-        document.getElementById('currentCarTitle').innerText = carTitle;
+        document.getElementById('chatPartnerName').innerText = pName;
+        document.getElementById('chatCarTitle').innerText = cTitle;
 
-        // تحميل الرسائل لهذه المحادثة فقط
+        // استماع لرسائل هذا "الخيط" فقط
         const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
         onSnapshot(q, (snap) => {
-            const display = document.getElementById('messagesDisplay');
-            const msgs = snap.docs
+            const list = document.getElementById('messageList');
+            const filtered = snap.docs
                 .map(d => d.data())
                 .filter(m => {
                     const tid = [m.senderId, m.receiverId].sort().join("_") + "_" + (m.carId || m.carTitle);
                     return tid === id;
                 });
 
-            display.innerHTML = msgs.map(m => `
-                <div class="bubble ${m.senderId === currentUser.uid ? 'sent' : 'received'}">
+            list.innerHTML = filtered.map(m => `
+                <div class="msg-bubble ${m.senderId === currentUser.uid ? 'sent' : 'received'}">
                     ${m.message}
+                    <span class="msg-time">${m.createdAt?.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) || ''}</span>
                 </div>
             `).join('');
-            display.scrollTop = display.scrollHeight;
+            list.scrollTop = list.scrollHeight;
         });
     };
 
     document.getElementById('sendBtn').onclick = async () => {
-        const input = document.getElementById('replyField');
-        if (!input.value.trim() || !chatPartner) return;
+        const input = document.getElementById('messageInput');
+        if (!input.value.trim() || !partnerData) return;
 
         try {
             await addDoc(collection(db, "messages"), {
                 senderId: currentUser.uid,
-                senderName: currentUser.displayName || "Säljare",
+                senderName: "Säljare",
                 senderEmail: currentUser.email,
-                receiverId: chatPartner.id,
-                receiverEmail: chatPartner.email,
-                carTitle: chatPartner.title,
+                receiverId: partnerData.id,
+                receiverEmail: partnerData.email,
+                carTitle: partnerData.title,
                 message: input.value,
                 createdAt: serverTimestamp()
             });
             input.value = "";
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error("Error sending:", err); }
     };
 </script>
 </body>
