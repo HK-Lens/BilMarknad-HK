@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skapa konto | BILHK Premium</title>
+    <title>Skapa konto | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f4f6f9; --border: #e5e7eb; }
@@ -16,86 +16,87 @@
         
         h2 { font-size: 22px; margin-bottom: 20px; text-align: center; color: var(--dark); }
         
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; }
-        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-        
-        .form-group { margin-bottom: 15px; }
-        .full-width { grid-column: 1 / -1; }
-        
+        .form-group { margin-bottom: 15px; text-align: left; }
         label { display: block; font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 6px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f9fafb; font-size: 14px; outline: none; }
+        input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f9fafb; font-size: 14px; outline: none; transition: 0.2s; }
         input:focus { border-color: var(--primary); background: white; }
 
-        /* صندوق إخلاء المسؤولية */
-        .disclaimer-box { grid-column: 1 / -1; background: #fff8f1; border: 1px solid #fde6d5; padding: 15px; border-radius: 12px; margin: 10px 0; display: flex; gap: 10px; }
-        .disclaimer-box input { width: 20px; height: 20px; margin-top: 3px; cursor: pointer; accent-color: var(--primary); }
-        .disclaimer-box label { font-size: 12px; color: #555; line-height: 1.5; font-weight: 400; }
+        /* حقول الشركات المخفية */
+        #businessFields { display: none; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px dashed #cbd5e1; margin-bottom: 15px; }
 
-        .btn-primary { grid-column: 1 / -1; width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        .btn-primary:hover { background: #e07210; }
-        .btn-primary:disabled { background: #ccc; }
+        .disclaimer-box { background: #fff8f1; border: 1px solid #fde6d5; padding: 15px; border-radius: 12px; margin: 20px 0; display: flex; gap: 12px; align-items: flex-start; text-align: left; }
+        .disclaimer-box input { width: 22px; height: 22px; cursor: pointer; accent-color: var(--primary); margin-top: 3px; }
+        .disclaimer-box label { font-size: 12px; color: #555; line-height: 1.6; font-weight: 400; cursor: pointer; }
 
-        #businessFields { display: none; grid-column: 1 / -1; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #eee; pt: 15px; margin-top: 5px; }
+        .btn-primary { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-primary:hover { background: #e07210; transform: translateY(-2px); }
+        .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+
+        .footer-links { margin-top: 25px; text-align: center; font-size: 15px; color: #64748b; border-top: 1px solid #eee; padding-top: 20px; }
+        .footer-links a { color: var(--primary); text-decoration: none; font-weight: 700; background: #fff4eb; padding: 5px 15px; border-radius: 8px; margin-left: 5px; }
     </style>
 </head>
 <body>
 
 <div class="auth-card">
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <h2>Skapa konto</h2>
+    <h2>Skapa nytt konto</h2>
     
-    <form id="regForm" class="form-grid">
-        <div class="form-group full-width">
+    <form id="regForm">
+        <div class="form-group">
             <label>Kontotyp</label>
             <select id="userType" onchange="toggleFields()">
                 <option value="private">Privatperson</option>
-                <option value="business">Företag (Bilhandlare)</option>
+                <option value="business">Företag / Bilhandlare</option>
             </select>
         </div>
 
-        <div class="form-group full-width">
+        <div class="form-group">
             <label id="nameLabel">Ditt Namn</label>
             <input type="text" id="fullName" placeholder="T.ex. Miro" required>
         </div>
 
-        <div id="businessFields" class="full-width">
-            <div class="form-grid" style="grid-template-columns: 1fr 1fr; width: 100%;">
-                <div class="form-group">
-                    <label>Organisationsnummer</label>
-                    <input type="text" id="taxId" placeholder="55XXXX-XXXX">
-                </div>
-                <div class="form-group">
-                    <label>Företagsadress</label>
-                    <input type="text" id="address" placeholder="Gatuadress, Postort">
-                </div>
+        <div id="businessFields">
+            <div class="form-group">
+                <label>Organisationsnummer</label>
+                <input type="text" id="taxId" placeholder="55XXXX-XXXX">
+            </div>
+            <div class="form-group">
+                <label>Företagsadress</label>
+                <input type="text" id="address" placeholder="Gata, Postort">
             </div>
         </div>
 
-        <div class="form-group full-width">
+        <div class="form-group">
             <label>E-postadress</label>
             <input type="email" id="email" required>
         </div>
         
-        <div class="form-group">
-            <label>Lösenord</label>
-            <input type="password" id="pass" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Bekräfta lösenord</label>
-            <input type="password" id="confirmPass" required>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group">
+                <label>Lösenord</label>
+                <input type="password" id="pass" required>
+            </div>
+            <div class="form-group">
+                <label>Bekräfta</label>
+                <input type="password" id="confirmPass" required>
+            </div>
         </div>
 
         <div class="disclaimer-box">
             <input type="checkbox" id="termsCheck" required>
             <label for="termsCheck">
                 <strong>Ansvarsfriskrivning:</strong>
-                Jag godkänner att BILHK endast är en annonsplats. Webbplatsen tar inget ansvar för avtal, skick på fordon eller transaktioner mellan parterna.
+                Jag godkänner att BILHK endast är en förmedlingsplattform. Webbplatsen tar inget ansvar för avtal eller transaktioner mellan köpare och säljare.
             </label>
         </div>
 
-        <button type="submit" class="btn-primary" id="regBtn">Registrera dig</button>
+        <button type="submit" class="btn-primary" id="regBtn">Skapa konto</button>
     </form>
+
+    <div class="footer-links">
+        Har du redan ett konto? <a href="login.html">Logga in här</a>
+    </div>
 </div>
 
 <script type="module">
@@ -103,13 +104,13 @@
     import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    // وظيفة إظهار حقول الشركات
     window.toggleFields = () => {
         const type = document.getElementById('userType').value;
         const bFields = document.getElementById('businessFields');
         const nLabel = document.getElementById('nameLabel');
-        
         if(type === 'business') {
-            bFields.style.display = 'grid';
+            bFields.style.display = 'block';
             nLabel.innerText = "Företagsnamn";
         } else {
             bFields.style.display = 'none';
@@ -120,40 +121,47 @@
     document.getElementById('regForm').onsubmit = async (e) => {
         e.preventDefault();
         
+        const name = document.getElementById('fullName').value;
+        const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
         const confirm = document.getElementById('confirmPass').value;
-        const name = document.getElementById('fullName').value;
 
         if (pass !== confirm) { alert("Lösenorden matchar inte!"); return; }
-        if (pass.length < 6) { alert("Lösenordet måste vara minst 6 tecken!"); return; }
 
         const regBtn = document.getElementById('regBtn');
         regBtn.disabled = true;
         regBtn.innerText = "Behandlar...";
 
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, document.getElementById('email').value, pass);
+            // 1. إنشاء الحساب
+            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
             const user = userCredential.user;
 
+            // 2. تحديث الاسم الشخصي
             await updateProfile(user, { displayName: name });
+
+            // 3. إرسال بريد التأكيد
             await sendEmailVerification(user);
 
+            // 4. حفظ البيانات في Firestore
             await setDoc(doc(db, "users", user.uid), {
                 name: name,
-                email: user.email,
+                email: email,
                 userType: document.getElementById('userType').value,
                 taxId: document.getElementById('taxId').value || "",
                 address: document.getElementById('address').value || "",
                 createdAt: serverTimestamp()
             });
 
+            // 5. تسجيل الخروج والتحويل
             await signOut(auth);
-            alert(`Grattis ${name}! Kontot är skapat.\nKolla din e-post för att bekräfta kontot innan du loggar in.`);
+            alert(`Grattis ${name}! Kontot är skapat. Kolla din e-post för att bekräfta kontot innan du loggar in.`);
             window.location.href = "login.html";
 
         } catch (err) {
             alert("Fel: " + err.message);
             regBtn.disabled = false;
+            regBtn.innerText = "Skapa konto";
         }
     };
 </script>
