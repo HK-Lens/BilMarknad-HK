@@ -3,102 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mitt Konto | BilMarknad-HK</title>
+    <title>Chatt & Konto | BilMarknad-HK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { 
             --primary: #f58220; 
             --dark: #0f172a; 
-            --bg: #f8fafc; 
-            --border: #e2e8f0; 
+            --bg: #f1f5f9; 
             --white: #ffffff;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --success: #10b981;
+            --chat-in: #e2e8f0;
+            --chat-out: #f58220;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
+        header { background: var(--white); padding: 15px 6%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
 
-        header {
-            background: var(--white);
-            padding: 15px 6%;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
-        .logo span { color: var(--primary); }
+        .section-title { font-weight: 900; margin: 30px 0 15px; color: var(--dark); border-left: 4px solid var(--primary); padding-left: 10px; }
 
-        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
-        .welcome-card { background: var(--dark); color: white; padding: 30px; border-radius: 20px; margin-bottom: 30px; }
+        /* تصميم الدردشة الذكي */
+        .chat-container { display: flex; flex-direction: column; gap: 10px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         
-        .section-title { font-weight: 800; font-size: 20px; margin: 30px 0 15px; display: flex; align-items: center; gap: 10px; }
-        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .car-card { background: white; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; }
-        .car-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-        .car-img { width: 100%; height: 160px; object-fit: cover; }
-        .car-info { padding: 15px; }
-
-        /* تنسيق الرسائل */
-        .msg-card { background: white; padding: 20px; border-radius: 15px; border-left: 5px solid var(--primary); margin-bottom: 15px; border: 1px solid var(--border); box-shadow: var(--shadow); }
-        .msg-sent { border-left: 5px solid var(--success); background: #f0fdf4; }
+        .message-bubble { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.4; position: relative; margin-bottom: 5px; }
         
-        .reply-box { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
-        textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); font-family: inherit; margin-bottom: 10px; resize: vertical; }
+        /* رسالة مستلمة (يسار) */
+        .msg-in { align-self: flex-start; background: var(--chat-in); color: var(--dark); border-bottom-left-radius: 4px; }
+        
+        /* رسالة مرسلة (يمين) */
+        .msg-out { align-self: flex-end; background: var(--chat-out); color: white; border-bottom-right-radius: 4px; }
 
-        .btn { padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-reply { background: none; color: var(--primary); padding: 5px 0; font-size: 14px; }
-        .btn-send { background: var(--dark); color: white; width: 100%; }
+        .msg-info { font-size: 10px; opacity: 0.7; margin-top: 5px; display: block; }
+        .car-tag { font-size: 11px; font-weight: 700; margin-bottom: 4px; display: block; text-transform: uppercase; }
 
-        #editModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:2000; }
-        .modal-content { background:white; padding:30px; border-radius:20px; width:90%; max-width:400px; }
+        /* صندوق الرد السريع */
+        .quick-reply { margin-top: 20px; display: flex; gap: 10px; background: #fff; padding: 10px; border-top: 1px solid #eee; }
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 25px; outline: none; }
+        .send-btn { background: var(--dark); color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: 700; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .car-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .car-img { width: 100%; height: 120px; object-fit: cover; }
     </style>
 </head>
 <body>
 
 <header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <button id="logoutAction" class="btn" style="color: #ef4444; background: #fee2e2;">Logga ut</button>
+    <a href="index.html" style="text-decoration:none; color:black; font-weight:900;">BIL<span>HK</span></a>
+    <button onclick="logout()" style="background:#fee2e2; color:#ef4444; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;">Logga ut</button>
 </header>
 
 <div class="container">
-    <div class="welcome-card">
-        <h1 id="userGreeting">Välkommen!</h1>
-        <p id="userEmail" style="opacity: 0.7; font-size: 14px;"></p>
+    <h2 class="section-title">Mina Annonser</h2>
+    <div id="myCarsGrid" class="grid"><p>Laddar...</p></div>
+
+    <h2 class="section-title">Smart Chat (دردشة ذكية)</h2>
+    <div id="chatWindow" class="chat-container">
+        <p style="text-align:center; color:#999;">Laddar konversationer...</p>
     </div>
 
-    <h2 class="section-title">Mina annonser</h2>
-    <div id="myCarsGrid" class="grid">
-        <p>Laddar dina annonser...</p>
-    </div>
-
-    <h2 class="section-title">Konversationer (الرسائل والردود)</h2>
-    <div id="messagesGrid">
-        <p>Laddar meddelanden...</p>
+    <div class="quick-reply">
+        <input type="text" id="replyInput" placeholder="Skriv ett svar...">
+        <button class="send-btn" id="sendBtn">Skicka</button>
     </div>
 </div>
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { collection, query, where, getDocs, orderBy, doc, deleteDoc, updateDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, getDocs, addDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     let currentUser = null;
+    let lastChatPartner = null;
+    let lastCarTitle = "";
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
-            document.getElementById('userGreeting').innerText = `Hej, ${user.displayName || 'Användare'}!`;
-            document.getElementById('userEmail').innerText = user.email;
             loadMyCars();
-            loadMessages();
+            loadSmartChat();
         } else {
             window.location.href = "login.html";
         }
@@ -106,110 +88,83 @@
 
     async function loadMyCars() {
         const grid = document.getElementById('myCarsGrid');
-        try {
-            const q = query(collection(db, "cars"), where("sellerId", "==", currentUser.uid));
-            const snap = await getDocs(q);
-            grid.innerHTML = snap.docs.length === 0 ? "<p>Inga annonser.</p>" : snap.docs.map(d => {
-                const c = d.data();
-                return `
-                    <div class="car-card">
-                        <img src="${c.images?.[0] || ''}" class="car-img">
-                        <div class="car-info">
-                            <div style="font-weight:800;">${c.brand}</div>
-                            <div style="color:var(--primary); font-weight:900;">${c.price} kr</div>
-                        </div>
-                    </div>`;
-            }).join('');
-        } catch (err) { console.error(err); }
+        const q = query(collection(db, "cars"), where("sellerId", "==", currentUser.uid));
+        const snap = await getDocs(q);
+        grid.innerHTML = snap.docs.length === 0 ? "<p>Inga annonser.</p>" : snap.docs.map(d => `
+            <div class="car-card">
+                <img src="${d.data().images?.[0] || ''}" class="car-img">
+                <div style="padding:10px; font-weight:700;">${d.data().brand}</div>
+            </div>
+        `).join('');
     }
 
-    async function loadMessages() {
-        const msgGrid = document.getElementById('messagesGrid');
+    async function loadSmartChat() {
+        const chatWindow = document.getElementById('chatWindow');
         try {
-            // جلب الرسائل حيث المستخدم هو المستلم (الأسئلة الواردة)
-            const qInbox = query(collection(db, "messages"), where("receiverId", "==", currentUser.uid));
-            // جلب الرسائل حيث المستخدم هو المرسل (الردود التي أرسلها أو أسئلة أرسلها هو)
-            const qOutbox = query(collection(db, "messages"), where("senderId", "==", currentUser.uid));
+            // جلب كل الرسائل التي تخصني (سواء أرسلتها أو استلمتها)
+            const q1 = query(collection(db, "messages"), where("receiverId", "==", currentUser.uid));
+            const q2 = query(collection(db, "messages"), where("senderId", "==", currentUser.uid));
 
-            const [snapInbox, snapOutbox] = await Promise.all([getDocs(qInbox), getDocs(qOutbox)]);
+            const [snap1, snap2] = await Promise.all([getDocs(q1), getDocs(q2)]);
             
-            let allMsgs = [
-                ...snapInbox.docs.map(d => ({ id: d.id, ...d.data(), isMine: false })),
-                ...snapOutbox.docs.map(d => ({ id: d.id, ...d.data(), isMine: true }))
+            let messages = [
+                ...snap1.docs.map(d => ({ ...d.data(), type: 'in' })),
+                ...snap2.docs.map(d => ({ ...d.data(), type: 'out' }))
             ];
 
-            // ترتيب زمني للأحدث
-            allMsgs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            // ترتيب زمني تصاعدي للدردشة (الأقدم فوق والأحدث تحت)
+            messages.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
 
-            if (allMsgs.length === 0) {
-                msgGrid.innerHTML = "<p>Inga meddelanden än.</p>";
+            if (messages.length === 0) {
+                chatWindow.innerHTML = "<p style='text-align:center;'>Inga meddelanden än.</p>";
                 return;
             }
 
-            msgGrid.innerHTML = allMsgs.map(m => `
-                <div class="msg-card ${m.isMine ? 'msg-sent' : ''}">
-                    <div style="display: flex; justify-content: space-between;">
-                        <div style="font-weight: 800; font-size: 14px;">
-                            ${m.isMine ? '📤 Skickat:' : '📥 Mottaget:'} ${m.carTitle}
-                        </div>
-                    </div>
-                    <div style="font-size: 12px; color: #64748b; margin: 5px 0;">
-                        ${m.isMine ? `Till: ${m.receiverEmail || 'Säljare'}` : `Från: ${m.senderName}`}
-                    </div>
-                    <p style="background: white; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+            chatWindow.innerHTML = messages.map(m => {
+                const isOut = m.type === 'out';
+                // تخزين آخر شخص تواصلت معه للرد عليه لاحقاً
+                if (!isOut) { 
+                    lastChatPartner = m.senderId; 
+                    lastCarTitle = m.carTitle;
+                }
+
+                return `
+                    <div class="message-bubble ${isOut ? 'msg-out' : 'msg-in'}">
+                        <span class="car-tag">${m.carTitle}</span>
                         ${m.message}
-                    </p>
-                    
-                    ${!m.isMine ? `
-                        <button class="btn btn-reply" data-id="${m.id}">Svara</button>
-                        <div id="reply-box-${m.id}" class="reply-box">
-                            <textarea id="text-${m.id}" placeholder="Skriv ditt svar..."></textarea>
-                            <button class="btn btn-send" data-msgid="${m.id}" data-target="${m.senderId}" data-targetemail="${m.senderEmail}" data-title="${m.carTitle}">Skicka svar</button>
-                        </div>
-                    ` : ''}
-                </div>
-            `).join('');
+                        <span class="msg-info">${m.createdAt?.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            // النزول لآخر رسالة تلقائياً
+            chatWindow.scrollTop = chatWindow.scrollHeight;
 
-            attachMessageEvents();
-        } catch (err) {
-            msgGrid.innerHTML = "<p>Kunde inte ladda meddelanden.</p>";
-        }
+        } catch (err) { console.error(err); }
     }
 
-    function attachMessageEvents() {
-        document.querySelectorAll('.btn-reply').forEach(btn => {
-            btn.onclick = () => {
-                const box = document.getElementById(`reply-box-${btn.dataset.id}`);
-                box.style.display = box.style.display === 'block' ? 'none' : 'block';
-            };
-        });
+    // إرسال الرد السريع
+    document.getElementById('sendBtn').onclick = async () => {
+        const text = document.getElementById('replyInput').value;
+        if (!text || !lastChatPartner) return alert("Välj en konversation att svara på.");
 
-        document.querySelectorAll('.btn-send').forEach(btn => {
-            btn.onclick = async () => {
-                const { msgid, target, targetemail, title } = btn.dataset;
-                const text = document.getElementById(`text-${msgid}`).value;
-                if (!text) return;
+        try {
+            await addDoc(collection(db, "messages"), {
+                senderId: currentUser.uid,
+                senderName: "Säljare",
+                senderEmail: currentUser.email,
+                receiverId: lastChatPartner,
+                carTitle: lastCarTitle,
+                message: text,
+                createdAt: serverTimestamp()
+            });
+            document.getElementById('replyInput').value = "";
+            loadSmartChat(); // تحديث الدردشة فوراً
+        } catch (err) { alert("Kunde inte skicka."); }
+    };
 
-                btn.disabled = true;
-                try {
-                    await addDoc(collection(db, "messages"), {
-                        senderId: currentUser.uid,
-                        senderName: currentUser.displayName || "Användare",
-                        senderEmail: currentUser.email,
-                        receiverId: target,
-                        receiverEmail: targetemail,
-                        carTitle: "RE: " + title,
-                        message: text,
-                        createdAt: serverTimestamp()
-                    });
-                    alert("Svar skickat!");
-                    location.reload();
-                } catch (err) { alert("Fel vid sändning."); }
-            };
-        });
-    }
-
-    document.getElementById('logoutAction').onclick = () => signOut(auth).then(() => window.location.href = "login.html");
+    window.logout = () => signOut(auth).then(() => window.location.href="login.html");
 </script>
+
 </body>
 </html>
