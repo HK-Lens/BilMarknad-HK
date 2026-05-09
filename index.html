@@ -4,137 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BilHK | Hitta din nästa bil</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --white: #ffffff; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: #1e293b; }
-
-        header { background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        header { background: white; padding: 1rem 6%; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
         .logo { font-size: 1.5rem; font-weight: 900; color: var(--dark); text-decoration: none; }
         .logo span { color: var(--primary); }
-
-        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; }
-        
-        .notif-btn { position: relative; font-size: 1.4rem; text-decoration: none; cursor: pointer; }
-        .notif-badge { position: absolute; top: -5px; right: -8px; background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; display: none; }
-
-        .hero { background: var(--white); padding: 2rem 6%; border-bottom: 1px solid var(--border); }
-        .search-grid {
-            max-width: 1100px; margin: 0 auto;
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
-            background: #ffffff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        }
-        @media (max-width: 768px) { .search-grid { grid-template-columns: 1fr; } }
-
-        .search-group label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 5px; color: #64748b; }
-        .search-group input, .search-group select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; background: #f8fafc; font-size: 14px; }
-        
-        .search-btn { grid-column: 1 / -1; background: var(--dark); color: white; padding: 15px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 10px; font-size: 16px; }
-        .search-btn:hover { background: var(--primary); }
-
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-        .car-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; cursor: pointer; }
-        .car-card:hover { transform: translateY(-10px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
-        .car-card img { width: 100%; height: 200px; object-fit: cover; }
+        .btn-reg { background: var(--primary); color: white; padding: 0.6rem 1.2rem; border-radius: 10px; text-decoration: none; font-weight: 700; transition: 0.3s; }
+        .btn-reg:hover { background: #e07210; }
     </style>
 </head>
 <body>
-
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <nav class="nav-links">
-        <a href="index.html">Hem</a>
-        <a href="messages.html" class="notif-btn" id="msgBtn">
-            ✉️ <span class="notif-badge" id="notifCount">0</span>
-        </a>
-        <a href="my-account.html" id="accBtn" style="display:none;">Mitt Konto</a>
-        <a href="login.html" id="loginBtn">Logga in</a>
-        <a href="sell.html" style="background:var(--primary); color:white; padding:8px 18px; border-radius:10px; text-decoration:none; font-weight:700;">Sälj bil</a>
-    </nav>
-</header>
-
-<section class="hero">
-    <div class="search-grid">
-        <div class="search-group"><label>MÄRKE</label><input type="text" id="searchBrand" placeholder="Volvo"></div>
-        <div class="search-group"><label>MODELL</label><input type="text" id="searchModel" placeholder="V40"></div>
-        <div class="search-group">
-            <label>DRIVMEDEL</label>
-            <select id="searchFuel">
-                <option value="all">Alla</option>
-                <option value="Bensin">Bensin</option>
-                <option value="Diesel">Diesel</option>
-                <option value="El">El</option>
-            </select>
-        </div>
-        <div class="search-group"><label>FRÅN ÅR</label><input type="number" id="searchYear" placeholder="2018"></div>
-        <div class="search-group"><label>MAX MIL</label><input type="number" id="searchMileage" placeholder="10000"></div>
-        <div class="search-group"><label>MAX PRIS</label><input type="number" id="searchPrice" placeholder="150000"></div>
-        <button class="search-btn" id="searchBtn">SÖK BIL</button>
+    <div class="nav-auth">
+        <a href="login.html" style="margin-right: 15px; text-decoration: none; color: var(--dark); font-weight: 600;">Logga in</a>
+        <a href="register.html" class="btn-reg">Skapa konto</a>
     </div>
-</section>
-
-<main class="container">
-    <div id="carGrid" class="car-grid"></div>
-</main>
-
-<script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            document.getElementById('loginBtn').style.display = 'none';
-            document.getElementById('accBtn').style.display = 'block';
-            
-            // إشعار الصفحة الرئيسية
-            const q = query(collection(db, "messages"), where("receiverId", "==", user.uid));
-            onSnapshot(q, (snap) => {
-                const badge = document.getElementById('notifCount');
-                badge.innerText = snap.docs.length;
-                badge.style.display = snap.docs.length > 0 ? 'block' : 'none';
-            });
-        }
-    });
-
-    async function loadCars() {
-        const grid = document.getElementById('carGrid');
-        const snap = await getDocs(collection(db, "cars"));
-        
-        const brand = document.getElementById('searchBrand').value.toLowerCase();
-        const model = document.getElementById('searchModel').value.toLowerCase();
-        const fuel = document.getElementById('searchFuel').value;
-        const year = document.getElementById('searchYear').value;
-        const mileage = document.getElementById('searchMileage').value;
-        const price = document.getElementById('searchPrice').value;
-
-        grid.innerHTML = snap.docs.map(doc => {
-            const c = doc.data();
-            if ((!brand || c.brand.toLowerCase().includes(brand)) &&
-                (!model || c.model.toLowerCase().includes(model)) &&
-                (fuel === 'all' || c.fuelType === fuel) &&
-                (!year || Number(c.year) >= Number(year)) &&
-                (!mileage || Number(c.mileage) <= Number(mileage)) &&
-                (!price || Number(c.price) <= Number(price))) {
-                
-                return `
-                <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
-                    <img src="${c.images?.[0] || ''}">
-                    <div style="padding:20px;">
-                        <h3 style="color:var(--primary); font-weight:900;">${Number(c.price).toLocaleString()} kr</h3>
-                        <p style="font-weight:800; font-size:16px;">${c.brand} ${c.model}</p>
-                        <p style="font-size:12px; color:#666; margin-top:5px;">${c.year} | ${c.mileage} mil | ${c.fuelType}</p>
-                    </div>
-                </div>`;
-            }
-            return '';
-        }).join('');
-    }
-    document.getElementById('searchBtn').onclick = loadCars;
-    loadCars();
-</script>
+</header>
 </body>
 </html>
