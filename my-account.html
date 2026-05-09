@@ -34,64 +34,69 @@
         .logo span { color: var(--primary); }
 
         .nav-links { display: flex; gap: 20px; align-items: center; }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 700; font-size: 14px; }
-        .btn-sell { background: var(--primary); color: white !important; padding: 8px 20px; border-radius: 10px; transition: 0.3s; }
-        .btn-sell:hover { opacity: 0.9; transform: translateY(-2px); }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 700; font-size: 14px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--primary); }
+        
+        /* أيقونة البريد */
+        .icon-link { font-size: 22px; position: relative; }
+        
+        .btn-sell { background: var(--primary); color: white !important; padding: 10px 22px; border-radius: 12px; box-shadow: 0 4px 12px rgba(245, 130, 32, 0.2); }
 
-        /* --- Main Layout --- */
+        /* --- Main Content --- */
         .container { max-width: 1100px; margin: 40px auto; padding: 0 25px; }
-        .welcome-section { background: var(--dark); color: white; padding: 40px; border-radius: 24px; margin-bottom: 40px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
-        .welcome-section h1 { font-size: 32px; font-weight: 900; margin-bottom: 10px; }
-        .welcome-section p { opacity: 0.8; font-size: 16px; }
+        
+        .welcome-card { 
+            background: var(--dark); color: white; padding: 40px; border-radius: 28px; 
+            margin-bottom: 50px; box-shadow: var(--shadow);
+            background-image: linear-gradient(45deg, #0f172a 0%, #1e293b 100%);
+        }
+        .welcome-card h1 { font-size: 34px; font-weight: 900; margin-bottom: 10px; letter-spacing: -1px; }
+        .welcome-card p { opacity: 0.8; font-size: 16px; }
 
-        h2 { font-size: 22px; font-weight: 800; margin: 40px 0 20px; display: flex; align-items: center; gap: 10px; }
-        h2::after { content: ''; flex: 1; height: 2px; background: var(--border); }
+        .section-header { 
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; 
+            border-left: 5px solid var(--primary); padding-left: 15px;
+        }
+        .section-header h2 { font-size: 24px; font-weight: 900; }
 
         /* --- Ads Grid --- */
-        .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-        .ad-card { 
-            background: var(--white); border-radius: 20px; overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid var(--border);
-            transition: 0.3s; display: flex; flex-direction: column;
-        }
-        .ad-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-        .ad-img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
-        .ad-content { padding: 20px; flex-grow: 1; }
-        .ad-content h3 { font-size: 18px; margin-bottom: 8px; font-weight: 800; }
-        .ad-price { color: var(--primary); font-size: 20px; font-weight: 900; margin-bottom: 15px; }
+        .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
         
-        .ad-meta { display: flex; gap: 10px; font-size: 13px; color: #64748b; margin-bottom: 20px; }
-        .ad-meta span { background: #f1f5f9; padding: 4px 10px; border-radius: 6px; }
+        .ad-card { 
+            background: var(--white); border-radius: 24px; overflow: hidden;
+            border: 1px solid var(--border); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column;
+        }
+        .ad-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        
+        .ad-img-wrapper { position: relative; height: 200px; width: 100%; overflow: hidden; }
+        .ad-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .ad-card:hover .ad-img { scale: 1.1; }
 
-        .ad-actions { display: flex; gap: 10px; padding: 0 20px 20px; }
-        .btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-size: 13px; transition: 0.2s; text-align: center; }
+        .ad-content { padding: 25px; flex-grow: 1; }
+        .ad-content h3 { font-size: 19px; font-weight: 800; margin-bottom: 10px; color: var(--dark); }
+        .ad-price { color: var(--primary); font-size: 22px; font-weight: 900; margin-bottom: 15px; }
+        
+        .ad-info-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .chip { background: #f1f5f9; color: #475569; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 8px; }
+
+        .ad-footer-actions { display: flex; gap: 12px; padding: 0 25px 25px; }
+        .btn-action { flex: 1; padding: 12px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; font-size: 14px; transition: 0.2s; text-align: center; text-decoration: none; }
         .btn-edit { background: #f1f5f9; color: var(--dark); }
+        .btn-edit:hover { background: #e2e8f0; }
         .btn-delete { background: #fee2e2; color: #dc2626; }
+        .btn-delete:hover { background: #fecaca; }
 
-        /* --- Messages Section --- */
-        .messages-list { display: grid; gap: 20px; }
-        .msg-card {
-            background: var(--white); border-radius: 20px; padding: 25px;
-            border: 1px solid var(--border); border-left: 6px solid var(--primary);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-        .msg-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
-        .msg-header strong { font-size: 16px; font-weight: 800; color: var(--dark); }
-        .msg-date { font-size: 12px; color: #94a3b8; font-weight: 600; }
-        .msg-body { font-size: 15px; color: #334155; margin-bottom: 20px; font-style: italic; }
-        .msg-footer { 
-            background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #f1f5f9;
-            font-size: 13px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .contact-btn { color: var(--primary); text-decoration: none; font-weight: 800; border: 1.5px solid var(--primary); padding: 5px 12px; border-radius: 8px; }
-
-        /* --- Modal --- */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(4px); }
-        .modal-content { background: white; padding: 40px; border-radius: 28px; width: 90%; max-width: 450px; box-shadow: var(--shadow); }
-        .modal-content h3 { margin-bottom: 25px; font-weight: 900; font-size: 24px; }
-        .modal-content label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #64748b; text-transform: uppercase; }
-        .modal-content input { width: 100%; padding: 14px; margin-bottom: 20px; border: 2px solid #f1f5f9; border-radius: 12px; outline: none; transition: 0.3s; font-size: 16px; }
-        .modal-content input:focus { border-color: var(--primary); }
+        /* --- Edit Modal --- */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(6px); }
+        .modal-box { background: white; padding: 40px; border-radius: 30px; width: 90%; max-width: 450px; box-shadow: var(--shadow); position: relative; }
+        .modal-box h3 { margin-bottom: 25px; font-weight: 900; font-size: 24px; color: var(--dark); }
+        .modal-box label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #64748b; text-transform: uppercase; }
+        .modal-box input { width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid #f1f5f9; border-radius: 14px; outline: none; transition: 0.3s; font-size: 16px; font-family: inherit; }
+        .modal-box input:focus { border-color: var(--primary); background: #fffaf5; }
+        
+        .save-btn { background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .cancel-btn { background: none; border: none; color: #94a3b8; width: 100%; margin-top: 15px; cursor: pointer; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -100,34 +105,38 @@
     <a href="index.html" class="logo">BIL<span>HK</span></a>
     <nav class="nav-links">
         <a href="index.html">Hem</a>
+        <a href="messages.html" class="icon-link" title="Meddelanden">✉️</a>
         <a href="sell.html" class="btn-sell">Sälj bil</a>
-        <a href="#" id="logoutAction" style="color: #dc2626; font-weight: 800;">Logga ut</a>
+        <a href="#" id="logoutAction" style="color: #dc2626; font-weight: 800; margin-left: 10px;">Logga ut</a>
     </nav>
 </header>
 
 <div class="container">
-    <div class="welcome-section">
-        <h1>Ditt Konto</h1>
-        <p>Hantera dina annonser och svara på dina meddelanden snabbt och enkelt.</p>
+    <div class="welcome-card">
+        <h1>Hej Haitham!</h1>
+        <p>Här kan du se dina aktiva annonser, ändra priser eller ta bort bilar du har sålt.</p>
     </div>
 
-    <h2>Mina annonser</h2>
-    <div id="myAdsList" class="ads-grid">Laddar dina annonser...</div>
-
-    <h2>Mottagna förfrågningar</h2>
-    <div id="messagesList" class="messages-list">Laddar meddelanden...</div>
+    <div class="section-header">
+        <h2>Mina annonser</h2>
+    </div>
+    
+    <div id="myAdsList" class="ads-grid">
+        <p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #94a3b8;">Laddar dina annonser...</p>
+    </div>
 </div>
 
 <div class="modal" id="editModal">
-    <div class="modal-content">
-        <h3>Redigera uppgifter</h3>
+    <div class="modal-box">
+        <h3>Redigera annons</h3>
         <label>Nytt Pris (kr)</label>
-        <input type="number" id="editPrice" placeholder="t.ex. 150000">
-        <label>Nytt Miltal (mil)</label>
-        <input type="number" id="editMileage" placeholder="t.ex. 5000">
+        <input type="number" id="editPrice">
         
-        <button class="btn" id="saveEditBtn" style="background: var(--primary); color: white; width: 100%; margin-bottom: 12px; font-size: 15px; padding: 15px;">Spara ändringar</button>
-        <button class="btn" id="closeModalBtn" style="background: #f1f5f9; width: 100%; padding: 12px;">Avbryt</button>
+        <label>Nytt Miltal (mil)</label>
+        <input type="number" id="editMileage">
+        
+        <button class="save-btn" id="saveEditBtn">Spara ändringar</button>
+        <button class="cancel-btn" id="closeModalBtn">Avbryt</button>
     </div>
 </div>
 
@@ -135,7 +144,7 @@
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { 
-        collection, query, where, getDocs, doc, deleteDoc, updateDoc, orderBy 
+        collection, query, where, getDocs, doc, deleteDoc, updateDoc 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let currentEditId = null;
@@ -143,7 +152,6 @@
     onAuthStateChanged(auth, (user) => {
         if (user) {
             loadUserAds(user.uid);
-            loadMessages(user.uid);
         } else {
             window.location.href = "login.html";
         }
@@ -156,7 +164,11 @@
             const snap = await getDocs(q);
             
             if (snap.empty) {
-                adsContainer.innerHTML = "<div style='grid-column: 1/-1; text-align:center; padding:40px; color:#64748b;'>Du har inga aktiva annonser än.</div>";
+                adsContainer.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align:center; padding:60px; background: white; border-radius: 20px; border: 2px dashed #e2e8f0;">
+                        <p style="color:#64748b; margin-bottom:15px;">Du har inga aktiva annonser just nu.</p>
+                        <a href="sell.html" style="color:var(--primary); font-weight:800; text-decoration:none;">Lägg upp din första annons →</a>
+                    </div>`;
                 return;
             }
 
@@ -165,68 +177,35 @@
                 const id = docSnap.id;
                 return `
                     <div class="ad-card" id="card-${id}">
-                        <img src="${car.images && car.images[0] ? car.images[0] : 'placeholder.jpg'}" class="ad-img">
+                        <div class="ad-img-wrapper">
+                            <img src="${car.images && car.images[0] ? car.images[0] : 'placeholder.jpg'}" class="ad-img">
+                        </div>
                         <div class="ad-content">
                             <h3>${car.brand} ${car.model}</h3>
                             <div class="ad-price">${Number(car.price).toLocaleString()} kr</div>
-                            <div class="ad-meta">
-                                <span>${car.year}</span>
-                                <span>${car.mileage} mil</span>
-                                <span>${car.fuelType || 'Bensin'}</span>
+                            <div class="ad-info-chips">
+                                <span class="chip">${car.year}</span>
+                                <span class="chip">${car.mileage} mil</span>
+                                <span class="chip">${car.fuelType || 'Bensin'}</span>
                             </div>
                         </div>
-                        <div class="ad-actions">
-                            <button class="btn btn-edit" data-id="${id}" data-price="${car.price}" data-mileage="${car.mileage}">Redigera</button>
-                            <button class="btn btn-delete" data-id="${id}">Ta bort</button>
+                        <div class="ad-footer-actions">
+                            <button class="btn-action btn-edit" data-id="${id}" data-price="${car.price}" data-mileage="${car.mileage}">Redigera</button>
+                            <button class="btn-action btn-delete" data-id="${id}">Ta bort</button>
                         </div>
                     </div>
                 `;
             }).join('');
+            
             attachAdEvents();
-        } catch (err) { console.error(err); adsContainer.innerHTML = "Ett fel uppstod."; }
-    }
-
-    async function loadMessages(userId) {
-        const msgList = document.getElementById('messagesList');
-        try {
-            let q;
-            try {
-                q = query(collection(db, "messages"), where("receiverId", "==", userId), orderBy("createdAt", "desc"));
-                const snap = await getDocs(q);
-                renderMessages(snap, msgList);
-            } catch (e) {
-                q = query(collection(db, "messages"), where("receiverId", "==", userId));
-                const snap = await getDocs(q);
-                renderMessages(snap, msgList);
-            }
-        } catch (err) { msgList.innerHTML = "Kunde inte ladda meddelanden."; }
-    }
-
-    function renderMessages(snap, container) {
-        if (snap.empty) {
-            container.innerHTML = "<p style='text-align:center; color: #64748b; padding:20px;'>Inga meddelanden än.</p>";
-            return;
+        } catch (err) { 
+            console.error(err); 
+            adsContainer.innerHTML = "<p>Kunde inte ladda annonser.</p>"; 
         }
-        container.innerHTML = snap.docs.map(docSnap => {
-            const m = docSnap.data();
-            const date = m.createdAt ? m.createdAt.toDate().toLocaleDateString('sv-SE') : 'Nyligen';
-            return `
-                <div class="msg-card">
-                    <div class="msg-header">
-                        <strong>${m.carTitle || 'Förfrågan'}</strong>
-                        <span class="msg-date">${date}</span>
-                    </div>
-                    <div class="msg-body">"${m.message}"</div>
-                    <div class="msg-footer">
-                        <span>Från: <strong>${m.senderName}</strong></span>
-                        <a href="mailto:${m.senderEmail}" class="contact-btn">Svara via E-post</a>
-                    </div>
-                </div>
-            `;
-        }).join('');
     }
 
     function attachAdEvents() {
+        // زر التعديل
         document.querySelectorAll('.btn-edit').forEach(btn => {
             btn.onclick = () => {
                 currentEditId = btn.dataset.id;
@@ -235,9 +214,11 @@
                 document.getElementById('editModal').style.display = 'flex';
             };
         });
+
+        // زر الحذف
         document.querySelectorAll('.btn-delete').forEach(btn => {
             btn.onclick = async () => {
-                if (confirm("Är du säker på att du vill ta bort annonsen?")) {
+                if (confirm("Är du säker على حذف هذا الإعلان؟")) {
                     try {
                         await deleteDoc(doc(db, "cars", btn.dataset.id));
                         document.getElementById(`card-${btn.dataset.id}`).remove();
@@ -247,18 +228,26 @@
         });
     }
 
+    // حفظ التعديلات
     document.getElementById('saveEditBtn').onclick = async () => {
         const newPrice = Number(document.getElementById('editPrice').value);
         const newMileage = Number(document.getElementById('editMileage').value);
         if (!newPrice || !newMileage) return alert("Fyll i alla fält.");
+        
         try {
             await updateDoc(doc(db, "cars", currentEditId), { price: newPrice, mileage: newMileage });
+            alert("Uppdaterad!");
             location.reload();
-        } catch (err) { alert("Ett fel uppstod."); }
+        } catch (err) { alert("Ett fel uppstود."); }
     };
 
-    document.getElementById('closeModalBtn').onclick = () => document.getElementById('editModal').style.display = 'none';
-    document.getElementById('logoutAction').onclick = () => signOut(auth).then(() => window.location.href = "index.html");
+    document.getElementById('closeModalBtn').onclick = () => {
+        document.getElementById('editModal').style.display = 'none';
+    };
+
+    document.getElementById('logoutAction').onclick = () => {
+        signOut(auth).then(() => window.location.href = "index.html");
+    };
 </script>
 </body>
 </html>
