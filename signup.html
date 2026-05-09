@@ -74,28 +74,26 @@
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // 2. إنشاء مستند للمستخدم في Firestore لحفظ بياناته لاحقاً
+            // 2. إنشاء مستند للمستخدم في Firestore
             await setDoc(doc(db, "users", user.uid), {
                 email: email,
-                userType: "private", // افتراضي خاص، يمكن للمستخدم تعديله لاحقاً
-                createdAt: serverTimestamp(),
-                lastLogin: serverTimestamp()
+                userType: "private",
+                createdAt: serverTimestamp()
             });
 
-            alert("Konto skapat!");
-            location.href = "index.html";
+            // 3. رسالة النجاح والتحويل لصفحة الدخول
+            alert("Konto skapat! Logga in med dina uppgifter.");
+            location.href = "login.html"; 
+            
         } catch (err) {
-            // 🚀 هنا تم إضافة الترجمة الذكية للأخطاء 🚀
             console.error(err);
             if (err.code === 'auth/email-already-in-use') {
-                alert("Den här e-postadressen används redan. Vänligen logga in istället."); // الإيميل مستخدم
+                alert("Den här e-postadressen används redan. Vänligen logga in istället.");
             } else if (err.code === 'auth/weak-password') {
-                alert("Lösenordet är för svagt. Använd minst 6 tecken."); // كلمة المرور ضعيفة
+                alert("Lösenordet är för svagt. Använd minst 6 tecken.");
             } else {
-                alert("Ett fel uppstod: " + err.message); // أي خطأ آخر
+                alert("Ett fel uppstod: " + err.message);
             }
-            
-            // إعادة تفعيل الزر ليتيح للمستخدم المحاولة مرة أخرى
             regBtn.disabled = false;
             regBtn.innerText = "Registrera dig";
         }
