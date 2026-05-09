@@ -17,19 +17,21 @@
         .nav-links { display: flex; align-items: center; gap: 1.5rem; }
         .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; }
         
-        .notif-btn { position: relative; font-size: 1.4rem; text-decoration: none; }
+        .notif-btn { position: relative; font-size: 1.4rem; text-decoration: none; cursor: pointer; }
         .notif-badge { position: absolute; top: -5px; right: -8px; background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; display: none; }
 
-        .hero { background: var(--white); padding: 3rem 6%; border-bottom: 1px solid var(--border); }
+        .hero { background: var(--white); padding: 2rem 6%; border-bottom: 1px solid var(--border); }
         .search-grid {
             max-width: 1100px; margin: 0 auto;
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
-            background: #f1f5f9; padding: 25px; border-radius: 20px;
+            background: #ffffff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
         @media (max-width: 768px) { .search-grid { grid-template-columns: 1fr; } }
 
-        .search-group input, .search-group select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; }
-        .search-btn { grid-column: 1 / -1; background: var(--dark); color: white; padding: 15px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .search-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: var(--text-muted); }
+        .search-group input, .search-group select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; background: #f8fafc; }
+        
+        .search-btn { grid-column: 1 / -1; background: var(--dark); color: white; padding: 15px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .search-btn:hover { background: var(--primary); }
 
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
@@ -45,7 +47,9 @@
     <a href="index.html" class="logo">BIL<span>HK</span></a>
     <nav class="nav-links">
         <a href="index.html">Hem</a>
-        <a href="messages.html" class="notif-btn">✉️ <span class="notif-badge" id="notifCount">0</span></a>
+        <a href="messages.html" class="notif-btn" title="Meddelanden">
+            ✉️ <span class="notif-badge" id="notifCount">0</span>
+        </a>
         <a href="my-account.html" id="accBtn" style="display:none;">Mitt Konto</a>
         <a href="login.html" id="loginBtn">Logga in</a>
         <a href="sell.html" style="background:var(--primary); color:white; padding:8px 18px; border-radius:10px; text-decoration:none; font-weight:700;">Sälj bil</a>
@@ -54,19 +58,20 @@
 
 <section class="hero">
     <div class="search-grid">
-        <div class="search-group"><input type="text" id="searchBrand" placeholder="Märke"></div>
-        <div class="search-group"><input type="text" id="searchModel" placeholder="Modell"></div>
+        <div class="search-group"><label>MÄRKE</label><input type="text" id="searchBrand" placeholder="t.ex. Volvo"></div>
+        <div class="search-group"><label>MODELL</label><input type="text" id="searchModel" placeholder="t.ex. V40"></div>
         <div class="search-group">
+            <label>DRIVMEDEL</label>
             <select id="searchFuel">
-                <option value="all">Drivmedel (Alla)</option>
+                <option value="all">Alla</option>
                 <option value="Bensin">Bensin</option>
                 <option value="Diesel">Diesel</option>
                 <option value="El">El</option>
             </select>
         </div>
-        <div class="search-group"><input type="number" id="searchYear" placeholder="Från år"></div>
-        <div class="search-group"><input type="number" id="searchMileage" placeholder="Max mil"></div>
-        <div class="search-group"><input type="number" id="searchPrice" placeholder="Max pris (kr)"></div>
+        <div class="search-group"><label>FRÅN ÅR</label><input type="number" id="searchYear" placeholder="2015"></div>
+        <div class="search-group"><label>MAX MIL</label><input type="number" id="searchMileage" placeholder="10000"></div>
+        <div class="search-group"><label>MAX PRIS (KR)</label><input type="number" id="searchPrice" placeholder="200000"></div>
         <button class="search-btn" id="searchBtn">SÖK BIL</button>
     </div>
 </section>
@@ -84,35 +89,45 @@
         if (user) {
             document.getElementById('loginBtn').style.display = 'none';
             document.getElementById('accBtn').style.display = 'block';
-            trackNotifs(user.uid);
+            
+            // تتبع الرسائل الواردة فقط للإشعار
+            const q = query(collection(db, "messages"), where("receiverId", "==", user.uid));
+            onSnapshot(q, (snap) => {
+                const badge = document.getElementById('notifCount');
+                badge.innerText = snap.docs.length;
+                badge.style.display = snap.docs.length > 0 ? 'block' : 'none';
+            });
         }
     });
-
-    function trackNotifs(uid) {
-        const q = query(collection(db, "messages"), where("receiverId", "==", uid));
-        onSnapshot(q, (snap) => {
-            const badge = document.getElementById('notifCount');
-            badge.innerText = snap.docs.length;
-            badge.style.display = snap.docs.length > 0 ? 'block' : 'none';
-        });
-    }
 
     async function loadCars() {
         const grid = document.getElementById('carGrid');
         const snap = await getDocs(collection(db, "cars"));
-        const b = document.getElementById('searchBrand').value.toLowerCase();
-        const p = document.getElementById('searchPrice').value;
+        
+        const brand = document.getElementById('searchBrand').value.toLowerCase();
+        const model = document.getElementById('searchModel').value.toLowerCase();
+        const fuel = document.getElementById('searchFuel').value;
+        const year = document.getElementById('searchYear').value;
+        const mileage = document.getElementById('searchMileage').value;
+        const price = document.getElementById('searchPrice').value;
 
         grid.innerHTML = snap.docs.map(doc => {
             const c = doc.data();
-            if ((!b || c.brand.toLowerCase().includes(b)) && (!p || Number(c.price) <= Number(p))) {
+            // تصفية ذكية بـ 6 خانات
+            if ((!brand || c.brand.toLowerCase().includes(brand)) &&
+                (!model || c.model.toLowerCase().includes(model)) &&
+                (fuel === 'all' || c.fuelType === fuel) &&
+                (!year || Number(c.year) >= Number(year)) &&
+                (!mileage || Number(c.mileage) <= Number(mileage)) &&
+                (!price || Number(c.price) <= Number(price))) {
+                
                 return `
                 <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
                     <img src="${c.images?.[0] || ''}">
                     <div style="padding:20px;">
-                        <h3 style="color:var(--primary);">${Number(c.price).toLocaleString()} kr</h3>
-                        <p style="font-weight:800;">${c.brand} ${c.model}</p>
-                        <p style="font-size:12px; color:#666;">${c.year} | ${c.mileage} mil | ${c.fuelType}</p>
+                        <h3 style="color:var(--primary); font-weight:900;">${Number(c.price).toLocaleString()} kr</h3>
+                        <p style="font-weight:800; font-size:16px;">${c.brand} ${c.model}</p>
+                        <p style="font-size:12px; color:#666; margin-top:5px;">${c.year} | ${c.mileage} mil | ${c.fuelType}</p>
                     </div>
                 </div>`;
             }
