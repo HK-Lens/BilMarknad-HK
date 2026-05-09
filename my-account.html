@@ -3,190 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meddelanden | BilMarknad-HK</title>
+    <title>Mitt Konto | BilMarknad-HK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { 
             --primary: #f58220; 
             --dark: #0f172a; 
             --bg: #f8fafc; 
+            --border: #e2e8f0; 
             --white: #ffffff;
-            --border: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; color: var(--dark); }
-        header { background: var(--white); padding: 15px 6%; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); }
-        .logo { font-weight: 900; text-decoration: none; color: var(--dark); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); line-height: 1.6; }
+
+        /* --- Header --- */
+        header {
+            background: var(--white);
+            padding: 15px 6%;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        .container { max-width: 1100px; margin: 20px auto; display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 85vh; padding: 0 20px; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 700; font-size: 14px; }
+        .btn-sell { background: var(--primary); color: white !important; padding: 8px 20px; border-radius: 10px; transition: 0.3s; }
+        .btn-sell:hover { opacity: 0.9; transform: translateY(-2px); }
 
-        /* قائمة الرسائل (تشبه البريد الوارد) */
-        .inbox-list { background: var(--white); border-radius: 15px; border: 1px solid var(--border); overflow-y: auto; }
-        .inbox-item { padding: 15px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
-        .inbox-item:hover { background: #f1f5f9; }
-        .inbox-item.active { border-left: 5px solid var(--primary); background: #fef3e7; }
-        .inbox-item .car-name { font-weight: 800; font-size: 14px; }
-        .inbox-item .sender-name { font-size: 12px; color: #64748b; margin-top: 5px; }
+        /* --- Main Layout --- */
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 25px; }
+        .welcome-section { background: var(--dark); color: white; padding: 40px; border-radius: 24px; margin-bottom: 40px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+        .welcome-section h1 { font-size: 32px; font-weight: 900; margin-bottom: 10px; }
+        .welcome-section p { opacity: 0.8; font-size: 16px; }
 
-        /* نافذة المحادثة */
-        .chat-view { background: var(--white); border-radius: 15px; border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-        .chat-header { padding: 15px 20px; border-bottom: 1px solid var(--border); background: #fafafa; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fdfdfd; }
+        h2 { font-size: 22px; font-weight: 800; margin: 40px 0 20px; display: flex; align-items: center; gap: 10px; }
+        h2::after { content: ''; flex: 1; height: 2px; background: var(--border); }
+
+        /* --- Ads Grid --- */
+        .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .ad-card { 
+            background: var(--white); border-radius: 20px; overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid var(--border);
+            transition: 0.3s; display: flex; flex-direction: column;
+        }
+        .ad-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+        .ad-img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
+        .ad-content { padding: 20px; flex-grow: 1; }
+        .ad-content h3 { font-size: 18px; margin-bottom: 8px; font-weight: 800; }
+        .ad-price { color: var(--primary); font-size: 20px; font-weight: 900; margin-bottom: 15px; }
         
-        .bubble { max-width: 70%; padding: 12px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
-        .bubble.in { align-self: flex-start; background: #e2e8f0; }
-        .bubble.out { align-self: flex-end; background: var(--primary); color: white; }
+        .ad-meta { display: flex; gap: 10px; font-size: 13px; color: #64748b; margin-bottom: 20px; }
+        .ad-meta span { background: #f1f5f9; padding: 4px 10px; border-radius: 6px; }
 
-        .chat-input { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
-        .chat-input input { flex: 1; padding: 12px; border-radius: 25px; border: 1px solid var(--border); outline: none; }
-        .chat-input button { background: var(--dark); color: white; border: none; padding: 0 20px; border-radius: 25px; cursor: pointer; font-weight: 700; }
+        .ad-actions { display: flex; gap: 10px; padding: 0 20px 20px; }
+        .btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-size: 13px; transition: 0.2s; text-align: center; }
+        .btn-edit { background: #f1f5f9; color: var(--dark); }
+        .btn-delete { background: #fee2e2; color: #dc2626; }
 
-        /* معلومات السيارة داخل المحادثة */
-        .car-info-bar { font-size: 12px; background: #fff4eb; padding: 8px 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffe0c2; }
+        /* --- Messages Section --- */
+        .messages-list { display: grid; gap: 20px; }
+        .msg-card {
+            background: var(--white); border-radius: 20px; padding: 25px;
+            border: 1px solid var(--border); border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .msg-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .msg-header strong { font-size: 16px; font-weight: 800; color: var(--dark); }
+        .msg-date { font-size: 12px; color: #94a3b8; font-weight: 600; }
+        .msg-body { font-size: 15px; color: #334155; margin-bottom: 20px; font-style: italic; }
+        .msg-footer { 
+            background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #f1f5f9;
+            font-size: 13px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .contact-btn { color: var(--primary); text-decoration: none; font-weight: 800; border: 1.5px solid var(--primary); padding: 5px 12px; border-radius: 8px; }
+
+        /* --- Modal --- */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 40px; border-radius: 28px; width: 90%; max-width: 450px; box-shadow: var(--shadow); }
+        .modal-content h3 { margin-bottom: 25px; font-weight: 900; font-size: 24px; }
+        .modal-content label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #64748b; text-transform: uppercase; }
+        .modal-content input { width: 100%; padding: 14px; margin-bottom: 20px; border: 2px solid #f1f5f9; border-radius: 12px; outline: none; transition: 0.3s; font-size: 16px; }
+        .modal-content input:focus { border-color: var(--primary); }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <button id="logoutBtn" style="background:none; border:none; color:red; cursor:pointer;">Logga ut</button>
+    <nav class="nav-links">
+        <a href="index.html">Hem</a>
+        <a href="sell.html" class="btn-sell">Sälj bil</a>
+        <a href="#" id="logoutAction" style="color: #dc2626; font-weight: 800;">Logga ut</a>
+    </nav>
 </header>
 
 <div class="container">
-    <div class="inbox-list" id="inboxList">
-        <p style="padding:20px; text-align:center; color:#999;">Hämtar meddelanden...</p>
+    <div class="welcome-section">
+        <h1>Ditt Konto</h1>
+        <p>Hantera dina annonser och svara på dina meddelanden snabbt och enkelt.</p>
     </div>
 
-    <div class="chat-view" id="chatView" style="display:none;">
-        <div class="chat-header" id="chatHeader"></div>
-        <div class="chat-messages" id="chatMessages"></div>
-        <div class="chat-input">
-            <input type="text" id="replyText" placeholder="Skriv ditt svar...">
-            <button id="sendReply">Svara</button>
-        </div>
-    </div>
-    
-    <div id="noChatSelected" style="display:flex; align-items:center; justify-content:center; color:#94a3b8; background:white; border-radius:15px; border:1px solid #e2e8f0;">
-        Välj en konversation för att läsa
+    <h2>Mina annonser</h2>
+    <div id="myAdsList" class="ads-grid">Laddar dina annonser...</div>
+
+    <h2>Mottagna förfrågningar</h2>
+    <div id="messagesList" class="messages-list">Laddar meddelanden...</div>
+</div>
+
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <h3>Redigera uppgifter</h3>
+        <label>Nytt Pris (kr)</label>
+        <input type="number" id="editPrice" placeholder="t.ex. 150000">
+        <label>Nytt Miltal (mil)</label>
+        <input type="number" id="editMileage" placeholder="t.ex. 5000">
+        
+        <button class="btn" id="saveEditBtn" style="background: var(--primary); color: white; width: 100%; margin-bottom: 12px; font-size: 15px; padding: 15px;">Spara ändringar</button>
+        <button class="btn" id="closeModalBtn" style="background: #f1f5f9; width: 100%; padding: 12px;">Avbryt</button>
     </div>
 </div>
 
 <script type="module">
-    import { db, auth } from './firebase-config.js';
-    import { collection, query, where, getDocs, addDoc, serverTimestamp, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+        collection, query, where, getDocs, doc, deleteDoc, updateDoc, orderBy 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let currentUser = null;
-    let activeChat = null;
+    let currentEditId = null;
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            currentUser = user;
-            loadInbox();
+            loadUserAds(user.uid);
+            loadMessages(user.uid);
         } else {
             window.location.href = "login.html";
         }
     });
 
-    // تحميل قائمة المحادثات (كل محادثة هي خيط منفصل بين مشتري وبائع)
-    function loadInbox() {
-        const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-        
-        onSnapshot(q, (snap) => {
-            const inboxList = document.getElementById('inboxList');
-            const threads = {};
-
-            snap.docs.forEach(doc => {
-                const m = doc.data();
-                if (m.senderId === currentUser.uid || m.receiverId === currentUser.uid) {
-                    // إنشاء معرف فريد للمحادثة يجمع بين المشتري والبائع والسيارة
-                    const threadId = [m.senderId, m.receiverId].sort().join("_") + "_" + (m.carId || m.carTitle);
-                    if (!threads[threadId]) {
-                        threads[threadId] = {
-                            id: threadId,
-                            lastMsg: m.message,
-                            carTitle: m.carTitle,
-                            partnerName: m.senderId === currentUser.uid ? "Mottagare" : m.senderName,
-                            partnerId: m.senderId === currentUser.uid ? m.receiverId : m.senderId,
-                            partnerEmail: m.senderId === currentUser.uid ? m.receiverEmail : m.senderEmail
-                        };
-                    }
-                }
-            });
-
-            const threadArray = Object.values(threads);
-            if (threadArray.length === 0) {
-                inboxList.innerHTML = "<p style='padding:20px; text-align:center;'>Inga meddelanden.</p>";
+    async function loadUserAds(userId) {
+        const adsContainer = document.getElementById('myAdsList');
+        try {
+            const q = query(collection(db, "cars"), where("sellerId", "==", userId));
+            const snap = await getDocs(q);
+            
+            if (snap.empty) {
+                adsContainer.innerHTML = "<div style='grid-column: 1/-1; text-align:center; padding:40px; color:#64748b;'>Du har inga aktiva annonser än.</div>";
                 return;
             }
 
-            inboxList.innerHTML = threadArray.map(t => `
-                <div class="inbox-item" onclick="openThread('${t.id}', '${t.partnerId}', '${t.partnerName}', '${t.carTitle}', '${t.partnerEmail}')">
-                    <div class="car-name">${t.carTitle}</div>
-                    <div class="sender-name">${t.partnerName}</div>
-                    <div style="font-size:11px; color:#94a3b8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:5px;">${t.lastMsg}</div>
+            adsContainer.innerHTML = snap.docs.map(docSnap => {
+                const car = docSnap.data();
+                const id = docSnap.id;
+                return `
+                    <div class="ad-card" id="card-${id}">
+                        <img src="${car.images && car.images[0] ? car.images[0] : 'placeholder.jpg'}" class="ad-img">
+                        <div class="ad-content">
+                            <h3>${car.brand} ${car.model}</h3>
+                            <div class="ad-price">${Number(car.price).toLocaleString()} kr</div>
+                            <div class="ad-meta">
+                                <span>${car.year}</span>
+                                <span>${car.mileage} mil</span>
+                                <span>${car.fuelType || 'Bensin'}</span>
+                            </div>
+                        </div>
+                        <div class="ad-actions">
+                            <button class="btn btn-edit" data-id="${id}" data-price="${car.price}" data-mileage="${car.mileage}">Redigera</button>
+                            <button class="btn btn-delete" data-id="${id}">Ta bort</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            attachAdEvents();
+        } catch (err) { console.error(err); adsContainer.innerHTML = "Ett fel uppstod."; }
+    }
+
+    async function loadMessages(userId) {
+        const msgList = document.getElementById('messagesList');
+        try {
+            let q;
+            try {
+                q = query(collection(db, "messages"), where("receiverId", "==", userId), orderBy("createdAt", "desc"));
+                const snap = await getDocs(q);
+                renderMessages(snap, msgList);
+            } catch (e) {
+                q = query(collection(db, "messages"), where("receiverId", "==", userId));
+                const snap = await getDocs(q);
+                renderMessages(snap, msgList);
+            }
+        } catch (err) { msgList.innerHTML = "Kunde inte ladda meddelanden."; }
+    }
+
+    function renderMessages(snap, container) {
+        if (snap.empty) {
+            container.innerHTML = "<p style='text-align:center; color: #64748b; padding:20px;'>Inga meddelanden än.</p>";
+            return;
+        }
+        container.innerHTML = snap.docs.map(docSnap => {
+            const m = docSnap.data();
+            const date = m.createdAt ? m.createdAt.toDate().toLocaleDateString('sv-SE') : 'Nyligen';
+            return `
+                <div class="msg-card">
+                    <div class="msg-header">
+                        <strong>${m.carTitle || 'Förfrågan'}</strong>
+                        <span class="msg-date">${date}</span>
+                    </div>
+                    <div class="msg-body">"${m.message}"</div>
+                    <div class="msg-footer">
+                        <span>Från: <strong>${m.senderName}</strong></span>
+                        <a href="mailto:${m.senderEmail}" class="contact-btn">Svara via E-post</a>
+                    </div>
                 </div>
-            `).join('');
+            `;
+        }).join('');
+    }
+
+    function attachAdEvents() {
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.onclick = () => {
+                currentEditId = btn.dataset.id;
+                document.getElementById('editPrice').value = btn.dataset.price;
+                document.getElementById('editMileage').value = btn.dataset.mileage;
+                document.getElementById('editModal').style.display = 'flex';
+            };
+        });
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.onclick = async () => {
+                if (confirm("Är du säker på att du vill ta bort annonsen?")) {
+                    try {
+                        await deleteDoc(doc(db, "cars", btn.dataset.id));
+                        document.getElementById(`card-${btn.dataset.id}`).remove();
+                    } catch (err) { alert("Fel vid borttagning."); }
+                }
+            };
         });
     }
 
-    // فتح محادثة معينة
-    window.openThread = (threadId, partnerId, partnerName, carTitle, partnerEmail) => {
-        activeChat = { threadId, partnerId, partnerName, carTitle, partnerEmail };
-        
-        document.getElementById('noChatSelected').style.display = 'none';
-        document.getElementById('chatView').style.display = 'flex';
-        
-        document.getElementById('chatHeader').innerHTML = `
-            <div style="font-weight:900;">${partnerName}</div>
-            <div style="font-size:12px; color:var(--primary);">Gäller: ${carTitle}</div>
-        `;
-
-        // استماع للرسائل داخل هذه المحادثة فقط
-        const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
-        onSnapshot(q, (snap) => {
-            const chatMessages = document.getElementById('chatMessages');
-            const filtered = snap.docs
-                .map(d => d.data())
-                .filter(m => {
-                    const id = [m.senderId, m.receiverId].sort().join("_") + "_" + (m.carId || m.carTitle);
-                    return id === threadId;
-                });
-
-            chatMessages.innerHTML = filtered.map(m => `
-                <div class="bubble ${m.senderId === currentUser.uid ? 'out' : 'in'}">
-                    ${m.message}
-                    <div style="font-size:9px; opacity:0.6; margin-top:5px;">
-                        ${m.createdAt?.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
-                    </div>
-                </div>
-            `).join('');
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        });
-    };
-
-    // إرسال رد
-    document.getElementById('sendReply').onclick = async () => {
-        const text = document.getElementById('replyText').value;
-        if (!text || !activeChat) return;
-
+    document.getElementById('saveEditBtn').onclick = async () => {
+        const newPrice = Number(document.getElementById('editPrice').value);
+        const newMileage = Number(document.getElementById('editMileage').value);
+        if (!newPrice || !newMileage) return alert("Fyll i alla fält.");
         try {
-            await addDoc(collection(db, "messages"), {
-                senderId: currentUser.uid,
-                senderName: "Säljare",
-                senderEmail: currentUser.email,
-                receiverId: activeChat.partnerId,
-                receiverEmail: activeChat.partnerEmail,
-                carTitle: activeChat.carTitle,
-                message: text,
-                createdAt: serverTimestamp()
-            });
-            document.getElementById('replyText').value = "";
-        } catch (err) { console.error(err); }
+            await updateDoc(doc(db, "cars", currentEditId), { price: newPrice, mileage: newMileage });
+            location.reload();
+        } catch (err) { alert("Ett fel uppstod."); }
     };
 
-    document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => window.location.href="login.html");
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById('editModal').style.display = 'none';
+    document.getElementById('logoutAction').onclick = () => signOut(auth).then(() => window.location.href = "index.html");
 </script>
 </body>
 </html>
