@@ -28,10 +28,10 @@
         }
         @media (max-width: 768px) { .search-grid { grid-template-columns: 1fr; } }
 
-        .search-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: var(--text-muted); }
-        .search-group input, .search-group select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; background: #f8fafc; }
+        .search-group label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 5px; color: #64748b; }
+        .search-group input, .search-group select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; background: #f8fafc; font-size: 14px; }
         
-        .search-btn { grid-column: 1 / -1; background: var(--dark); color: white; padding: 15px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .search-btn { grid-column: 1 / -1; background: var(--dark); color: white; padding: 15px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 10px; font-size: 16px; }
         .search-btn:hover { background: var(--primary); }
 
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
@@ -47,7 +47,7 @@
     <a href="index.html" class="logo">BIL<span>HK</span></a>
     <nav class="nav-links">
         <a href="index.html">Hem</a>
-        <a href="messages.html" class="notif-btn" title="Meddelanden">
+        <a href="messages.html" class="notif-btn" id="msgBtn">
             ✉️ <span class="notif-badge" id="notifCount">0</span>
         </a>
         <a href="my-account.html" id="accBtn" style="display:none;">Mitt Konto</a>
@@ -69,9 +69,9 @@
                 <option value="El">El</option>
             </select>
         </div>
-        <div class="search-group"><label>FRÅN ÅR</label><input type="number" id="searchYear" placeholder="2015"></div>
-        <div class="search-group"><label>MAX MIL</label><input type="number" id="searchMileage" placeholder="10000"></div>
-        <div class="search-group"><label>MAX PRIS (KR)</label><input type="number" id="searchPrice" placeholder="200000"></div>
+        <div class="search-group"><label>FRÅN ÅR</label><input type="number" id="searchYear" placeholder="2018"></div>
+        <div class="search-group"><label>MAX MIL</label><input type="number" id="searchMileage" placeholder="12000"></div>
+        <div class="search-group"><label>MAX PRIS (KR)</label><input type="number" id="searchPrice" placeholder="150000"></div>
         <button class="search-btn" id="searchBtn">SÖK BIL</button>
     </div>
 </section>
@@ -90,7 +90,7 @@
             document.getElementById('loginBtn').style.display = 'none';
             document.getElementById('accBtn').style.display = 'block';
             
-            // تتبع الرسائل الواردة فقط للإشعار
+            // نظام الإشعارات - جلب أي رسالة يكون المستخدم هو المستلم فيها
             const q = query(collection(db, "messages"), where("receiverId", "==", user.uid));
             onSnapshot(q, (snap) => {
                 const badge = document.getElementById('notifCount');
@@ -113,7 +113,6 @@
 
         grid.innerHTML = snap.docs.map(doc => {
             const c = doc.data();
-            // تصفية ذكية بـ 6 خانات
             if ((!brand || c.brand.toLowerCase().includes(brand)) &&
                 (!model || c.model.toLowerCase().includes(model)) &&
                 (fuel === 'all' || c.fuelType === fuel) &&
