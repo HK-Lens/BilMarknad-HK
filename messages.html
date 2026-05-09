@@ -2,56 +2,47 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <title>Inbox | BilMarknad-HK</title>
+    <title>Mina Meddelanden | BilHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f0f2f5; --white: #ffffff; --border: #e4e6eb; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); height: 100vh; overflow: hidden; }
-
-        header { background: var(--white); padding: 0 4%; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-        .messenger-container { display: grid; grid-template-columns: 350px 1fr; height: calc(100vh - 60px); background: #fff; }
-
-        .sidebar { border-right: 1px solid var(--border); overflow-y: auto; }
-        .thread-item { padding: 15px 20px; border-bottom: 1px solid #f0f2f5; cursor: pointer; transition: 0.2s; }
-        .thread-item:hover { background: #f5f6f7; }
-        .thread-item.active { background: #fff5ed; border-right: 4px solid var(--primary); }
-
-        .chat-area { display: flex; flex-direction: column; background: #f0f2f5; }
-        .messages-display { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { max-width: 70%; padding: 10px 15px; border-radius: 15px; font-size: 14px; }
-        .bubble.sent { align-self: flex-end; background: var(--primary); color: white; }
-        .bubble.received { align-self: flex-start; background: white; }
-
-        .input-bar { padding: 15px; background: white; display: flex; gap: 10px; }
-        .input-bar input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #ddd; outline: none; }
-        .send-btn { background: var(--dark); color: white; border: none; padding: 0 20px; border-radius: 20px; cursor: pointer; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); height: 100vh; overflow: hidden; }
+        header { background: var(--white); padding: 0 5%; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .messenger { display: grid; grid-template-columns: 350px 1fr; height: calc(100vh - 60px); }
+        .sidebar { background: white; border-right: 1px solid var(--border); overflow-y: auto; }
+        .thread { padding: 20px; border-bottom: 1px solid #f0f2f5; cursor: pointer; border-left: 4px solid transparent; }
+        .thread:hover { background: #f8f9fa; }
+        .thread.active { background: #fff5ed; border-left-color: var(--primary); }
+        .chat-area { display: flex; flex-direction: column; background: #fff; }
+        .msg-list { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f0f2f5; }
+        .bubble { max-width: 75%; padding: 12px; border-radius: 15px; font-size: 14px; line-height: 1.5; }
+        .bubble.sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
+        .bubble.received { align-self: flex-start; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-bottom-left-radius: 2px; }
+        .input-bar { padding: 20px; background: white; display: flex; gap: 10px; border-top: 1px solid var(--border); }
+        .input-bar input { flex: 1; padding: 14px; border-radius: 25px; border: 1px solid #ddd; outline: none; }
+        .send-btn { background: var(--dark); color: white; border: none; padding: 0 25px; border-radius: 25px; cursor: pointer; font-weight: 700; }
     </style>
 </head>
 <body>
-    <header>
-        <a href="index.html" style="text-decoration:none; color:black; font-weight:900;">BIL<span>HK</span></a>
-        <a href="my-account.html" style="text-decoration:none; font-weight:700; color:black; font-size:13px;">← Tillbaka</a>
-    </header>
-
-    <div class="messenger-container">
-        <div class="sidebar" id="threadsContainer">
-            <p style="padding:20px; color:#999;">Laddar meddelanden...</p>
-        </div>
-        <div class="chat-area">
-            <div class="messages-display" id="msgDisplay">
-                <p style="text-align:center; margin-top:100px; color:#888;">Välj en chatt</p>
-            </div>
-            <div class="input-bar" id="inputArea" style="display:none;">
-                <input type="text" id="msgInput" placeholder="Svara...">
-                <button id="sendBtn">Skicka</button>
-            </div>
+<header>
+    <a href="index.html" style="text-decoration:none; color:black; font-weight:900; font-size:22px;">BIL<span>HK</span></a>
+    <a href="my-account.html" style="text-decoration:none; font-weight:700; color:black; font-size:14px;">← Mitt Konto</a>
+</header>
+<div class="messenger">
+    <div class="sidebar" id="threadsContainer"><p style="padding:20px; text-align:center; color:#999;">Laddar...</p></div>
+    <div class="chat-area">
+        <div id="msgList" class="msg-list"><p style="text-align:center; margin-top:100px; color:#888;">Välj en konversation</p></div>
+        <div class="input-bar" id="inputArea" style="display:none;">
+            <input type="text" id="msgInput" placeholder="Skriv ett svar...">
+            <button id="sendBtn">Skicka</button>
         </div>
     </div>
+</div>
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { collection, query, addDoc, serverTimestamp, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     let currentUser = null;
@@ -63,22 +54,28 @@
     });
 
     function loadInbox() {
-        const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-        onSnapshot(q, (snap) => {
+        // جلب الرسائل بدونorderBy لتجنب مشاكل الـ Index
+        onSnapshot(collection(db, "messages"), (snap) => {
             const threads = {};
-            snap.docs.forEach(doc => {
-                const m = doc.data();
+            const allMsgs = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            allMsgs.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+            allMsgs.forEach(m => {
                 if (m.senderId === currentUser.uid || m.receiverId === currentUser.uid) {
+                    const partnerId = m.senderId === currentUser.uid ? m.receiverId : m.senderId;
                     const threadId = [m.senderId, m.receiverId].sort().join("_") + "_" + m.carTitle;
+                    
                     if (!threads[threadId]) {
-                        threads[threadId] = { id: threadId, ...m, 
-                            partnerId: m.senderId === currentUser.uid ? m.receiverId : m.senderId };
+                        threads[threadId] = { id: threadId, ...m, partnerId, partnerName: m.senderId === currentUser.uid ? "Mottagare" : m.senderName };
                     }
                 }
             });
-            document.getElementById('threadsContainer').innerHTML = Object.values(threads).map(t => `
-                <div class="thread-item" onclick="openChat('${t.id}', '${t.partnerId}', '${t.carTitle}', '${t.senderEmail || t.receiverEmail}')">
-                    <strong>${t.carTitle}</strong><br><small>${t.message}</small>
+
+            const container = document.getElementById('threadsContainer');
+            const threadValues = Object.values(threads);
+            container.innerHTML = threadValues.length === 0 ? "<p style='padding:20px;'>Inga meddelanden.</p>" : threadValues.map(t => `
+                <div class="thread ${activeChat?.tid === t.id ? 'active' : ''}" onclick="openChat('${t.id}', '${t.partnerId}', '${t.carTitle}', '${t.senderEmail || t.receiverEmail}')">
+                    <strong>${t.carTitle}</strong><br><small>${t.message.substring(0,35)}...</small>
                 </div>`).join('');
         });
     }
@@ -86,21 +83,20 @@
     window.openChat = (tid, pId, title, pEmail) => {
         activeChat = { tid, pId, title, pEmail };
         document.getElementById('inputArea').style.display = 'flex';
-        const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
-        onSnapshot(q, (snap) => {
-            const msgs = snap.docs.map(d => d.data()).filter(m => {
-                const id = [m.senderId, m.receiverId].sort().join("_") + "_" + m.carTitle;
-                return id === tid;
-            });
-            document.getElementById('msgDisplay').innerHTML = msgs.map(m => `
+        onSnapshot(collection(db, "messages"), (snap) => {
+            const msgs = snap.docs.map(d => d.data())
+                .filter(m => ([m.senderId, m.receiverId].sort().join("_") + "_" + m.carTitle) === tid);
+            msgs.sort((a,b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+
+            document.getElementById('msgList').innerHTML = msgs.map(m => `
                 <div class="bubble ${m.senderId === currentUser.uid ? 'sent' : 'received'}">${m.message}</div>`).join('');
-            document.getElementById('msgDisplay').scrollTop = 9999;
+            document.getElementById('msgList').scrollTop = 9999;
         });
     };
 
     document.getElementById('sendBtn').onclick = async () => {
         const input = document.getElementById('msgInput');
-        if(!input.value.trim()) return;
+        if (!input.value.trim()) return;
         await addDoc(collection(db, "messages"), {
             senderId: currentUser.uid, senderName: "Säljare", senderEmail: currentUser.email,
             receiverId: activeChat.pId, receiverEmail: activeChat.pEmail,
