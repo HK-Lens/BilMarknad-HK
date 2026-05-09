@@ -3,319 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meddelanden | BilHK Premium</title>
+    <title>Chatt | BilHK Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f3f4f6; --white: #ffffff; --border: #e5e7eb; --text: #1f2937; --muted: #6b7280; }
+        :root { --primary: #25D366; /* لون الواتساب */ --dark: #075E54; --bg: #e5ddd5; --white: #ffffff; --border: #e0e0e0; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; color: var(--text); }
+        body { background: #f0f2f5; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Header */
-        header { background: var(--white); padding: 0 4%; height: 65px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); z-index: 10; }
-        .logo { text-decoration:none; color:var(--dark); font-weight:900; font-size:24px; letter-spacing:-0.5px; }
-        .logo span { color: var(--primary); }
-        .back-link { text-decoration:none; font-weight:600; color:var(--muted); font-size:14px; transition: 0.2s; }
-        .back-link:hover { color: var(--dark); }
+        header { background: var(--dark); padding: 0 5%; height: 60px; display: flex; justify-content: space-between; align-items: center; color: white; flex-shrink: 0; }
+        header a { color: white; text-decoration: none; font-weight: bold; }
 
-        /* App Container */
-        .app-container { display: flex; flex: 1; overflow: hidden; background: var(--white); max-width: 1400px; margin: 0 auto; width: 100%; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        .app-container { display: flex; flex: 1; overflow: hidden; background: var(--white); max-width: 1300px; margin: 0 auto; width: 100%; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         
-        /* Sidebar (Threads) */
-        .sidebar { width: 380px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #fdfdfd; }
-        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 18px; display: flex; justify-content: space-between; align-items: center; }
-        .thread-list { flex: 1; overflow-y: auto; }
+        /* قائمة المحادثات (Sidebar) */
+        .sidebar { width: 350px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #ffffff; }
+        .sidebar-header { padding: 15px 20px; background: #f0f2f5; font-weight: 700; border-bottom: 1px solid var(--border); }
+        .chat-list { flex: 1; overflow-y: auto; }
         
-        .thread-item { padding: 15px 20px; display: flex; gap: 15px; border-bottom: 1px solid var(--border); cursor: pointer; transition: all 0.2s; align-items: center; }
-        .thread-item:hover { background: #f9fafb; }
-        .thread-item.active { background: #fff7f0; border-left: 4px solid var(--primary); padding-left: 16px; }
-        
-        .avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--dark), #334155); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
-        .thread-info { flex: 1; min-width: 0; }
-        .thread-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-        .thread-title { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--dark); }
-        .thread-time { font-size: 11px; color: var(--muted); font-weight: 500; }
-        .thread-preview { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-item { display: flex; padding: 15px; border-bottom: 1px solid #f2f2f2; cursor: pointer; transition: 0.2s; align-items: center; gap: 15px; }
+        .chat-item:hover, .chat-item.active { background: #f0f2f5; }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; background: #dfe5e7; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: #54656f; flex-shrink: 0;}
+        .chat-info { flex: 1; overflow: hidden; }
+        .chat-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .chat-name { font-weight: 600; color: #111b21; font-size: 16px; }
+        .chat-time { font-size: 12px; color: #667781; }
+        .chat-last-msg { font-size: 13px; color: #667781; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Chat Area */
-        .chat-area { flex: 1; display: flex; flex-direction: column; background: #efeae2; position: relative; }
-        .chat-header { height: 70px; padding: 0 20px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); z-index: 5; }
-        .mobile-back { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--dark); padding-right: 10px; }
-        .chat-title-info h2 { font-size: 16px; color: var(--dark); margin-bottom: 2px; }
-        .chat-title-info p { font-size: 12px; color: var(--primary); font-weight: 600; }
+        /* منطقة الدردشة (Chat Area) */
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); position: relative; }
+        .chat-header { height: 60px; background: #f0f2f5; padding: 0 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); }
+        .chat-header .chat-name { font-size: 16px; }
         
-        /* Messages Display */
-        .messages-display { flex: 1; padding: 25px 5%; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .empty-state { margin: auto; text-align: center; color: var(--muted); }
-        .empty-state svg { width: 60px; height: 60px; margin-bottom: 15px; opacity: 0.5; }
+        .messages-display { flex: 1; padding: 20px 5%; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); /* خلفية واتساب */ }
         
-        .bubble-wrap { display: flex; flex-direction: column; max-width: 75%; }
-        .bubble-wrap.sent { align-self: flex-end; align-items: flex-end; }
-        .bubble-wrap.received { align-self: flex-start; align-items: flex-start; }
-        
-        .bubble { padding: 12px 16px; border-radius: 20px; font-size: 14.5px; line-height: 1.5; box-shadow: 0 1px 2px rgba(0,0,0,0.1); word-wrap: break-word; }
-        .sent .bubble { background: var(--primary); color: white; border-bottom-right-radius: 4px; }
-        .received .bubble { background: var(--white); color: var(--dark); border-bottom-left-radius: 4px; }
-        .msg-time { font-size: 10px; color: #888; margin-top: 4px; margin-bottom: 8px; }
-        
-        /* Input Area */
-        .input-area { padding: 15px 25px; background: var(--white); display: flex; gap: 12px; align-items: center; }
-        .msg-input { flex: 1; padding: 15px 20px; border-radius: 30px; border: 1px solid var(--border); outline: none; font-size: 15px; background: #f8fafc; transition: 0.2s; }
-        .msg-input:focus { border-color: var(--primary); background: var(--white); box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.1); }
-        .send-btn { background: var(--dark); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .send-btn:hover { background: var(--primary); transform: scale(1.05); }
-        .send-btn svg { width: 20px; height: 20px; fill: currentColor; }
+        .bubble { max-width: 65%; padding: 8px 12px; border-radius: 8px; font-size: 14.5px; line-height: 1.5; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); position: relative; word-wrap: break-word; }
+        .sent { align-self: flex-end; background: #d9fdd3; border-top-right-radius: 0; }
+        .received { align-self: flex-start; background: #ffffff; border-top-left-radius: 0; }
+        .msg-time { display: block; font-size: 10px; color: #667781; text-align: right; margin-top: 4px; }
 
-        /* Responsive Mobile */
+        .input-area { background: #f0f2f5; padding: 15px; display: flex; gap: 10px; align-items: center; }
+        .msg-input { flex: 1; padding: 12px 20px; border-radius: 30px; border: none; outline: none; font-size: 15px; }
+        .send-btn { background: var(--dark); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-weight: bold; }
+
         @media (max-width: 768px) {
             .app-container { flex-direction: column; }
-            .sidebar { width: 100%; height: 100%; border-right: none; }
-            .chat-area { display: none; position: absolute; top: 65px; left: 0; right: 0; bottom: 0; z-index: 20; }
+            .sidebar { width: 100%; height: 100%; }
+            .chat-area { display: none; position: absolute; top: 60px; left: 0; right: 0; bottom: 0; z-index: 20; }
             .app-container.chat-active .sidebar { display: none; }
             .app-container.chat-active .chat-area { display: flex; }
-            .mobile-back { display: block; }
-            .bubble-wrap { max-width: 85%; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <a href="my-account.html" class="back-link">← Mitt Konto</a>
+    <a href="index.html">BILHK</a>
+    <a href="my-account.html" style="font-size: 14px; font-weight: normal;">← Tillbaka</a>
 </header>
 
 <div class="app-container" id="appContainer">
     <div class="sidebar">
-        <div class="sidebar-header">Meddelanden</div>
-        <div class="thread-list" id="threadList">
-            <div class="empty-state" style="margin-top: 50px;">Laddar data...</div>
+        <div class="sidebar-header">Mina Chattar</div>
+        <div class="chat-list" id="chatList">
+            <p style="text-align:center; margin-top:20px; color:#666;">Laddar...</p>
         </div>
     </div>
 
     <div class="chat-area">
         <div class="chat-header" id="chatHeader" style="display:none;">
-            <button class="mobile-back" onclick="closeChat()">←</button>
-            <div class="avatar" id="headerAvatar">?</div>
-            <div class="chat-title-info">
-                <h2 id="headerName">Namn</h2>
-                <p id="headerCar">Biltitel</p>
-            </div>
+            <button onclick="closeChat()" style="border:none; background:none; font-size:20px; cursor:pointer;">←</button>
+            <div class="avatar" id="activeAvatar">U</div>
+            <div class="chat-name" id="activeName">Användare</div>
         </div>
         
         <div class="messages-display" id="msgDisplay">
-            <div class="empty-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                <h3>Välj en konversation</h3>
-                <p>Klicka på ett meddelande i listan för att börja chatta.</p>
-            </div>
+            <div style="text-align:center; margin-top:100px; background:rgba(255,255,255,0.8); padding:10px; border-radius:10px; display:inline-block; align-self:center;">Välj en chatt för att börja</div>
         </div>
 
         <div class="input-area" id="inputArea" style="display:none;">
-            <input type="text" id="msgInput" class="msg-input" placeholder="Skriv ett meddelande..." autocomplete="off">
-            <button class="send-btn" id="sendBtn">
-                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-            </button>
+            <input type="text" id="msgInput" class="msg-input" placeholder="Skriv ett meddelande">
+            <button class="send-btn" id="sendBtn">➤</button>
         </div>
     </div>
 </div>
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { collection, query, where, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, doc, query, where, addDoc, setDoc, serverTimestamp, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     let currentUser = null;
-    let activeChatId = null;
-    let allMessagesMap = new Map(); // الخزنة المركزية للرسائل لتجاوز قيود Firebase
+    let currentRoomId = null;
+    let unsubscribeMessages = null;
 
     onAuthStateChanged(auth, (user) => {
         if (user) { 
             currentUser = user; 
-            initAdvancedMessaging(); 
+            loadChatRooms(); 
         } else { 
             window.location.href = "login.html"; 
         }
     });
 
-    // دالة لتنسيق الوقت بشكل احترافي
-    function formatTime(timestamp) {
-        if (!timestamp) return "Nyss";
-        const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-        return date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    // استخراج أول حرفين للصورة الرمزية
-    function getInitials(name) {
-        return (name || "Anonym").substring(0, 2).toUpperCase();
-    }
-
-    function initAdvancedMessaging() {
-        // نفتح قناتي اتصال منفصلتين (بدون OR وبدون OrderBy) لتفادي أي خطأ في الفهارس (Indexes)
-        const qSent = query(collection(db, "messages"), where("senderId", "==", currentUser.uid));
-        const qReceived = query(collection(db, "messages"), where("receiverId", "==", currentUser.uid));
-
-        const handleData = (snapshot) => {
-            snapshot.docChanges().forEach(change => {
-                if (change.type === "removed") {
-                    allMessagesMap.delete(change.doc.id);
-                } else {
-                    allMessagesMap.set(change.doc.id, { id: change.doc.id, ...change.doc.data() });
-                }
-            });
-            processAndRenderUI();
-        };
-
-        onSnapshot(qSent, handleData);
-        onSnapshot(qReceived, handleData);
-    }
-
-    function processAndRenderUI() {
-        const threads = {};
+    // 1. جلب قائمة "الغرف" الخاصة بالمستخدم (تعمل كقائمة الواتساب)
+    function loadChatRooms() {
+        // هات الغرف التي يتواجد فيها رقمي (uid) داخل مصفوفة users
+        const qRooms = query(collection(db, "chats"), where("users", "array-contains", currentUser.uid), orderBy("updatedAt", "desc"));
         
-        // تحويل الخزنة إلى مصفوفة وترتيبها برمجياً لضمان الدقة
-        const messagesArray = Array.from(allMessagesMap.values());
-        messagesArray.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+        onSnapshot(qRooms, (snap) => {
+            const list = document.getElementById('chatList');
+            if (snap.docs.length === 0) {
+                list.innerHTML = "<p style='text-align:center; padding:20px; color:#999;'>Inga konversationer än.</p>";
+                return;
+            }
 
-        // بناء المحادثات
-        messagesArray.forEach(m => {
-            if (!m.senderId || !m.receiverId) return; // تجاهل البيانات التالفة
+            list.innerHTML = snap.docs.map(doc => {
+                const room = doc.data();
+                // تحديد اسم الطرف الآخر
+                const partnerName = room.names[room.users[0] === currentUser.uid ? 1 : 0];
+                const time = room.updatedAt ? new Date(room.updatedAt.toDate()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
 
-            const isMeSender = m.senderId === currentUser.uid;
-            const partnerId = isMeSender ? m.receiverId : m.senderId;
-            const partnerName = isMeSender ? (m.receiverName || "Intresserad") : (m.senderName || "Säljare");
-            const safeCarTitle = m.carTitle || "Bokning / Förfrågan";
-            
-            // توليد معرف فريد لكل محادثة (يجمع بين الشخصين والسيارة)
-            const threadId = [m.senderId, m.receiverId].sort().join("_") + "_" + safeCarTitle;
-
-            // تحديث المحادثة لتكون الرسالة الأخيرة دائماً هي الظاهرة
-            threads[threadId] = {
-                id: threadId,
-                partnerId: partnerId,
-                partnerName: partnerName,
-                carTitle: safeCarTitle,
-                lastMessage: m.message,
-                timestamp: m.createdAt,
-                partnerEmail: isMeSender ? m.receiverEmail : m.senderEmail
-            };
-        });
-
-        renderSidebar(Object.values(threads));
-        
-        // إذا كان هناك محادثة مفتوحة، قم بتحديث الرسائل بداخلها
-        if (activeChatId) {
-            renderChatWindow(activeChatId, messagesArray);
-        }
-    }
-
-    function renderSidebar(threadList) {
-        const container = document.getElementById('threadList');
-        
-        // ترتيب المحادثات من الأحدث للأقدم
-        threadList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-
-        if (threadList.length === 0) {
-            container.innerHTML = `<div class="empty-state" style="margin-top: 50px;">Inga meddelanden än.</div>`;
-            return;
-        }
-
-        container.innerHTML = threadList.map(t => `
-            <div class="thread-item ${activeChatId === t.id ? 'active' : ''}" onclick="window.openChat('${t.id}', '${t.partnerId}', '${t.carTitle}', '${t.partnerName}', '${t.partnerEmail || ''}')">
-                <div class="avatar">${getInitials(t.partnerName)}</div>
-                <div class="thread-info">
-                    <div class="thread-top">
-                        <span class="thread-title">${t.partnerName}</span>
-                        <span class="thread-time">${formatTime(t.timestamp)}</span>
+                return `
+                    <div class="chat-item" onclick="openRoom('${doc.id}', '${partnerName}')">
+                        <div class="avatar">${partnerName.charAt(0).toUpperCase()}</div>
+                        <div class="chat-info">
+                            <div class="chat-top">
+                                <span class="chat-name">${partnerName} | ${room.carTitle || 'Bil'}</span>
+                                <span class="chat-time">${time}</span>
+                            </div>
+                            <div class="chat-last-msg">${room.lastMessage || 'Inget meddelande...'}</div>
+                        </div>
                     </div>
-                    <div class="thread-preview">${t.carTitle}</div>
-                    <div class="thread-preview" style="color:#999;">${t.lastMessage}</div>
-                </div>
-            </div>
-        `).join('');
+                `;
+            }).join('');
+        });
     }
 
-    window.openChat = (threadId, partnerId, carTitle, partnerName, partnerEmail) => {
-        activeChatId = threadId;
-        
-        // إظهار عناصر واجهة الدردشة
+    // 2. فتح غرفة و عرض الرسائل بداخلها
+    window.openRoom = (roomId, partnerName) => {
+        currentRoomId = roomId;
+        document.getElementById('appContainer').classList.add('chat-active');
         document.getElementById('chatHeader').style.display = 'flex';
         document.getElementById('inputArea').style.display = 'flex';
-        document.getElementById('appContainer').classList.add('chat-active');
+        document.getElementById('activeName').innerText = partnerName;
+        document.getElementById('activeAvatar').innerText = partnerName.charAt(0).toUpperCase();
+
+        // إغلاق المراقبة القديمة إن وجدت
+        if(unsubscribeMessages) unsubscribeMessages();
+
+        // جلب الرسائل الخاصة بهذه الغرفة فقط!
+        const qMsgs = query(collection(db, `chats/${roomId}/messages`), orderBy("createdAt", "asc"));
         
-        // تحديث بيانات الترويسة
-        document.getElementById('headerAvatar').innerText = getInitials(partnerName);
-        document.getElementById('headerName').innerText = partnerName;
-        document.getElementById('headerCar').innerText = carTitle;
-
-        // تجهيز بيانات الإرسال
-        window.currentChatContext = { partnerId, carTitle, partnerName, partnerEmail };
-
-        // جلب وترتيب رسائل هذه المحادثة فقط
-        const messagesArray = Array.from(allMessagesMap.values());
-        messagesArray.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
-        renderChatWindow(threadId, messagesArray);
-    };
-
-    function renderChatWindow(threadId, allMsgsSorted) {
-        const display = document.getElementById('msgDisplay');
-        
-        const chatMsgs = allMsgsSorted.filter(m => {
-            const safeTitle = m.carTitle || "Bokning / Förfrågan";
-            return ([m.senderId, m.receiverId].sort().join("_") + "_" + safeTitle) === threadId;
+        unsubscribeMessages = onSnapshot(qMsgs, (snap) => {
+            const display = document.getElementById('msgDisplay');
+            display.innerHTML = snap.docs.map(doc => {
+                const m = doc.data();
+                const isMe = m.senderId === currentUser.uid;
+                const time = m.createdAt ? new Date(m.createdAt.toDate()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+                return `
+                    <div class="bubble ${isMe ? 'sent' : 'received'}">
+                        ${m.text}
+                        <span class="msg-time">${time}</span>
+                    </div>
+                `;
+            }).join('');
+            display.scrollTop = display.scrollHeight; // النزول للأسفل تلقائياً
         });
-
-        display.innerHTML = chatMsgs.map(m => {
-            const isMe = m.senderId === currentUser.uid;
-            return `
-                <div class="bubble-wrap ${isMe ? 'sent' : 'received'}">
-                    <div class="bubble">${m.message}</div>
-                    <div class="msg-time">${formatTime(m.createdAt)}</div>
-                </div>
-            `;
-        }).join('');
-
-        // النزول لأسفل المحادثة تلقائياً
-        display.scrollTop = display.scrollHeight;
-    }
+    };
 
     window.closeChat = () => {
         document.getElementById('appContainer').classList.remove('chat-active');
+        currentRoomId = null;
     };
 
-    // إرسال الرسالة
-    const sendBtn = document.getElementById('sendBtn');
-    const msgInput = document.getElementById('msgInput');
-
-    const sendMessage = async () => {
-        const text = msgInput.value.trim();
-        if (!text || !window.currentChatContext) return;
+    // 3. إرسال رسالة داخل الغرفة المحددة
+    document.getElementById('sendBtn').onclick = async () => {
+        const input = document.getElementById('msgInput');
+        const text = input.value.trim();
+        if (!text || !currentRoomId) return;
         
-        const ctx = window.currentChatContext;
-        msgInput.value = ''; // تفريغ الحقل فوراً لتجربة أسرع
+        input.value = ""; // تفريغ الحقل
 
-        try {
-            await addDoc(collection(db, "messages"), {
-                senderId: currentUser.uid,
-                senderName: currentUser.displayName || "Användare",
-                senderEmail: currentUser.email || "",
-                receiverId: ctx.partnerId,
-                receiverName: ctx.partnerName,
-                receiverEmail: ctx.partnerEmail,
-                carTitle: ctx.carTitle,
-                message: text,
-                createdAt: serverTimestamp()
-            });
-        } catch(error) {
-            alert("Ett fel uppstod när meddelandet skulle skickas.");
-            console.error(error);
-        }
+        // إضافة الرسالة إلى الغرفة
+        await addDoc(collection(db, `chats/${currentRoomId}/messages`), {
+            senderId: currentUser.uid,
+            text: text,
+            createdAt: serverTimestamp()
+        });
+
+        // تحديث "آخر رسالة" في الغرفة لترتفع للأعلى في القائمة
+        await setDoc(doc(db, "chats", currentRoomId), {
+            lastMessage: text,
+            updatedAt: serverTimestamp()
+        }, { merge: true });
     };
 
-    sendBtn.onclick = sendMessage;
-    msgInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
+    document.getElementById('msgInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('sendBtn').click();
     });
-
 </script>
 </body>
 </html>
