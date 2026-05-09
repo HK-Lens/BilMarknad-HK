@@ -3,224 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logga in / Skapa konto | BilMarknad-HK</title>
+    <title>Skapa konto | BILHK Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        .auth-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: #f4f6f9; }
-        .auth-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); width: 100%; max-width: 480px; border: 1px solid #e5e7eb; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f4f6f9; --border: #e5e7eb; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         
-        /* أزرار التبديل العلوي */
-        .branch-toggle { display: flex; background: #f3f4f6; padding: 5px; border-radius: 12px; margin-bottom: 25px; }
-        .branch-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; color: #6b7280; background: transparent; font-family: inherit; }
-        .branch-btn.active { background: white; color: #111827; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-
-        /* زر جوجل */
-        .google-auth-btn {
-            width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px;
-            background: white; color: #374151; border: 1px solid #d1d5db; padding: 12px;
-            border-radius: 10px; font-weight: 700; cursor: pointer; margin-bottom: 20px; transition: 0.2s;
-        }
-        .google-auth-btn:hover { background: #f9fafb; }
-
-        .divider { display: flex; align-items: center; text-align: center; color: #9ca3af; font-size: 12px; margin: 20px 0; }
-        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #eee; margin: 0 10px; }
-
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; background: #f9fafb; font-size: 14px; outline: none; transition: 0.2s; }
-        .form-group input:focus { border-color: #f58220; background: #fff; }
+        .auth-card { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); width: 100%; max-width: 550px; border: 1px solid var(--border); }
+        .logo { text-decoration: none; font-size: 30px; font-weight: 900; color: var(--dark); margin-bottom: 20px; display: block; text-align: center; }
+        .logo span { color: var(--primary); }
         
-        /* تحكم في ظهور الخانات */
-        #dynamicFields { display: none; } 
-        .company-only { display: none; }
+        h2 { font-size: 22px; margin-bottom: 20px; text-align: center; color: var(--dark); }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+        
+        .form-group { margin-bottom: 15px; }
+        .full-width { grid-column: 1 / -1; }
+        
+        label { display: block; font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 6px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f9fafb; font-size: 14px; outline: none; }
+        input:focus { border-color: var(--primary); background: white; }
 
-        .btn-submit { width: 100%; padding: 15px; background: #f58220; color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        .btn-submit:hover { background: #e07210; }
-        .auth-footer { margin-top: 25px; text-align: center; font-size: 14px; }
-        .auth-footer a { color: #f58220; text-decoration: none; font-weight: 700; }
+        /* صندوق إخلاء المسؤولية */
+        .disclaimer-box { grid-column: 1 / -1; background: #fff8f1; border: 1px solid #fde6d5; padding: 15px; border-radius: 12px; margin: 10px 0; display: flex; gap: 10px; }
+        .disclaimer-box input { width: 20px; height: 20px; margin-top: 3px; cursor: pointer; accent-color: var(--primary); }
+        .disclaimer-box label { font-size: 12px; color: #555; line-height: 1.5; font-weight: 400; }
+
+        .btn-primary { grid-column: 1 / -1; width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-primary:hover { background: #e07210; }
+        .btn-primary:disabled { background: #ccc; }
+
+        #businessFields { display: none; grid-column: 1 / -1; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #eee; pt: 15px; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-<div class="auth-container">
-    <div class="auth-card">
-        <header style="text-align: center; margin-bottom: 20px;">
-            <a href="index.html" class="logo" style="text-decoration:none; font-size:28px; font-weight:900; color:#111827;">BIL<span>HK</span></a>
-            <h1 id="mainTitle" style="margin-top:15px; font-size:22px;">Logga in</h1>
-        </header>
-
-        <div class="branch-toggle">
-            <button class="branch-btn active" id="btnPrivat">Privat (خاص)</button>
-            <button class="branch-btn" id="btnCompany">Företag (شركات)</button>
+<div class="auth-card">
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <h2>Skapa konto</h2>
+    
+    <form id="regForm" class="form-grid">
+        <div class="form-group full-width">
+            <label>Kontotyp</label>
+            <select id="userType" onchange="toggleFields()">
+                <option value="private">Privatperson</option>
+                <option value="business">Företag (Bilhandlare)</option>
+            </select>
         </div>
 
-        <button class="google-auth-btn" id="googleBtn">
-            <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
-            Fortsätt med Google
-        </button>
-
-        <div class="divider">eller med e-post</div>
-
-        <form id="authForm">
-            <div class="form-group">
-                <label>E-postadress (البريد الإلكتروني)</label>
-                <input type="email" id="email" placeholder="namn@epost.se" required>
-            </div>
-
-            <div id="dynamicFields">
-                <div class="form-group" id="privateNameGroup">
-                    <label>Fullständigt namn (الاسم الكامل)</label>
-                    <input type="text" id="fullName" placeholder="Förnamn Efternamn">
-                </div>
-
-                <div class="company-only" id="companyFields">
-                    <div class="form-group">
-                        <label>Företagsnamn (اسم الشركة)</label>
-                        <input type="text" id="companyName" placeholder="T.ex. Bilweb AB">
-                    </div>
-                    <div class="form-group">
-                        <label>Organisationsnummer (الرقم الضريبي)</label>
-                        <input type="text" id="orgNr" placeholder="XXXXXX-XXXX">
-                    </div>
-                    <div class="form-group">
-                        <label>Telefonnummer (رقم الهاتف)</label>
-                        <input type="tel" id="phone" placeholder="070-000 00 00">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Lösenord (كلمة المرور)</label>
-                <input type="password" id="password" placeholder="Minst 6 tecken" required>
-            </div>
-
-            <button type="submit" class="btn-submit" id="submitBtn">Logga in</button>
-        </form>
-
-        <div class="auth-footer">
-            <span id="footerText">Har du inget konto?</span>
-            <a href="javascript:void(0)" id="modeLink">Skapa konto</a>
+        <div class="form-group full-width">
+            <label id="nameLabel">Ditt Namn</label>
+            <input type="text" id="fullName" placeholder="T.ex. Miro" required>
         </div>
-    </div>
+
+        <div id="businessFields" class="full-width">
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr; width: 100%;">
+                <div class="form-group">
+                    <label>Organisationsnummer</label>
+                    <input type="text" id="taxId" placeholder="55XXXX-XXXX">
+                </div>
+                <div class="form-group">
+                    <label>Företagsadress</label>
+                    <input type="text" id="address" placeholder="Gatuadress, Postort">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group full-width">
+            <label>E-postadress</label>
+            <input type="email" id="email" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Lösenord</label>
+            <input type="password" id="pass" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Bekräfta lösenord</label>
+            <input type="password" id="confirmPass" required>
+        </div>
+
+        <div class="disclaimer-box">
+            <input type="checkbox" id="termsCheck" required>
+            <label for="termsCheck">
+                <strong>Ansvarsfriskrivning:</strong>
+                Jag godkänner att BILHK endast är en annonsplats. Webbplatsen tar inget ansvar för avtal, skick på fordon eller transaktioner mellan parterna.
+            </label>
+        </div>
+
+        <button type="submit" class="btn-primary" id="regBtn">Registrera dig</button>
+    </form>
 </div>
 
 <script type="module">
-    import { auth, db, googleProvider } from './firebase-config.js';
-    import { 
-        signInWithEmailAndPassword, 
-        createUserWithEmailAndPassword, 
-        signInWithPopup 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { auth, db } from './firebase-config.js';
+    import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let currentBranch = 'private'; 
-    let isLogin = true;
-
-    // إصلاح مشكلة النطاق (Scope) بتصدير الوظائف للنافذة أو استخدام Event Listeners
-    const updateUI = () => {
-        const title = document.getElementById('mainTitle');
-        const submitBtn = document.getElementById('submitBtn');
-        const footerText = document.getElementById('footerText');
-        const modeLink = document.getElementById('modeLink');
-        const dynamicFields = document.getElementById('dynamicFields');
-        const companyFields = document.getElementById('companyFields');
-        const privateNameGroup = document.getElementById('privateNameGroup');
-
-        if (isLogin) {
-            title.innerText = "Logga in";
-            submitBtn.innerText = "Logga in";
-            footerText.innerText = "Har du inget konto?";
-            modeLink.innerText = "Skapa konto";
-            dynamicFields.style.display = "none";
+    window.toggleFields = () => {
+        const type = document.getElementById('userType').value;
+        const bFields = document.getElementById('businessFields');
+        const nLabel = document.getElementById('nameLabel');
+        
+        if(type === 'business') {
+            bFields.style.display = 'grid';
+            nLabel.innerText = "Företagsnamn";
         } else {
-            title.innerText = "Skapa konto";
-            submitBtn.innerText = "Registrera dig";
-            footerText.innerText = "Redan medlem?";
-            modeLink.innerText = "Logga in";
-            dynamicFields.style.display = "block";
-            
-            if (currentBranch === 'company') {
-                companyFields.style.display = "block";
-                privateNameGroup.style.display = "none";
-            } else {
-                companyFields.style.display = "none";
-                privateNameGroup.style.display = "block";
-            }
+            bFields.style.display = 'none';
+            nLabel.innerText = "Ditt Namn";
         }
     };
 
-    // ربط الأحداث بالأزرار (أكثر أماناً من onclick في HTML)
-    document.getElementById('btnPrivat').addEventListener('click', () => {
-        currentBranch = 'private';
-        document.getElementById('btnPrivat').classList.add('active');
-        document.getElementById('btnCompany').classList.remove('active');
-        updateUI();
-    });
-
-    document.getElementById('btnCompany').addEventListener('click', () => {
-        currentBranch = 'company';
-        document.getElementById('btnCompany').classList.add('active');
-        document.getElementById('btnPrivat').classList.remove('active');
-        updateUI();
-    });
-
-    document.getElementById('modeLink').addEventListener('click', () => {
-        isLogin = !isLogin;
-        updateUI();
-    });
-
-    // الدخول عبر جوجل
-    document.getElementById('googleBtn').onclick = async () => {
-        try {
-            const res = await signInWithPopup(auth, googleProvider);
-            await setDoc(doc(db, "users", res.user.uid), {
-                email: res.user.email,
-                userType: currentBranch,
-                displayName: res.user.displayName,
-                lastLogin: serverTimestamp()
-            }, { merge: true });
-            window.location.href = "index.html";
-        } catch (err) { alert("Fel: " + err.message); }
-    };
-
-    // معالجة النموذج
-    document.getElementById('authForm').onsubmit = async (e) => {
+    document.getElementById('regForm').onsubmit = async (e) => {
         e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const btn = document.getElementById('submitBtn');
+        
+        const pass = document.getElementById('pass').value;
+        const confirm = document.getElementById('confirmPass').value;
+        const name = document.getElementById('fullName').value;
 
-        btn.disabled = true;
-        btn.innerText = "Vänta...";
+        if (pass !== confirm) { alert("Lösenorden matchar inte!"); return; }
+        if (pass.length < 6) { alert("Lösenordet måste vara minst 6 tecken!"); return; }
+
+        const regBtn = document.getElementById('regBtn');
+        regBtn.disabled = true;
+        regBtn.innerText = "Behandlar...";
 
         try {
-            if (isLogin) {
-                await signInWithEmailAndPassword(auth, email, password);
-            } else {
-                const res = await createUserWithEmailAndPassword(auth, email, password);
-                const user = res.user;
+            const userCredential = await createUserWithEmailAndPassword(auth, document.getElementById('email').value, pass);
+            const user = userCredential.user;
 
-                const userData = {
-                    email,
-                    userType: currentBranch,
-                    createdAt: serverTimestamp()
-                };
+            await updateProfile(user, { displayName: name });
+            await sendEmailVerification(user);
 
-                if (currentBranch === 'company') {
-                    userData.companyName = document.getElementById('companyName').value;
-                    userData.orgNr = document.getElementById('orgNr').value;
-                    userData.phone = document.getElementById('phone').value;
-                } else {
-                    userData.fullName = document.getElementById('fullName').value;
-                }
+            await setDoc(doc(db, "users", user.uid), {
+                name: name,
+                email: user.email,
+                userType: document.getElementById('userType').value,
+                taxId: document.getElementById('taxId').value || "",
+                address: document.getElementById('address').value || "",
+                createdAt: serverTimestamp()
+            });
 
-                await setDoc(doc(db, "users", user.uid), userData);
-            }
-            window.location.href = "index.html";
+            await signOut(auth);
+            alert(`Grattis ${name}! Kontot är skapat.\nKolla din e-post för att bekräfta kontot innan du loggar in.`);
+            window.location.href = "login.html";
+
         } catch (err) {
             alert("Fel: " + err.message);
-            btn.disabled = false;
-            btn.innerText = isLogin ? "Logga in" : "Registrera dig";
+            regBtn.disabled = false;
         }
     };
 </script>
