@@ -7,7 +7,6 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* تم الإبقاء على كافة تنسيقات الـ CSS الأصلية بدون أي تغيير للحفاظ على شكل الموقع */
         :root {
             --primary: #f58220;
             --dark: #0f172a;
@@ -15,25 +14,20 @@
             --border: #e2e8f0;
             --text-main: #1e293b;
             --text-muted: #64748b;
+            --white: #ffffff;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         * {
             margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', -apple-system, sans-serif;
-            -webkit-font-smoothing: antialiased;
+            font-family: 'Inter', sans-serif;
         }
 
-        body { 
-            background-color: var(--bg); 
-            color: var(--text-main); 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
-        }
+        body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; }
 
-        /* --- الأكواد المتبقية من التصميم الأصلي --- */
+        /* --- Header --- */
         header {
-            background: white;
+            background: var(--white);
             padding: 1rem 6%;
             display: flex;
             justify-content: space-between;
@@ -44,37 +38,94 @@
             z-index: 1000;
         }
 
-        .logo { font-size: 1.5rem; font-weight: 900; color: var(--dark); text-decoration: none; letter-spacing: -1px; }
+        .logo { font-size: 1.5rem; font-weight: 900; color: var(--dark); text-decoration: none; }
         .logo span { color: var(--primary); }
 
         .nav-links { display: flex; align-items: center; gap: 1.5rem; }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 0.95rem; transition: 0.2s; }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; transition: 0.2s; }
         .nav-links a:hover { color: var(--primary); }
 
-        /* أيقونة الإشعارات */
-        .notif-badge {
+        /* أيقونة الرسائل مع الإشعارات */
+        .notif-btn {
             position: relative;
-            display: inline-flex;
+            font-size: 1.4rem;
+            text-decoration: none;
+            display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
         }
-        .notif-count {
+        .notif-badge {
             position: absolute;
             top: -5px;
             right: -8px;
             background: #ef4444;
             color: white;
             font-size: 10px;
-            padding: 2px 5px;
+            font-weight: 800;
+            padding: 2px 6px;
             border-radius: 10px;
-            display: none;
+            display: none; /* تظهر فقط عند وجود رسائل */
         }
 
-        /* باقي تنسيقات البحث والبطاقات كما هي في ملفك الأصلي... */
-        .hero-section { padding: 4rem 6%; background: white; border-bottom: 1px solid var(--border); }
-        /* (أضف هنا باقي الـ CSS الخاص بملفك الأصلي لضمان عدم تأثر الشكل) */
+        .btn-sell {
+            background: var(--primary);
+            color: white !important;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        /* --- Search Section --- */
+        .hero { background: var(--white); padding: 3rem 6%; border-bottom: 1px solid var(--border); }
+        .search-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+        }
+        .search-group input, .search-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            outline: none;
+        }
+        .search-btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .search-btn:hover { background: var(--primary); }
+
+        /* --- Car Grid --- */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .car-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .car-card:hover { transform: translateY(-10px); box-shadow: var(--shadow); }
+        .car-card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-content { padding: 20px; }
+        .price-tag { font-size: 1.4rem; font-weight: 900; color: var(--primary); margin-bottom: 5px; }
+        .car-title { font-weight: 800; font-size: 1.1rem; margin-bottom: 8px; }
+        .car-meta { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
     </style>
 </head>
 <body>
@@ -84,45 +135,61 @@
     <nav class="nav-links">
         <a href="index.html">Hem</a>
         
-        <a href="messages.html" class="notif-badge" id="msgNotifBtn" title="Meddelanden">
-            ✉️ <span class="notif-count" id="globalMsgCount">0</span>
+        <a href="messages.html" class="notif-btn" id="notifBtn" title="Meddelanden">
+            ✉️ <span class="notif-badge" id="notifCount">0</span>
         </a>
 
-        <a href="my-account.html" id="accountLink" style="display:none;">Mitt Konto</a>
-        <a href="login.html" id="loginLink">Logga in</a>
-        <a href="sell.html" style="background: var(--primary); color: white; padding: 0.6rem 1.2rem; border-radius: 10px;">Sälj bil</a>
+        <a href="my-account.html" id="accBtn" style="display:none;">Mitt Konto</a>
+        <a href="login.html" id="loginBtn">Logga in</a>
+        <a href="sell.html" class="btn-sell">Sälj bil</a>
     </nav>
 </header>
 
-<section class="hero-section">
-    </section>
+<section class="hero">
+    <div class="search-container">
+        <div class="search-group">
+            <input type="text" id="searchBrand" placeholder="Märke (t.ex. Volvo)">
+        </div>
+        <div class="search-group">
+            <select id="searchFuel">
+                <option value="all">Drivmedel</option>
+                <option value="Bensin">Bensin</option>
+                <option value="Diesel">Diesel</option>
+                <option value="El">El</option>
+            </select>
+        </div>
+        <div class="search-group">
+            <input type="number" id="searchPrice" placeholder="Max pris">
+        </div>
+        <button class="search-btn" id="searchBtn">Sök bil</button>
+    </div>
+</section>
 
 <main class="container">
-    <div id="carGrid" class="car-grid"></div>
+    <div id="carGrid" class="car-grid">
+        <p style="grid-column: 1/-1; text-align: center;">Laddar bilar...</p>
+    </div>
 </main>
 
 <script type="module">
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            document.getElementById('loginLink').style.display = 'none';
-            document.getElementById('accountLink').style.display = 'block';
-            
-            // استدعاء نظام الإشعارات الذكي
-            trackMessages(user.uid);
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('accBtn').style.display = 'block';
+            trackNotifications(user.uid);
         }
     });
 
-    // وظيفة تتبع الرسائل الجديدة وتحديث الإشعار
-    function trackMessages(uid) {
+    // نظام الإشعارات المستقل
+    function trackNotifications(uid) {
         const q = query(collection(db, "messages"), where("receiverId", "==", uid));
-        
         onSnapshot(q, (snap) => {
             const count = snap.docs.length;
-            const badge = document.getElementById('globalMsgCount');
+            const badge = document.getElementById('notifCount');
             if (count > 0) {
                 badge.innerText = count;
                 badge.style.display = 'block';
@@ -132,9 +199,44 @@
         });
     }
 
-    /* استمر هنا بوضع كافة وظائف جافا سكريبت الأصلية الخاصة بك (البحث، تحميل السيارات، إلخ) 
-       لضمان بقاء عمل الصفحة كما هو تماماً */
-</script>
+    // تحميل وعرض السيارات مع محرك البحث
+    async function loadCars() {
+        const grid = document.getElementById('carGrid');
+        const brand = document.getElementById('searchBrand').value.toLowerCase();
+        const fuel = document.getElementById('searchFuel').value;
+        const price = document.getElementById('searchPrice').value;
 
+        try {
+            const snap = await getDocs(collection(db, "cars"));
+            let cars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            // منطق البحث
+            const filtered = cars.filter(c => {
+                return (brand === "" || c.brand.toLowerCase().includes(brand)) &&
+                       (fuel === "all" || c.fuelType === fuel) &&
+                       (price === "" || Number(c.price) <= Number(price));
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Hittade inga bilar.</p>";
+                return;
+            }
+
+            grid.innerHTML = filtered.map(c => `
+                <div class="car-card" onclick="window.location.href='details.html?id=${c.id}'">
+                    <img src="${c.images?.[0] || 'placeholder.jpg'}">
+                    <div class="card-content">
+                        <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
+                        <div class="car-title">${c.brand} ${c.model}</div>
+                        <div class="car-meta">${c.year} • ${c.mileage} mil • ${c.fuelType}</div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (e) { grid.innerHTML = "Ett fel uppstod."; }
+    }
+
+    document.getElementById('searchBtn').onclick = loadCars;
+    window.onload = loadCars;
+</script>
 </body>
 </html>
