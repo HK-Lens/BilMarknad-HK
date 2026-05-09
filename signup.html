@@ -85,8 +85,17 @@
             alert("Konto skapat!");
             location.href = "index.html";
         } catch (err) {
+            // 🚀 هنا تم إضافة الترجمة الذكية للأخطاء 🚀
             console.error(err);
-            alert("Fel: " + err.message);
+            if (err.code === 'auth/email-already-in-use') {
+                alert("Den här e-postadressen används redan. Vänligen logga in istället."); // الإيميل مستخدم
+            } else if (err.code === 'auth/weak-password') {
+                alert("Lösenordet är för svagt. Använd minst 6 tecken."); // كلمة المرور ضعيفة
+            } else {
+                alert("Ett fel uppstod: " + err.message); // أي خطأ آخر
+            }
+            
+            // إعادة تفعيل الزر ليتيح للمستخدم المحاولة مرة أخرى
             regBtn.disabled = false;
             regBtn.innerText = "Registrera dig";
         }
