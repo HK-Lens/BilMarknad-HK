@@ -35,7 +35,7 @@
         .btn-primary:hover { background: #e07210; }
         .btn-primary:disabled { background: #ccc; }
 
-        #businessFields { display: none; grid-column: 1 / -1; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #eee; pt: 15px; margin-top: 5px; }
+        #businessFields { display: none; grid-column: 1 / -1; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #eee; padding-top: 15px; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -90,7 +90,7 @@
             <input type="checkbox" id="termsCheck" required>
             <label for="termsCheck">
                 <strong>Ansvarsfriskrivning:</strong>
-                Jag godkänner att BILHK endast är en annonsplats. Webbplatsen tar inget ansvar för avtal, skick på fordon eller transaktioner mellan parterna.
+                Jag godkänner أن الموقع مجرد وسيط ولا يتحمل أي مسؤولية عن الاتفاقات أو التعاملات بين البائع والمشتري.
             </label>
         </div>
 
@@ -107,7 +107,6 @@
         const type = document.getElementById('userType').value;
         const bFields = document.getElementById('businessFields');
         const nLabel = document.getElementById('nameLabel');
-        
         if(type === 'business') {
             bFields.style.display = 'grid';
             nLabel.innerText = "Företagsnamn";
@@ -119,14 +118,12 @@
 
     document.getElementById('regForm').onsubmit = async (e) => {
         e.preventDefault();
-        
         const pass = document.getElementById('pass').value;
         const confirm = document.getElementById('confirmPass').value;
         const name = document.getElementById('fullName').value;
 
         if (pass !== confirm) { alert("Lösenorden matchar inte!"); return; }
-        if (pass.length < 6) { alert("Lösenordet måste vara minst 6 tecken!"); return; }
-
+        
         const regBtn = document.getElementById('regBtn');
         regBtn.disabled = true;
         regBtn.innerText = "Behandlar...";
@@ -148,12 +145,13 @@
             });
 
             await signOut(auth);
-            alert(`Grattis ${name}! Kontot är skapat.\nKolla din e-post för att bekräfta kontot innan du loggar in.`);
+            alert(`Grattis ${name}! Kontot är skapat. Kolla din e-post för att bekräfta kontot innan du loggar in.`);
             window.location.href = "login.html";
 
         } catch (err) {
             alert("Fel: " + err.message);
             regBtn.disabled = false;
+            regBtn.innerText = "Registrera dig";
         }
     };
 </script>
