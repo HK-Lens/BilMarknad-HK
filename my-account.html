@@ -12,12 +12,12 @@
             --bg: #f8fafc; 
             --border: #e2e8f0; 
             --white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
 
-        /* --- Header --- */
         header {
             background: var(--white);
             padding: 15px 6%;
@@ -32,241 +32,237 @@
         .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        .nav-links { display: flex; gap: 20px; align-items: center; }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 700; font-size: 14px; }
-        .btn-sell { background: var(--primary); color: white !important; padding: 8px 16px; border-radius: 8px; }
-
-        /* --- Main Content --- */
         .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
-        h1 { margin-bottom: 30px; font-weight: 900; font-size: 28px; }
-        h2 { font-size: 20px; font-weight: 800; margin: 40px 0 20px; border-bottom: 3px solid var(--primary); display: inline-block; padding-bottom: 5px; }
+        .welcome-card { background: var(--dark); color: white; padding: 30px; border-radius: 20px; margin-bottom: 30px; }
         
-        /* --- Ads Section --- */
-        .ad-card { 
-            background: var(--white); border-radius: 16px; padding: 20px; margin-bottom: 15px; 
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--border);
-        }
-        .ad-info { display: flex; align-items: center; gap: 20px; }
-        .ad-img { width: 120px; height: 80px; border-radius: 8px; object-fit: cover; background: #eee; }
-        .ad-details h3 { font-size: 18px; margin-bottom: 5px; color: var(--dark); }
-        .ad-details p { font-size: 14px; color: #64748b; }
+        .section-title { font-weight: 800; font-size: 20px; margin: 30px 0 15px; display: flex; align-items: center; gap: 10px; }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        /* --- Messages Section --- */
-        .msg-card {
-            background: var(--white); border-radius: 16px; padding: 20px; margin-bottom: 15px;
-            border: 1px solid var(--border); border-left: 5px solid var(--primary);
-        }
-        .msg-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; color: #94a3b8; }
-        .msg-body { font-size: 15px; line-height: 1.6; margin-bottom: 15px; color: var(--dark); }
-        .msg-footer { font-size: 13px; color: #64748b; background: #f8fafc; padding: 10px; border-radius: 8px; }
-        .msg-footer strong { color: var(--dark); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .car-card { background: white; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; }
+        .car-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+        .car-img { width: 100%; height: 160px; object-fit: cover; }
+        .car-info { padding: 15px; }
 
-        .actions { display: flex; gap: 10px; }
-        .btn { padding: 10px 18px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; font-size: 13px; transition: 0.2s; font-family: inherit; }
-        .btn-edit { background: #f1f5f9; color: var(--dark); }
-        .btn-delete { background: #fee2e2; color: #dc2626; }
-        
-        /* --- Modal --- */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 2000; }
-        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; }
-        .modal-content label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: #64748b; }
-        .modal-content input { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 10px; }
+        /* تسيق الرسائل */
+        .msg-card { background: white; padding: 20px; border-radius: 15px; border-left: 5px solid var(--primary); margin-bottom: 15px; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .reply-box { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
+        textarea { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border); font-family: inherit; margin-bottom: 10px; outline: none; }
+        textarea:focus { border-color: var(--primary); }
+
+        .btn { padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-reply { background: none; color: var(--primary); padding-left: 0; }
+        .btn-send { background: var(--dark); color: white; font-size: 13px; }
+
+        /* Modal */
+        #editModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:2000; }
+        .modal-content { background:white; padding:30px; border-radius:20px; width:90%; max-width:400px; }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <nav class="nav-links">
-        <a href="index.html">Hem</a>
-        <a href="sell.html" class="btn-sell">Sälj bil</a>
-        <a href="#" id="logoutAction" style="color: #dc2626; text-decoration: none; font-weight: 700; font-size: 14px;">Logga ut</a>
-    </nav>
+    <button id="logoutAction" class="btn" style="color: #ef4444; background: #fee2e2;">Logga ut</button>
 </header>
 
 <div class="container">
-    <h1>Välkommen till ditt konto</h1>
+    <div class="welcome-card">
+        <h1 id="userGreeting">Välkommen!</h1>
+        <p id="userEmail" style="opacity: 0.7; font-size: 14px;"></p>
+    </div>
 
-    <h2>Mina annonser</h2>
-    <div id="myAdsList">Laddar dina annonser...</div>
+    <h2 class="section-title">Mina annonser</h2>
+    <div id="myCarsGrid" class="grid">
+        <p>Laddar dina annonser...</p>
+    </div>
 
-    <h2>Mottagna förfrågningar</h2>
-    <div id="messagesList">Laddar meddelanden...</div>
+    <h2 class="section-title">Mottagna förfrågningar</h2>
+    <div id="messagesGrid">
+        <p>Laddar meddelanden...</p>
+    </div>
 </div>
 
-<div class="modal" id="editModal">
+<div id="editModal">
     <div class="modal-content">
-        <h3>Redigera annons</h3>
-        <label>Pris (kr)</label>
-        <input type="number" id="editPrice">
-        <label>Miltal (mil)</label>
-        <input type="number" id="editMileage">
+        <h3 style="margin-bottom: 20px;">Redigera annons</h3>
+        <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 5px;">PRIS (KR)</label>
+        <input type="number" id="editPrice" style="width:100%; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #ddd;">
         
-        <button class="btn" id="saveEditBtn" style="background: var(--primary); color: white; width: 100%; margin-bottom: 10px;">Spara ändringar</button>
-        <button class="btn" id="closeModalBtn" style="background: #f1f5f9; width: 100%;">Avbryt</button>
+        <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 5px;">MILTAL</label>
+        <input type="number" id="editMileage" style="width:100%; padding:12px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd;">
+        
+        <div style="display: flex; gap: 10px;">
+            <button id="saveEditBtn" class="btn btn-primary" style="flex:1;">Spara</button>
+            <button id="closeModalBtn" class="btn" style="flex:1; background:#e2e8f0;">Avbryt</button>
+        </div>
     </div>
 </div>
 
 <script type="module">
-    import { auth, db } from './firebase-config.js';
+    import { db, auth } from './firebase-config.js';
+    import { collection, query, where, getDocs, orderBy, doc, deleteDoc, updateDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { 
-        collection, query, where, getDocs, doc, deleteDoc, updateDoc, orderBy 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    let currentUser = null;
     let currentEditId = null;
 
-    // التحقق من حالة تسجيل الدخول
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            loadUserAds(user.uid);
-            loadMessages(user.uid);
+            currentUser = user;
+            document.getElementById('userGreeting').innerText = `Hej, ${user.displayName || 'Bilvän'}!`;
+            document.getElementById('userEmail').innerText = user.email;
+            loadMyCars();
+            loadMessages();
         } else {
             window.location.href = "login.html";
         }
     });
 
-    // جلب الإعلانات الخاصة بالمستخدم
-    async function loadUserAds(userId) {
-        const adsContainer = document.getElementById('myAdsList');
+    // تحميل الإعلانات الخاصة بي
+    async function loadMyCars() {
+        const grid = document.getElementById('myCarsGrid');
         try {
-            const q = query(collection(db, "cars"), where("sellerId", "==", userId));
+            const q = query(collection(db, "cars"), where("sellerId", "==", currentUser.uid));
             const snap = await getDocs(q);
-            
-            if (snap.empty) {
-                adsContainer.innerHTML = "<p style='color: #64748b;'>Du har inga aktiva annonser.</p>";
+            const cars = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+            if (cars.length === 0) {
+                grid.innerHTML = "<p>Du har inga aktiva annonser.</p>";
                 return;
             }
 
-            adsContainer.innerHTML = snap.docs.map(docSnap => {
-                const car = docSnap.data();
-                const id = docSnap.id;
-                return `
-                    <div class="ad-card" id="card-${id}">
-                        <div class="ad-info">
-                            <img src="${car.images && car.images[0] ? car.images[0] : 'placeholder.jpg'}" class="ad-img">
-                            <div class="ad-details">
-                                <h3>${car.brand} ${car.model}</h3>
-                                <p>${Number(car.price).toLocaleString()} kr • ${car.mileage} mil • ${car.year}</p>
-                            </div>
+            grid.innerHTML = cars.map(c => `
+                <div class="car-card" id="card-${c.id}">
+                    <img src="${c.images?.[0] || 'placeholder.jpg'}" class="car-img">
+                    <div class="car-info">
+                        <div style="font-weight: 800;">${c.brand} ${c.model}</div>
+                        <div style="color: var(--primary); font-weight: 900; margin: 5px 0;">${Number(c.price).toLocaleString()} kr</div>
+                        <div style="font-size: 12px; color: #64748b; margin-bottom: 15px;">${c.year} | ${c.mileage} mil</div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-edit" data-id="${c.id}" data-price="${c.price}" data-mile="${c.mileage}" style="flex:1; background: #e2e8f0; font-size: 12px;">Redigera</button>
+                            <button class="btn btn-delete" data-id="${c.id}" style="flex:1; background: #fee2e2; color: #ef4444; font-size: 12px;">Radera</button>
                         </div>
-                        <div class="actions">
-                            <button class="btn btn-edit" data-id="${id}" data-price="${car.price}" data-mileage="${car.mileage}">Redigera</button>
-                            <button class="btn btn-delete" data-id="${id}">Ta bort</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            // إضافة أحداث الأزرار ديناميكياً
-            attachAdEvents();
-        } catch (err) { 
-            console.error(err); 
-            adsContainer.innerHTML = "Fel vid laddning.";
-        }
-    }
-
-    // جلب الرسائل (إصلاح منطق الفهرس)
-    async function loadMessages(userId) {
-        const msgList = document.getElementById('messagesList');
-        try {
-            let q;
-            // محاولة الجلب بالترتيب (تتطلب فهرس)
-            try {
-                q = query(
-                    collection(db, "messages"), 
-                    where("receiverId", "==", userId),
-                    orderBy("createdAt", "desc")
-                );
-                // تنفيذ جلب وهمي للتأكد من وجود الفهرس
-                const checkSnap = await getDocs(q);
-                renderMessages(checkSnap, msgList);
-            } catch (indexErr) {
-                // إذا فشل بسبب الفهرس، نستخدم الاستعلام البسيط (بدون ترتيب)
-                console.warn("Firebase Index missing, fallback to simple query.");
-                q = query(
-                    collection(db, "messages"), 
-                    where("receiverId", "==", userId)
-                );
-                const snap = await getDocs(q);
-                renderMessages(snap, msgList);
-            }
-        } catch (err) { 
-            console.error(err);
-            msgList.innerHTML = "<p>Kunde inte ladda meddelanden.</p>";
-        }
-    }
-
-    function renderMessages(snap, container) {
-        if (snap.empty) {
-            container.innerHTML = "<p style='color: #64748b;'>Inga meddelanden ännu.</p>";
-            return;
-        }
-        container.innerHTML = snap.docs.map(docSnap => {
-            const m = docSnap.data();
-            const date = m.createdAt ? m.createdAt.toDate().toLocaleDateString('sv-SE') : 'Nyligen';
-            return `
-                <div class="msg-card">
-                    <div class="msg-header">
-                        <strong>${m.carTitle || 'Förfrågan'}</strong>
-                        <span>${date}</span>
-                    </div>
-                    <div class="msg-body">"${m.message}"</div>
-                    <div class="msg-footer">
-                        Från: <strong>${m.senderName}</strong> | 
-                        E-post: <a href="mailto:${m.senderEmail}" style="color:var(--primary); font-weight:700;">${m.senderEmail}</a>
                     </div>
                 </div>
-            `;
-        }).join('');
+            `).join('');
+
+            attachCarEvents();
+        } catch (err) { console.error(err); }
     }
 
-    // وظائف الأزرار
-    function attachAdEvents() {
+    // تحميل الرسائل مع ميزة الرد
+    async function loadMessages() {
+        const msgGrid = document.getElementById('messagesGrid');
+        try {
+            const q = query(collection(db, "messages"), where("receiverId", "==", currentUser.uid), orderBy("createdAt", "desc"));
+            const snap = await getDocs(q);
+            const msgs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+            if (msgs.length === 0) {
+                msgGrid.innerHTML = "<p>Inga mottagna meddelanden än.</p>";
+                return;
+            }
+
+            msgGrid.innerHTML = msgs.map(m => `
+                <div class="msg-card">
+                    <div style="font-weight: 800; color: var(--dark); font-size: 15px;">${m.carTitle || 'Förfrågan'}</div>
+                    <div style="font-size: 12px; color: #64748b; margin-bottom: 10px;">Från: ${m.senderName} (${m.senderEmail})</div>
+                    <p style="background: #f1f5f9; padding: 12px; border-radius: 10px; font-size: 14px; line-height: 1.5;">${m.message}</p>
+                    
+                    <button class="btn btn-reply" data-id="${m.id}">Svara (رد)</button>
+
+                    <div id="reply-box-${m.id}" class="reply-box">
+                        <textarea id="text-${m.id}" placeholder="Skriv ditt svar..."></textarea>
+                        <button class="btn btn-send" data-msgid="${m.id}" data-target="${m.senderId}" data-title="${m.carTitle}">Skicka svar</button>
+                    </div>
+
+                    <div style="font-size: 10px; color: #94a3b8; margin-top: 10px; text-align: right;">
+                        ${m.createdAt?.toDate().toLocaleString('sv-SE')}
+                    </div>
+                </div>
+            `).join('');
+
+            attachMessageEvents();
+        } catch (err) {
+            msgGrid.innerHTML = "<p>Kunde inte ladda meddelanden.</p>";
+        }
+    }
+
+    function attachMessageEvents() {
+        // فتح صندوق الرد
+        document.querySelectorAll('.btn-reply').forEach(btn => {
+            btn.onclick = () => {
+                const id = btn.dataset.id;
+                const box = document.getElementById(`reply-box-${id}`);
+                box.style.display = box.style.display === 'block' ? 'none' : 'block';
+            };
+        });
+
+        // إرسال الرد
+        document.querySelectorAll('.btn-send').forEach(btn => {
+            btn.onclick = async () => {
+                const { msgid, target, title } = btn.dataset;
+                const text = document.getElementById(`text-${msgid}`).value;
+
+                if (!text) return alert("Skriv ett svar först.");
+
+                btn.disabled = true;
+                btn.innerText = "Skickar...";
+
+                try {
+                    await addDoc(collection(db, "messages"), {
+                        senderId: currentUser.uid,
+                        senderName: "Säljare (هيثم)",
+                        senderEmail: currentUser.email,
+                        receiverId: target,
+                        carTitle: "RE: " + title,
+                        message: text,
+                        createdAt: serverTimestamp()
+                    });
+                    alert("Svar skickat!");
+                    document.getElementById(`reply-box-${msgid}`).style.display = 'none';
+                } catch (err) {
+                    alert("Kunde inte skicka svar.");
+                } finally {
+                    btn.disabled = false;
+                    btn.innerText = "Skicka svar";
+                }
+            };
+        });
+    }
+
+    function attachCarEvents() {
         document.querySelectorAll('.btn-edit').forEach(btn => {
             btn.onclick = () => {
                 currentEditId = btn.dataset.id;
                 document.getElementById('editPrice').value = btn.dataset.price;
-                document.getElementById('editMileage').value = btn.dataset.mileage;
+                document.getElementById('editMileage').value = btn.dataset.mile;
                 document.getElementById('editModal').style.display = 'flex';
             };
         });
 
         document.querySelectorAll('.btn-delete').forEach(btn => {
             btn.onclick = async () => {
-                const id = btn.dataset.id;
-                if (confirm("Är du säker på att du vill ta bort annonsen?")) {
-                    try {
-                        await deleteDoc(doc(db, "cars", id));
-                        document.getElementById(`card-${id}`).remove();
-                    } catch (err) { alert("Fel vid borttagning."); }
+                if (confirm("Ta bort annonsen?")) {
+                    await deleteDoc(doc(db, "cars", btn.dataset.id));
+                    location.reload();
                 }
             };
         });
     }
 
-    // حفظ التعديلات
     document.getElementById('saveEditBtn').onclick = async () => {
-        const newPrice = Number(document.getElementById('editPrice').value);
-        const newMileage = Number(document.getElementById('editMileage').value);
-        if (!newPrice || !newMileage) return alert("Fyll i alla fält.");
-        
-        try {
-            await updateDoc(doc(db, "cars", currentEditId), { price: newPrice, mileage: newMileage });
-            alert("Uppdaterad!");
-            location.reload();
-        } catch (err) { alert("Ett fel uppstod."); }
+        const p = Number(document.getElementById('editPrice').value);
+        const m = Number(document.getElementById('editMileage').value);
+        await updateDoc(doc(db, "cars", currentEditId), { price: p, mileage: m });
+        location.reload();
     };
 
-    // إغلاق المودال وتسجيل الخروج
-    document.getElementById('closeModalBtn').onclick = () => {
-        document.getElementById('editModal').style.display = 'none';
-    };
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById('editModal').style.display = 'none';
+    document.getElementById('logoutAction').onclick = () => signOut(auth).then(() => window.location.href = "login.html");
 
-    document.getElementById('logoutAction').onclick = () => {
-        signOut(auth).then(() => window.location.href = "index.html");
-    };
 </script>
 </body>
 </html>
