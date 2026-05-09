@@ -30,7 +30,7 @@
     <a href="my-account.html" style="text-decoration:none; font-weight:700; color:black; font-size:14px;">← Mitt Konto</a>
 </header>
 <div class="messenger">
-    <div class="sidebar" id="threadsContainer"><p style="padding:20px; text-align:center; color:#999;">Laddar...</p></div>
+    <div class="sidebar" id="threadsContainer"><p style="padding:20px; text-align:center; color:#999;">Laddar data...</p></div>
     <div class="chat-area">
         <div id="msgList" class="msg-list"><p style="text-align:center; margin-top:100px; color:#888;">Välj en konversation</p></div>
         <div class="input-bar" id="inputArea" style="display:none;">
@@ -42,40 +42,60 @@
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { collection, query, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     let currentUser = null;
     let activeChat = null;
 
     onAuthStateChanged(auth, (user) => {
-        if (user) { currentUser = user; loadInbox(); }
-        else { window.location.href = "login.html"; }
+        if (user) { 
+            currentUser = user; 
+            console.log("Inloggad som:", user.uid);
+            loadInbox(); 
+        } else { 
+            window.location.href = "login.html"; 
+        }
     });
 
     function loadInbox() {
-        // جلب الرسائل بدونorderBy لتجنب مشاكل الـ Index
         onSnapshot(collection(db, "messages"), (snap) => {
+            console.log("Antal meddelanden i databasen:", snap.docs.length);
             const threads = {};
+            
             const allMsgs = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            
             allMsgs.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
             allMsgs.forEach(m => {
+                // حماية الكود من الرسائل التي لا تحتوي على بيانات كاملة
+                if (!m.senderId || !m.receiverId) return;
+
                 if (m.senderId === currentUser.uid || m.receiverId === currentUser.uid) {
                     const partnerId = m.senderId === currentUser.uid ? m.receiverId : m.senderId;
-                    const threadId = [m.senderId, m.receiverId].sort().join("_") + "_" + m.carTitle;
+                    const safeCarTitle = m.carTitle || "Okänd Bil"; // سيارة غير معروفة إذا كان الحقل فارغاً
+                    const threadId = [m.senderId, m.receiverId].sort().join("_") + "_" + safeCarTitle;
                     
                     if (!threads[threadId]) {
-                        threads[threadId] = { id: threadId, ...m, partnerId, partnerName: m.senderId === currentUser.uid ? "Mottagare" : m.senderName };
+                        threads[threadId] = { 
+                            id: threadId, 
+                            ...m, 
+                            carTitle: safeCarTitle,
+                            partnerId, 
+                            partnerName: m.senderId === currentUser.uid ? "Mottagare" : (m.senderName || "Användare") 
+                        };
                     }
                 }
             });
 
             const container = document.getElementById('threadsContainer');
             const threadValues = Object.values(threads);
-            container.innerHTML = threadValues.length === 0 ? "<p style='padding:20px;'>Inga meddelanden.</p>" : threadValues.map(t => `
+            console.log("Antal konversationer (Threads) hittade:", threadValues.length);
+
+            container.innerHTML = threadValues.length === 0 ? "<p style='padding:20px; text-align:center;'>Inga meddelanden hittades för dig.</p>" : threadValues.map(t => `
                 <div class="thread ${activeChat?.tid === t.id ? 'active' : ''}" onclick="openChat('${t.id}', '${t.partnerId}', '${t.carTitle}', '${t.senderEmail || t.receiverEmail}')">
-                    <strong>${t.carTitle}</strong><br><small>${t.message.substring(0,35)}...</small>
+                    <strong style="display:block; margin-bottom:5px;">${t.carTitle}</strong>
+                    <small style="color:#666;">${t.message ? t.message.substring(0,35) : 'Inget text'}...</small>
                 </div>`).join('');
         });
     }
@@ -83,13 +103,19 @@
     window.openChat = (tid, pId, title, pEmail) => {
         activeChat = { tid, pId, title, pEmail };
         document.getElementById('inputArea').style.display = 'flex';
+        
         onSnapshot(collection(db, "messages"), (snap) => {
             const msgs = snap.docs.map(d => d.data())
-                .filter(m => ([m.senderId, m.receiverId].sort().join("_") + "_" + m.carTitle) === tid);
+                .filter(m => {
+                    if (!m.senderId || !m.receiverId) return false;
+                    const safeCarTitle = m.carTitle || "Okänd Bil";
+                    return ([m.senderId, m.receiverId].sort().join("_") + "_" + safeCarTitle) === tid;
+                });
+                
             msgs.sort((a,b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
 
             document.getElementById('msgList').innerHTML = msgs.map(m => `
-                <div class="bubble ${m.senderId === currentUser.uid ? 'sent' : 'received'}">${m.message}</div>`).join('');
+                <div class="bubble ${m.senderId === currentUser.uid ? 'sent' : 'received'}">${m.message || ''}</div>`).join('');
             document.getElementById('msgList').scrollTop = 9999;
         });
     };
@@ -97,12 +123,21 @@
     document.getElementById('sendBtn').onclick = async () => {
         const input = document.getElementById('msgInput');
         if (!input.value.trim()) return;
-        await addDoc(collection(db, "messages"), {
-            senderId: currentUser.uid, senderName: "Säljare", senderEmail: currentUser.email,
-            receiverId: activeChat.pId, receiverEmail: activeChat.pEmail,
-            carTitle: activeChat.title, message: input.value, createdAt: serverTimestamp()
-        });
-        input.value = "";
+        try {
+            await addDoc(collection(db, "messages"), {
+                senderId: currentUser.uid, 
+                senderName: currentUser.displayName || "Säljare", 
+                senderEmail: currentUser.email || "",
+                receiverId: activeChat.pId, 
+                receiverEmail: activeChat.pEmail || "",
+                carTitle: activeChat.title, 
+                message: input.value, 
+                createdAt: serverTimestamp()
+            });
+            input.value = "";
+        } catch(e) {
+            console.error("Kunde inte skicka:", e);
+        }
     };
 </script>
 </body>
