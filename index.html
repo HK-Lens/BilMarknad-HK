@@ -4,128 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BilHK | Hitta din nästa bil</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #f58220;
-            --dark: #0f172a;
-            --bg: #f8fafc;
-            --border: #e2e8f0;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --white: #ffffff;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0;
+            --text-main: #1e293b; --text-muted: #64748b; --white: #ffffff;
         }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); }
 
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; }
-
-        /* --- Header --- */
         header {
-            background: var(--white);
-            padding: 1rem 6%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000;
         }
-
         .logo { font-size: 1.5rem; font-weight: 900; color: var(--dark); text-decoration: none; }
         .logo span { color: var(--primary); }
 
         .nav-links { display: flex; align-items: center; gap: 1.5rem; }
         .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; transition: 0.2s; }
-        .nav-links a:hover { color: var(--primary); }
-
-        /* أيقونة الرسائل مع الإشعارات */
-        .notif-btn {
-            position: relative;
-            font-size: 1.4rem;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-        }
+        
+        /* أيقونة الرسائل المستقلة */
+        .notif-btn { position: relative; font-size: 1.4rem; text-decoration: none; display: flex; align-items: center; }
         .notif-badge {
-            position: absolute;
-            top: -5px;
-            right: -8px;
-            background: #ef4444;
-            color: white;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 2px 6px;
-            border-radius: 10px;
-            display: none; /* تظهر فقط عند وجود رسائل */
+            position: absolute; top: -5px; right: -8px; background: #ef4444; color: white;
+            font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 10px; display: none;
         }
 
-        .btn-sell {
-            background: var(--primary);
-            color: white !important;
-            padding: 0.6rem 1.2rem;
-            border-radius: 10px;
-            font-weight: 700;
-        }
+        .btn-sell { background: var(--primary); color: white !important; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 700; }
 
-        /* --- Search Section --- */
         .hero { background: var(--white); padding: 3rem 6%; border-bottom: 1px solid var(--border); }
         .search-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            background: var(--bg);
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid var(--border);
+            max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px; background: var(--bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border);
         }
-        .search-group input, .search-group select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            outline: none;
-        }
-        .search-btn {
-            background: var(--dark);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .search-btn:hover { background: var(--primary); }
+        .search-group input, .search-group select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); outline: none; }
+        .search-btn { background: var(--dark); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
 
-        /* --- Car Grid --- */
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-        .car-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        .car-card {
-            background: var(--white);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            transition: 0.3s;
-            cursor: pointer;
-        }
-        .car-card:hover { transform: translateY(-10px); box-shadow: var(--shadow); }
+        .car-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        .car-card { background: var(--white); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; cursor: pointer; }
+        .car-card:hover { transform: translateY(-10px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
         .car-card img { width: 100%; height: 200px; object-fit: cover; }
         .card-content { padding: 20px; }
         .price-tag { font-size: 1.4rem; font-weight: 900; color: var(--primary); margin-bottom: 5px; }
-        .car-title { font-weight: 800; font-size: 1.1rem; margin-bottom: 8px; }
-        .car-meta { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
     </style>
 </head>
 <body>
@@ -134,11 +55,9 @@
     <a href="index.html" class="logo">BIL<span>HK</span></a>
     <nav class="nav-links">
         <a href="index.html">Hem</a>
-        
-        <a href="messages.html" class="notif-btn" id="notifBtn" title="Meddelanden">
+        <a href="messages.html" class="notif-btn" id="notifBtn">
             ✉️ <span class="notif-badge" id="notifCount">0</span>
         </a>
-
         <a href="my-account.html" id="accBtn" style="display:none;">Mitt Konto</a>
         <a href="login.html" id="loginBtn">Logga in</a>
         <a href="sell.html" class="btn-sell">Sälj bil</a>
@@ -147,28 +66,21 @@
 
 <section class="hero">
     <div class="search-container">
-        <div class="search-group">
-            <input type="text" id="searchBrand" placeholder="Märke (t.ex. Volvo)">
-        </div>
+        <div class="search-group"><input type="text" id="searchBrand" placeholder="Märke"></div>
         <div class="search-group">
             <select id="searchFuel">
                 <option value="all">Drivmedel</option>
                 <option value="Bensin">Bensin</option>
                 <option value="Diesel">Diesel</option>
-                <option value="El">El</option>
             </select>
         </div>
-        <div class="search-group">
-            <input type="number" id="searchPrice" placeholder="Max pris">
-        </div>
-        <button class="search-btn" id="searchBtn">Sök bil</button>
+        <div class="search-group"><input type="number" id="searchPrice" placeholder="Max pris"></div>
+        <button class="search-btn" id="searchBtn">Sök</button>
     </div>
 </section>
 
 <main class="container">
-    <div id="carGrid" class="car-grid">
-        <p style="grid-column: 1/-1; text-align: center;">Laddar bilar...</p>
-    </div>
+    <div id="carGrid" class="car-grid"></div>
 </main>
 
 <script type="module">
@@ -184,59 +96,32 @@
         }
     });
 
-    // نظام الإشعارات المستقل
     function trackNotifications(uid) {
         const q = query(collection(db, "messages"), where("receiverId", "==", uid));
         onSnapshot(q, (snap) => {
             const count = snap.docs.length;
             const badge = document.getElementById('notifCount');
-            if (count > 0) {
-                badge.innerText = count;
-                badge.style.display = 'block';
-            } else {
-                badge.style.display = 'none';
-            }
+            if (count > 0) { badge.innerText = count; badge.style.display = 'block'; }
+            else { badge.style.display = 'none'; }
         });
     }
 
-    // تحميل وعرض السيارات مع محرك البحث
     async function loadCars() {
         const grid = document.getElementById('carGrid');
-        const brand = document.getElementById('searchBrand').value.toLowerCase();
-        const fuel = document.getElementById('searchFuel').value;
-        const price = document.getElementById('searchPrice').value;
-
-        try {
-            const snap = await getDocs(collection(db, "cars"));
-            let cars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-            // منطق البحث
-            const filtered = cars.filter(c => {
-                return (brand === "" || c.brand.toLowerCase().includes(brand)) &&
-                       (fuel === "all" || c.fuelType === fuel) &&
-                       (price === "" || Number(c.price) <= Number(price));
-            });
-
-            if (filtered.length === 0) {
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Hittade inga bilar.</p>";
-                return;
-            }
-
-            grid.innerHTML = filtered.map(c => `
-                <div class="car-card" onclick="window.location.href='details.html?id=${c.id}'">
-                    <img src="${c.images?.[0] || 'placeholder.jpg'}">
+        const snap = await getDocs(collection(db, "cars"));
+        grid.innerHTML = snap.docs.map(doc => {
+            const c = doc.data();
+            return `
+                <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
+                    <img src="${c.images?.[0] || ''}">
                     <div class="card-content">
-                        <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
-                        <div class="car-title">${c.brand} ${c.model}</div>
-                        <div class="car-meta">${c.year} • ${c.mileage} mil • ${c.fuelType}</div>
+                        <div class="price-tag">${c.price} kr</div>
+                        <div style="font-weight:800;">${c.brand} ${c.model}</div>
                     </div>
-                </div>
-            `).join('');
-        } catch (e) { grid.innerHTML = "Ett fel uppstod."; }
+                </div>`;
+        }).join('');
     }
-
-    document.getElementById('searchBtn').onclick = loadCars;
-    window.onload = loadCars;
+    loadCars();
 </script>
 </body>
 </html>
