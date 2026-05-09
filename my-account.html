@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatt & Konto | BilMarknad-HK</title>
+    <title>Mitt Konto | BilMarknad-HK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -15,72 +15,74 @@
             --chat-out: #f58220;
         }
 
-        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
-        header { background: var(--white); padding: 15px 6%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
-        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
-
-        .section-title { font-weight: 900; margin: 30px 0 15px; color: var(--dark); border-left: 4px solid var(--primary); padding-left: 10px; }
-
-        /* تصميم الدردشة الذكي */
-        .chat-container { display: flex; flex-direction: column; gap: 10px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding-bottom: 20px; }
+        header { background: var(--white); padding: 15px 6%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
+        .logo { text-decoration: none; color: var(--dark); font-weight: 900; font-size: 22px; }
+        .logo span { color: var(--primary); }
         
-        .message-bubble { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.4; position: relative; margin-bottom: 5px; }
+        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+        .section-title { font-weight: 900; margin: 30px 0 15px; color: var(--dark); text-transform: uppercase; letter-spacing: 1px; font-size: 18px; }
+
+        /* --- Smart Chat Layout --- */
+        .chat-wrapper { background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 500px; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fafafa; }
         
-        /* رسالة مستلمة (يسار) */
-        .msg-in { align-self: flex-start; background: var(--chat-in); color: var(--dark); border-bottom-left-radius: 4px; }
+        .bubble { max-width: 75%; padding: 12px 16px; border-radius: 15px; font-size: 14px; line-height: 1.4; position: relative; }
+        .bubble.in { align-self: flex-start; background: var(--chat-in); color: var(--dark); border-bottom-left-radius: 2px; }
+        .bubble.out { align-self: flex-end; background: var(--chat-out); color: white; border-bottom-right-radius: 2px; }
         
-        /* رسالة مرسلة (يمين) */
-        .msg-out { align-self: flex-end; background: var(--chat-out); color: white; border-bottom-right-radius: 4px; }
+        .bubble .info { font-size: 10px; opacity: 0.6; display: block; margin-top: 5px; text-align: right; }
+        .bubble .car-ref { font-size: 10px; font-weight: 900; margin-bottom: 4px; display: block; opacity: 0.8; }
 
-        .msg-info { font-size: 10px; opacity: 0.7; margin-top: 5px; display: block; }
-        .car-tag { font-size: 11px; font-weight: 700; margin-bottom: 4px; display: block; text-transform: uppercase; }
+        /* --- Chat Input --- */
+        .chat-input-area { padding: 15px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        .chat-input-area input { flex: 1; padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; outline: none; transition: 0.3s; }
+        .chat-input-area input:focus { border-color: var(--primary); }
+        .send-btn { background: var(--dark); color: white; border: none; padding: 0 25px; border-radius: 30px; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .send-btn:hover { background: var(--primary); }
 
-        /* صندوق الرد السريع */
-        .quick-reply { margin-top: 20px; display: flex; gap: 10px; background: #fff; padding: 10px; border-top: 1px solid #eee; }
-        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 25px; outline: none; }
-        .send-btn { background: var(--dark); color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: 700; }
-
+        /* --- Grid for Ads --- */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .car-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .car-card { background: white; border-radius: 15px; overflow: hidden; border: 1px solid #eee; }
         .car-img { width: 100%; height: 120px; object-fit: cover; }
     </style>
 </head>
 <body>
 
 <header>
-    <a href="index.html" style="text-decoration:none; color:black; font-weight:900;">BIL<span>HK</span></a>
-    <button onclick="logout()" style="background:#fee2e2; color:#ef4444; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;">Logga ut</button>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <button onclick="logout()" style="background:#fee2e2; color:#ef4444; border:none; padding:8px 15px; border-radius:8px; cursor:pointer; font-weight:700;">Logga ut</button>
 </header>
 
 <div class="container">
     <h2 class="section-title">Mina Annonser</h2>
     <div id="myCarsGrid" class="grid"><p>Laddar...</p></div>
 
-    <h2 class="section-title">Smart Chat (دردشة ذكية)</h2>
-    <div id="chatWindow" class="chat-container">
-        <p style="text-align:center; color:#999;">Laddar konversationer...</p>
-    </div>
-
-    <div class="quick-reply">
-        <input type="text" id="replyInput" placeholder="Skriv ett svar...">
-        <button class="send-btn" id="sendBtn">Skicka</button>
+    <h2 class="section-title">Smart Chat</h2>
+    <div class="chat-wrapper">
+        <div id="chatWindow" class="chat-messages">
+            <p style="text-align:center; color:#999; margin-top:100px;">Hämtar konversationer...</p>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="replyInput" placeholder="Skriv ett svar...">
+            <button class="send-btn" id="sendBtn">Skicka</button>
+        </div>
     </div>
 </div>
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { collection, query, where, getDocs, addDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, getDocs, addDoc, serverTimestamp, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     let currentUser = null;
-    let lastChatPartner = null;
-    let lastCarTitle = "";
+    let chatContext = { partnerId: null, partnerEmail: null, carTitle: "Allmän förfrågan" };
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
             loadMyCars();
-            loadSmartChat();
+            listenToMessages();
         } else {
             window.location.href = "login.html";
         }
@@ -90,77 +92,72 @@
         const grid = document.getElementById('myCarsGrid');
         const q = query(collection(db, "cars"), where("sellerId", "==", currentUser.uid));
         const snap = await getDocs(q);
-        grid.innerHTML = snap.docs.length === 0 ? "<p>Inga annonser.</p>" : snap.docs.map(d => `
+        grid.innerHTML = snap.docs.length === 0 ? "<p>Inga annonser upplagda.</p>" : snap.docs.map(d => `
             <div class="car-card">
                 <img src="${d.data().images?.[0] || ''}" class="car-img">
-                <div style="padding:10px; font-weight:700;">${d.data().brand}</div>
+                <div style="padding:10px; font-weight:700; font-size:14px;">${d.data().brand} ${d.data().model}</div>
             </div>
         `).join('');
     }
 
-    async function loadSmartChat() {
+    function listenToMessages() {
         const chatWindow = document.getElementById('chatWindow');
-        try {
-            // جلب كل الرسائل التي تخصني (سواء أرسلتها أو استلمتها)
-            const q1 = query(collection(db, "messages"), where("receiverId", "==", currentUser.uid));
-            const q2 = query(collection(db, "messages"), where("senderId", "==", currentUser.uid));
+        
+        // جلب الرسائل التي يكون المستخدم طرفاً فيها (مرسل أو مستقبل)
+        const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
 
-            const [snap1, snap2] = await Promise.all([getDocs(q1), getDocs(q2)]);
-            
-            let messages = [
-                ...snap1.docs.map(d => ({ ...d.data(), type: 'in' })),
-                ...snap2.docs.map(d => ({ ...d.data(), type: 'out' }))
-            ];
+        onSnapshot(q, (snapshot) => {
+            const allMsgs = snapshot.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(m => m.receiverId === currentUser.uid || m.senderId === currentUser.uid);
 
-            // ترتيب زمني تصاعدي للدردشة (الأقدم فوق والأحدث تحت)
-            messages.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
-
-            if (messages.length === 0) {
-                chatWindow.innerHTML = "<p style='text-align:center;'>Inga meddelanden än.</p>";
+            if (allMsgs.length === 0) {
+                chatWindow.innerHTML = "<p style='text-align:center; margin-top:100px;'>Inga meddelanden ännu.</p>";
                 return;
             }
 
-            chatWindow.innerHTML = messages.map(m => {
-                const isOut = m.type === 'out';
-                // تخزين آخر شخص تواصلت معه للرد عليه لاحقاً
-                if (!isOut) { 
-                    lastChatPartner = m.senderId; 
-                    lastCarTitle = m.carTitle;
+            chatWindow.innerHTML = allMsgs.map(m => {
+                const isOut = m.senderId === currentUser.uid;
+                
+                // تحديث سياق الرد التلقائي بناءً على آخر رسالة مستلمة
+                if (!isOut) {
+                    chatContext.partnerId = m.senderId;
+                    chatContext.partnerEmail = m.senderEmail;
+                    chatContext.carTitle = m.carTitle;
                 }
 
                 return `
-                    <div class="message-bubble ${isOut ? 'msg-out' : 'msg-in'}">
-                        <span class="car-tag">${m.carTitle}</span>
+                    <div class="bubble ${isOut ? 'out' : 'in'}">
+                        <span class="car-ref">${m.carTitle}</span>
                         ${m.message}
-                        <span class="msg-info">${m.createdAt?.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        <span class="info">${m.createdAt?.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                     </div>
                 `;
             }).join('');
             
-            // النزول لآخر رسالة تلقائياً
             chatWindow.scrollTop = chatWindow.scrollHeight;
-
-        } catch (err) { console.error(err); }
+        });
     }
 
-    // إرسال الرد السريع
     document.getElementById('sendBtn').onclick = async () => {
-        const text = document.getElementById('replyInput').value;
-        if (!text || !lastChatPartner) return alert("Välj en konversation att svara på.");
+        const input = document.getElementById('replyInput');
+        if (!input.value.trim() || !chatContext.partnerId) return;
 
         try {
             await addDoc(collection(db, "messages"), {
                 senderId: currentUser.uid,
                 senderName: "Säljare",
                 senderEmail: currentUser.email,
-                receiverId: lastChatPartner,
-                carTitle: lastCarTitle,
-                message: text,
+                receiverId: chatContext.partnerId,
+                receiverEmail: chatContext.partnerEmail,
+                carTitle: "RE: " + chatContext.carTitle,
+                message: input.value,
                 createdAt: serverTimestamp()
             });
-            document.getElementById('replyInput').value = "";
-            loadSmartChat(); // تحديث الدردشة فوراً
-        } catch (err) { alert("Kunde inte skicka."); }
+            input.value = "";
+        } catch (err) {
+            console.error("Error sending message:", err);
+        }
     };
 
     window.logout = () => signOut(auth).then(() => window.location.href="login.html");
