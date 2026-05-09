@@ -8,19 +8,25 @@
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f4f6f9; --border: #e5e7eb; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         
-        .auth-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); width: 100%; max-width: 450px; text-align: center; border: 1px solid var(--border); }
+        .auth-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); width: 100%; max-width: 480px; text-align: center; border: 1px solid var(--border); }
         .logo { text-decoration: none; font-size: 32px; font-weight: 900; color: var(--dark); margin-bottom: 20px; display: block; }
         .logo span { color: var(--primary); }
         
         h2 { font-size: 20px; margin-bottom: 25px; color: var(--dark); }
         
         .form-group { text-align: left; margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px; }
-        input { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f9fafb; font-size: 14px; outline: none; transition: 0.2s; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 6px; }
+        input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f9fafb; font-size: 14px; outline: none; transition: 0.2s; }
         input:focus { border-color: var(--primary); background: white; }
         
+        /* تصميم مربع إخلاء المسؤولية */
+        .terms-box { display: flex; align-items: flex-start; gap: 10px; text-align: left; background: #fff8f1; padding: 15px; border-radius: 10px; border: 1px solid #fde6d5; margin: 20px 0; }
+        .terms-box input[type="checkbox"] { width: 18px; height: 18px; margin-top: 2px; cursor: pointer; accent-color: var(--primary); }
+        .terms-box label { font-size: 12px; color: #555; line-height: 1.5; cursor: pointer; }
+        .terms-box label strong { color: #d946ef; display: block; margin-bottom: 4px; }
+
         .btn-primary { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 10px; transition: 0.3s; }
         .btn-primary:hover { background: #e07210; transform: translateY(-2px); }
         .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
@@ -37,6 +43,11 @@
     
     <form id="regForm">
         <div class="form-group">
+            <label>Ditt namn</label>
+            <input type="text" id="fullName" placeholder="T.ex. Miro" required>
+        </div>
+
+        <div class="form-group">
             <label>E-postadress</label>
             <input type="email" id="email" placeholder="Din e-post" required>
         </div>
@@ -46,7 +57,15 @@
             <input type="password" id="pass" placeholder="Minst 6 tecken" required>
         </div>
 
-        <button type="submit" class="btn-primary" id="regBtn">Registrera dig</button>
+        <div class="terms-box">
+            <input type="checkbox" id="termsCheck" required>
+            <label for="termsCheck">
+                <strong>Ansvarsfriskrivning / Avtal</strong>
+                Jag godkänner att denna webbplats endast är en förmedlingsplattform. Webbplatsen och dess ägare bär inget som helst juridiskt eller ekonomiskt ansvar för affärer, avtal eller konflikter mellan köpare och säljare.
+            </label>
+        </div>
+
+        <button type="submit" class="btn-primary" id="regBtn">Skapa konto</button>
     </form>
 
     <p class="link-alt">Har du redan ett konto? <a href="login.html">Logga in</a></p>
@@ -54,7 +73,7 @@
 
 <script type="module">
     import { auth, db } from './firebase-config.js';
-    import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const regForm = document.getElementById('regForm');
@@ -63,26 +82,46 @@
     regForm.onsubmit = async (e) => {
         e.preventDefault();
         
-        const email = document.getElementById('email').value;
+        const fullName = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
         const password = document.getElementById('pass').value;
+        const termsAccepted = document.getElementById('termsCheck').checked;
+
+        if (!termsAccepted) {
+            alert("Du måste godkänna ansvarsfriskrivningen för att fortsätta.");
+            return;
+        }
 
         regBtn.disabled = true;
-        regBtn.innerText = "Skapar konto...";
+        regBtn.innerText = "Bearbetar...";
 
         try {
-            // 1. إنشاء الحساب في Firebase Auth
+            // 1. إنشاء الحساب
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // 2. إنشاء مستند للمستخدم في Firestore
+            // 2. تحديث ملف المستخدم لإضافة اسمه (مثل: ميرو)
+            await updateProfile(user, { displayName: fullName });
+
+            // 3. إرسال إيميل التفعيل فوراً
+            await sendEmailVerification(user);
+
+            // 4. حفظ بياناته في قاعدة البيانات مع الإقرار بالموافقة على الشروط
             await setDoc(doc(db, "users", user.uid), {
+                name: fullName,
                 email: email,
                 userType: "private",
+                termsAccepted: true,
                 createdAt: serverTimestamp()
             });
 
-            // 3. رسالة النجاح والتحويل لصفحة الدخول
-            alert("Konto skapat! Logga in med dina uppgifter.");
+            // 5. تسجيل الخروج الإجباري حتى يقوم بتأكيد الإيميل
+            await signOut(auth);
+
+            // 6. الرسالة المخصصة باسمه
+            alert(`Grattis ${fullName}, ditt konto har skapats framgångsrikt!\n\nVi har skickat en verifieringslänk till: ${email}\nVänligen bekräfta din e-post innan du loggar in.`);
+            
+            // 7. التحويل لصفحة تسجيل الدخول
             location.href = "login.html"; 
             
         } catch (err) {
@@ -95,7 +134,7 @@
                 alert("Ett fel uppstod: " + err.message);
             }
             regBtn.disabled = false;
-            regBtn.innerText = "Registrera dig";
+            regBtn.innerText = "Skapa konto";
         }
     };
 </script>
