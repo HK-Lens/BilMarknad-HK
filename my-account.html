@@ -13,6 +13,7 @@
             --border: #e2e8f0; 
             --white: #ffffff;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --success: #10b981;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -44,18 +45,18 @@
         .car-img { width: 100%; height: 160px; object-fit: cover; }
         .car-info { padding: 15px; }
 
-        /* تسيق الرسائل */
-        .msg-card { background: white; padding: 20px; border-radius: 15px; border-left: 5px solid var(--primary); margin-bottom: 15px; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        /* تنسيق الرسائل */
+        .msg-card { background: white; padding: 20px; border-radius: 15px; border-left: 5px solid var(--primary); margin-bottom: 15px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .msg-sent { border-left: 5px solid var(--success); background: #f0fdf4; }
+        
         .reply-box { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
-        textarea { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border); font-family: inherit; margin-bottom: 10px; outline: none; }
-        textarea:focus { border-color: var(--primary); }
+        textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); font-family: inherit; margin-bottom: 10px; resize: vertical; }
 
-        .btn { padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
+        .btn { padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-reply { background: none; color: var(--primary); padding-left: 0; }
-        .btn-send { background: var(--dark); color: white; font-size: 13px; }
+        .btn-reply { background: none; color: var(--primary); padding: 5px 0; font-size: 14px; }
+        .btn-send { background: var(--dark); color: white; width: 100%; }
 
-        /* Modal */
         #editModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:2000; }
         .modal-content { background:white; padding:30px; border-radius:20px; width:90%; max-width:400px; }
     </style>
@@ -78,7 +79,7 @@
         <p>Laddar dina annonser...</p>
     </div>
 
-    <h2 class="section-title">Mottagna förfrågningar</h2>
+    <h2 class="section-title">Meddelanden & Svar</h2>
     <div id="messagesGrid">
         <p>Laddar meddelanden...</p>
     </div>
@@ -86,13 +87,13 @@
 
 <div id="editModal">
     <div class="modal-content">
-        <h3 style="margin-bottom: 20px;">Redigera annons</h3>
-        <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 5px;">PRIS (KR)</label>
-        <input type="number" id="editPrice" style="width:100%; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #ddd;">
-        
-        <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 5px;">MILTAL</label>
-        <input type="number" id="editMileage" style="width:100%; padding:12px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd;">
-        
+        <h3>Redigera annons</h3>
+        <div style="margin: 20px 0;">
+            <label style="font-size: 12px; font-weight: 700;">PRIS (KR)</label>
+            <input type="number" id="editPrice" style="width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
+            <label style="font-size: 12px; font-weight: 700;">MILTAL</label>
+            <input type="number" id="editMileage" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
+        </div>
         <div style="display: flex; gap: 10px;">
             <button id="saveEditBtn" class="btn btn-primary" style="flex:1;">Spara</button>
             <button id="closeModalBtn" class="btn" style="flex:1; background:#e2e8f0;">Avbryt</button>
@@ -120,7 +121,6 @@
         }
     });
 
-    // تحميل الإعلانات الخاصة بي
     async function loadMyCars() {
         const grid = document.getElementById('myCarsGrid');
         try {
@@ -141,8 +141,8 @@
                         <div style="color: var(--primary); font-weight: 900; margin: 5px 0;">${Number(c.price).toLocaleString()} kr</div>
                         <div style="font-size: 12px; color: #64748b; margin-bottom: 15px;">${c.year} | ${c.mileage} mil</div>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-edit" data-id="${c.id}" data-price="${c.price}" data-mile="${c.mileage}" style="flex:1; background: #e2e8f0; font-size: 12px;">Redigera</button>
-                            <button class="btn btn-delete" data-id="${c.id}" style="flex:1; background: #fee2e2; color: #ef4444; font-size: 12px;">Radera</button>
+                            <button class="btn btn-edit" data-id="${c.id}" data-price="${c.price}" data-mile="${c.mileage}" style="flex:1; background: #e2e8f0; font-size: 12px; padding: 8px;">Redigera</button>
+                            <button class="btn btn-delete" data-id="${c.id}" style="flex:1; background: #fee2e2; color: #ef4444; font-size: 12px; padding: 8px;">Radera</button>
                         </div>
                     </div>
                 </div>
@@ -152,83 +152,90 @@
         } catch (err) { console.error(err); }
     }
 
-    // تحميل الرسائل مع ميزة الرد
     async function loadMessages() {
         const msgGrid = document.getElementById('messagesGrid');
         try {
-            const q = query(collection(db, "messages"), where("receiverId", "==", currentUser.uid), orderBy("createdAt", "desc"));
-            const snap = await getDocs(q);
-            const msgs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            // جلب الرسائل المستلمة
+            const qRec = query(collection(db, "messages"), where("receiverId", "==", currentUser.uid));
+            // جلب الرسائل المرسلة (الردود)
+            const qSent = query(collection(db, "messages"), where("senderId", "==", currentUser.uid));
 
-            if (msgs.length === 0) {
-                msgGrid.innerHTML = "<p>Inga mottagna meddelanden än.</p>";
+            const [snapRec, snapSent] = await Promise.all([getDocs(qRec), getDocs(qSent)]);
+            
+            let allMsgs = [
+                ...snapRec.docs.map(d => ({ id: d.id, ...d.data(), type: 'received' })),
+                ...snapSent.docs.map(d => ({ id: d.id, ...d.data(), type: 'sent' }))
+            ];
+
+            // ترتيب حسب التاريخ
+            allMsgs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+            if (allMsgs.length === 0) {
+                msgGrid.innerHTML = "<p>Inga meddelanden än.</p>";
                 return;
             }
 
-            msgGrid.innerHTML = msgs.map(m => `
-                <div class="msg-card">
-                    <div style="font-weight: 800; color: var(--dark); font-size: 15px;">${m.carTitle || 'Förfrågan'}</div>
-                    <div style="font-size: 12px; color: #64748b; margin-bottom: 10px;">Från: ${m.senderName} (${m.senderEmail})</div>
-                    <p style="background: #f1f5f9; padding: 12px; border-radius: 10px; font-size: 14px; line-height: 1.5;">${m.message}</p>
+            msgGrid.innerHTML = allMsgs.map(m => `
+                <div class="msg-card ${m.type === 'sent' ? 'msg-sent' : ''}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="font-weight: 800; font-size: 14px;">
+                            ${m.type === 'sent' ? '📤 SVAR:' : '📥 FRÅGA:'} ${m.carTitle}
+                        </div>
+                        <span style="font-size: 10px; color: #94a3b8;">${m.createdAt?.toDate().toLocaleString('sv-SE')}</span>
+                    </div>
+                    <div style="font-size: 12px; color: #64748b; margin: 5px 0 10px;">
+                        ${m.type === 'sent' ? `Till: ${m.receiverEmail || 'Användare'}` : `Från: ${m.senderName}`}
+                    </div>
+                    <p style="background: ${m.type === 'sent' ? '#ffffff' : '#f1f5f9'}; padding: 12px; border-radius: 10px; font-size: 14px; border: 1px solid #e2e8f0;">
+                        ${m.message}
+                    </p>
                     
-                    <button class="btn btn-reply" data-id="${m.id}">Svara (رد)</button>
-
-                    <div id="reply-box-${m.id}" class="reply-box">
-                        <textarea id="text-${m.id}" placeholder="Skriv ditt svar..."></textarea>
-                        <button class="btn btn-send" data-msgid="${m.id}" data-target="${m.senderId}" data-title="${m.carTitle}">Skicka svar</button>
-                    </div>
-
-                    <div style="font-size: 10px; color: #94a3b8; margin-top: 10px; text-align: right;">
-                        ${m.createdAt?.toDate().toLocaleString('sv-SE')}
-                    </div>
+                    ${m.type === 'received' ? `
+                        <button class="btn btn-reply" data-id="${m.id}">Svara</button>
+                        <div id="reply-box-${m.id}" class="reply-box">
+                            <textarea id="text-${m.id}" placeholder="Skriv ditt svar..."></textarea>
+                            <button class="btn btn-send" data-msgid="${m.id}" data-target="${m.senderId}" data-targetemail="${m.senderEmail}" data-title="${m.carTitle}">Skicka svar</button>
+                        </div>
+                    ` : ''}
                 </div>
             `).join('');
 
             attachMessageEvents();
         } catch (err) {
+            console.error(err);
             msgGrid.innerHTML = "<p>Kunde inte ladda meddelanden.</p>";
         }
     }
 
     function attachMessageEvents() {
-        // فتح صندوق الرد
         document.querySelectorAll('.btn-reply').forEach(btn => {
             btn.onclick = () => {
-                const id = btn.dataset.id;
-                const box = document.getElementById(`reply-box-${id}`);
+                const box = document.getElementById(`reply-box-${btn.dataset.id}`);
                 box.style.display = box.style.display === 'block' ? 'none' : 'block';
             };
         });
 
-        // إرسال الرد
         document.querySelectorAll('.btn-send').forEach(btn => {
             btn.onclick = async () => {
-                const { msgid, target, title } = btn.dataset;
+                const { msgid, target, targetemail, title } = btn.dataset;
                 const text = document.getElementById(`text-${msgid}`).value;
-
-                if (!text) return alert("Skriv ett svar först.");
+                if (!text) return;
 
                 btn.disabled = true;
-                btn.innerText = "Skickar...";
-
                 try {
                     await addDoc(collection(db, "messages"), {
                         senderId: currentUser.uid,
-                        senderName: "Säljare (هيثم)",
+                        senderName: "Säljare",
                         senderEmail: currentUser.email,
                         receiverId: target,
-                        carTitle: "RE: " + title,
+                        receiverEmail: targetemail,
+                        carTitle: title,
                         message: text,
                         createdAt: serverTimestamp()
                     });
                     alert("Svar skickat!");
-                    document.getElementById(`reply-box-${msgid}`).style.display = 'none';
-                } catch (err) {
-                    alert("Kunde inte skicka svar.");
-                } finally {
-                    btn.disabled = false;
-                    btn.innerText = "Skicka svar";
-                }
+                    location.reload();
+                } catch (err) { alert("Fel vid sändning."); }
             };
         });
     }
@@ -262,7 +269,6 @@
 
     document.getElementById('closeModalBtn').onclick = () => document.getElementById('editModal').style.display = 'none';
     document.getElementById('logoutAction').onclick = () => signOut(auth).then(() => window.location.href = "login.html");
-
 </script>
 </body>
 </html>
