@@ -3,81 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skapa konto | BILHK PRO</title>
+    <title>Skapa konto | BILHK Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f4f6f9; --border: #e5e7eb; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         
-        .auth-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); width: 100%; max-width: 500px; text-align: center; border: 1px solid var(--border); }
-        .logo { text-decoration: none; font-size: 32px; font-weight: 900; color: var(--dark); margin-bottom: 20px; display: block; }
+        .auth-card { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); width: 100%; max-width: 550px; border: 1px solid var(--border); }
+        .logo { text-decoration: none; font-size: 30px; font-weight: 900; color: var(--dark); margin-bottom: 20px; display: block; text-align: center; }
         .logo span { color: var(--primary); }
         
-        h2 { font-size: 22px; margin-bottom: 20px; color: var(--dark); }
+        h2 { font-size: 22px; margin-bottom: 20px; text-align: center; color: var(--dark); }
         
-        .form-group { text-align: left; margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 6px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
         
-        input, select { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f9fafb; font-size: 14px; outline: none; transition: 0.2s; }
-        input:focus, select:focus { border-color: var(--primary); background: white; }
+        .form-group { margin-bottom: 15px; }
+        .full-width { grid-column: 1 / -1; }
+        
+        label { display: block; font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 6px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f9fafb; font-size: 14px; outline: none; }
+        input:focus { border-color: var(--primary); background: white; }
 
-        /* تنسيق صندوق إخلاء المسؤولية */
-        .disclaimer-container { background: #fff8f1; border: 1px solid #fde6d5; padding: 15px; border-radius: 12px; margin: 20px 0; text-align: left; display: flex; gap: 12px; }
-        .disclaimer-container input { width: 22px; height: 22px; margin-top: 3px; cursor: pointer; accent-color: var(--primary); }
-        .disclaimer-container label { font-size: 12px; color: #555; line-height: 1.6; cursor: pointer; }
-        .disclaimer-container label strong { color: var(--primary); display: block; margin-bottom: 4px; font-size: 14px; }
+        /* صندوق إخلاء المسؤولية */
+        .disclaimer-box { grid-column: 1 / -1; background: #fff8f1; border: 1px solid #fde6d5; padding: 15px; border-radius: 12px; margin: 10px 0; display: flex; gap: 10px; }
+        .disclaimer-box input { width: 20px; height: 20px; margin-top: 3px; cursor: pointer; accent-color: var(--primary); }
+        .disclaimer-box label { font-size: 12px; color: #555; line-height: 1.5; font-weight: 400; }
 
-        .btn-primary { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        .btn-primary:hover { background: #e07210; transform: translateY(-2px); }
-        .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-primary { grid-column: 1 / -1; width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-primary:hover { background: #e07210; }
+        .btn-primary:disabled { background: #ccc; }
 
-        .link-alt { margin-top: 25px; font-size: 14px; color: #64748b; }
-        .link-alt a { color: var(--primary); text-decoration: none; font-weight: 700; }
+        #businessFields { display: none; grid-column: 1 / -1; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #eee; pt: 15px; margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="auth-card">
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <h2>Skapa nytt konto</h2>
+    <h2>Skapa konto</h2>
     
-    <form id="regForm">
-        <div class="form-group">
+    <form id="regForm" class="form-grid">
+        <div class="form-group full-width">
             <label>Kontotyp</label>
-            <select id="userType" required>
+            <select id="userType" onchange="toggleFields()">
                 <option value="private">Privatperson</option>
-                <option value="business">Företag / Bilhandlare</option>
+                <option value="business">Företag (Bilhandlare)</option>
             </select>
         </div>
 
-        <div class="form-group">
-            <label>Namn / Företagsnamn</label>
-            <input type="text" id="fullName" placeholder="T.ex. Miro eller Bil AB" required>
+        <div class="form-group full-width">
+            <label id="nameLabel">Ditt Namn</label>
+            <input type="text" id="fullName" placeholder="T.ex. Miro" required>
         </div>
 
-        <div class="form-group">
+        <div id="businessFields" class="full-width">
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr; width: 100%;">
+                <div class="form-group">
+                    <label>Organisationsnummer</label>
+                    <input type="text" id="taxId" placeholder="55XXXX-XXXX">
+                </div>
+                <div class="form-group">
+                    <label>Företagsadress</label>
+                    <input type="text" id="address" placeholder="Gatuadress, Postort">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group full-width">
             <label>E-postadress</label>
-            <input type="email" id="email" placeholder="Din e-post" required>
+            <input type="email" id="email" required>
         </div>
         
         <div class="form-group">
             <label>Lösenord</label>
-            <input type="password" id="pass" placeholder="Minst 6 tecken" required>
+            <input type="password" id="pass" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Bekräfta lösenord</label>
+            <input type="password" id="confirmPass" required>
         </div>
 
-        <div class="disclaimer-container">
+        <div class="disclaimer-box">
             <input type="checkbox" id="termsCheck" required>
             <label for="termsCheck">
-                <strong>Ansvarsfriskrivning</strong>
-                Jag godkänner att denna webbplats endast är en förmedlingsplattform. Webbplatsen och dess ägare bär inget juridiskt eller ekonomiskt ansvar för affärer, avtal eller konflikter mellan köpare och säljare.
+                <strong>Ansvarsfriskrivning:</strong>
+                Jag godkänner att BILHK endast är en annonsplats. Webbplatsen tar inget ansvar för avtal, skick på fordon eller transaktioner mellan parterna.
             </label>
         </div>
 
-        <button type="submit" class="btn-primary" id="regBtn">Skapa konto</button>
+        <button type="submit" class="btn-primary" id="regBtn">Registrera dig</button>
     </form>
-
-    <p class="link-alt">Har du redan ett konto? <a href="login.html">Logga in</a></p>
 </div>
 
 <script type="module">
@@ -85,59 +103,57 @@
     import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const regForm = document.getElementById('regForm');
-    const regBtn = document.getElementById('regBtn');
+    window.toggleFields = () => {
+        const type = document.getElementById('userType').value;
+        const bFields = document.getElementById('businessFields');
+        const nLabel = document.getElementById('nameLabel');
+        
+        if(type === 'business') {
+            bFields.style.display = 'grid';
+            nLabel.innerText = "Företagsnamn";
+        } else {
+            bFields.style.display = 'none';
+            nLabel.innerText = "Ditt Namn";
+        }
+    };
 
-    regForm.onsubmit = async (e) => {
+    document.getElementById('regForm').onsubmit = async (e) => {
         e.preventDefault();
         
-        const userType = document.getElementById('userType').value;
-        const fullName = document.getElementById('fullName').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('pass').value;
-        const termsAccepted = document.getElementById('termsCheck').checked;
+        const pass = document.getElementById('pass').value;
+        const confirm = document.getElementById('confirmPass').value;
+        const name = document.getElementById('fullName').value;
 
+        if (pass !== confirm) { alert("Lösenorden matchar inte!"); return; }
+        if (pass.length < 6) { alert("Lösenordet måste vara minst 6 tecken!"); return; }
+
+        const regBtn = document.getElementById('regBtn');
         regBtn.disabled = true;
         regBtn.innerText = "Behandlar...";
 
         try {
-            // 1. إنشاء الحساب
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, document.getElementById('email').value, pass);
             const user = userCredential.user;
 
-            // 2. تحديث الاسم في الملف الشخصي
-            await updateProfile(user, { displayName: fullName });
-
-            // 3. إرسال بريد التأكيد
+            await updateProfile(user, { displayName: name });
             await sendEmailVerification(user);
 
-            // 4. حفظ البيانات في Firestore مع نوع الحساب
             await setDoc(doc(db, "users", user.uid), {
-                name: fullName,
-                email: email,
-                userType: userType,
-                termsAccepted: true,
+                name: name,
+                email: user.email,
+                userType: document.getElementById('userType').value,
+                taxId: document.getElementById('taxId').value || "",
+                address: document.getElementById('address').value || "",
                 createdAt: serverTimestamp()
             });
 
-            // 5. تسجيل الخروج لفرض تفعيل الإيميل
             await signOut(auth);
+            alert(`Grattis ${name}! Kontot är skapat.\nKolla din e-post för att bekräfta kontot innan du loggar in.`);
+            window.location.href = "login.html";
 
-            // 6. رسالة النجاح المخصصة
-            alert(`Tack ${fullName}! Ditt konto har skapats.\n\nEn bekräftelselänk har skickats till ${email}.\nVänligen aktivera ditt konto via länken innan du loggar in.`);
-            
-            // 7. التحويل لصفحة تسجيل الدخول
-            window.location.href = "login.html"; 
-            
         } catch (err) {
-            console.error(err);
-            if (err.code === 'auth/email-already-in-use') {
-                alert("Denna e-post används redan. Logga in istället.");
-            } else {
-                alert("Ett fel uppstod: " + err.message);
-            }
+            alert("Fel: " + err.message);
             regBtn.disabled = false;
-            regBtn.innerText = "Skapa konto";
         }
     };
 </script>
