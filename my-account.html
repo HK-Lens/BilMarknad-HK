@@ -24,24 +24,25 @@
         .section-title { font-weight: 900; margin: 30px 0 15px; color: var(--dark); text-transform: uppercase; letter-spacing: 1px; font-size: 18px; }
 
         /* --- Smart Chat Layout --- */
-        .chat-wrapper { background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 500px; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fafafa; }
+        .chat-wrapper { background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 550px; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fafafa; }
         
-        .bubble { max-width: 75%; padding: 12px 16px; border-radius: 15px; font-size: 14px; line-height: 1.4; position: relative; }
+        .bubble { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.5; position: relative; }
         .bubble.in { align-self: flex-start; background: var(--chat-in); color: var(--dark); border-bottom-left-radius: 2px; }
         .bubble.out { align-self: flex-end; background: var(--chat-out); color: white; border-bottom-right-radius: 2px; }
         
-        .bubble .info { font-size: 10px; opacity: 0.6; display: block; margin-top: 5px; text-align: right; }
+        .bubble .info { font-size: 10px; opacity: 0.6; display: block; margin-top: 5px; }
+        .bubble.out .info { text-align: right; }
         .bubble .car-ref { font-size: 10px; font-weight: 900; margin-bottom: 4px; display: block; opacity: 0.8; }
 
-        /* --- Chat Input --- */
+        /* --- Chat Input Area --- */
         .chat-input-area { padding: 15px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; }
         .chat-input-area input { flex: 1; padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; outline: none; transition: 0.3s; }
         .chat-input-area input:focus { border-color: var(--primary); }
         .send-btn { background: var(--dark); color: white; border: none; padding: 0 25px; border-radius: 30px; cursor: pointer; font-weight: 700; transition: 0.3s; }
         .send-btn:hover { background: var(--primary); }
 
-        /* --- Grid for Ads --- */
+        /* --- Ads Grid --- */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
         .car-card { background: white; border-radius: 15px; overflow: hidden; border: 1px solid #eee; }
         .car-img { width: 100%; height: 120px; object-fit: cover; }
@@ -51,7 +52,7 @@
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <button onclick="logout()" style="background:#fee2e2; color:#ef4444; border:none; padding:8px 15px; border-radius:8px; cursor:pointer; font-weight:700;">Logga ut</button>
+    <button id="logoutAction" style="background:#fee2e2; color:#ef4444; border:none; padding:8px 15px; border-radius:8px; cursor:pointer; font-weight:700;">Logga ut</button>
 </header>
 
 <div class="container">
@@ -61,7 +62,7 @@
     <h2 class="section-title">Smart Chat</h2>
     <div class="chat-wrapper">
         <div id="chatWindow" class="chat-messages">
-            <p style="text-align:center; color:#999; margin-top:100px;">Hämtar konversationer...</p>
+            <p style="text-align:center; color:#999; margin-top:150px;">Väntar på meddelanden...</p>
         </div>
         <div class="chat-input-area">
             <input type="text" id="replyInput" placeholder="Skriv ett svar...">
@@ -72,62 +73,65 @@
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { collection, query, where, getDocs, addDoc, serverTimestamp, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, addDoc, serverTimestamp, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     let currentUser = null;
-    let chatContext = { partnerId: null, partnerEmail: null, carTitle: "Allmän förfrågan" };
+    let chatPartner = { id: null, email: null, title: "Förfrågan" };
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
             loadMyCars();
-            listenToMessages();
+            startChatListener();
         } else {
             window.location.href = "login.html";
         }
     });
 
+    // تحميل إعلاناتي
     async function loadMyCars() {
         const grid = document.getElementById('myCarsGrid');
         const q = query(collection(db, "cars"), where("sellerId", "==", currentUser.uid));
-        const snap = await getDocs(q);
-        grid.innerHTML = snap.docs.length === 0 ? "<p>Inga annonser upplagda.</p>" : snap.docs.map(d => `
-            <div class="car-card">
-                <img src="${d.data().images?.[0] || ''}" class="car-img">
-                <div style="padding:10px; font-weight:700; font-size:14px;">${d.data().brand} ${d.data().model}</div>
-            </div>
-        `).join('');
+        
+        onSnapshot(q, (snap) => {
+            grid.innerHTML = snap.docs.length === 0 ? "<p>Inga annonser upplagda.</p>" : snap.docs.map(d => `
+                <div class="car-card">
+                    <img src="${d.data().images?.[0] || ''}" class="car-img">
+                    <div style="padding:10px; font-weight:700; font-size:13px;">${d.data().brand} ${d.data().model}</div>
+                </div>
+            `).join('');
+        });
     }
 
-    function listenToMessages() {
+    // نظام الدردشة المباشر (الطرفين)
+    function startChatListener() {
         const chatWindow = document.getElementById('chatWindow');
-        
-        // جلب الرسائل التي يكون المستخدم طرفاً فيها (مرسل أو مستقبل)
         const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
 
         onSnapshot(q, (snapshot) => {
-            const allMsgs = snapshot.docs
+            // تصفية الرسائل التي يكون المستخدم الحالي طرفاً فيها
+            const messages = snapshot.docs
                 .map(d => ({ id: d.id, ...d.data() }))
                 .filter(m => m.receiverId === currentUser.uid || m.senderId === currentUser.uid);
 
-            if (allMsgs.length === 0) {
-                chatWindow.innerHTML = "<p style='text-align:center; margin-top:100px;'>Inga meddelanden ännu.</p>";
+            if (messages.length === 0) {
+                chatWindow.innerHTML = "<p style='text-align:center; margin-top:150px;'>Inga meddelanden ännu.</p>";
                 return;
             }
 
-            chatWindow.innerHTML = allMsgs.map(m => {
-                const isOut = m.senderId === currentUser.uid;
+            chatWindow.innerHTML = messages.map(m => {
+                const isMine = m.senderId === currentUser.uid;
                 
-                // تحديث سياق الرد التلقائي بناءً على آخر رسالة مستلمة
-                if (!isOut) {
-                    chatContext.partnerId = m.senderId;
-                    chatContext.partnerEmail = m.senderEmail;
-                    chatContext.carTitle = m.carTitle;
+                // إذا لم تكن الرسالة لي، فأنا المستلم، إذن الطرف الآخر هو المرسل
+                if (!isMine) {
+                    chatPartner.id = m.senderId;
+                    chatPartner.email = m.senderEmail;
+                    chatPartner.title = m.carTitle;
                 }
 
                 return `
-                    <div class="bubble ${isOut ? 'out' : 'in'}">
+                    <div class="bubble ${isMine ? 'out' : 'in'}">
                         <span class="car-ref">${m.carTitle}</span>
                         ${m.message}
                         <span class="info">${m.createdAt?.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
@@ -139,28 +143,31 @@
         });
     }
 
+    // إرسال الرد
     document.getElementById('sendBtn').onclick = async () => {
         const input = document.getElementById('replyInput');
-        if (!input.value.trim() || !chatContext.partnerId) return;
+        const text = input.value.trim();
+
+        if (!text || !chatPartner.id) return;
 
         try {
             await addDoc(collection(db, "messages"), {
                 senderId: currentUser.uid,
-                senderName: "Säljare",
+                senderName: currentUser.displayName || "Säljare",
                 senderEmail: currentUser.email,
-                receiverId: chatContext.partnerId,
-                receiverEmail: chatContext.partnerEmail,
-                carTitle: "RE: " + chatContext.carTitle,
-                message: input.value,
+                receiverId: chatPartner.id,
+                receiverEmail: chatPartner.email,
+                carTitle: chatPartner.title,
+                message: text,
                 createdAt: serverTimestamp()
             });
             input.value = "";
         } catch (err) {
-            console.error("Error sending message:", err);
+            console.error("Fel vid sändning:", err);
         }
     };
 
-    window.logout = () => signOut(auth).then(() => window.location.href="login.html");
+    document.getElementById('logoutAction').onclick = () => signOut(auth).then(() => window.location.href="login.html");
 </script>
 
 </body>
