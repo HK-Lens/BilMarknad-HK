@@ -79,25 +79,9 @@
         <p>Laddar dina annonser...</p>
     </div>
 
-    <h2 class="section-title">Meddelanden & Svar</h2>
+    <h2 class="section-title">Konversationer (الرسائل والردود)</h2>
     <div id="messagesGrid">
         <p>Laddar meddelanden...</p>
-    </div>
-</div>
-
-<div id="editModal">
-    <div class="modal-content">
-        <h3>Redigera annons</h3>
-        <div style="margin: 20px 0;">
-            <label style="font-size: 12px; font-weight: 700;">PRIS (KR)</label>
-            <input type="number" id="editPrice" style="width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
-            <label style="font-size: 12px; font-weight: 700;">MILTAL</label>
-            <input type="number" id="editMileage" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
-        </div>
-        <div style="display: flex; gap: 10px;">
-            <button id="saveEditBtn" class="btn btn-primary" style="flex:1;">Spara</button>
-            <button id="closeModalBtn" class="btn" style="flex:1; background:#e2e8f0;">Avbryt</button>
-        </div>
     </div>
 </div>
 
@@ -107,12 +91,11 @@
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     let currentUser = null;
-    let currentEditId = null;
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
-            document.getElementById('userGreeting').innerText = `Hej, ${user.displayName || 'Bilvän'}!`;
+            document.getElementById('userGreeting').innerText = `Hej, ${user.displayName || 'Användare'}!`;
             document.getElementById('userEmail').innerText = user.email;
             loadMyCars();
             loadMessages();
@@ -126,48 +109,36 @@
         try {
             const q = query(collection(db, "cars"), where("sellerId", "==", currentUser.uid));
             const snap = await getDocs(q);
-            const cars = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-            if (cars.length === 0) {
-                grid.innerHTML = "<p>Du har inga aktiva annonser.</p>";
-                return;
-            }
-
-            grid.innerHTML = cars.map(c => `
-                <div class="car-card" id="card-${c.id}">
-                    <img src="${c.images?.[0] || 'placeholder.jpg'}" class="car-img">
-                    <div class="car-info">
-                        <div style="font-weight: 800;">${c.brand} ${c.model}</div>
-                        <div style="color: var(--primary); font-weight: 900; margin: 5px 0;">${Number(c.price).toLocaleString()} kr</div>
-                        <div style="font-size: 12px; color: #64748b; margin-bottom: 15px;">${c.year} | ${c.mileage} mil</div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-edit" data-id="${c.id}" data-price="${c.price}" data-mile="${c.mileage}" style="flex:1; background: #e2e8f0; font-size: 12px; padding: 8px;">Redigera</button>
-                            <button class="btn btn-delete" data-id="${c.id}" style="flex:1; background: #fee2e2; color: #ef4444; font-size: 12px; padding: 8px;">Radera</button>
+            grid.innerHTML = snap.docs.length === 0 ? "<p>Inga annonser.</p>" : snap.docs.map(d => {
+                const c = d.data();
+                return `
+                    <div class="car-card">
+                        <img src="${c.images?.[0] || ''}" class="car-img">
+                        <div class="car-info">
+                            <div style="font-weight:800;">${c.brand}</div>
+                            <div style="color:var(--primary); font-weight:900;">${c.price} kr</div>
                         </div>
-                    </div>
-                </div>
-            `).join('');
-
-            attachCarEvents();
+                    </div>`;
+            }).join('');
         } catch (err) { console.error(err); }
     }
 
     async function loadMessages() {
         const msgGrid = document.getElementById('messagesGrid');
         try {
-            // جلب الرسائل المستلمة
-            const qRec = query(collection(db, "messages"), where("receiverId", "==", currentUser.uid));
-            // جلب الرسائل المرسلة (الردود)
-            const qSent = query(collection(db, "messages"), where("senderId", "==", currentUser.uid));
+            // جلب الرسائل حيث المستخدم هو المستلم (الأسئلة الواردة)
+            const qInbox = query(collection(db, "messages"), where("receiverId", "==", currentUser.uid));
+            // جلب الرسائل حيث المستخدم هو المرسل (الردود التي أرسلها أو أسئلة أرسلها هو)
+            const qOutbox = query(collection(db, "messages"), where("senderId", "==", currentUser.uid));
 
-            const [snapRec, snapSent] = await Promise.all([getDocs(qRec), getDocs(qSent)]);
+            const [snapInbox, snapOutbox] = await Promise.all([getDocs(qInbox), getDocs(qOutbox)]);
             
             let allMsgs = [
-                ...snapRec.docs.map(d => ({ id: d.id, ...d.data(), type: 'received' })),
-                ...snapSent.docs.map(d => ({ id: d.id, ...d.data(), type: 'sent' }))
+                ...snapInbox.docs.map(d => ({ id: d.id, ...d.data(), isMine: false })),
+                ...snapOutbox.docs.map(d => ({ id: d.id, ...d.data(), isMine: true }))
             ];
 
-            // ترتيب حسب التاريخ
+            // ترتيب زمني للأحدث
             allMsgs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
             if (allMsgs.length === 0) {
@@ -176,21 +147,20 @@
             }
 
             msgGrid.innerHTML = allMsgs.map(m => `
-                <div class="msg-card ${m.type === 'sent' ? 'msg-sent' : ''}">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div class="msg-card ${m.isMine ? 'msg-sent' : ''}">
+                    <div style="display: flex; justify-content: space-between;">
                         <div style="font-weight: 800; font-size: 14px;">
-                            ${m.type === 'sent' ? '📤 SVAR:' : '📥 FRÅGA:'} ${m.carTitle}
+                            ${m.isMine ? '📤 Skickat:' : '📥 Mottaget:'} ${m.carTitle}
                         </div>
-                        <span style="font-size: 10px; color: #94a3b8;">${m.createdAt?.toDate().toLocaleString('sv-SE')}</span>
                     </div>
-                    <div style="font-size: 12px; color: #64748b; margin: 5px 0 10px;">
-                        ${m.type === 'sent' ? `Till: ${m.receiverEmail || 'Användare'}` : `Från: ${m.senderName}`}
+                    <div style="font-size: 12px; color: #64748b; margin: 5px 0;">
+                        ${m.isMine ? `Till: ${m.receiverEmail || 'Säljare'}` : `Från: ${m.senderName}`}
                     </div>
-                    <p style="background: ${m.type === 'sent' ? '#ffffff' : '#f1f5f9'}; padding: 12px; border-radius: 10px; font-size: 14px; border: 1px solid #e2e8f0;">
+                    <p style="background: white; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
                         ${m.message}
                     </p>
                     
-                    ${m.type === 'received' ? `
+                    ${!m.isMine ? `
                         <button class="btn btn-reply" data-id="${m.id}">Svara</button>
                         <div id="reply-box-${m.id}" class="reply-box">
                             <textarea id="text-${m.id}" placeholder="Skriv ditt svar..."></textarea>
@@ -202,7 +172,6 @@
 
             attachMessageEvents();
         } catch (err) {
-            console.error(err);
             msgGrid.innerHTML = "<p>Kunde inte ladda meddelanden.</p>";
         }
     }
@@ -225,11 +194,11 @@
                 try {
                     await addDoc(collection(db, "messages"), {
                         senderId: currentUser.uid,
-                        senderName: "Säljare",
+                        senderName: currentUser.displayName || "Användare",
                         senderEmail: currentUser.email,
                         receiverId: target,
                         receiverEmail: targetemail,
-                        carTitle: title,
+                        carTitle: "RE: " + title,
                         message: text,
                         createdAt: serverTimestamp()
                     });
@@ -240,34 +209,6 @@
         });
     }
 
-    function attachCarEvents() {
-        document.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.onclick = () => {
-                currentEditId = btn.dataset.id;
-                document.getElementById('editPrice').value = btn.dataset.price;
-                document.getElementById('editMileage').value = btn.dataset.mile;
-                document.getElementById('editModal').style.display = 'flex';
-            };
-        });
-
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.onclick = async () => {
-                if (confirm("Ta bort annonsen?")) {
-                    await deleteDoc(doc(db, "cars", btn.dataset.id));
-                    location.reload();
-                }
-            };
-        });
-    }
-
-    document.getElementById('saveEditBtn').onclick = async () => {
-        const p = Number(document.getElementById('editPrice').value);
-        const m = Number(document.getElementById('editMileage').value);
-        await updateDoc(doc(db, "cars", currentEditId), { price: p, mileage: m });
-        location.reload();
-    };
-
-    document.getElementById('closeModalBtn').onclick = () => document.getElementById('editModal').style.display = 'none';
     document.getElementById('logoutAction').onclick = () => signOut(auth).then(() => window.location.href = "login.html");
 </script>
 </body>
