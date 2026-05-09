@@ -2,150 +2,96 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mitt Garage | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Meddelanden | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
-        header { background: white; padding: 15px 6%; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-        .logo { text-decoration: none; font-size: 22px; font-weight: 900; color: var(--dark); }
-        .logo span { color: var(--primary); }
-
-        .dashboard-hero { background: var(--dark); color: white; padding: 60px 6%; text-align: center; }
-        .tabs { display: flex; justify-content: center; gap: 10px; margin: -25px auto 30px; }
-        .tab-btn { padding: 15px 30px; border: none; border-radius: 50px; cursor: pointer; font-weight: 700; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; }
-        .tab-btn.active { background: var(--primary); color: white; }
-
-        .grid { max-width: 1200px; margin: 40px auto; padding: 0 6%; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; flex: 1; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; position: relative; transition: 0.3s; }
-        .car-card:hover { transform: translateY(-5px); }
-        .car-card img { width: 100%; height: 180px; object-fit: cover; }
-        .card-info { padding: 15px; }
-        .badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: 700; }
-        .btn-delete { width: 100%; background: #fee2e2; color: #ef4444; border: none; padding: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-delete:hover { background: #fecaca; }
-
-        footer { background: #fff; padding: 40px 6%; border-top: 1px solid #e2e8f0; margin-top: 50px; text-align: center; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f0f2f5; --white: #ffffff; --border: #e4e6eb; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); height: 100vh; overflow: hidden; }
+        header { background: var(--white); padding: 0 5%; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .messenger { display: grid; grid-template-columns: 350px 1fr; height: calc(100vh - 60px); }
+        .sidebar { background: white; border-right: 1px solid var(--border); overflow-y: auto; }
+        .thread { padding: 15px; border-bottom: 1px solid #f0f2f5; cursor: pointer; }
+        .thread:hover { background: #f5f6f7; }
+        .thread.active { background: #fff5ed; border-right: 4px solid var(--primary); }
+        .chat-area { display: flex; flex-direction: column; background: #f0f2f5; }
+        .msg-list { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .bubble { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 14px; }
+        .bubble.sent { align-self: flex-end; background: var(--primary); color: white; }
+        .bubble.received { align-self: flex-start; background: white; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .input-bar { padding: 15px; background: white; display: flex; gap: 10px; }
+        .input-bar input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #ddd; outline: none; }
+        .send-btn { background: var(--dark); color: white; border: none; padding: 0 25px; border-radius: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
-
 <header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;">← Tillbaka</a>
+    <a href="index.html" style="text-decoration:none; color:black; font-weight:900;">BIL<span>HK</span></a>
+    <a href="my-account.html" style="text-decoration:none; font-weight:700; color:black;">← Tillbaka</a>
 </header>
-
-<div class="dashboard-hero">
-    <h1 id="userName">Välkommen!</h1>
-    <p>Hantera dina sparade fordon och annonser</p>
-</div>
-
-<div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('favs', this)">Sparade bilar</button>
-    <button class="tab-btn" onclick="switchTab('mine', this)">Mina annonser</button>
-</div>
-
-<div class="grid" id="displayGrid">
-    <p style="text-align:center; grid-column: 1/-1;">Laddar data...</p>
-</div>
-
-<footer>
-    <div style="max-width: 800px; margin: auto;">
-        <h3 style="font-size: 18px; font-weight: 800; color: #0f172a;">BIL<span>HK</span></h3>
-        <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin-top: 15px;">
-            <strong>Viktig information:</strong> Vi är en annonsplattform och ansvarar inte för felaktig information eller falska annonser. Genomför aldrig betalningar utan att ha träffat säljaren och kontrollerat fordonet personligen.
-        </p>
-        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 14px; font-weight: 700;">
-            <a href="terms.html" style="color: #f58220; text-decoration: none;">Användarvillkor & Säkerhet</a>
-            <a href="mailto:support@bilmarknad-hk.se" style="color: #0f172a; text-decoration: none;">Kontakt</a>
+<div class="messenger">
+    <div class="sidebar" id="threadsContainer"></div>
+    <div class="chat-area">
+        <div id="msgList" class="msg-list"></div>
+        <div class="input-bar" id="inputArea" style="display:none;">
+            <input type="text" id="msgInput" placeholder="Skriv svar...">
+            <button id="sendBtn">Skicka</button>
         </div>
-        <p style="margin-top: 30px; font-size: 11px; color: #94a3b8;">&copy; 2026 BilMarknad-HK. Alla rättigheter förbehållna.</p>
     </div>
-</footer>
+</div>
 
 <script type="module">
-    // استيراد الإعدادات من ملفك الموحد
     import { db, auth } from './firebase-config.js';
-    import { collection, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, addDoc, serverTimestamp, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    let allCars = [];
     let currentUser = null;
+    let activeChat = null;
 
-    onAuthStateChanged(auth, async (user) => {
-        if (!user) {
-            window.location.href = "login.html";
-        } else {
-            currentUser = user;
-            document.getElementById('userName').innerText = `Hej, ${user.displayName || 'Bilvän'}!`;
-            await loadData();
-        }
+    onAuthStateChanged(auth, (user) => {
+        if (user) { currentUser = user; loadInbox(); }
+        else { window.location.href = "login.html"; }
     });
 
-    async function loadData() {
-        try {
-            const snap = await getDocs(collection(db, "cars"));
-            allCars = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            // نتحقق من التبويب النشط حالياً عند التحميل
-            const activeTab = document.querySelector('.tab-btn.active').innerText;
-            if (activeTab === 'Sparade bilar') showFavs(); else showMine();
-        } catch (error) {
-            console.error("Error loading cars:", error);
-        }
+    function loadInbox() {
+        const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+        onSnapshot(q, (snap) => {
+            const threads = {};
+            snap.docs.forEach(doc => {
+                const m = doc.data();
+                if (m.senderId === currentUser.uid || m.receiverId === currentUser.uid) {
+                    const threadId = [m.senderId, m.receiverId].sort().join("_") + "_" + m.carTitle;
+                    if (!threads[threadId]) threads[threadId] = { id: threadId, ...m, partnerId: m.senderId === currentUser.uid ? m.receiverId : m.senderId };
+                }
+            });
+            document.getElementById('threadsContainer').innerHTML = Object.values(threads).map(t => `
+                <div class="thread" onclick="openChat('${t.id}', '${t.partnerId}', '${t.carTitle}', '${t.senderEmail || t.receiverEmail}')">
+                    <strong>${t.carTitle}</strong><br><small>${t.message.substring(0,30)}</small>
+                </div>`).join('');
+        });
     }
 
-    // تصدير الدالة للنافذة العامة لتعمل مع onclick في HTML
-    window.switchTab = (type, btn) => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        if (type === 'favs') showFavs();
-        else showMine();
+    window.openChat = (tid, pId, title, pEmail) => {
+        activeChat = { tid, pId, title, pEmail };
+        document.getElementById('inputArea').style.display = 'flex';
+        const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
+        onSnapshot(q, (snap) => {
+            const msgs = snap.docs.map(d => d.data()).filter(m => ([m.senderId, m.receiverId].sort().join("_") + "_" + m.carTitle) === tid);
+            document.getElementById('msgList').innerHTML = msgs.map(m => `
+                <div class="bubble ${m.senderId === currentUser.uid ? 'sent' : 'received'}">${m.message}</div>`).join('');
+            document.getElementById('msgList').scrollTop = 9999;
+        });
     };
 
-    function showFavs() {
-        const favIds = JSON.parse(localStorage.getItem('favCars')) || [];
-        const favs = allCars.filter(c => favIds.includes(c.id));
-        render(favs, false);
-    }
-
-    function showMine() {
-        if (!currentUser) return;
-        const mine = allCars.filter(c => c.sellerId === currentUser.uid);
-        render(mine, true);
-    }
-
-    function render(data, isMine) {
-        const grid = document.getElementById('displayGrid');
-        if (data.length === 0) {
-            grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 40px; color: #64748b;">Inga bilar hittades här.</p>`;
-            return;
-        }
-        grid.innerHTML = data.map(c => `
-            <div class="car-card">
-                <span class="badge" style="background: ${isMine ? '#f58220' : 'rgba(0,0,0,0.6)'}">${isMine ? 'Min annons' : 'Sparad'}</span>
-                <img src="${c.images?.[0] || 'placeholder.jpg'}" onclick="location.href='details.html?id=${c.id}'">
-                <div class="card-info" onclick="location.href='details.html?id=${c.id}'">
-                    <div style="font-weight:800; font-size: 16px;">${c.brand} ${c.model || ''}</div>
-                    <div style="color:var(--primary); font-weight:800; margin-top:5px; font-size: 18px;">${Number(c.price).toLocaleString()} kr</div>
-                    <div style="font-size: 12px; color: #64748b; margin-top: 5px;">${c.year} • ${c.mileage} mil</div>
-                </div>
-                ${isMine ? `<button class="btn-delete" onclick="event.stopPropagation(); deleteAd('${c.id}')">Ta bort annons</button>` : ''}
-            </div>
-        `).join('');
-    }
-
-    // تصدير دالة الحذف للنافذة العامة
-    window.deleteAd = async (id) => {
-        if (confirm("Vill du ta bort denna annons permanent?")) {
-            try {
-                await deleteDoc(doc(db, "cars", id));
-                alert("Annonsen har raderats.");
-                location.reload();
-            } catch (error) {
-                alert("Ett fel uppstod vid radering.");
-            }
-        }
+    document.getElementById('sendBtn').onclick = async () => {
+        const input = document.getElementById('msgInput');
+        if (!input.value.trim()) return;
+        await addDoc(collection(db, "messages"), {
+            senderId: currentUser.uid, senderName: "Säljare", senderEmail: currentUser.email,
+            receiverId: activeChat.pId, receiverEmail: activeChat.pEmail,
+            carTitle: activeChat.title, message: input.value, createdAt: serverTimestamp()
+        });
+        input.value = "";
     };
 </script>
 </body>
