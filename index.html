@@ -58,8 +58,8 @@
 
 <section class="hero">
     <div class="search-grid">
-        <div class="search-group"><label>MÄRKE</label><input type="text" id="searchBrand" placeholder="t.ex. Volvo"></div>
-        <div class="search-group"><label>MODELL</label><input type="text" id="searchModel" placeholder="t.ex. V40"></div>
+        <div class="search-group"><label>MÄRKE</label><input type="text" id="searchBrand" placeholder="Volvo"></div>
+        <div class="search-group"><label>MODELL</label><input type="text" id="searchModel" placeholder="V40"></div>
         <div class="search-group">
             <label>DRIVMEDEL</label>
             <select id="searchFuel">
@@ -70,8 +70,8 @@
             </select>
         </div>
         <div class="search-group"><label>FRÅN ÅR</label><input type="number" id="searchYear" placeholder="2018"></div>
-        <div class="search-group"><label>MAX MIL</label><input type="number" id="searchMileage" placeholder="12000"></div>
-        <div class="search-group"><label>MAX PRIS (KR)</label><input type="number" id="searchPrice" placeholder="150000"></div>
+        <div class="search-group"><label>MAX MIL</label><input type="number" id="searchMileage" placeholder="10000"></div>
+        <div class="search-group"><label>MAX PRIS</label><input type="number" id="searchPrice" placeholder="150000"></div>
         <button class="search-btn" id="searchBtn">SÖK BIL</button>
     </div>
 </section>
@@ -90,7 +90,7 @@
             document.getElementById('loginBtn').style.display = 'none';
             document.getElementById('accBtn').style.display = 'block';
             
-            // نظام الإشعارات - جلب أي رسالة يكون المستخدم هو المستلم فيها
+            // إشعار الصفحة الرئيسية
             const q = query(collection(db, "messages"), where("receiverId", "==", user.uid));
             onSnapshot(q, (snap) => {
                 const badge = document.getElementById('notifCount');
