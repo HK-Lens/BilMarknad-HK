@@ -3,36 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skapa konto | BILHK</title>
+    <title>Logga in | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f4f6f9; --border: #e5e7eb; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         
-        .auth-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border: 1px solid var(--border); }
-        .logo { text-decoration: none; font-size: 28px; font-weight: 900; color: var(--dark); margin-bottom: 20px; display: block; text-align: center; }
+        .auth-card { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); width: 100%; max-width: 450px; text-align: center; border: 1px solid var(--border); }
+        .logo { text-decoration: none; font-size: 30px; font-weight: 900; color: var(--dark); margin-bottom: 25px; display: block; }
         .logo span { color: var(--primary); }
         
-        h2 { font-size: 20px; margin-bottom: 20px; text-align: center; color: var(--dark); }
+        h2 { font-size: 22px; margin-bottom: 25px; color: var(--dark); }
         
-        .form-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 5px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f9fafb; font-size: 14px; outline: none; transition: 0.2s; }
+        .form-group { text-align: left; margin-bottom: 15px; }
+        label { display: block; font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 6px; }
+        input { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f9fafb; font-size: 14px; outline: none; transition: 0.2s; }
         input:focus { border-color: var(--primary); background: white; }
 
-        /* حقول الشركات المخفية افتراضياً */
-        #businessFields { display: none; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px dashed #cbd5e1; margin-bottom: 15px; }
+        .forgot-link { text-align: right; margin-bottom: 20px; }
+        .forgot-link a { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 600; }
 
-        .disclaimer-box { background: #fff8f1; border: 1px solid #fde6d5; padding: 15px; border-radius: 10px; margin: 15px 0; display: flex; gap: 10px; align-items: flex-start; text-align: left; }
-        .disclaimer-box input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); margin-top: 3px; }
-        .disclaimer-box label { font-size: 11px; color: #555; line-height: 1.4; font-weight: 400; cursor: pointer; }
-
-        .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-primary:hover { background: #e07210; transform: translateY(-1px); }
+        .btn-primary { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-primary:hover { background: #e07210; transform: translateY(-2px); }
         .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
 
-        .footer-links { margin-top: 20px; text-align: center; font-size: 14px; color: #64748b; border-top: 1px solid #eee; padding-top: 15px; }
+        .footer-links { margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; font-size: 14px; color: #64748b; }
         .footer-links a { color: var(--primary); text-decoration: none; font-weight: 700; }
     </style>
 </head>
@@ -40,129 +36,63 @@
 
 <div class="auth-card">
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <h2>Skapa nytt konto</h2>
+    <h2>Välkommen tillbaka</h2>
     
-    <form id="regForm">
-        <div class="form-group">
-            <label>Kontotyp</label>
-            <select id="userType" onchange="toggleBusinessFields()">
-                <option value="private">Privatperson</option>
-                <option value="business">Företag / Bilhandlare</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label id="nameLabel">Ditt Namn</label>
-            <input type="text" id="fullName" placeholder="T.ex. Miro" required>
-        </div>
-
-        <div id="businessFields">
-            <div class="form-group">
-                <label>Organisationsnummer</label>
-                <input type="text" id="taxId" placeholder="55XXXX-XXXX">
-            </div>
-            <div class="form-group">
-                <label>Företagsadress</label>
-                <input type="text" id="address" placeholder="Gata, Postort">
-            </div>
-        </div>
-
+    <form id="loginForm">
         <div class="form-group">
             <label>E-postadress</label>
-            <input type="email" id="email" required>
+            <input type="email" id="email" placeholder="din@epost.se" required>
         </div>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div class="form-group">
-                <label>Lösenord</label>
-                <input type="password" id="pass" required>
-            </div>
-            <div class="form-group">
-                <label>Bekräfta</label>
-                <input type="password" id="confirmPass" required>
-            </div>
+        <div class="form-group">
+            <label>Lösenord</label>
+            <input type="password" id="pass" placeholder="Din lösenord" required>
         </div>
 
-        <div class="disclaimer-box">
-            <input type="checkbox" id="termsCheck" required>
-            <label for="termsCheck">
-                <strong>Ansvarsfriskrivning:</strong><br>
-                Jag godkänner att BILHK endast är en förmedlingsplattform. Webbplatsen tar inget ansvar för affärer eller avtal mellan köpare och säljare.
-            </label>
+        <div class="forgot-link">
+            <a href="forgot-password.html">Glömt lösenord?</a>
         </div>
 
-        <button type="submit" class="btn-primary" id="regBtn">Skapa konto</button>
+        <button type="submit" class="btn-primary" id="loginBtn">Logga in</button>
     </form>
 
     <div class="footer-links">
-        Har du redan ett konto? <a href="login.html">Logga in här</a>
+        Har du inget konto? <a href="signup.html">Skapa ett här</a>
     </div>
 </div>
 
 <script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { auth } from './firebase-config.js';
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // إظهار وإخفاء حقول الشركة
-    window.toggleBusinessFields = () => {
-        const type = document.getElementById('userType').value;
-        const fields = document.getElementById('businessFields');
-        const label = document.getElementById('nameLabel');
-        
-        if (type === 'business') {
-            fields.style.display = 'block';
-            label.innerText = "Företagsnamn";
-        } else {
-            fields.style.display = 'none';
-            label.innerText = "Ditt Namn";
-        }
-    };
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
 
-    document.getElementById('regForm').onsubmit = async (e) => {
+    loginForm.onsubmit = async (e) => {
         e.preventDefault();
         
-        const name = document.getElementById('fullName').value;
-        const email = document.getElementById('email').value;
-        const pass = document.getElementById('pass').value;
-        const confirm = document.getElementById('confirmPass').value;
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('pass').value;
 
-        if (pass !== confirm) { alert("Lösenorden matchar inte!"); return; }
-
-        const btn = document.getElementById('regBtn');
-        btn.disabled = true;
-        btn.innerText = "Behandlar...";
+        loginBtn.disabled = true;
+        loginBtn.innerText = "Loggar in...";
 
         try {
-            // 1. إنشاء الحساب
-            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-            const user = userCredential.user;
-
-            // 2. تحديث الاسم
-            await updateProfile(user, { displayName: name });
-
-            // 3. إرسال إيميل التفعيل
-            await sendEmailVerification(user);
-
-            // 4. حفظ البيانات
-            await setDoc(doc(db, "users", user.uid), {
-                name: name,
-                email: email,
-                userType: document.getElementById('userType').value,
-                taxId: document.getElementById('taxId').value || "",
-                address: document.getElementById('address').value || "",
-                createdAt: serverTimestamp()
-            });
-
-            // 5. خروج وتحويل
-            await signOut(auth);
-            alert(`Tack ${name}! Ditt konto har skapats. \n\nEtt bekräftelsemail har skickats till ${email}. Aktivera kontot innan du loggar in.`);
-            window.location.href = "login.html";
-
-        } catch (err) {
-            alert("Fel: " + err.message);
-            btn.disabled = false;
-            btn.innerText = "Skapa konto";
+            await signInWithEmailAndPassword(auth, email, password);
+            // التوجيه للصفحة الرئيسية بعد النجاح
+            window.location.href = "index.html"; 
+        } catch (error) {
+            console.error(error);
+            // ترجمة الأخطاء للعامل
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                alert("Fel e-postadress eller lösenord.");
+            } else if (error.code === 'auth/too-many-requests') {
+                alert("För många misslyckade försök. Försök igen senare.");
+            } else {
+                alert("Ett fel uppstod: " + error.message);
+            }
+            loginBtn.disabled = false;
+            loginBtn.innerText = "Logga in";
         }
     };
 </script>
