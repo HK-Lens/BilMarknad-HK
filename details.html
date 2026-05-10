@@ -100,17 +100,24 @@
     document.getElementById('chatBtn').onclick = async () => {
         if (!auth.currentUser) return alert("Du måste logga in först.");
         if (!carData) return;
+        if (auth.currentUser.uid === carData.sellerId) return alert("Du kan inte skicka meddelande till din egen annons.");
 
         const btn = document.getElementById('chatBtn');
         btn.disabled = true;
+        btn.innerText = "Öppnar chatt...";
 
         try {
             const roomId = [auth.currentUser.uid, carData.sellerId].sort().join('_') + '_' + carId;
             const buyerName = auth.currentUser.displayName || auth.currentUser.email.split('@')[0] || "Köpare";
+            const chatTitle = `${carData.brand} ${carData.model}`;
+
+            // 💡 الخطة البديلة: تخزين الغرفة في الذاكرة المحلية للهاتف لتجنب أخطاء المتصفح
+            localStorage.setItem('targetChat', roomId);
+            localStorage.setItem('targetChatName', chatTitle);
 
             await setDoc(doc(db, "chats", roomId), { 
                 carId: carId, 
-                carName: `${carData.brand} ${carData.model}`, 
+                carName: chatTitle, 
                 participants: [auth.currentUser.uid, carData.sellerId],
                 buyerId: auth.currentUser.uid,
                 buyerName: buyerName, 
@@ -118,12 +125,12 @@
                 updatedAt: serverTimestamp() 
             }, { merge: true });
             
-            // الحل الذكي: تمرير معرف الغرفة في الرابط لفتحها فوراً
             window.location.href = `messages.html?chat=${roomId}`;
         } catch (error) {
             alert("Databasfel: " + error.message);
             console.error(error);
             btn.disabled = false;
+            btn.innerText = "Kontakta Säljaren";
         }
     };
 
