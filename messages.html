@@ -15,14 +15,16 @@
         .sidebar { width: 350px; border-right: 1px solid var(--border); overflow-y: auto; background: var(--white); display: flex; flex-direction: column; }
         .chat-window { flex: 1; display: flex; flex-direction: column; background: #fdfdfd; }
         
+        /* 💡 الحل الجذري للهواتف: التبديل المخفي */
+        .back-btn { display: none; background: none; border: none; font-size: 20px; color: var(--dark); cursor: pointer; padding-right: 15px; }
+        
         @media (max-width: 768px) {
             .sidebar { width: 100%; border-right: none; }
-            .chat-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
-            .chat-window.active-mobile { display: flex; }
+            .sidebar.hide-on-mobile { display: none !important; } /* إخفاء القائمة عند فتح الدردشة */
+            .chat-window { display: none; width: 100%; }
+            .chat-window.show-on-mobile { display: flex !important; } /* إظهار الدردشة بالكامل */
+            .back-btn { display: inline-block; }
         }
-        
-        .back-btn { display: none; background: none; border: none; font-size: 20px; color: var(--dark); cursor: pointer; padding-right: 15px; }
-        @media (max-width: 768px) { .back-btn { display: inline-block; } }
 
         .msg-display { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
         .bubble { padding: 12px 18px; border-radius: 20px; max-width: 80%; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
@@ -30,7 +32,6 @@
         .received { align-self: flex-start; background: #e2e8f0; border-bottom-left-radius: 4px; color: var(--dark); }
         .input-area { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: white; }
         
-        /* 💡 تنسيق الحقل والزر عند الإغلاق لمنع الخطأ */
         input { flex: 1; padding: 15px 20px; border-radius: 30px; border: 1px solid var(--border); outline: none; font-size: 15px; background: #f8fafc; }
         input:disabled { background: #e2e8f0; cursor: not-allowed; }
         .btn-send { background: var(--primary); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
@@ -75,7 +76,6 @@
 
     let user = null, activeRoom = null;
     
-    // 💡 الخطة المزدوجة: قراءة الرابط أولاً، وإذا فشل نقرأ الذاكرة المحلية
     const urlParams = new URLSearchParams(window.location.search);
     const targetChatId = urlParams.get('chat') || localStorage.getItem('targetChat');
     const targetChatName = localStorage.getItem('targetChatName') || "Chatt";
@@ -85,7 +85,6 @@
             user = u; 
             if (targetChatId) {
                 window.openRoom(targetChatId, targetChatName);
-                // مسح الذاكرة بعد الاستخدام
                 localStorage.removeItem('targetChat');
                 localStorage.removeItem('targetChatName');
             }
@@ -126,17 +125,16 @@
         activeRoom = id;
         document.getElementById('activeChatHeader').innerText = name;
         
-        // 💡 تفعيل حقل الكتابة وزر الإرسال عند اختيار الغرفة
         const inputField = document.getElementById('msgInput');
         const sendBtn = document.getElementById('sendBtn');
         inputField.disabled = false;
         sendBtn.disabled = false;
         inputField.placeholder = "Skriv ett meddelande...";
 
-        // إظهار نافذة الدردشة للهواتف
-        document.getElementById('chatWindowView').classList.add('active-mobile');
+        // 💡 إخفاء القائمة وإظهار الدردشة في الهاتف
+        document.getElementById('chatWindowView').classList.add('show-on-mobile');
+        document.getElementById('sidebarView').classList.add('hide-on-mobile');
 
-        // تمييز المحادثة النشطة في القائمة
         document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
         const clickedChat = document.querySelector(`.chat-item[data-id='${id}']`);
         if(clickedChat) clickedChat.classList.add('active');
@@ -158,12 +156,12 @@
         });
     }
 
-    // زر الرجوع في الهاتف
+    // 💡 برمجة سهم الرجوع: إخفاء الدردشة وإظهار القائمة
     document.getElementById('backBtn').onclick = () => {
-        document.getElementById('chatWindowView').classList.remove('active-mobile');
+        document.getElementById('chatWindowView').classList.remove('show-on-mobile');
+        document.getElementById('sidebarView').classList.remove('hide-on-mobile');
         activeRoom = null; 
         
-        // 💡 إعادة إقفال الحقل عند الخروج من الغرفة
         document.getElementById('msgInput').disabled = true;
         document.getElementById('sendBtn').disabled = true;
         document.getElementById('msgInput').placeholder = "Välj en chatt först...";
@@ -193,7 +191,7 @@
             }, { merge: true });
 
         } catch (error) {
-            alert("Sändningsfel (Database): " + error.message);
+            alert("Sändningsfel: " + error.message);
             console.error(error);
         } finally {
             btn.disabled = false;
