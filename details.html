@@ -97,30 +97,33 @@
         if (snap.exists()) { document.getElementById('fIcon').className = 'fa-solid fa-heart'; document.getElementById('favBtn').classList.add('active'); }
     }
 
-    // مجسات كشف الأعطال لزر المراسلة
+    // زر المراسلة الجديد مع فصل هويات البائع والمشتري
     document.getElementById('chatBtn').onclick = async () => {
-        if (!auth.currentUser) return alert("Steg 1: Du måste logga in först.");
-        if (!carData) return alert("Steg 1: Fordonsdata har inte laddats ännu.");
-        if (!carData.sellerId) return alert("Steg 1 Fel: Annonsen saknar sellerId! Säljaren måste ladda upp annonsen igen.");
+        if (!auth.currentUser) return alert("Du måste logga in först.");
+        if (!carData) return;
 
         const btn = document.getElementById('chatBtn');
         btn.disabled = true;
 
         try {
-            // alert("Steg 2: Skapar chattrum..."); // تتبع مسار العمل
             const roomId = [auth.currentUser.uid, carData.sellerId].sort().join('_') + '_' + carId;
             
+            // تحديد اسم المشتري للظهور لدى البائع
+            const buyerName = auth.currentUser.displayName || auth.currentUser.email.split('@')[0] || "Köpare";
+
             await setDoc(doc(db, "chats", roomId), { 
                 carId: carId, 
                 carName: `${carData.brand} ${carData.model}`, 
-                participants: [auth.currentUser.uid, carData.sellerId], 
+                participants: [auth.currentUser.uid, carData.sellerId],
+                buyerId: auth.currentUser.uid,
+                buyerName: buyerName, // حفظ اسم المشتري
+                sellerId: carData.sellerId, // حفظ معرف البائع للتمييز لاحقاً
                 updatedAt: serverTimestamp() 
             }, { merge: true });
             
-            // alert("Steg 3: Sparat i databasen! Omdirigerar...");
             window.location.href = "messages.html";
         } catch (error) {
-            alert("Steg 4 Fel (Databas): " + error.message);
+            alert("Databasfel: " + error.message);
             console.error(error);
             btn.disabled = false;
         }
