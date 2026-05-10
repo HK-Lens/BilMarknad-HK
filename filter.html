@@ -2,104 +2,179 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sökfilter | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Avancerad Sökning | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f58220; --dark: #1a1a1a; --bg: #ffffff; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); }
-        .filter-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: white; z-index: 100; }
-        .close-btn { text-decoration: none; font-size: 24px; color: var(--dark); font-weight: 300; }
-        
-        .filter-content { padding: 20px; max-width: 600px; margin: auto; }
-        .section-title { font-size: 14px; font-weight: 800; text-transform: uppercase; color: #666; margin: 25px 0 15px; letter-spacing: 1px; }
-        
-        .select-box { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; background: #f9f9f9; margin-bottom: 15px; outline: none; }
-        
-        /* أيقونات الهيكل */
-        .karosseri-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .kar-item { border: 1px solid #ddd; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .kar-item img { width: 40px; margin-bottom: 8px; }
-        .kar-item span { font-size: 12px; font-weight: 600; display: block; }
-        .kar-item.active { border-color: var(--primary); background: #fff5eb; box-shadow: 0 0 0 1px var(--primary); }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #ffffff; --light: #f8fafc; --border: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding-bottom: 120px; }
 
-        .footer-action { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; }
-        .btn-apply { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: 800; font-size: 18px; cursor: pointer; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+        select, input, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; background: var(--light); outline: none; margin-bottom: 10px; }
+
+        .header { padding: 15px 5%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 1000; }
+        .header h2 { font-size: 18px; font-weight: 800; }
+        .close-btn { text-decoration: none; color: var(--dark); font-size: 24px; font-weight: 300; }
+        .reset-btn { color: var(--primary); font-weight: 700; font-size: 13px; cursor: pointer; }
+
+        .content { padding: 20px 5%; max-width: 700px; margin: auto; }
+        .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 25px 0 12px; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
+
+        .karosseri-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .kar-item { border: 1px solid var(--border); border-radius: 12px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--light); }
+        .kar-item img { width: 35px; height: 35px; object-fit: contain; margin-bottom: 5px; opacity: 0.6; }
+        .kar-item span { font-size: 10px; font-weight: 700; display: block; color: #64748b; }
+        .kar-item.active { border-color: var(--primary); background: #fff5eb; }
+        .kar-item.active span { color: var(--primary); }
+        .kar-item.active img { opacity: 1; }
+
+        .tag-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { padding: 10px 16px; border: 1px solid var(--border); border-radius: 50px; font-size: 13px; font-weight: 600; cursor: pointer; background: var(--light); }
+        .tag.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+        .range-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .check-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .check-item input { width: 20px; height: 20px; margin: 0; cursor: pointer; }
+
+        .footer-actions { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid var(--border); padding: 20px 5%; display: grid; grid-template-columns: 1fr 2fr; gap: 15px; }
+        .btn-cancel { background: #f1f5f9; color: var(--dark); border: none; padding: 16px; border-radius: 50px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; font-size: 14px; }
+        .btn-search { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 50px; font-weight: 800; cursor: pointer; font-size: 16px; box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
     </style>
 </head>
 <body>
 
-<div class="filter-header">
+<div class="header">
     <a href="index.html" class="close-btn">✕</a>
-    <h2 style="margin:0; font-size:18px;">Sökfilter</h2>
-    <span style="color:var(--primary); font-weight:700; cursor:pointer;" onclick="reset()">Rensa</span>
+    <h2>Filtrera</h2>
+    <span class="reset-btn" onclick="location.reload()">Rensa filter</span>
 </div>
 
-<div class="filter-content">
-    <div class="section-title">Fordon</div>
-    <select id="brandSel" class="select-box" onchange="updateModels()">
-        <option value="all">Alla märken</option>
-        <option value="Volvo">Volvo</option>
-        <option value="Mercedes-Benz">Mercedes-Benz</option>
-        <option value="BMW">BMW</option>
-        <option value="Audi">Audi</option>
-        <option value="Tesla">Tesla</option>
-        <option value="Volkswagen">Volkswagen</option>
+<div class="content">
+    <div class="section-title">Grunduppgifter</div>
+    <select id="fordonstyp"><option value="all">Fordonstyp (Alla)</option><option value="personbil">Personbil</option></select>
+    <select id="brand" onchange="updateModels()"><option value="all">Märke (Alla)</option></select>
+    <select id="model"><option value="all">Modell (Alla)</option></select>
+    <input type="text" id="fritext" placeholder="Fritext (t.ex. GPS, Dragkrok)">
+    <select id="lan">
+        <option value="all">Hela Sverige (Län)</option>
+        <option value="Stockholm">Stockholm</option>
+        <option value="Västra Götaland">Västra Götaland</option>
+        <option value="Skåne">Skåne</option>
     </select>
 
-    <select id="modelSel" class="select-box">
-        <option value="all">Alla modeller</option>
-    </select>
-
-    <div class="section-title">Karosserityp</div>
-    <div class="karosseri-grid">
-        <div class="kar-item" onclick="setKar('Sedan', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202926.png"><span>Sedan</span></div>
-        <div class="kar-item" onclick="setKar('SUV', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png"><span>SUV</span></div>
-        <div class="kar-item" onclick="setKar('Kombi', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png"><span>Kombi</span></div>
+    <div class="section-title">Pris, År & Mil</div>
+    <div class="range-group">
+        <input type="number" id="minPrice" placeholder="Pris från">
+        <input type="number" id="maxPrice" placeholder="Pris till">
+    </div>
+    <div class="range-group">
+        <input type="number" id="minYear" placeholder="Årsmodell från">
+        <input type="number" id="maxYear" placeholder="Årsmodell till">
+    </div>
+    <div class="range-group">
+        <input type="number" id="minMileage" placeholder="Mätarställning från">
+        <input type="number" id="maxMileage" placeholder="Mätarställning till">
     </div>
 
-    <div class="section-title">Pris & Mil</div>
-    <input type="number" id="pTo" class="select-box" placeholder="Maxpris (kr)">
-    <input type="number" id="mTo" class="select-box" placeholder="Max miltal (mil)">
+    <div class="section-title">Karosseri</div>
+    <div class="karosseri-grid" id="karGrid">
+        <div class="kar-item active" onclick="setKar('all', this)"><span>Alla</span></div>
+        <div class="kar-item" onclick="setKar('Sedan', this)"><img src="https://cdn-icons-png.flaticon.com/512/18042/18042004.png"><span>Sedan</span></div>
+        <div class="kar-item" onclick="setKar('Kombi', this)"><img src="https://cdn-icons-png.flaticon.com/512/2736/2736781.png"><span>Kombi</span></div>
+        <div class="kar-item" onclick="setKar('SUV', this)"><img src="https://cdn-icons-png.flaticon.com/512/4391/4391474.png"><span>SUV</span></div>
+        <div class="kar-item" onclick="setKar('Halvkombi', this)"><img src="https://cdn-icons-png.flaticon.com/512/5038/5038865.png"><span>Halvkombi</span></div>
+        <div class="kar-item" onclick="setKar('Cab', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202939.png"><span>Cab</span></div>
+        <div class="kar-item" onclick="setKar('Sportkupé', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202935.png"><span>Sportkupé</span></div>
+        <div class="kar-item" onclick="setKar('Minibuss', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png"><span>Minibuss</span></div>
+    </div>
 
-    <div style="height:100px;"></div> </div>
+    <div class="section-title">Drivmedel</div>
+    <div class="tag-group" id="fuelGroup">
+        <div class="tag" onclick="setTag('fuel', 'Bensin', this)">Bensin</div>
+        <div class="tag" onclick="setTag('fuel', 'Diesel', this)">Diesel</div>
+        <div class="tag" onclick="setTag('fuel', 'El', this)">El</div>
+        <div class="tag" onclick="setTag('fuel', 'Hybrid', this)">Hybrid</div>
+    </div>
 
-<div class="footer-action">
-    <button class="btn-apply" onclick="apply()">Visa fordon</button>
+    <div class="section-title">Växellåda</div>
+    <div class="tag-group" id="gearGroup">
+        <div class="tag" onclick="setTag('gear', 'Automat', this)">Automatisk</div>
+        <div class="tag" onclick="setTag('gear', 'Manuell', this)">Manuell</div>
+    </div>
+
+    <div class="section-title">Teknik & Mer</div>
+    <input type="number" id="power" placeholder="Motoreffekt (hk)">
+    <input type="number" id="range" placeholder="Elektrisk räckvidd (km)">
+    <input type="text" id="color" placeholder="Färg (t.ex. Vit, Svart)">
+
+    <div class="section-title">Övrigt</div>
+    <label class="check-item"><input type="checkbox" id="leasing"> Privatleasing</label>
+    <label class="check-item"><input type="checkbox" id="moms"> Avdragbar moms</label>
+    <label class="check-item"><input type="checkbox" id="imported"> Importerade fordon</label>
 </div>
 
-<script>
-    const models = {
-        "Volvo": ["V60", "XC60", "XC90"],
-        "Mercedes-Benz": ["C-Klass", "E-Klass", "GLC"],
-        "BMW": ["3-serie", "5-serie", "X5"],
-        "Tesla": ["Model 3", "Model Y"]
+<div class="footer-actions">
+    <a href="index.html" class="btn-cancel">Avbryt</a>
+    <button class="btn-search" onclick="apply()">Sök fordon</button>
+</div>
+
+<script type="module">
+    import { carData } from './cars-data.js';
+
+    let filterData = { kar: 'all', fuel: 'all', gear: 'all' };
+
+    // 1. تعبئة الماركات وتصدير الدالة للنافذة
+    const bSel = document.getElementById('brand');
+    Object.keys(carData).sort().forEach(b => {
+        bSel.innerHTML += `<option value="${b}">${b}</option>`;
+    });
+
+    window.updateModels = () => {
+        const mSel = document.getElementById('model');
+        mSel.innerHTML = '<option value="all">Modell (Alla)</option>';
+        if(carData[bSel.value]) {
+            carData[bSel.value].sort().forEach(m => {
+                mSel.innerHTML += `<option value="${m}">${m}</option>`;
+            });
+        }
     };
 
-    let selectedKar = 'all';
-
-    function updateModels() {
-        const b = document.getElementById('brandSel').value;
-        const mSel = document.getElementById('modelSel');
-        mSel.innerHTML = '<option value="all">Alla modeller</option>';
-        if(models[b]) models[b].forEach(m => mSel.innerHTML += `<option value="${m}">${m}</option>`);
-    }
-
-    function setKar(type, el) {
+    // 2. اختيار الهيكل (تصدير للنافذة)
+    window.setKar = (val, el) => {
         document.querySelectorAll('.kar-item').forEach(i => i.classList.remove('active'));
-        selectedKar = type;
         el.classList.add('active');
-    }
+        filterData.kar = val;
+    };
 
-    function apply() {
-        const brand = document.getElementById('brandSel').value;
-        const model = document.getElementById('modelSel').value;
-        window.location.href = `index.html?brand=${brand}&model=${model}&kar=${selectedKar}`;
-    }
+    // 3. اختيار الوسوم (تصدير للنافذة)
+    window.setTag = (key, val, el) => {
+        const group = key === 'fuel' ? '#fuelGroup' : '#gearGroup';
+        document.querySelectorAll(`${group} .tag`).forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        filterData[key] = val;
+    };
 
-    function reset() {
-        location.reload();
-    }
+    // 4. تنفيذ البحث وتمرير البارامترات لـ index.html
+    window.apply = () => {
+        const params = new URLSearchParams({
+            kar: filterData.kar,
+            fuel: filterData.fuel,
+            gear: filterData.gear,
+            brand: bSel.value,
+            model: document.getElementById('model').value,
+            minP: document.getElementById('minPrice').value,
+            maxP: document.getElementById('maxPrice').value,
+            minY: document.getElementById('minYear').value,
+            maxY: document.getElementById('maxYear').value,
+            minM: document.getElementById('minMileage').value,
+            maxM: document.getElementById('maxMileage').value,
+            text: document.getElementById('fritext').value
+        });
+        window.location.href = `index.html?${params.toString()}`;
+    };
 </script>
 </body>
 </html>

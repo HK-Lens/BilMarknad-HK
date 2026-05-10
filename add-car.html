@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sälj din bil | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--dark); padding-bottom: 50px; }
+        
+        /* --- شريط التنبيه --- */
+        .dev-banner { background: #ef4444; color: white; text-align: center; padding: 12px; font-weight: 700; font-size: 14px; }
+
+        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
+        .logo span { color: var(--primary); }
+
+        .container { max-width: 900px; margin: 40px auto; background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        h1 { text-align: center; font-weight: 900; margin-bottom: 30px; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
+        
+        .section-title { grid-column: span 2; font-weight: 800; color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 10px; margin-top: 20px; }
+        
+        label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 8px; color: #64748b; }
+        input, select, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; outline: none; background: #fcfcfc; font-size: 15px; }
+        input:focus, select:focus { border-color: var(--primary); }
+
+        .btn-submit { width: 100%; background: var(--dark); color: white; padding: 18px; border-radius: 12px; border: none; font-weight: 800; font-size: 18px; cursor: pointer; margin-top: 30px; transition: 0.3s; }
+        .btn-submit:hover { background: var(--primary); }
+        .btn-submit:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        footer { text-align: center; margin-top: 50px; padding: 30px; border-top: 1px solid var(--border); }
+        .disclaimer { font-size: 12px; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<div class="dev-banner">
+    ⚠️ Observera: Webbplatsen är under utveckling. Det går inte att publicera riktiga annonser än.
+</div>
+
+<header>
+    <a href="index.html" class="logo">Bil<span>HK</span></a>
+    <a href="dashboard.html" style="text-decoration: none; font-weight: 700; color: var(--dark);">Mitt Konto</a>
+</header>
+
+<div class="container">
+    <h1>Lägg till en ny bil</h1>
+    
+    <form id="sellForm">
+        <div class="form-grid">
+            <div class="section-title">Basinformation</div>
+            
+            <div class="form-group">
+                <label>Märke</label>
+                <select id="brand" required><option value="">Välj märke</option></select>
+            </div>
+            
+            <div class="form-group">
+                <label>Modell</label>
+                <select id="model" required><option value="">Välj modell</option></select>
+            </div>
+
+            <div class="form-group">
+                <label>Registreringsnummer</label>
+                <input type="text" id="regnr" placeholder="t.ex. ABC 123">
+            </div>
+
+            <div class="form-group">
+                <label>Modellår</label>
+                <input type="number" id="year" required>
+            </div>
+
+            <div class="section-title">Teknisk Data</div>
+
+            <div class="form-group">
+                <label>Drivmedel</label>
+                <select id="fuelType">
+                    <option value="Bensin">Bensin</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="El">El</option>
+                    <option value="Laddhybrid">Laddhybrid</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Växellåda</label>
+                <select id="transmission">
+                    <option value="Automat">Automat</option>
+                    <option value="Manuell">Manuell</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Miltal (mil)</label>
+                <input type="number" id="mileage" required>
+            </div>
+
+            <div class="form-group">
+                <label>Färg</label>
+                <input type="text" id="color" placeholder="t.ex. Svart">
+            </div>
+
+            <div class="form-group">
+                <label>Pris (SEK)</label>
+                <input type="number" id="price" required>
+            </div>
+
+            <div class="section-title">Beskrivning & Bilder</div>
+
+            <div class="form-group full-width">
+                <label>Beskrivning</label>
+                <textarea id="description" rows="5" placeholder="Berätta mer om bilen..."></textarea>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Ladda upp bilder</label>
+                <input type="file" id="imageFiles" multiple accept="image/*" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Publicera annons</button>
+    </form>
+</div>
+
+<footer>
+    <div class="disclaimer">
+        <strong>Ansvarsfriskrivning:</strong> Detta är en testplattform. Inga riktiga transaktioner sker här. <br>
+        &copy; 2026 BilHK.
+    </div>
+</footer>
+
+<script type="module">
+    import { db, auth, storage } from './firebase-config.js';
+    import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { carData } from './cars-data.js';
+
+    let currentUserId = null;
+    let currentUserEmail = null;
+
+    // 1. التأكد من تسجيل الدخول أولاً
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUserId = user.uid;
+            currentUserEmail = user.email;
+        } else {
+            alert("Du måste vara inloggad för att sälja.");
+            window.location.href = "login.html";
+        }
+    });
+
+    const brandSelect = document.getElementById('brand');
+    const modelSelect = document.getElementById('model');
+
+    // 2. تعبئة الماركات فوراً من ملف cars-data.js
+    if (carData && brandSelect) {
+        brandSelect.innerHTML = '<option value="">Välj märke</option>';
+        Object.keys(carData).sort().forEach(brand => {
+            const opt = document.createElement('option');
+            opt.value = brand; 
+            opt.textContent = brand;
+            brandSelect.appendChild(opt);
+        });
+    }
+
+    // 3. تحديث الموديلات ديناميكياً عند اختيار ماركة
+    brandSelect.addEventListener('change', () => {
+        modelSelect.innerHTML = '<option value="">Välj modell</option>';
+        const selected = brandSelect.value;
+        if (selected && carData[selected]) {
+            carData[selected].sort().forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m; 
+                opt.textContent = m;
+                modelSelect.appendChild(opt);
+            });
+        }
+    });
+
+    // 4. رفع البيانات والصور إلى Firebase
+    document.getElementById('sellForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const files = document.getElementById('imageFiles').files;
+
+        if (!currentUserId) {
+            alert("Du måste vara inloggad för att sälja.");
+            return;
+        }
+
+        if (files.length === 0) {
+            alert("Vänligen ladda upp minst en bild.");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "Sparar annons...";
+
+        try {
+            let imageUrls = [];
+            // رفع الصور إلى Storage - مع تصحيح المتغير sRef بشكل حرج هنا
+            for (let file of files) {
+                const sRef = ref(storage, `cars/${Date.now()}_${file.name}`);
+                await uploadBytes(sRef, file);
+                const url = await getDownloadURL(sRef);
+                imageUrls.push(url);
+            }
+
+            // حفظ بيانات السيارة في Firestore
+            await addDoc(collection(db, "cars"), {
+                brand: brandSelect.value,
+                model: modelSelect.value,
+                regnr: document.getElementById('regnr').value || "",
+                year: Number(document.getElementById('year').value),
+                fuelType: document.getElementById('fuelType').value,
+                transmission: document.getElementById('transmission').value,
+                mileage: Number(document.getElementById('mileage').value),
+                color: document.getElementById('color').value || "",
+                price: Number(document.getElementById('price').value),
+                description: document.getElementById('description').value || "",
+                images: imageUrls,
+                sellerId: currentUserId,
+                sellerEmail: currentUserEmail,
+                createdAt: serverTimestamp()
+            });
+
+            alert("Annonsen har publicerats!");
+            window.location.href = "my-account.html"; // التوجيه لصفحة حسابي بعد النشر
+
+        } catch (err) {
+            console.error("Error:", err);
+            alert("Ett fel uppstod: " + err.message);
+            btn.disabled = false;
+            btn.innerText = "Publicera annons";
+        }
+    };
+</script>
+</body>
+</html>

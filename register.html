@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skapa konto | BilMarknad-HK</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e07210;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --danger: #ef4444;
+            --warning-bg: #fff7ed;
+            --warning-text: #9a3412;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light); display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* --- Varningsbanner --- */
+        .dev-banner {
+            background: var(--danger);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 13px;
+            animation: pulse-danger 2s infinite;
+        }
+        @keyframes pulse-danger { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+
+        header { background: var(--white); padding: 15px 6%; border-bottom: 1px solid var(--border); text-align: center; }
+        .logo { font-size: 1.8rem; font-weight: 900; color: var(--dark); text-decoration: none; }
+        .logo span { color: var(--primary); }
+
+        .auth-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        .auth-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 550px;
+            border: 1px solid var(--border);
+        }
+
+        h2 { text-align: center; margin-bottom: 25px; font-weight: 800; color: var(--dark); }
+
+        /* --- Account Type Toggle --- */
+        .account-tabs {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 50px;
+            padding: 5px;
+            margin-bottom: 25px;
+        }
+        .tab-btn {
+            flex: 1;
+            border: none;
+            padding: 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            color: #64748b;
+            background: transparent;
+            transition: 0.3s;
+        }
+        .tab-btn.active { background: var(--primary); color: white; }
+
+        /* --- Legal Disclaimer Box --- */
+        .disclaimer-box {
+            background: var(--warning-bg);
+            border: 1px solid #ffedd5;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            font-size: 12px;
+            color: var(--warning-text);
+            line-height: 1.6;
+        }
+        .disclaimer-box strong { display: block; margin-bottom: 5px; font-size: 13px; text-transform: uppercase; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: 1 / -1; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 8px; }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #f1f5f9;
+            outline: none;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary); background: white; }
+
+        #businessFields { display: none; }
+
+        /* --- Terms & Checkbox --- */
+        .terms-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 20px 0;
+            font-size: 13px;
+            color: #475569;
+            cursor: pointer;
+        }
+        .terms-container input { width: 20px; height: 20px; margin-top: 2px; cursor: pointer; }
+
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); }
+
+        .btn-google {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            color: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .divider { margin: 25px 0; display: flex; align-items: center; color: #94a3b8; font-size: 13px; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
+
+        .footer-link { text-align: center; margin-top: 25px; font-size: 14px; color: #64748b; }
+        .footer-link a { color: var(--primary); text-decoration: none; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<div class="dev-banner">Webbplatsen är under uppbyggnad - All data behandlas enligt testvillkor</div>
+
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+</header>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Skapa ditt konto</h2>
+
+        <div class="account-tabs">
+            <button type="button" id="tabPrivate" class="tab-btn active" onclick="window.switchTab('private')">Privatperson</button>
+            <button type="button" id="tabBusiness" class="tab-btn" onclick="window.switchTab('business')">Företag</button>
+        </div>
+
+        <div class="disclaimer-box">
+            <strong>Ansvarsfriskrivning & Juridisk information</strong>
+            BilMarknad-HK är en förmedlingsplattform. Vi tar inget ansvar för annonsernas riktighet, fordonets skick eller finansiella transaktioner. 
+            Vi avråder starkt från förskottsbetalningar. Genom att registrera dig bekräftar du att du har läst våra 
+            <a href="terms.html" style="color: inherit; font-weight: bold;">Användarvillkor</a> och förstår att vi friskriver oss från allt ansvar vid bedrägeriförsök eller felaktig information.
+        </div>
+
+        <label class="terms-container">
+            <input type="checkbox" id="legalCheck">
+            <span>Jag bekräftar att jag är över 18 år, accepterar ansvarsfriskrivningen och samtycker till behandling av mina personuppgifter enligt vår integritetspolicy (GDPR).</span>
+        </label>
+
+        <form id="regForm" class="form-grid">
+            <div class="form-group full-width">
+                <label id="nameLabel">Fullständigt namn</label>
+                <input type="text" id="fullName" placeholder="För- och efternamn" required>
+            </div>
+
+            <div id="businessFields" class="full-width">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Organisationsnummer</label>
+                        <input type="text" id="taxId" placeholder="XXXXXX-XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefon (Växel)</label>
+                        <input type="tel" id="phone" placeholder="010-XXX XX XX">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Företagsadress</label>
+                        <input type="text" id="address" placeholder="Gata, Postnummer, Ort">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label>E-postadress</label>
+                <input type="email" id="email" placeholder="namn@exempel.se" required>
+            </div>
+
+            <div class="form-group">
+                <label>Lösenord</label>
+                <input type="password" id="pass" placeholder="Minst 8 tecken" required>
+            </div>
+
+            <div class="form-group">
+                <label>Bekräfta lösenord</label>
+                <input type="password" id="confirmPass" placeholder="Upprepa lösenord" required>
+            </div>
+
+            <button type="submit" class="btn-primary full-width" id="regBtn" disabled>Skapa konto</button>
+        </form>
+
+        <div class="divider"><span>eller registrera med</span></div>
+
+        <button type="button" class="btn-google" id="googleBtn" disabled>
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+            Google-konto (Endast privat)
+        </button>
+
+        <div class="footer-link">
+            Har du redan ett konto? <a href="login.html">Logga in här</a>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { auth, db, googleProvider } from './firebase-config.js';
+    import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const legalCheck = document.getElementById('legalCheck');
+    const regBtn = document.getElementById('regBtn');
+    const googleBtn = document.getElementById('googleBtn');
+    let accountType = 'private';
+
+    // 1. Logic for Terms Check (GDPR Compliance)
+    legalCheck.onchange = () => {
+        regBtn.disabled = !legalCheck.checked;
+        googleBtn.disabled = !legalCheck.checked;
+    };
+
+    // 2. Tab Switching (Smart UI)
+    window.switchTab = (type) => {
+        accountType = type;
+        document.getElementById('tabPrivate').classList.toggle('active', type === 'private');
+        document.getElementById('tabBusiness').classList.toggle('active', type === 'business');
+        document.getElementById('businessFields').style.display = (type === 'business') ? 'block' : 'none';
+        document.getElementById('nameLabel').innerText = (type === 'business') ? 'Företagsnamn' : 'Fullständigt namn';
+        
+        // Google is usually for individuals in these platforms
+        googleBtn.style.display = (type === 'private') ? 'flex' : 'none';
+    };
+
+    // 3. Main Registration Logic
+    document.getElementById('regForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const pass = document.getElementById('pass').value;
+        const confirm = document.getElementById('confirmPass').value;
+
+        if (pass.length < 8) return alert("Lösenordet måste vara minst 8 tecken.");
+        if (pass !== confirm) return alert("Lösenorden matchar inte.");
+
+        regBtn.disabled = true;
+        regBtn.innerText = "Behandlar...";
+
+        try {
+            const userCred = await createUserWithEmailAndPassword(auth, document.getElementById('email').value, pass);
+            const user = userCred.user;
+
+            await updateProfile(user, { displayName: document.getElementById('fullName').value });
+            await sendEmailVerification(user);
+
+            // Store specialized data in Firestore
+            await setDoc(doc(db, "users", user.uid), {
+                name: document.getElementById('fullName').value,
+                email: user.email,
+                userType: accountType,
+                taxId: accountType === 'business' ? document.getElementById('taxId').value : "",
+                address: accountType === 'business' ? document.getElementById('address').value : "",
+                phone: accountType === 'business' ? document.getElementById('phone').value : "",
+                createdAt: serverTimestamp(),
+                legalAccepted: true
+            });
+
+            await signOut(auth);
+            alert("Kontot har skapats! Ett bekräftelsemail har skickats. Verifiera din e-post innan du loggar in.");
+            window.location.href = "login.html";
+
+        } catch (error) {
+            console.error(error);
+            alert("Ett fel uppstod: " + error.message);
+            regBtn.disabled = false;
+            regBtn.innerText = "Skapa konto";
+        }
+    };
+
+    // 4. Google Quick Register (Private only)
+    googleBtn.onclick = async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            await setDoc(doc(db, "users", result.user.uid), {
+                name: result.user.displayName,
+                email: result.user.email,
+                userType: 'private',
+                createdAt: serverTimestamp(),
+                legalAccepted: true
+            }, { merge: true });
+            window.location.href = "index.html";
+        } catch (error) {
+            alert("Kunde inte registrera med Google.");
+        }
+    };
+</script>
+
+</body>
+</html>
