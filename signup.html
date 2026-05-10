@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skapa konto | BILHK</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <h2>Skapa nytt konto</h2>
+    <input type="email" id="email" placeholder="E-post">
+    <input type="password" id="pass" placeholder="Lösenord">
+    <button class="btn-primary" id="regBtn">Registrera dig</button>
+    <p class="link-alt">Har du redan ett konto? <a href="login.html">Logga in</a></p>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import firebaseConfig from './firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById('regBtn').onclick = async () => {
+        const e = document.getElementById('email').value;
+        const p = document.getElementById('pass').value;
+        try {
+            await createUserWithEmailAndPassword(auth, e, p);
+            location.href = "index.html";
+        } catch (err) { alert(err.message); }
+    };
+</script>
+</body>
+</html>
