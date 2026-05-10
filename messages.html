@@ -15,7 +15,6 @@
         .sidebar { width: 350px; border-right: 1px solid var(--border); overflow-y: auto; background: var(--white); display: flex; flex-direction: column; }
         .chat-window { flex: 1; display: flex; flex-direction: column; background: #fdfdfd; }
         
-        /* تصميم مخصص للهواتف لحل مشكلة إخفاء القوائم */
         @media (max-width: 768px) {
             .sidebar { width: 100%; border-right: none; }
             .chat-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
@@ -30,9 +29,13 @@
         .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
         .received { align-self: flex-start; background: #e2e8f0; border-bottom-left-radius: 4px; color: var(--dark); }
         .input-area { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: white; }
+        
+        /* 💡 تنسيق الحقل والزر عند الإغلاق لمنع الخطأ */
         input { flex: 1; padding: 15px 20px; border-radius: 30px; border: 1px solid var(--border); outline: none; font-size: 15px; background: #f8fafc; }
+        input:disabled { background: #e2e8f0; cursor: not-allowed; }
         .btn-send { background: var(--primary); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .btn-send:disabled { background: #cbd5e1; cursor: not-allowed; }
+        
         .chat-item { padding: 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
         .chat-item.active { background: #fff7ed; border-left: 4px solid var(--primary); }
         .empty-state { margin: auto; color: #94a3b8; text-align: center; padding: 20px; }
@@ -53,14 +56,14 @@
     <div class="chat-window" id="chatWindowView">
         <div style="padding:15px 20px; background:white; border-bottom:1px solid var(--border); display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
             <button class="back-btn" id="backBtn"><i class="fa-solid fa-arrow-left"></i></button>
-            <div id="activeChatHeader" style="font-weight:800; font-size: 16px;">Välj en chatt</div>
+            <div id="activeChatHeader" style="font-weight:800; font-size: 16px;">Ingen chatt vald</div>
         </div>
         <div class="msg-display" id="msgArea">
             <div class="empty-state">Välj en konversation från listan för att börja chatta.</div>
         </div>
         <div class="input-area">
-            <input type="text" id="msgInput" placeholder="Skriv ett meddelande..." autocomplete="off">
-            <button id="sendBtn" class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
+            <input type="text" id="msgInput" placeholder="Välj en chatt först..." autocomplete="off" disabled>
+            <button id="sendBtn" class="btn-send" disabled><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
@@ -72,12 +75,22 @@
 
     let user = null, activeRoom = null;
     
-    // التقاط معرف الغرفة من الرابط القادم من الإعلان
+    // 💡 الخطة المزدوجة: قراءة الرابط أولاً، وإذا فشل نقرأ الذاكرة المحلية
     const urlParams = new URLSearchParams(window.location.search);
-    const targetChatId = urlParams.get('chat');
+    const targetChatId = urlParams.get('chat') || localStorage.getItem('targetChat');
+    const targetChatName = localStorage.getItem('targetChatName') || "Chatt";
 
     onAuthStateChanged(auth, (u) => { 
-        if(u) { user = u; loadRooms(); } 
+        if(u) { 
+            user = u; 
+            if (targetChatId) {
+                window.openRoom(targetChatId, targetChatName);
+                // مسح الذاكرة بعد الاستخدام
+                localStorage.removeItem('targetChat');
+                localStorage.removeItem('targetChatName');
+            }
+            loadRooms(); 
+        } 
         else { window.location.href = "login.html"; } 
     });
 
@@ -91,39 +104,21 @@
                 return;
             }
 
-            let chatFound = false;
-
             snap.forEach(d => {
                 const room = d.data();
                 const div = document.createElement('div'); 
                 div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
+                div.setAttribute('data-id', d.id);
                 
                 let displayTitle = room.carName;
                 if (room.sellerId && user.uid === room.sellerId && room.buyerName) {
                     displayTitle = `${room.carName} (Från: ${room.buyerName})`;
                 }
 
-                div.innerHTML = `<strong>${displayTitle}</strong><small style="color:#64748b; margin-top:4px;">${room.lastMessage || 'Skicka första meddelandet'}</small>`;
+                div.innerHTML = `<strong>${displayTitle}</strong><small style="color:#64748b; margin-top:4px;">${room.lastMessage || 'Skicka meddelande'}</small>`;
                 div.onclick = () => window.openRoom(d.id, displayTitle);
                 list.appendChild(div);
-                
-                // فتح الغرفة تلقائياً إذا كانت مطابقة للرابط
-                if (targetChatId === d.id && !chatFound) {
-                    window.openRoom(d.id, displayTitle);
-                    chatFound = true;
-                }
             });
-
-            // فتح أول غرفة تلقائياً إذا كنت تتصفح من الكمبيوتر
-            if(!activeRoom && !chatFound && window.innerWidth > 768) {
-                const firstDoc = snap.docs[0];
-                const firstRoom = firstDoc.data();
-                let firstTitle = firstRoom.carName;
-                if (firstRoom.sellerId && user.uid === firstRoom.sellerId && firstRoom.buyerName) {
-                    firstTitle = `${firstRoom.carName} (Från: ${firstRoom.buyerName})`;
-                }
-                window.openRoom(firstDoc.id, firstTitle);
-            }
         });
     }
 
@@ -131,12 +126,19 @@
         activeRoom = id;
         document.getElementById('activeChatHeader').innerText = name;
         
-        // إظهار نافذة الدردشة على شاشات الهواتف المحمولة
+        // 💡 تفعيل حقل الكتابة وزر الإرسال عند اختيار الغرفة
+        const inputField = document.getElementById('msgInput');
+        const sendBtn = document.getElementById('sendBtn');
+        inputField.disabled = false;
+        sendBtn.disabled = false;
+        inputField.placeholder = "Skriv ett meddelande...";
+
+        // إظهار نافذة الدردشة للهواتف
         document.getElementById('chatWindowView').classList.add('active-mobile');
 
-        // تمييز المحادثة النشطة
+        // تمييز المحادثة النشطة في القائمة
         document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
-        const clickedChat = Array.from(document.querySelectorAll('.chat-item')).find(el => el.innerHTML.includes(name));
+        const clickedChat = document.querySelector(`.chat-item[data-id='${id}']`);
         if(clickedChat) clickedChat.classList.add('active');
 
         const q = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
@@ -156,18 +158,23 @@
         });
     }
 
-    // برمجة سهم الرجوع في الهاتف
+    // زر الرجوع في الهاتف
     document.getElementById('backBtn').onclick = () => {
         document.getElementById('chatWindowView').classList.remove('active-mobile');
         activeRoom = null; 
+        
+        // 💡 إعادة إقفال الحقل عند الخروج من الغرفة
+        document.getElementById('msgInput').disabled = true;
+        document.getElementById('sendBtn').disabled = true;
+        document.getElementById('msgInput').placeholder = "Välj en chatt först...";
+        document.getElementById('activeChatHeader').innerText = "Ingen chatt vald";
     };
 
     document.getElementById('sendBtn').onclick = async () => {
         const input = document.getElementById('msgInput'); 
         const text = input.value.trim();
         
-        if(!activeRoom) return alert("Välj en chatt från listan först!");
-        if(!text) return;
+        if(!activeRoom || !text) return;
 
         input.value = "";
         const btn = document.getElementById('sendBtn');
@@ -195,7 +202,9 @@
     };
 
     document.getElementById('msgInput').onkeypress = (e) => { 
-        if (e.key === 'Enter') document.getElementById('sendBtn').click(); 
+        if (e.key === 'Enter' && !document.getElementById('msgInput').disabled) {
+            document.getElementById('sendBtn').click(); 
+        }
     };
 </script>
 </body>
