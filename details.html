@@ -97,7 +97,6 @@
         if (snap.exists()) { document.getElementById('fIcon').className = 'fa-solid fa-heart'; document.getElementById('favBtn').classList.add('active'); }
     }
 
-    // زر المراسلة الجديد مع فصل هويات البائع والمشتري
     document.getElementById('chatBtn').onclick = async () => {
         if (!auth.currentUser) return alert("Du måste logga in först.");
         if (!carData) return;
@@ -107,8 +106,6 @@
 
         try {
             const roomId = [auth.currentUser.uid, carData.sellerId].sort().join('_') + '_' + carId;
-            
-            // تحديد اسم المشتري للظهور لدى البائع
             const buyerName = auth.currentUser.displayName || auth.currentUser.email.split('@')[0] || "Köpare";
 
             await setDoc(doc(db, "chats", roomId), { 
@@ -116,12 +113,13 @@
                 carName: `${carData.brand} ${carData.model}`, 
                 participants: [auth.currentUser.uid, carData.sellerId],
                 buyerId: auth.currentUser.uid,
-                buyerName: buyerName, // حفظ اسم المشتري
-                sellerId: carData.sellerId, // حفظ معرف البائع للتمييز لاحقاً
+                buyerName: buyerName, 
+                sellerId: carData.sellerId, 
                 updatedAt: serverTimestamp() 
             }, { merge: true });
             
-            window.location.href = "messages.html";
+            // الحل الذكي: تمرير معرف الغرفة في الرابط لفتحها فوراً
+            window.location.href = `messages.html?chat=${roomId}`;
         } catch (error) {
             alert("Databasfel: " + error.message);
             console.error(error);
