@@ -2,45 +2,72 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mitt Konto | BilMarknad-HK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        body { background: var(--bg); font-family: 'Inter', sans-serif; padding: 20px; }
-        .wrapper { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 250px 1fr; gap: 30px; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --danger: #ef4444; }
+        body { background: var(--bg); font-family: 'Inter', sans-serif; padding: 20px; margin: 0; }
+        .wrapper { max-width: 1000px; margin: 20px auto; display: grid; grid-template-columns: 250px 1fr; gap: 30px; }
         @media (max-width: 768px) { .wrapper { grid-template-columns: 1fr; } }
-        .tab-btn { padding: 15px; cursor: pointer; border-radius: 12px; margin-bottom: 10px; font-weight: 700; color: #64748b; background: white; border: 1px solid var(--border); }
+        
+        .sidebar { background: white; padding: 20px; border-radius: 20px; border: 1px solid var(--border); height: fit-content; }
+        .tab-btn { width: 100%; text-align: left; padding: 15px; cursor: pointer; border-radius: 12px; margin-bottom: 10px; font-weight: 700; color: #64748b; background: white; border: 1px solid var(--border); transition: 0.3s; }
         .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .ad-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; cursor: pointer; }
-        .ad-card img { width: 80px; height: 60px; object-fit: cover; border-radius: 8px; }
+        .tab-btn i { width: 25px; }
+        
+        .ad-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; flex-wrap: wrap; }
+        .ad-card img { width: 110px; height: 80px; object-fit: cover; border-radius: 12px; cursor: pointer; }
+        .ad-info { flex: 1; min-width: 200px; cursor: pointer; }
+        .ad-actions { display: flex; gap: 10px; }
+        
+        .btn-action { padding: 12px; border-radius: 12px; border: none; cursor: pointer; font-size: 16px; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; }
+        .btn-edit { background: #f1f5f9; color: var(--dark); }
+        .btn-edit:hover { background: #e2e8f0; }
+        .btn-delete { background: #fee2e2; color: var(--danger); }
+        .btn-delete:hover { background: #fca5a5; }
+        
+        h2 { margin-bottom: 20px; font-weight: 900; color: var(--dark); }
+        .empty-state { text-align: center; padding: 40px; color: #64748b; background: white; border-radius: 18px; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
+<header style="background: white; padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+    <a href="index.html" style="text-decoration:none; font-size:22px; font-weight:900; color:var(--dark);">BIL<span style="color:var(--primary);">HK</span></a>
+    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700; font-size:14px;"><i class="fa-solid fa-arrow-left"></i> Tillbaka</a>
+</header>
+
 <div class="wrapper">
     <div class="sidebar">
-        <div class="tab-btn active" id="btnAds" onclick="switchTab('ads')">Mina Annonser</div>
-        <div class="tab-btn" id="btnFavs" onclick="switchTab('favs')">Sparade Bilar</div>
-        <div class="tab-btn" onclick="window.location.href='messages.html'">Meddelanden</div>
-        <div class="tab-btn" onclick="window.location.href='index.html'">Hem</div>
+        <button class="tab-btn active" id="btnAds" onclick="switchTab('ads')"><i class="fa-solid fa-car"></i> Mina Annonser</button>
+        <button class="tab-btn" id="btnFavs" onclick="switchTab('favs')"><i class="fa-solid fa-heart"></i> Sparade Bilar</button>
+        <button class="tab-btn" onclick="window.location.href='messages.html'"><i class="fa-solid fa-message"></i> Meddelanden</button>
+        <button class="tab-btn" style="color:var(--danger); border-color:#fee2e2; background:#fff5f5; margin-top:20px;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
     </div>
-    <div class="content" id="mainContent">Laddar...</div>
+    <div class="content" id="mainContent">
+        <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Laddar...</div>
+    </div>
 </div>
 
 <script type="module">
     import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { collection, query, where, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let user = null;
-    onAuthStateChanged(auth, (u) => { if(u) { user = u; switchTab('ads'); } else { window.location.href="login.html"; } });
+    onAuthStateChanged(auth, (u) => { 
+        if(u) { user = u; switchTab('ads'); } 
+        else { window.location.href="login.html"; } 
+    });
 
     window.switchTab = async (tab) => {
         document.getElementById('btnAds').classList.toggle('active', tab === 'ads');
         document.getElementById('btnFavs').classList.toggle('active', tab === 'favs');
+        
         const container = document.getElementById('mainContent');
-        container.innerHTML = "Laddar...";
+        container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Hämtar data...</div>`;
 
         const col = tab === 'ads' ? 'cars' : 'favorites';
         const key = tab === 'ads' ? 'sellerId' : 'userId';
@@ -48,18 +75,78 @@
         const snap = await getDocs(q);
 
         container.innerHTML = `<h2>${tab === 'ads' ? 'Mina Annonser' : 'Sparade Bilar'}</h2>`;
-        if (snap.empty) { container.innerHTML += "<p>Ingenting hittades.</p>"; return; }
+        
+        if (snap.empty) { 
+            container.innerHTML += `<div class="empty-state">Ingenting hittades här ännu.</div>`; 
+            return; 
+        }
         
         snap.forEach(d => {
             const data = d.data();
-            const carId = tab === 'ads' ? d.id : data.carId;
-            const img = tab === 'ads' ? (data.images?.[0] || '') : (data.image || '');
+            const id = d.id;
+            const carId = tab === 'ads' ? id : data.carId;
+            const img = tab === 'ads' ? (data.images?.[0] || 'placeholder.jpg') : (data.image || 'placeholder.jpg');
             const title = tab === 'ads' ? `${data.brand} ${data.model}` : data.brand;
-            container.innerHTML += `
-                <div class="ad-card" onclick="window.location.href='details.html?id=${carId}'">
-                    <img src="${img}">
-                    <div><h4>${title}</h4><p>${Number(data.price).toLocaleString()} kr</p></div>
-                </div>`;
+
+            const card = document.createElement('div');
+            card.className = "ad-card";
+            card.innerHTML = `
+                <img src="${img}" onclick="window.location.href='details.html?id=${carId}'">
+                <div class="ad-info" onclick="window.location.href='details.html?id=${carId}'">
+                    <h4 style="margin:0; font-size: 18px; color: var(--dark);">${title}</h4>
+                    <p style="margin:6px 0 0 0; color:#f58220; font-weight: 800; font-size: 16px;">${Number(data.price).toLocaleString()} kr</p>
+                </div>
+            `;
+
+            if (tab === 'ads') {
+                const actions = document.createElement('div');
+                actions.className = "ad-actions";
+                actions.innerHTML = `
+                    <button class="btn-action btn-edit" title="Redigera" onclick="window.location.href='edit-car.html?id=${id}'"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-action btn-delete" title="Ta bort" onclick="deleteAd('${id}')"><i class="fa-solid fa-trash"></i></button>
+                `;
+                card.appendChild(actions);
+            }
+            container.appendChild(card);
+        });
+    }
+
+    window.deleteAd = async (id) => {
+        const result = await Swal.fire({
+            title: 'Är du säker?',
+            text: "Denna åtgärd går inte att ångra!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ja, radera',
+            cancelButtonText: 'Avbryt'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await deleteDoc(doc(db, "cars", id));
+                Swal.fire('Raderad!', 'Annonsen har tagits bort.', 'success');
+                switchTab('ads'); 
+            } catch (error) {
+                Swal.fire('Fel!', 'Kunde inte radera annonsen: ' + error.message, 'error');
+            }
+        }
+    }
+
+    window.logout = () => {
+        Swal.fire({
+            title: 'Logga ut?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#f58220',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ja',
+            cancelButtonText: 'Avbryt'
+        }).then((res) => {
+            if(res.isConfirmed) {
+                signOut(auth).then(() => window.location.href = 'index.html');
+            }
         });
     }
 </script>
