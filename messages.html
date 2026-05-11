@@ -2,8 +2,8 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatt | BILHK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Meddelanden | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -11,14 +11,18 @@
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         body { background: var(--bg); height: 100vh; display: flex; flex-direction: column; margin: 0; font-family: 'Inter', sans-serif; overflow: hidden; }
         .app-container { display: flex; flex: 1; overflow: hidden; max-width: 1400px; margin: 0 auto; width: 100%; position: relative; background: white; }
-        .sidebar { width: 350px; border-right: 1px solid var(--border); overflow-y: auto; }
+        .sidebar { width: 350px; border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; }
         .chat-window { flex: 1; display: flex; flex-direction: column; background: #fdfdfd; }
-        @media (max-width: 768px) { .sidebar.hide-mobile { display: none; } .chat-window.show-mobile { display: flex; width: 100%; position: absolute; height: 100%; } .chat-window { display: none; } }
+        @media (max-width: 768px) {
+            .sidebar.hide-mobile { display: none !important; }
+            .chat-window { display: none; }
+            .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 10; }
+        }
         .msg-display { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { padding: 12px 18px; border-radius: 20px; max-width: 80%; }
-        .sent { align-self: flex-end; background: var(--primary); color: white; }
-        .received { align-self: flex-start; background: #e2e8f0; }
-        .chat-item { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+        .bubble { padding: 12px 18px; border-radius: 18px; max-width: 80%; font-size: 15px; line-height: 1.4; }
+        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        .received { align-self: flex-start; background: #e2e8f0; border-bottom-left-radius: 4px; }
+        .chat-item { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
         .chat-item.active { background: #fff7ed; border-left: 4px solid var(--primary); }
     </style>
 </head>
@@ -27,21 +31,21 @@
     <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark); font-size:20px;">BIL<span>HK</span></a>
     <a href="my-account.html" style="text-decoration:none; font-weight:700; color:var(--dark);">Mitt Konto</a>
 </header>
+
 <div class="app-container">
     <div class="sidebar" id="sidebarView">
-        <div style="padding:20px; font-weight:900; border-bottom:1px solid var(--border);">Meddelanden</div>
+        <div style="padding:20px; font-weight:900; border-bottom:1px solid var(--border);">Konversationer</div>
         <div id="chatList"></div>
     </div>
     <div class="chat-window" id="chatWindowView">
-        <div style="padding:15px; border-bottom:1px solid var(--border); display:flex; align-items:center; background:white;">
-            <button onclick="location.reload()" style="background:none; border:none; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
-            <div id="activeChatHeader" style="font-weight:800; margin-left:10px;">Välj en chatt</div>
-            <button id="delChat" style="margin-left:auto; color:red; border:none; background:none; cursor:pointer; display:none;"><i class="fa-solid fa-trash"></i></button>
+        <div style="padding:15px; border-bottom:1px solid var(--border); background:white; display:flex; align-items:center;">
+            <button onclick="window.location.href='messages.html'" style="background:none; border:none; font-size:18px; margin-right:10px; cursor:pointer;" class="mobile-only"><i class="fa-solid fa-arrow-left"></i></button>
+            <div id="activeChatHeader" style="font-weight:800;">Välj en konversation</div>
         </div>
         <div class="msg-display" id="msgArea"></div>
-        <div style="padding:15px; border-top:1px solid var(--border); display:flex; gap:10px;">
-            <input type="text" id="msgInput" style="flex:1; padding:12px; border-radius:10px; border:1px solid var(--border);" placeholder="Skriv..." disabled>
-            <button id="sendBtn" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:10px;" disabled>Sänd</button>
+        <div style="padding:15px; border-top:1px solid var(--border); display:flex; gap:10px; background:white;">
+            <input type="text" id="msgInput" style="flex:1; padding:12px; border-radius:30px; border:1px solid var(--border); outline:none;" placeholder="Skriv ett meddelande..." disabled>
+            <button id="sendBtn" style="background:var(--primary); color:white; border:none; padding:10px 25px; border-radius:30px; font-weight:700; cursor:pointer;" disabled>Sänd</button>
         </div>
     </div>
 </div>
@@ -49,65 +53,123 @@
 <script type="module">
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, setDoc, deleteDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let user = null, activeRoom = null;
+    let user = null, activeRoom = null, tempChatData = null;
     const urlParams = new URLSearchParams(window.location.search);
-    const chatFromUrl = urlParams.get('chat');
 
-    onAuthStateChanged(auth, u => { if(u) { user = u; loadRooms(); } else { window.location.href="login.html"; } });
+    onAuthStateChanged(auth, (u) => { 
+        if(u) { user = u; loadRooms(); handleUrlParams(); } 
+        else { window.location.href="login.html"; }
+    });
+
+    async function handleUrlParams() {
+        const sellerId = urlParams.get('seller');
+        const carId = urlParams.get('carId');
+        const carName = urlParams.get('name');
+
+        if (sellerId && carId) {
+            const roomId = [user.uid, sellerId].sort().join('_') + '_' + carId;
+            const docSnap = await getDoc(doc(db, "chats", roomId));
+            
+            if (docSnap.exists()) {
+                openRoom(roomId, carName, carId);
+            } else {
+                // 💡 تحضير واجهة محادثة وهمية/مؤقتة حتى يتم الإرسال
+                activeRoom = roomId;
+                tempChatData = { sellerId, carId, carName };
+                setupChatUI(carName);
+            }
+        }
+    }
 
     function loadRooms() {
-        const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
-        onSnapshot(q, snap => {
-            const list = document.getElementById('chatList'); list.innerHTML = "";
+        // نطلب الغرف التي يشارك فيها المستخدم والمرتبة حسب وقت التحديث
+        const q = query(collection(db, "chats"), 
+                        where("participants", "array-contains", user.uid),
+                        orderBy("updatedAt", "desc"));
+
+        onSnapshot(q, (snap) => {
+            const list = document.getElementById('chatList');
+            list.innerHTML = "";
             snap.forEach(d => {
                 const r = d.data();
+                // 💡 نفلتر برمجياً: لا تظهر الغرفة إذا لم تكن تحتوي على رسالة أخيرة
+                if (!r.lastMessage) return;
+
                 const div = document.createElement('div');
                 div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
-                div.innerHTML = `<strong>${r.carName}</strong><br><small>${r.lastMessage || '...'}</small>`;
-                div.onclick = () => openRoom(d.id, r.carName, r.carId);
+                const title = r.sellerId === user.uid ? `${r.carName} (Köpare: ${r.buyerName})` : r.carName;
+                div.innerHTML = `<strong>${title}</strong><br><small style="color:#64748b;">${r.lastMessage}</small>`;
+                div.onclick = () => openRoom(d.id, title, r.carId);
                 list.appendChild(div);
-                if(chatFromUrl === d.id && !activeRoom) openRoom(d.id, r.carName, r.carId);
             });
         });
     }
 
-    window.openRoom = (id, name, carId) => {
-        activeRoom = id;
-        document.getElementById('activeChatHeader').innerHTML = `<span onclick="window.location.href='details.html?id=${carId}'" style="cursor:pointer; color:var(--primary)">${name}</span>`;
+    function setupChatUI(name) {
+        document.getElementById('activeChatHeader').innerText = name;
         document.getElementById('msgInput').disabled = false;
         document.getElementById('sendBtn').disabled = false;
-        document.getElementById('delChat').style.display = "block";
         document.getElementById('chatWindowView').classList.add('show-mobile');
+        document.getElementById('sidebarView').classList.add('hide-mobile');
+    }
+
+    window.openRoom = (id, name, carId) => {
+        activeRoom = id;
+        tempChatData = null; 
+        setupChatUI(name);
+
         const q = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
-        onSnapshot(q, snap => {
+        onSnapshot(q, (snap) => {
             const area = document.getElementById('msgArea'); area.innerHTML = "";
             snap.forEach(d => {
                 const m = d.data();
-                const div = document.createElement('div'); div.className = `bubble ${m.senderId === user.uid ? 'sent' : 'received'}`;
-                div.innerText = m.text; area.appendChild(div);
+                const div = document.createElement('div');
+                div.className = `bubble ${m.senderId === user.uid ? 'sent' : 'received'}`;
+                div.innerText = m.text;
+                area.appendChild(div);
             });
             area.scrollTop = area.scrollHeight;
         });
     };
 
     document.getElementById('sendBtn').onclick = async () => {
-        const input = document.getElementById('msgInput'); if(!input.value.trim()) return;
-        const text = input.value; input.value = "";
-        await addDoc(collection(db, `chats/${activeRoom}/messages`), { senderId: user.uid, text, createdAt: serverTimestamp() });
-        await setDoc(doc(db, "chats", activeRoom), { lastMessage: text, updatedAt: serverTimestamp() }, { merge: true });
-    };
+        const input = document.getElementById('msgInput');
+        const text = input.value.trim();
+        if(!text) return;
+        input.value = "";
 
-    document.getElementById('delChat').onclick = async () => {
-        const res = await Swal.fire({ title: 'Radera chatt?', showCancelButton: true });
-        if(res.isConfirmed){
-            const msgs = await getDocs(collection(db, `chats/${activeRoom}/messages`));
-            const batch = writeBatch(db);
-            msgs.forEach(m => batch.delete(m.ref));
-            batch.delete(doc(db, "chats", activeRoom));
-            await batch.commit(); location.reload();
+        // 💡 إذا كانت المحادثة لم تبدأ بعد (مؤقتة)، ننشئ الوثيقة الآن
+        if (tempChatData) {
+            await setDoc(doc(db, "chats", activeRoom), {
+                carId: tempChatData.carId,
+                carName: tempChatData.carName,
+                participants: [user.uid, tempChatData.sellerId],
+                sellerId: tempChatData.sellerId,
+                buyerId: user.uid,
+                buyerName: user.displayName || user.email.split('@')[0],
+                lastMessage: text,
+                updatedAt: serverTimestamp()
+            });
+            const name = tempChatData.carName;
+            const cid = tempChatData.carId;
+            tempChatData = null; 
+            openRoom(activeRoom, name, cid); // ننتقل للمراقبة الحقيقية
         }
+
+        // إرسال الرسالة في المجموعة الفرعية
+        await addDoc(collection(db, `chats/${activeRoom}/messages`), {
+            senderId: user.uid,
+            text: text,
+            createdAt: serverTimestamp()
+        });
+
+        // تحديث معلومات الغرفة
+        await setDoc(doc(db, "chats", activeRoom), {
+            lastMessage: text,
+            updatedAt: serverTimestamp()
+        }, { merge: true });
     };
 </script>
 </body>
