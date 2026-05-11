@@ -64,12 +64,16 @@
         if (sellerId && carId) {
             const roomId = [user.uid, sellerId].sort().join('_') + '_' + carId;
             const snap = await getDoc(doc(db, "chats", roomId));
+            
+            // 💡 الحل: تفعيل الواجهة سواء كانت الغرفة موجودة أو لا
+            activeRoom = roomId; 
+            showUI(carName);
+            
             if (snap.exists()) {
                 openRoom(roomId, carName);
             } else {
-                activeRoom = roomId;
                 tempChatData = { sellerId, carId, carName };
-                showUI(carName); // 💡 تفعيل الكتابة فوراً
+                document.getElementById('msgArea').innerHTML = "<div style='text-align:center; padding:20px; color:#64748b;'>Skicka det första meddelandet för att starta chatten!</div>";
             }
         }
     }
@@ -82,8 +86,8 @@
                 const r = d.data(); if (!r.lastMessage) return;
                 const div = document.createElement('div');
                 div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
-                const title = r.sellerId === user.uid ? `${r.carName} (Köpare: ${r.buyerName})` : r.carName;
-                div.innerHTML = `<strong>${title}</strong><br><small>${r.lastMessage}</small>`;
+                const title = r.sellerId === user.uid ? `${r.carName} (Från: ${r.buyerName})` : r.carName;
+                div.innerHTML = `<strong>${title}</strong><br><small style="color:#64748b;">${r.lastMessage}</small>`;
                 div.onclick = () => openRoom(d.id, title);
                 list.appendChild(div);
             });
@@ -95,12 +99,12 @@
         document.getElementById('msgInput').disabled = false;
         document.getElementById('sendBtn').disabled = false;
         document.getElementById('chatWindowView').classList.add('show-mobile');
+        document.getElementById('sidebarView').classList.add('hide-mobile');
     }
 
     window.openRoom = (id, name) => {
         activeRoom = id; tempChatData = null; showUI(name);
-        const q = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
-        onSnapshot(q, snap => {
+        onSnapshot(query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc")), snap => {
             const area = document.getElementById('msgArea'); area.innerHTML = "";
             snap.forEach(d => {
                 const m = d.data();
@@ -117,7 +121,6 @@
         if(!text) return; input.value = "";
         
         if (tempChatData) {
-            // إنشاء الغرفة مع مصفوفة المشاركين participants
             await setDoc(doc(db, "chats", activeRoom), {
                 carId: tempChatData.carId, carName: tempChatData.carName,
                 participants: [user.uid, tempChatData.sellerId],
