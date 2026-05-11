@@ -6,7 +6,6 @@
     <title>Chatt | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         body { background: var(--bg); height: 100vh; display: flex; flex-direction: column; margin: 0; font-family: 'Inter', sans-serif; overflow: hidden; }
@@ -16,56 +15,51 @@
         @media (max-width: 768px) {
             .sidebar.hide-mobile { display: none !important; }
             .chat-window { display: none; }
-            .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 10; }
+            .chat-window.show-mobile { display: flex !important; width: 100%; z-index: 10; }
         }
         .msg-display { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { padding: 12px 18px; border-radius: 20px; max-width: 80%; font-size: 15px; }
-        .sent { align-self: flex-end; background: var(--primary); color: white; }
-        .received { align-self: flex-start; background: #e2e8f0; }
-        .input-area { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: white; }
-        input { flex: 1; padding: 12px 20px; border-radius: 30px; border: 1px solid var(--border); outline: none; }
-        .btn-send { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
-        .chat-item { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+        .bubble { padding: 12px 18px; border-radius: 20px; max-width: 80%; font-size: 15px; line-height: 1.4; }
+        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        .received { align-self: flex-start; background: #e2e8f0; border-bottom-left-radius: 4px; }
+        .chat-item { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
         .chat-item.active { background: #fff7ed; border-left: 4px solid var(--primary); }
     </style>
 </head>
 <body>
 <header style="background:white; padding:15px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-    <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark);">BIL<span style="color:var(--primary);">HK</span></a>
-    <a href="my-account.html" style="text-decoration:none; font-size:14px; font-weight:700; color:var(--dark);">Mitt Konto</a>
+    <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark); font-size:20px;">BIL<span>HK</span></a>
+    <a href="my-account.html" style="text-decoration:none; font-weight:700; color:var(--dark);">Mitt Konto</a>
 </header>
+
 <div class="app-container">
     <div class="sidebar" id="sidebarView">
         <div style="padding:20px; font-weight:900; border-bottom:1px solid var(--border);">Meddelanden</div>
         <div id="chatList"></div>
     </div>
     <div class="chat-window" id="chatWindowView">
-        <div style="padding:15px; border-bottom:1px solid var(--border); display:flex; align-items:center; background:white;">
-            <button onclick="closeChat()" id="backBtn" style="background:none; border:none; font-size:20px; margin-right:10px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
+        <div style="padding:15px; border-bottom:1px solid var(--border); background:white; display:flex; align-items:center;">
+            <button onclick="closeChat()" style="background:none; border:none; font-size:18px; margin-right:10px;" class="mobile-only"><i class="fa-solid fa-arrow-left"></i></button>
             <div id="activeChatHeader" style="font-weight:800;">Välj en chatt</div>
-            <button id="deleteChatBtn" style="margin-left:auto; color:#ef4444; background:none; border:none; cursor:pointer; display:none;"><i class="fa-solid fa-trash"></i></button>
         </div>
         <div class="msg-display" id="msgArea"></div>
-        <div class="input-area">
-            <input type="file" id="imgInput" accept="image/*" style="display:none;">
-            <button onclick="document.getElementById('imgInput').click()" style="background:none; border:none; color:#64748b; font-size:20px; cursor:pointer;"><i class="fa-solid fa-camera"></i></button>
-            <input type="text" id="msgInput" placeholder="Skriv..." disabled>
-            <button id="sendBtn" class="btn-send" disabled><i class="fa-solid fa-paper-plane"></i></button>
+        <div class="input-area" style="padding:15px; border-top:1px solid var(--border); display:flex; gap:10px;">
+            <input type="text" id="msgInput" style="flex:1; padding:12px; border-radius:10px; border:1px solid var(--border);" placeholder="Skriv..." disabled>
+            <button id="sendBtn" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer;" disabled>Sänd</button>
         </div>
     </div>
 </div>
 
 <script type="module">
-    import { auth, db, storage } from './firebase-config.js';
+    import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, setDoc, deleteDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let user = null, activeRoom = null;
-    const params = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialChat = urlParams.get('chat');
 
     onAuthStateChanged(auth, (u) => { 
-        if(u) { user = u; loadRooms(); if(params.get('chat')) openRoom(params.get('chat'), params.get('name')); } 
+        if(u) { user = u; loadRooms(); } 
         else { window.location.href="login.html"; }
     });
 
@@ -73,15 +67,16 @@
         const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
         onSnapshot(q, (snap) => {
             const list = document.getElementById('chatList'); list.innerHTML = "";
-            let rooms = []; snap.forEach(d => rooms.push({ id: d.id, ...d.data() }));
-            rooms.sort((a,b) => (b.updatedAt?.toMillis() || 0) - (a.updatedAt?.toMillis() || 0));
-            rooms.forEach(r => {
+            snap.forEach(d => {
+                const r = d.data();
                 const div = document.createElement('div');
-                div.className = `chat-item ${activeRoom === r.id ? 'active' : ''}`;
-                let title = r.sellerId === user.uid ? `${r.carName} (Från: ${r.buyerName})` : r.carName;
-                div.innerHTML = `<strong>${title}</strong><br><small>${r.lastMessage || '...'}</small>`;
-                div.onclick = () => openRoom(r.id, title);
+                div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
+                div.innerHTML = `<strong>${r.carName}</strong><br><small>${r.lastMessage || 'Inga meddelanden'}</small>`;
+                div.onclick = () => openRoom(d.id, r.carName);
                 list.appendChild(div);
+                
+                // إذا كان هناك معرف محادثة في الرابط، افتحه تلقائياً
+                if (initialChat === d.id && !activeRoom) openRoom(d.id, r.carName);
             });
         });
     }
@@ -91,7 +86,7 @@
         document.getElementById('activeChatHeader').innerText = name;
         document.getElementById('msgInput').disabled = false;
         document.getElementById('sendBtn').disabled = false;
-        document.getElementById('deleteChatBtn').style.display = "block";
+        
         document.getElementById('chatWindowView').classList.add('show-mobile');
         document.getElementById('sidebarView').classList.add('hide-mobile');
 
@@ -100,46 +95,25 @@
             const area = document.getElementById('msgArea'); area.innerHTML = "";
             snap.forEach(d => {
                 const m = d.data();
-                const div = document.createElement('div'); div.className = `bubble ${m.senderId === user.uid ? 'sent' : 'received'}`;
-                if(m.imageUrl) div.innerHTML = `<img src="${m.imageUrl}" style="max-width:100%; border-radius:10px;">`;
-                else div.innerText = m.text;
+                const div = document.createElement('div');
+                div.className = `bubble ${m.senderId === user.uid ? 'sent' : 'received'}`;
+                div.innerText = m.text;
                 area.appendChild(div);
             });
             area.scrollTop = area.scrollHeight;
         });
-    };
+    }
 
     window.closeChat = () => {
         document.getElementById('chatWindowView').classList.remove('show-mobile');
         document.getElementById('sidebarView').classList.remove('hide-mobile');
-    };
+    }
 
     document.getElementById('sendBtn').onclick = async () => {
-        const input = document.getElementById('msgInput'); if(!input.value.trim() || !activeRoom) return;
+        const input = document.getElementById('msgInput'); if(!input.value.trim()) return;
         const text = input.value; input.value = "";
         await addDoc(collection(db, `chats/${activeRoom}/messages`), { senderId: user.uid, text, createdAt: serverTimestamp() });
         await setDoc(doc(db, "chats", activeRoom), { lastMessage: text, updatedAt: serverTimestamp() }, { merge: true });
-    };
-
-    document.getElementById('imgInput').onchange = async (e) => {
-        const file = e.target.files[0]; if(!file || file.size > 2*1024*1024) return alert("Max 2MB");
-        const sRef = ref(storage, `chat_images/${Date.now()}_${file.name}`);
-        await uploadBytes(sRef, file);
-        const url = await getDownloadURL(sRef);
-        await addDoc(collection(db, `chats/${activeRoom}/messages`), { senderId: user.uid, imageUrl: url, createdAt: serverTimestamp() });
-        await setDoc(doc(db, "chats", activeRoom), { lastMessage: "📷 Bild", updatedAt: serverTimestamp() }, { merge: true });
-    };
-
-    document.getElementById('deleteChatBtn').onclick = async () => {
-        const res = await Swal.fire({ title: 'Radera chatt?', showCancelButton: true, confirmButtonColor: '#ef4444' });
-        if(res.isConfirmed) {
-            const msgs = await getDocs(collection(db, `chats/${activeRoom}/messages`));
-            const batch = writeBatch(db);
-            msgs.forEach(m => batch.delete(m.ref));
-            batch.delete(doc(db, "chats", activeRoom));
-            await batch.commit();
-            location.reload();
-        }
     };
 </script>
 </body>
