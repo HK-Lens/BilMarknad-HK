@@ -3,190 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chatt | BILHK Premium</title>
+    <title>Chatt | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --danger: #ef4444; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         body { background: var(--bg); height: 100vh; display: flex; flex-direction: column; margin: 0; font-family: 'Inter', sans-serif; overflow: hidden; }
-        header { background: white; padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-        
-        .app-container { display: flex; flex: 1; overflow: hidden; background: white; max-width: 1400px; margin: 0 auto; width: 100%; border-left: 1px solid var(--border); border-right: 1px solid var(--border); position: relative; }
-        .sidebar { width: 350px; border-right: 1px solid var(--border); overflow-y: auto; background: var(--white); display: flex; flex-direction: column; }
+        .app-container { display: flex; flex: 1; overflow: hidden; background: white; max-width: 1400px; margin: 0 auto; width: 100%; position: relative; }
+        .sidebar { width: 350px; border-right: 1px solid var(--border); overflow-y: auto; background: white; }
         .chat-window { flex: 1; display: flex; flex-direction: column; background: #fdfdfd; }
-        
         @media (max-width: 768px) {
-            .sidebar { width: 100%; border-right: none; }
-            .sidebar.hide-on-mobile { display: none !important; } 
-            .chat-window { display: none; width: 100%; }
-            .chat-window.show-on-mobile { display: flex !important; }
+            .sidebar.hide-mobile { display: none !important; }
+            .chat-window { display: none; }
+            .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 10; }
         }
-        
-        .back-btn { display: none; background: none; border: none; font-size: 20px; color: var(--dark); cursor: pointer; padding-right: 15px; }
-        @media (max-width: 768px) { .back-btn { display: inline-block; } }
-
-        .msg-display { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .bubble { padding: 12px 18px; border-radius: 20px; max-width: 80%; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
-        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
-        .received { align-self: flex-start; background: #e2e8f0; border-bottom-left-radius: 4px; color: var(--dark); }
-        
-        .input-area { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: white; align-items: center; }
-        input[type="text"] { flex: 1; padding: 15px 20px; border-radius: 30px; border: 1px solid var(--border); outline: none; font-size: 15px; background: #f8fafc; }
-        
-        .btn-send { background: var(--primary); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .btn-delete-chat { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 18px; margin-left: auto; padding: 10px; }
-
-        .chat-item { padding: 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
+        .msg-display { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .bubble { padding: 12px 18px; border-radius: 20px; max-width: 80%; font-size: 15px; }
+        .sent { align-self: flex-end; background: var(--primary); color: white; }
+        .received { align-self: flex-start; background: #e2e8f0; }
+        .input-area { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: white; }
+        input { flex: 1; padding: 12px 20px; border-radius: 30px; border: 1px solid var(--border); outline: none; }
+        .btn-send { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+        .chat-item { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
         .chat-item.active { background: #fff7ed; border-left: 4px solid var(--primary); }
-        .empty-state { margin: auto; color: #94a3b8; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
-<header>
-    <a href="index.html" style="text-decoration:none; font-size:22px; font-weight:900; color:var(--dark);">BIL<span style="color:var(--primary);">HK</span></a>
-    <a href="my-account.html" style="text-decoration:none; color:var(--dark); font-weight:700; font-size:14px;">Mitt Konto</a>
+<header style="background:white; padding:15px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+    <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark);">BIL<span style="color:var(--primary);">HK</span></a>
+    <a href="my-account.html" style="text-decoration:none; font-size:14px; font-weight:700; color:var(--dark);">Mitt Konto</a>
 </header>
 <div class="app-container">
     <div class="sidebar" id="sidebarView">
-        <div style="padding:20px; font-weight:900; border-bottom:1px solid var(--border); font-size: 18px;">Meddelanden</div>
-        <div id="chatList" style="flex: 1; overflow-y: auto;">
-            <div class="empty-state">Laddar...</div>
-        </div>
+        <div style="padding:20px; font-weight:900; border-bottom:1px solid var(--border);">Meddelanden</div>
+        <div id="chatList"></div>
     </div>
     <div class="chat-window" id="chatWindowView">
-        <div style="padding:15px 20px; background:white; border-bottom:1px solid var(--border); display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
-            <button class="back-btn" id="backBtn"><i class="fa-solid fa-arrow-left"></i></button>
-            <div id="activeChatHeader" style="font-weight:800; font-size: 16px;">Välj en chatt</div>
-            <button id="deleteChatBtn" class="btn-delete-chat" style="display: none;" title="Radera konversation"><i class="fa-solid fa-trash-can"></i></button>
+        <div style="padding:15px; border-bottom:1px solid var(--border); display:flex; align-items:center; background:white;">
+            <button onclick="closeChat()" id="backBtn" style="background:none; border:none; font-size:20px; margin-right:10px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
+            <div id="activeChatHeader" style="font-weight:800;">Välj en chatt</div>
+            <button id="deleteChatBtn" style="margin-left:auto; color:#ef4444; background:none; border:none; cursor:pointer; display:none;"><i class="fa-solid fa-trash"></i></button>
         </div>
-        <div class="msg-display" id="msgArea">
-            <div class="empty-state">Välj en konversation från listان för att börja chatta.</div>
-        </div>
+        <div class="msg-display" id="msgArea"></div>
         <div class="input-area">
-            <input type="text" id="msgInput" placeholder="Välj en chatt först..." autocomplete="off" disabled>
+            <input type="file" id="imgInput" accept="image/*" style="display:none;">
+            <button onclick="document.getElementById('imgInput').click()" style="background:none; border:none; color:#64748b; font-size:20px; cursor:pointer;"><i class="fa-solid fa-camera"></i></button>
+            <input type="text" id="msgInput" placeholder="Skriv..." disabled>
             <button id="sendBtn" class="btn-send" disabled><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
 
 <script type="module">
-    import { auth, db } from './firebase-config.js';
+    import { auth, db, storage } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, setDoc, deleteDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
     let user = null, activeRoom = null;
+    const params = new URLSearchParams(window.location.search);
 
     onAuthStateChanged(auth, (u) => { 
-        if(u) { user = u; loadRooms(); } 
-        else { window.location.href = "login.html"; } 
+        if(u) { user = u; loadRooms(); if(params.get('chat')) openRoom(params.get('chat'), params.get('name')); } 
+        else { window.location.href="login.html"; }
     });
 
     function loadRooms() {
         const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
         onSnapshot(q, (snap) => {
             const list = document.getElementById('chatList'); list.innerHTML = "";
-            if(snap.empty) { list.innerHTML = "<div class='empty-state'>Inga meddelanden.</div>"; return; }
-
-            let rooms = [];
-            snap.forEach(d => rooms.push({ id: d.id, ...d.data() }));
-            rooms.sort((a, b) => (b.updatedAt?.toMillis() || 0) - (a.updatedAt?.toMillis() || 0));
-
-            rooms.forEach(room => {
-                const div = document.createElement('div'); 
-                div.className = `chat-item ${activeRoom === room.id ? 'active' : ''}`;
-                let title = room.sellerId === user.uid ? `${room.carName} (Från: ${room.buyerName || 'Köpare'})` : room.carName;
-                div.innerHTML = `<strong>${title}</strong><small style="color:#64748b; margin-top:4px;">${room.lastMessage || '...'}</small>`;
-                div.onclick = () => openRoom(room.id, title);
+            let rooms = []; snap.forEach(d => rooms.push({ id: d.id, ...d.data() }));
+            rooms.sort((a,b) => (b.updatedAt?.toMillis() || 0) - (a.updatedAt?.toMillis() || 0));
+            rooms.forEach(r => {
+                const div = document.createElement('div');
+                div.className = `chat-item ${activeRoom === r.id ? 'active' : ''}`;
+                let title = r.sellerId === user.uid ? `${r.carName} (Från: ${r.buyerName})` : r.carName;
+                div.innerHTML = `<strong>${title}</strong><br><small>${r.lastMessage || '...'}</small>`;
+                div.onclick = () => openRoom(r.id, title);
                 list.appendChild(div);
             });
         });
     }
 
-    window.openRoom = function(id, name) {
+    window.openRoom = (id, name) => {
         activeRoom = id;
         document.getElementById('activeChatHeader').innerText = name;
         document.getElementById('msgInput').disabled = false;
         document.getElementById('sendBtn').disabled = false;
-        document.getElementById('deleteChatBtn').style.display = "block"; // إظهار زر الحذف
-
-        document.getElementById('chatWindowView').classList.add('show-on-mobile');
-        document.getElementById('sidebarView').classList.add('hide-on-mobile');
+        document.getElementById('deleteChatBtn').style.display = "block";
+        document.getElementById('chatWindowView').classList.add('show-mobile');
+        document.getElementById('sidebarView').classList.add('hide-mobile');
 
         const q = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
         onSnapshot(q, (snap) => {
             const area = document.getElementById('msgArea'); area.innerHTML = "";
             snap.forEach(d => {
                 const m = d.data();
-                const div = document.createElement('div'); 
-                div.className = `bubble ${m.senderId === user.uid ? 'sent' : 'received'}`;
-                div.innerText = m.text; 
+                const div = document.createElement('div'); div.className = `bubble ${m.senderId === user.uid ? 'sent' : 'received'}`;
+                if(m.imageUrl) div.innerHTML = `<img src="${m.imageUrl}" style="max-width:100%; border-radius:10px;">`;
+                else div.innerText = m.text;
                 area.appendChild(div);
             });
             area.scrollTop = area.scrollHeight;
         });
-    }
-
-    // 💡 دالة حذف المحادثة الحالية (تنظيف الرسائل ثم الغرفة)
-    document.getElementById('deleteChatBtn').onclick = async () => {
-        if(!activeRoom) return;
-
-        const result = await Swal.fire({
-            title: 'Radera konversationen?',
-            text: "Alla meddelanden kommer att försvinna permanent.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Ja, radera',
-            cancelButtonText: 'Avbryt'
-        });
-
-        if (result.isConfirmed) {
-            try {
-                // 1. حذف جميع الرسائل داخل الغرفة
-                const msgSnap = await getDocs(collection(db, `chats/${activeRoom}/messages`));
-                const batch = writeBatch(db);
-                msgSnap.forEach(m => batch.delete(m.ref));
-                
-                // 2. حذف الغرفة الرئيسية
-                batch.delete(doc(db, "chats", activeRoom));
-                await batch.commit();
-
-                Swal.fire('Raderad!', 'Konversationen har tagits bort.', 'success');
-                
-                // إعادة ضبط الواجهة
-                activeRoom = null;
-                document.getElementById('msgArea').innerHTML = "<div class='empty-state'>Välj en chatt.</div>";
-                document.getElementById('activeChatHeader').innerText = "Välj en chatt";
-                document.getElementById('deleteChatBtn').style.display = "none";
-                document.getElementById('msgInput').disabled = true;
-                document.getElementById('sendBtn').disabled = true;
-                
-                // في الهاتف نعود للقائمة
-                document.getElementById('chatWindowView').classList.remove('show-on-mobile');
-                document.getElementById('sidebarView').classList.remove('hide-on-mobile');
-
-            } catch (error) {
-                Swal.fire('Fel', error.message, 'error');
-            }
-        }
     };
 
-    document.getElementById('backBtn').onclick = () => {
-        document.getElementById('chatWindowView').classList.remove('show-on-mobile');
-        document.getElementById('sidebarView').classList.remove('hide-on-mobile');
-        activeRoom = null;
+    window.closeChat = () => {
+        document.getElementById('chatWindowView').classList.remove('show-mobile');
+        document.getElementById('sidebarView').classList.remove('hide-mobile');
     };
 
     document.getElementById('sendBtn').onclick = async () => {
-        const input = document.getElementById('msgInput'); const text = input.value.trim();
-        if(!text || !activeRoom) return;
-        input.value = "";
+        const input = document.getElementById('msgInput'); if(!input.value.trim() || !activeRoom) return;
+        const text = input.value; input.value = "";
         await addDoc(collection(db, `chats/${activeRoom}/messages`), { senderId: user.uid, text, createdAt: serverTimestamp() });
         await setDoc(doc(db, "chats", activeRoom), { lastMessage: text, updatedAt: serverTimestamp() }, { merge: true });
     };
 
-    document.getElementById('msgInput').onkeypress = (e) => { if (e.key === 'Enter') document.getElementById('sendBtn').click(); };
+    document.getElementById('imgInput').onchange = async (e) => {
+        const file = e.target.files[0]; if(!file || file.size > 2*1024*1024) return alert("Max 2MB");
+        const sRef = ref(storage, `chat_images/${Date.now()}_${file.name}`);
+        await uploadBytes(sRef, file);
+        const url = await getDownloadURL(sRef);
+        await addDoc(collection(db, `chats/${activeRoom}/messages`), { senderId: user.uid, imageUrl: url, createdAt: serverTimestamp() });
+        await setDoc(doc(db, "chats", activeRoom), { lastMessage: "📷 Bild", updatedAt: serverTimestamp() }, { merge: true });
+    };
+
+    document.getElementById('deleteChatBtn').onclick = async () => {
+        const res = await Swal.fire({ title: 'Radera chatt?', showCancelButton: true, confirmButtonColor: '#ef4444' });
+        if(res.isConfirmed) {
+            const msgs = await getDocs(collection(db, `chats/${activeRoom}/messages`));
+            const batch = writeBatch(db);
+            msgs.forEach(m => batch.delete(m.ref));
+            batch.delete(doc(db, "chats", activeRoom));
+            await batch.commit();
+            location.reload();
+        }
+    };
 </script>
 </body>
 </html>
