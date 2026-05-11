@@ -3,41 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sälj din bil | BILHK Professional</title>
+    <title>Publicera Annons | BILHK Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--dark); padding: 20px; }
-        .form-card { max-width: 900px; margin: 0 auto; background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        body { background: var(--bg); color: var(--dark); padding: 20px; line-height: 1.5; }
+        
+        .form-card { max-width: 950px; margin: 0 auto; background: white; padding: 40px; border-radius: 28px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.04); }
         h1 { margin-bottom: 30px; font-weight: 900; font-size: 28px; text-align: center; }
         h3 { margin: 25px 0 15px; font-size: 18px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-        .form-group { margin-bottom: 15px; }
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+        
+        .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 13px; color: #64748b; }
+        
         input, select, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; outline: none; background: #f8fafc; transition: 0.3s; }
-        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: white; }
-        .btn-submit { width: 100%; padding: 18px; background: var(--dark); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 30px; transition: 0.3s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.1); }
+        
+        /* تصميم خانات التجهيزات (Utrustning) */
+        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
+        .check-item { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .check-item input { width: auto; height: 18px; width: 18px; cursor: pointer; }
+
+        .btn-submit { width: 100%; padding: 20px; background: var(--dark); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 17px; cursor: pointer; margin-top: 30px; transition: 0.3s; box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2); }
         .btn-submit:hover { background: #1e293b; transform: translateY(-2px); }
-        .checkbox-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; background: #f8fafc; padding: 15px; border-radius: 12px; }
-        .check-item { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-submit:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; }
+        
+        .img-preview-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .img-preview { width: 80px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
 <div class="form-card">
-    <h1>Publicera Annons</h1>
+    <h1>Publicera din annons</h1>
     <form id="sellForm">
         
-        <h3><i class="fa-solid fa-car"></i> Fordonsval</h3>
+        <h3><i class="fa-solid fa-car"></i> Grundläggande Information</h3>
         <div class="form-grid">
             <div class="form-group">
                 <label>Märke</label>
                 <select id="brand" required>
-                    <option value="">Laddar data...</option>
+                    <option value="">Laddar märken...</option>
                 </select>
             </div>
             <div class="form-group">
@@ -49,67 +61,78 @@
         </div>
 
         <div class="form-grid">
-            <div class="form-group"><label>Årsmodell</label><input type="number" id="year" placeholder="t.ex. 2022" required></div>
+            <div class="form-group"><label>Årsmodell</label><input type="number" id="year" placeholder="t.ex. 2021" required></div>
             <div class="form-group"><label>Pris (kr)</label><input type="number" id="price" placeholder="t.ex. 245000" required></div>
         </div>
 
         <h3><i class="fa-solid fa-gears"></i> Teknisk Specifikation</h3>
         <div class="form-grid">
-            <div class="form-group"><label>Miltal</label><input type="number" id="mileage" placeholder="Mil" required></div>
+            <div class="form-group"><label>Miltal (mil)</label><input type="number" id="mileage" placeholder="Antal mil" required></div>
             <div class="form-group">
                 <label>Växellåda</label>
-                <select id="transmission">
+                <select id="transmission" required>
                     <option value="Automat">Automat</option>
                     <option value="Manuell">Manuell</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Bränsle</label>
-                <select id="fuelType">
+                <select id="fuelType" required>
                     <option value="Bensin">Bensin</option>
                     <option value="Diesel">Diesel</option>
                     <option value="El">El</option>
                     <option value="Hybrid">Hybrid</option>
+                    <option value="Gas">Gas</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Karosstyp</label>
-                <select id="bodyType">
+                <select id="bodyType" required>
                     <option value="Sedan">Sedan</option>
                     <option value="Halvkombi">Halvkombi</option>
                     <option value="Kombi">Kombi</option>
                     <option value="SUV">SUV</option>
                     <option value="Coupé">Coupé</option>
+                    <option value="Cabriolet">Cabriolet</option>
+                    <option value="Transportbil">Transportbil</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Drivning</label>
-                <select id="drivetrain">
-                    <option value="Tvåhjulsdriven">2WD</option>
-                    <option value="Fyrhjulsdriven">4WD / AWD</option>
+                <select id="drivetrain" required>
+                    <option value="Tvåhjulsdriven">Tvåhjulsdriven (2WD)</option>
+                    <option value="Fyrhjulsdriven">Fyrhjulsdriven (4WD/AWD)</option>
                 </select>
             </div>
-            <div class="form-group"><label>Färg</label><input type="text" id="color" placeholder="t.ex. Grå"></div>
+            <div class="form-group"><label>Hästkrafter (hk)</label><input type="number" id="horsepower" placeholder="t.ex. 190"></div>
+            <div class="form-group"><label>Färg</label><input type="text" id="color" placeholder="t.ex. Svart metallic"></div>
         </div>
 
         <h3><i class="fa-solid fa-list-check"></i> Utrustning</h3>
-        <div class="checkbox-group" id="equipmentList">
+        <div class="checkbox-grid" id="equipmentList">
             <label class="check-item"><input type="checkbox" value="Dragkrok"> Dragkrok</label>
+            <label class="check-item"><input type="checkbox" value="Fyrhjulsdrift"> Fyrhjulsdrift</label>
+            <label class="check-item"><input type="checkbox" value="GPS"> GPS / Navigation</label>
+            <label class="check-item"><input type="checkbox" value="Motorvärmare"> Motorvärmare</label>
+            <label class="check-item"><input type="checkbox" value="Skinnklädsel"> Skinnklädsel</label>
             <label class="check-item"><input type="checkbox" value="Panoramatak"> Panoramatak</label>
-            <label class="check-item"><input type="checkbox" value="GPS"> GPS</label>
-            <label class="check-item"><input type="checkbox" value="Backkamera"> Backkamera</label>
             <label class="check-item"><input type="checkbox" value="Bluetooth"> Bluetooth</label>
-            <label class="check-item"><input type="checkbox" value="Skinnklädsel"> Skinn</label>
+            <label class="check-item"><input type="checkbox" value="Backkamera"> Backkamera</label>
+            <label class="check-item"><input type="checkbox" value="Farthållare"> Farthållare</label>
+            <label class="check-item"><input type="checkbox" value="Parkeringssensorer"> Sensorer</label>
+            <label class="check-item"><input type="checkbox" value="Svensksåld"> Svensksåld</label>
         </div>
 
-        <div class="form-group" style="margin-top:20px;">
+        <h3><i class="fa-solid fa-pen-to-square"></i> Detaljer & Bilder</h3>
+        <div class="form-group">
             <label>Beskrivning</label>
-            <textarea id="description" rows="5" placeholder="Berätta mer om bilen..."></textarea>
+            <textarea id="description" rows="6" placeholder="Beskriv bilens skick, servicehistorik och övrig information..."></textarea>
         </div>
 
         <div class="form-group">
-            <label>Bilder</label>
+            <label>Bilder (Max 10 bilder, max 5MB/bild)</label>
             <input type="file" id="images" multiple accept="image/*" required>
+            <div id="imagePreview" class="img-preview-container"></div>
         </div>
 
         <button type="submit" class="btn-submit" id="submitBtn">Publicera Annons</button>
@@ -127,14 +150,14 @@
     const brandSelect = document.getElementById('brand');
     const modelSelect = document.getElementById('model');
 
-    // 💡 وظيفة تهيئة البيانات من ملف cars-data.js
-    function setupDropdowns() {
-        // التأكد من أن carData متاح عالمياً
+    // 💡 وظيفة تحميل البيانات من carData مع معالجة خطأ النطاق
+    function initData() {
+        // التحقق من وجود carData في ملف cars-data.js
         const data = window.carData || (typeof carData !== 'undefined' ? carData : null);
 
         if (!data) {
-            console.log("Söker efter bildata...");
-            setTimeout(setupDropdowns, 200); // محاولة البحث مرة أخرى بعد 200 ملي ثانية
+            console.warn("Väntar på bildata من ملف cars-data.js...");
+            setTimeout(initData, 200); 
             return;
         }
 
@@ -163,12 +186,16 @@
         };
     }
 
-    // تشغيل القوائم فور جهوزية الصفحة
-    setupDropdowns();
+    initData();
 
+    // التحقق من حالة المستخدم
     let user = null;
-    onAuthStateChanged(auth, u => { if(u) user = u; else window.location.href="login.html"; });
+    onAuthStateChanged(auth, u => { 
+        if(u) user = u; 
+        else window.location.href="login.html"; 
+    });
 
+    // معالجة النموذج
     document.getElementById('sellForm').onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
@@ -176,15 +203,21 @@
 
         try {
             const files = document.getElementById('images').files;
+            if(files.length === 0) throw new Error("Välj minst en bild.");
+
             const imageUrls = [];
             for (let file of files) {
+                if(file.size > 5 * 1024 * 1024) throw new Error(`Bilden ${file.name} är för stor (Max 5MB).`);
                 const sRef = ref(storage, `cars/${Date.now()}_${file.name}`);
                 await uploadBytes(sRef, file);
-                imageUrls.push(await getDownloadURL(sRef));
+                const url = await getDownloadURL(sRef);
+                imageUrls.push(url);
             }
 
+            // تجميع الأجهزة المختارة
             const equipment = Array.from(document.querySelectorAll('#equipmentList input:checked')).map(el => el.value);
 
+            // حفظ المستند في Firestore
             await addDoc(collection(db, "cars"), {
                 brand: brandSelect.value,
                 model: modelSelect.value,
@@ -195,6 +228,7 @@
                 fuelType: document.getElementById('fuelType').value,
                 bodyType: document.getElementById('bodyType').value,
                 drivetrain: document.getElementById('drivetrain').value,
+                horsepower: Number(document.getElementById('horsepower').value) || 0,
                 color: document.getElementById('color').value,
                 equipment: equipment,
                 description: document.getElementById('description').value,
@@ -204,8 +238,9 @@
                 createdAt: serverTimestamp()
             });
 
-            await Swal.fire('Klar!', 'Annonsen är publicerad.', 'success');
+            await Swal.fire('Klar!', 'Din annons har publicerats framgångsrikt.', 'success');
             window.location.href = "my-account.html";
+
         } catch (err) {
             Swal.fire('Fel', err.message, 'error');
             btn.disabled = false; btn.innerText = "Publicera Annons";
