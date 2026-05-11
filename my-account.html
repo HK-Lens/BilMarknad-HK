@@ -16,21 +16,21 @@
         @media (max-width: 768px) { .wrapper { grid-template-columns: 1fr; } }
         .sidebar { background: white; padding: 20px; border-radius: 20px; border: 1px solid var(--border); height: fit-content; }
         .tab-btn { width: 100%; text-align: left; padding: 15px; cursor: pointer; border-radius: 12px; margin-bottom: 10px; font-weight: 700; color: #64748b; background: white; border: 1px solid var(--border); transition: 0.3s; display: flex; align-items: center; gap: 12px; }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .ad-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; transition: 0.2s; cursor: pointer; }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(245, 130, 32, 0.15); }
+        .ad-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
         .ad-card:hover { border-color: var(--primary); transform: translateY(-2px); }
         .ad-card img { width: 100px; height: 75px; object-fit: cover; border-radius: 10px; }
         .ad-info { flex: 1; }
-        .ad-info h4 { margin: 0; font-size: 16px; font-weight: 800; }
-        .ad-info p { margin: 5px 0 0 0; color: var(--primary); font-weight: 900; }
-        .btn-action { width: 40px; height: 40px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-delete { background: #fee2e2; color: var(--danger); }
-        .empty-state { text-align: center; padding: 50px; color: #94a3b8; background: white; border-radius: 20px; border: 1px solid var(--border); }
+        .ad-info h4 { margin: 0; font-size: 17px; font-weight: 800; }
+        .ad-info p { margin: 4px 0 0 0; color: var(--primary); font-weight: 900; }
+        .btn-del { width: 45px; height: 45px; border-radius: 12px; border: none; cursor: pointer; color: var(--danger); background: #fee2e2; display: flex; align-items: center; justify-content: center; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #94a3b8; font-weight: 600; }
     </style>
 </head>
 <body>
 <header>
     <a href="index.html" style="text-decoration:none; font-size:24px; font-weight:900; color:var(--dark);">BIL<span style="color:var(--primary);">HK</span></a>
+    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;"><i class="fa-solid fa-house"></i> Hem</a>
 </header>
 <div class="wrapper">
     <div class="sidebar">
@@ -38,14 +38,16 @@
         <button class="tab-btn" id="btnFavs" onclick="switchTab('favs')"><i class="fa-solid fa-heart"></i> Sparade Bilar</button>
         <button class="tab-btn" onclick="window.location.href='messages.html'"><i class="fa-solid fa-message"></i> Meddelanden</button>
         <button class="tab-btn" onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
-        <button class="tab-btn" style="margin-top:20px; color:var(--danger);" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
+        <button class="tab-btn" style="margin-top:20px; color:var(--danger); border-color:#fee2e2;" onclick="auth.signOut().then(()=>location.href='index.html')"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
     </div>
-    <div class="content" id="mainContent"><div class="empty-state">Laddar...</div></div>
+    <div class="content" id="mainContent">
+        <div class="empty-state">Laddar ditt konto...</div>
+    </div>
 </div>
 
 <script type="module">
     import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { collection, query, where, getDocs, deleteDoc, doc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let user = null;
@@ -55,7 +57,7 @@
         document.getElementById('btnAds').classList.toggle('active', tab === 'ads');
         document.getElementById('btnFavs').classList.toggle('active', tab === 'favs');
         const container = document.getElementById('mainContent');
-        container.innerHTML = "<div class='empty-state'>Hämtar data...</div>";
+        container.innerHTML = "<div class='empty-state'><i class='fa-solid fa-circle-notch fa-spin'></i> Söker efter dina uppgifter...</div>";
 
         const col = tab === 'ads' ? 'cars' : 'favorites';
         const key = tab === 'ads' ? 'sellerId' : 'userId';
@@ -63,21 +65,19 @@
         try {
             const q = query(collection(db, col), where(key, "==", user.uid));
             const snap = await getDocs(q);
-            container.innerHTML = `<h2 style="margin-bottom:20px; font-weight:900;">${tab === 'ads' ? 'Mina Annonser' : 'Sparade Bilar'}</h2>`;
+            container.innerHTML = `<h2 style="margin-bottom:25px; font-weight:900;">${tab === 'ads' ? 'Mina Annonser' : 'Sparade Bilar'}</h2>`;
             
-            if (snap.empty) { container.innerHTML += "<div class='empty-state'>Inga bilar hittades.</div>"; return; }
+            if (snap.empty) { container.innerHTML += `<div class='empty-state'>Här var det tomt.</div>`; return; }
             
             snap.forEach(d => {
                 const data = d.data();
                 const id = d.id;
-                // التأكد من معرف السيارة الصحيح
                 const carId = tab === 'ads' ? id : data.carId;
                 const img = tab === 'ads' ? (data.images?.[0] || 'placeholder.jpg') : (data.image || 'placeholder.jpg');
                 const title = tab === 'ads' ? `${data.brand} ${data.model}` : data.brand;
 
                 const card = document.createElement('div');
                 card.className = "ad-card";
-                // جعل الكرت بالكامل قابل للنقر لفتح التفاصيل
                 card.onclick = () => window.location.href = `details.html?id=${carId}`;
                 
                 card.innerHTML = `
@@ -87,34 +87,32 @@
                         <p>${Number(data.price).toLocaleString()} kr</p>
                     </div>
                     ${tab === 'ads' ? `
-                        <button class="btn-action btn-delete" onclick="event.stopPropagation(); deleteAd('${id}')">
+                        <button class="btn-del" onclick="event.stopPropagation(); deleteAd('${id}')">
                             <i class="fa-solid fa-trash"></i>
                         </button>` : ''}
                 `;
                 container.appendChild(card);
             });
-        } catch (e) { container.innerHTML = "Fel vid laddning."; }
+        } catch (e) { container.innerHTML = "Ett fel uppstod vid laddning."; }
     };
 
     window.deleteAd = async (id) => {
-        const res = await Swal.fire({ title: 'Radera annons?', text: 'Alla meddelanden försvinner också!', icon: 'warning', showCancelButton: true });
+        const res = await Swal.fire({ title: 'Radera annons?', text: 'Dina chattar kopplade till denna bil kommer också att raderas.', icon: 'warning', showCancelButton: true });
         if(res.isConfirmed) {
             await deleteDoc(doc(db, "cars", id));
-            // مسح الرسائل المرتبطة (التنظيف العميق)
+            // مسح الرسائل والغرف المرتبطة
             const q = query(collection(db, "chats"), where("carId", "==", id));
-            const cSnap = await getDocs(q);
+            const chatSnap = await getDocs(q);
             const batch = writeBatch(db);
-            for(let c of cSnap.docs) {
-                const ms = await getDocs(collection(db, `chats/${c.id}/messages`));
-                ms.forEach(m => batch.delete(m.ref));
-                batch.delete(c.ref);
+            for(let chatDoc of chatSnap.docs) {
+                const msgs = await getDocs(collection(db, `chats/${chatDoc.id}/messages`));
+                msgs.forEach(m => batch.delete(m.ref));
+                batch.delete(chatDoc.ref);
             }
             await batch.commit();
             location.reload();
         }
     };
-
-    window.logout = () => signOut(auth).then(() => window.location.href = 'index.html');
 </script>
 </body>
 </html>
