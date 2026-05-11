@@ -14,10 +14,18 @@
         
         .app-container { display: flex; flex: 1; overflow: hidden; max-width: 1400px; margin: 0 auto; width: 100%; background: white; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
         
-        /* Sidebar */
+        /* Sidebar & Chat List */
         .sidebar { width: 350px; border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; background: #fff; }
         .sidebar-header { padding: 25px 20px; font-weight: 900; font-size: 1.2rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: white; z-index: 10; }
         
+        .chat-item { position: relative; padding: 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; }
+        .chat-item:hover { background: #f8fafc; }
+        .chat-item.active { background: #fff7ed; border-left: 5px solid var(--primary); }
+        
+        /* زر حذف الدردشة كاملة */
+        .delete-chat-btn { color: #cbd5e1; padding: 8px; transition: 0.3s; font-size: 14px; }
+        .delete-chat-btn:hover { color: var(--danger); transform: scale(1.2); }
+
         /* Chat Window */
         .chat-window { flex: 1; display: flex; flex-direction: column; background: #fdfdfd; position: relative; }
         @media (max-width: 768px) { 
@@ -28,25 +36,12 @@
         
         .msg-display { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #f9fafb; }
         
-        /* Message Bubbles */
-        .bubble { position: relative; padding: 14px 18px; border-radius: 20px; max-width: 75%; font-size: 15px; line-height: 1.4; transition: 0.3s; word-wrap: break-word; }
-        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 12px rgba(245, 130, 32, 0.15); }
+        .bubble { position: relative; padding: 14px 18px; border-radius: 20px; max-width: 75%; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
+        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
         .received { align-self: flex-start; background: white; border: 1px solid var(--border); border-bottom-left-radius: 4px; }
         
-        /* خيار الحذف - معدل ليظهر بوضوح */
-        .del-option {
-            position: absolute; top: 50%; right: 100%; transform: translateY(-50%);
-            margin-right: 10px; color: #94a3b8; font-size: 14px; cursor: pointer;
-            opacity: 0; transition: 0.2s; padding: 5px;
-        }
-        .bubble.sent:hover .del-option { opacity: 1; }
-        .del-option:hover { color: var(--danger); }
-
-        .chat-item { padding: 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
-        .chat-item.active { background: #fff7ed; border-left: 5px solid var(--primary); }
-        
         .input-box { padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; background: white; }
-        input { flex: 1; padding: 14px 22px; border-radius: 30px; border: 1px solid var(--border); outline: none; font-size: 15px; }
+        input { flex: 1; padding: 14px 22px; border-radius: 30px; border: 1px solid var(--border); outline: none; }
         .send-btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 30px; font-weight: 900; cursor: pointer; }
         
         .time-stamp { font-size: 9px; opacity: 0.6; margin-top: 4px; display: block; text-align: right; }
@@ -56,25 +51,24 @@
 
 <header style="background:white; padding:15px 5%; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
     <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark); font-size:22px;">BIL<span>HK</span></a>
-    <div id="userStatus" style="font-size:12px; font-weight:700; color:#64748b;"></div>
 </header>
 
 <div class="app-container">
     <div class="sidebar" id="sidebarView">
-        <div class="sidebar-header">Mina chattar</div>
+        <div class="sidebar-header">Mina konversationer</div>
         <div id="chatList"></div>
     </div>
     
     <div class="chat-window" id="chatWindowView">
         <div style="padding:15px 20px; border-bottom:1px solid var(--border); background:white; display:flex; align-items:center;">
             <button onclick="location.href='messages.html'" style="background:none; border:none; font-size:18px; margin-right:15px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
-            <div id="activeChatHeader" style="font-weight:900;">Välj en konversation</div>
+            <div id="activeChatHeader" style="font-weight:900;">Välj en chatt</div>
         </div>
         
         <div class="msg-display" id="msgArea">
             <div style="text-align:center; padding-top:100px; color:#94a3b8;">
                 <i class="fa-regular fa-comment-dots" style="font-size:50px; margin-bottom:20px;"></i>
-                <p>Klicka på en chatt för att börja skriva</p>
+                <p>Välj en konversation för را بدأت الدردشة</p>
             </div>
         </div>
         
@@ -88,32 +82,46 @@
 <script type="module">
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, setDoc, getDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let user = null, activeRoom = null, tempChatData = null;
     const urlParams = new URLSearchParams(window.location.search);
 
     onAuthStateChanged(auth, (u) => { 
-        if(u) { user = u; document.getElementById('userStatus').innerText = `Inloggad som: ${u.email}`; loadRooms(); initIncoming(); } 
+        if(u) { user = u; loadRooms(); initIncoming(); } 
         else { window.location.href="login.html"; }
     });
 
-    // دالة الحذف معرفة عالمياً لتصل إليها الـ HTML
-    window.requestDelete = async (msgId) => {
+    // دالة حذف الدردشة بالكامل
+    window.deleteEntireChat = async (event, roomId) => {
+        event.stopPropagation(); // منع فتح الدردشة عند الضغط على زر الحذف
+        
         const { isConfirmed } = await Swal.fire({
-            title: 'Radera?',
-            text: "Meddelandet tas bort för båda parter.",
+            title: 'Radera hela chatten?',
+            text: "All historik kommer att försvinna permanent.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Ja, ta bort'
+            confirmButtonText: 'Ja, radera allt'
         });
 
         if (isConfirmed) {
             try {
-                const path = `chats/${activeRoom}/messages/${msgId}`;
-                await deleteDoc(doc(db, path));
-            } catch (err) { console.error("Error deleting:", err); }
+                // 1. حذف وثيقة الدردشة الأساسية
+                await deleteDoc(doc(db, "chats", roomId));
+                
+                // إذا كانت الدردشة المحذوفة هي المفتوحة حالياً، قم بتصفير الشاشة
+                if (activeRoom === roomId) {
+                    activeRoom = null;
+                    document.getElementById('msgArea').innerHTML = "Chatten raderades.";
+                    document.getElementById('activeChatHeader').innerText = "Välj en chatt";
+                    document.getElementById('msgInput').disabled = true;
+                    document.getElementById('sendBtn').disabled = true;
+                }
+                Swal.fire('Raderad!', 'Konversationen har tagits bort.', 'success');
+            } catch (err) {
+                console.error("Error deleting chat:", err);
+            }
         }
     };
 
@@ -145,8 +153,14 @@
                 const div = document.createElement('div');
                 div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
                 const title = r.sellerId === user.uid ? `${r.carName} (Köpare: ${r.buyerName})` : r.carName;
-                div.innerHTML = `<strong>${title}</strong><br><small style="color:#64748b">${r.lastMessage || 'Inga meddelanden'}</small>`;
-                div.onclick = () => openRoom(d.id, title);
+                
+                div.innerHTML = `
+                    <div style="flex:1" onclick="openRoom('${d.id}', '${title}')">
+                        <strong>${title}</strong><br>
+                        <small style="color:#64748b">${r.lastMessage || 'Inga meddelanden'}</small>
+                    </div>
+                    <i class="fa-solid fa-trash-can delete-chat-btn" title="Radera chatt" onclick="deleteEntireChat(event, '${d.id}')"></i>
+                `;
                 list.appendChild(div);
             });
         });
@@ -158,16 +172,9 @@
             const area = document.getElementById('msgArea'); area.innerHTML = "";
             snap.forEach(d => {
                 const m = d.data();
-                const isSent = m.senderId === user.uid;
                 const div = document.createElement('div');
-                div.className = `bubble ${isSent ? 'sent' : 'received'}`;
-                
-                // إضافة خيار الحذف لرسائلك فقط
-                div.innerHTML = `
-                    ${isSent ? `<i class="fa-solid fa-trash-can del-option" onclick="requestDelete('${d.id}')"></i>` : ''}
-                    ${m.text}
-                    <span class="time-stamp">${m.createdAt?.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) || ''}</span>
-                `;
+                div.className = `bubble ${m.senderId === user.uid ? 'sent' : 'received'}`;
+                div.innerHTML = `${m.text} <span class="time-stamp">${m.createdAt?.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) || ''}</span>`;
                 area.appendChild(div);
             });
             area.scrollTop = area.scrollHeight;
