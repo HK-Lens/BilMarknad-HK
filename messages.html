@@ -26,16 +26,26 @@
         @media (max-width: 768px) { .back-btn { display: inline-block; } }
 
         .msg-display { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .bubble { padding: 12px 18px; border-radius: 20px; max-width: 80%; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
+        .bubble { padding: 12px 18px; border-radius: 20px; max-width: 80%; font-size: 15px; line-height: 1.4; word-wrap: break-word; position: relative; }
         .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
         .received { align-self: flex-start; background: #e2e8f0; border-bottom-left-radius: 4px; color: var(--dark); }
-        .input-area { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: white; }
         
-        input { flex: 1; padding: 15px 20px; border-radius: 30px; border: 1px solid var(--border); outline: none; font-size: 15px; background: #f8fafc; }
-        input:disabled { background: #e2e8f0; cursor: not-allowed; }
-        .btn-send { background: var(--primary); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        /* تنسيق الصور داخل الدردشة */
+        .chat-image { max-width: 100%; border-radius: 12px; margin-top: 5px; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); }
+        
+        .input-area { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: white; align-items: center; }
+        
+        input[type="text"] { flex: 1; padding: 15px 20px; border-radius: 30px; border: 1px solid var(--border); outline: none; font-size: 15px; background: #f8fafc; }
+        input[type="text"]:disabled { background: #e2e8f0; cursor: not-allowed; }
+        
+        .btn-send { background: var(--primary); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s; }
         .btn-send:disabled { background: #cbd5e1; cursor: not-allowed; }
         
+        /* زر إرفاق الصورة */
+        .btn-attach { background: transparent; color: #64748b; border: none; font-size: 22px; cursor: pointer; padding: 10px; transition: 0.2s; }
+        .btn-attach:hover { color: var(--primary); }
+        .btn-attach:disabled { color: #cbd5e1; cursor: not-allowed; }
+
         .chat-item { padding: 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
         .chat-item.active { background: #fff7ed; border-left: 4px solid var(--primary); }
         .empty-state { margin: auto; color: #94a3b8; text-align: center; padding: 20px; }
@@ -62,6 +72,9 @@
             <div class="empty-state">Välj en konversation från listan för att börja chatta.</div>
         </div>
         <div class="input-area">
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+            
+            <button id="attachBtn" class="btn-attach" disabled><i class="fa-solid fa-paperclip"></i></button>
             <input type="text" id="msgInput" placeholder="Välj en chatt först..." autocomplete="off" disabled>
             <button id="sendBtn" class="btn-send" disabled><i class="fa-solid fa-paper-plane"></i></button>
         </div>
@@ -69,11 +82,13 @@
 </div>
 
 <script type="module">
-    import { auth, db } from './firebase-config.js';
+    import { auth, db, storage } from './firebase-config.js'; // تأكدنا من استدعاء storage هنا
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
     let user = null, activeRoom = null;
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 ميجابايت للحفاظ على البيانات
     
     const urlParams = new URLSearchParams(window.location.search);
     const targetChatId = urlParams.get('chat') || localStorage.getItem('targetChat');
@@ -93,7 +108,6 @@
     });
 
     function loadRooms() {
-        // إزالة orderBy لتجنب خطأ الفهرسة (Index Error) في فايبربيس
         const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
         
         onSnapshot(q, (snap) => {
@@ -105,14 +119,13 @@
                 return;
             }
 
-            // ترتيب الغرف برمجياً لتجنب مشاكل فايبربيس
             let rooms = [];
             snap.forEach(d => rooms.push({ id: d.id, ...d.data() }));
             
             rooms.sort((a, b) => {
                 const timeA = a.updatedAt ? a.updatedAt.toMillis() : 0;
                 const timeB = b.updatedAt ? b.updatedAt.toMillis() : 0;
-                return timeB - timeA; // الترتيب من الأحدث للأقدم
+                return timeB - timeA;
             });
 
             rooms.forEach(room => {
@@ -125,14 +138,16 @@
                     displayTitle = `${room.carName} (Från: ${room.buyerName})`;
                 }
 
-                div.innerHTML = `<strong>${displayTitle}</strong><small style="color:#64748b; margin-top:4px;">${room.lastMessage || 'Skicka meddelande'}</small>`;
+                // عرض كلمة "BILD" إذا كانت آخر رسالة عبارة عن صورة
+                let lastMsgPreview = room.lastMessage || 'Skicka meddelande';
+                if (lastMsgPreview === "[IMAGE]") lastMsgPreview = "📷 Skickade en bild";
+
+                div.innerHTML = `<strong>${displayTitle}</strong><small style="color:#64748b; margin-top:4px;">${lastMsgPreview}</small>`;
                 div.onclick = () => window.openRoom(room.id, displayTitle);
                 list.appendChild(div);
             });
         }, (error) => {
-            // تنبيه يظهر الخطأ المباشر بدلاً من التعليق على التحميل
-            const list = document.getElementById('chatList');
-            list.innerHTML = `<div class='empty-state' style='color:#ef4444;'>Laddningsfel: ${error.message}</div>`;
+            console.error(error);
         });
     }
 
@@ -142,8 +157,11 @@
         
         const inputField = document.getElementById('msgInput');
         const sendBtn = document.getElementById('sendBtn');
+        const attachBtn = document.getElementById('attachBtn');
+        
         inputField.disabled = false;
         sendBtn.disabled = false;
+        attachBtn.disabled = false;
         inputField.placeholder = "Skriv ett meddelande...";
 
         document.getElementById('chatWindowView').classList.add('show-on-mobile');
@@ -163,7 +181,15 @@
                 const m = d.data();
                 const div = document.createElement('div'); 
                 div.className = `bubble ${m.senderId === user.uid ? 'sent' : 'received'}`;
-                div.innerText = m.text; 
+                
+                // 💡 ذكاء العرض: التحقق مما إذا كانت الرسالة تحتوي على صورة أو نص فقط
+                if (m.imageUrl) {
+                    div.innerHTML = m.text ? `<div>${m.text}</div>` : '';
+                    div.innerHTML += `<img src="${m.imageUrl}" class="chat-image" onclick="window.open('${m.imageUrl}', '_blank')">`;
+                } else {
+                    div.innerText = m.text; 
+                }
+                
                 area.appendChild(div);
             });
             setTimeout(() => { area.scrollTop = area.scrollHeight; }, 100);
@@ -177,10 +203,12 @@
         
         document.getElementById('msgInput').disabled = true;
         document.getElementById('sendBtn').disabled = true;
+        document.getElementById('attachBtn').disabled = true;
         document.getElementById('msgInput').placeholder = "Välj en chatt först...";
         document.getElementById('activeChatHeader').innerText = "Ingen chatt vald";
     };
 
+    // 💡 برمجة إرسال النصوص
     document.getElementById('sendBtn').onclick = async () => {
         const input = document.getElementById('msgInput'); 
         const text = input.value.trim();
@@ -205,10 +233,57 @@
 
         } catch (error) {
             alert("Sändningsfel: " + error.message);
-            console.error(error);
         } finally {
             btn.disabled = false;
             input.focus();
+        }
+    };
+
+    // 💡 برمجة رفع الصور مع فحص الحجم
+    const imageInput = document.getElementById('imageInput');
+    const attachBtn = document.getElementById('attachBtn');
+
+    attachBtn.onclick = () => imageInput.click();
+
+    imageInput.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // التحقق من الحجم (الحد الأقصى 2 ميجابايت)
+        if (file.size > MAX_FILE_SIZE) {
+            alert("Bilden är för stor! Max 2MB tillåts för att spara data.");
+            imageInput.value = ""; // تفريغ الحقل
+            return;
+        }
+
+        attachBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        attachBtn.disabled = true;
+
+        try {
+            const sRef = ref(storage, `chat_images/${Date.now()}_${file.name}`);
+            await uploadBytes(sRef, file);
+            const downloadUrl = await getDownloadURL(sRef);
+
+            // حفظ الرسالة مع رابط الصورة
+            await addDoc(collection(db, `chats/${activeRoom}/messages`), { 
+                senderId: user.uid, 
+                text: "", // يمكن تركه فارغاً إذا كانت صورة فقط
+                imageUrl: downloadUrl,
+                createdAt: serverTimestamp() 
+            });
+            
+            // تحديث الغرفة ليعلم الطرف الآخر بوجود صورة
+            await setDoc(doc(db, "chats", activeRoom), { 
+                lastMessage: "[IMAGE]", 
+                updatedAt: serverTimestamp() 
+            }, { merge: true });
+
+        } catch (error) {
+            alert("Det gick inte att ladda upp bilden: " + error.message);
+        } finally {
+            attachBtn.innerHTML = '<i class="fa-solid fa-paperclip"></i>';
+            attachBtn.disabled = false;
+            imageInput.value = "";
         }
     };
 
