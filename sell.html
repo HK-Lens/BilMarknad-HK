@@ -11,75 +11,64 @@
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); padding: 20px; color: var(--dark); }
-        .form-card { max-width: 900px; margin: 0 auto; background: white; padding: 35px; border-radius: 30px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .form-card { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 30px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         
-        .section-header { font-size: 14px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 30px 0 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .section-title { font-size: 13px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 30px 0 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
         
-        /* تصميم رقم اللوحة */
-        .reg-box { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 25px; display: flex; gap: 15px; align-items: flex-end; border: 2px solid var(--border); }
-        .reg-input { text-transform: uppercase; font-weight: 900; font-size: 22px; letter-spacing: 2px; text-align: center; border: 2px solid var(--dark); background: white; height: 55px; border-radius: 12px; flex: 1; }
-        .btn-fetch { background: var(--dark); color: white; padding: 0 25px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; height: 55px; display: flex; align-items: center; gap: 8px; }
+        .reg-box { background: #0f172a; padding: 25px; border-radius: 20px; margin-bottom: 30px; display: flex; gap: 15px; align-items: flex-end; }
+        .reg-input { text-transform: uppercase; font-weight: 900; font-size: 26px; letter-spacing: 2px; text-align: center; border: none; background: white; height: 65px; border-radius: 12px; flex: 1; color: var(--dark); }
+        .btn-fetch { background: var(--primary); color: white; padding: 0 30px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; height: 65px; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
 
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px; }
-        label { display: block; margin-bottom: 5px; font-weight: 700; color: #64748b; font-size: 13px; }
-        input, select, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; font-size: 15px; outline: none; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 700; color: #475569; font-size: 13px; }
+        input, select, textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; font-size: 15px; outline: none; }
 
-        /* شبكة المواصفات (أزرار اختيار) */
-        .specs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; background: #f8fafc; padding: 20px; border-radius: 15px; }
-        .spec-item { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer; background: white; padding: 10px; border-radius: 10px; border: 1px solid var(--border); transition: 0.2s; }
-        .spec-item:hover { border-color: var(--primary); }
-        .spec-item input { width: auto; margin: 0; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
+        .feature-item { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 13px; cursor: pointer; background: white; padding: 10px; border-radius: 10px; border: 1px solid var(--border); }
+        .feature-item input { width: auto; margin: 0; }
 
-        .btn-submit { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 18px; margin-top: 30px; box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
+        .btn-submit { width: 100%; padding: 22px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 20px; margin-top: 40px; box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
     </style>
 </head>
 <body>
 
 <div class="form-card">
-    <h1 style="text-align:center; font-weight:900; margin-bottom:10px;">Publicera Fordon</h1>
+    <h1 style="text-align:center; font-weight:900; margin-bottom:5px;">Publicera Fordon</h1>
+    <p style="text-align:center; color:#64748b; margin-bottom:35px;">Komplett teknisk specifikation för seriösa köpare</p>
     
     <div class="reg-box">
         <div style="flex:1">
-            <label>Registreringsnummer (Reg-nr)</label>
+            <label style="color:white">Registreringsnummer (Reg-nr)</label>
             <input type="text" id="regNr" class="reg-input" placeholder="ABC 123" maxlength="7">
         </div>
-        <button type="button" class="btn-fetch" id="fetchBtn"><i class="fa-solid fa-sync-alt"></i> Hämta data</button>
+        <button type="button" class="btn-fetch" id="fetchBtn"><i class="fa-solid fa-sync"></i> HÄMTA DATA</button>
     </div>
 
     <form id="sellForm">
-        <div class="section-header"><i class="fa-solid fa-car"></i> Grunduppgifter</div>
+        <div class="section-title"><i class="fa-solid fa-car"></i> Grunduppgifter & Mekanik</div>
         <div class="form-grid">
-            <div>
-                <label>Märke</label>
-                <select id="brand" required><option value="">Välj märke...</option></select>
-            </div>
-            <div>
-                <label>Modell</label>
-                <select id="model" required disabled><option value="">Välj modell...</option></select>
-            </div>
-            <div>
-                <label>Årsmodell</label>
-                <input type="number" id="year" placeholder="t.ex. 2022" required>
-            </div>
+            <select id="brand" required><option value="">Märke...</option></select>
+            <select id="model" required disabled><option value="">Modell...</option></select>
+            <input type="number" id="year" placeholder="Årsmodell" required>
         </div>
 
         <div class="form-grid">
-            <input type="number" id="price" placeholder="Pris (kr)" required>
+            <input type="number" id="price" placeholder="Pris (SEK)" required>
             <input type="number" id="mileage" placeholder="Miltal (mil)" required>
             <select id="fuel" required>
                 <option value="">Drivmedel...</option>
                 <option value="Bensin">Bensin</option>
                 <option value="Diesel">Diesel</option>
-                <option value="El">El</option>
-                <option value="Hybrid">Hybrid</option>
+                <option value="El">Elbil</option>
+                <option value="Hybrid">Laddhybrid/Hybrid</option>
+                <option value="Gas">Gasbil</option>
             </select>
         </div>
 
-        <div class="section-header"><i class="fa-solid fa-gears"></i> Mekanik & Prestanda</div>
         <div class="form-grid">
             <select id="gearbox">
-                <option value="Automat">Automat</option>
-                <option value="Manuell">Manuell</option>
+                <option value="Automat">Automatisk växellåda</option>
+                <option value="Manuell">Manuell växellåda</option>
             </select>
             <select id="drive">
                 <option value="FWD">Framhjulsdrift (FWD)</option>
@@ -89,31 +78,37 @@
             <input type="number" id="hp" placeholder="Hästkrafter (hk)">
         </div>
 
-        <div class="section-header"><i class="fa-solid fa-shield-heart"></i> Säkerhet & ADAS</div>
-        <div class="specs-grid">
-            <label class="spec-item"><input type="checkbox" class="feat" value="ABS"> ABS-bromsar</label>
-            <label class="spec-item"><input type="checkbox" class="feat" value="ACC"> Adaptiv farthållare (ACC)</label>
-            <label class="spec-item"><input type="checkbox" class="feat" value="AEB"> Autobroms (AEB)</label>
-            <label class="spec-item"><input type="checkbox" class="feat" value="LKA"> Filassistans (LKA)</label>
-            <label class="spec-item"><input type="checkbox" class="feat" value="BSM"> Döda vinkel-varning</label>
-            <label class="spec-item"><input type="checkbox" class="feat" value="TPMS"> Däcktryckskontroll</label>
+        <div class="section-title"><i class="fa-solid fa-shield-check"></i> Aktiv Säkerhet (ADAS)</div>
+        <div class="feature-grid">
+            <label class="feature-item"><input type="checkbox" class="feat" value="AEB"> Automatisk nödbroms (AEB)</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="ACC"> Adaptiv farthållare (ACC)</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="LKA"> Körfältsassistans (LKA)</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="BSM"> Döda vinkel-varnare (BLIS)</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="RCTA"> Backvarnare (RCTA)</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="Trötthet"> Trötthetsvarnare</label>
         </div>
 
-        <div class="section-header"><i class="fa-solid fa-star"></i> Teknik & Komfort</div>
-        <div class="specs-grid">
-            <label class="spec-item"><input type="checkbox" class="feat" value="HUD"> Head-up display (HUD)</label>
-            <label class="spec-item"><input type="checkbox" class="feat" value="360Cam"> 360° kamera</label>
-            <label class="spec-item"><input type="checkbox" class="feat" value="ApplePlay"> Apple CarPlay</label>
-            <label class="spec-item"><input type="checkbox" class="feat" value="Matrix"> Matrix LED-strålkastare</label>
-            <label class="spec-item"><input type="checkbox" class="feat" value="Panoramiskt"> Panoramaglastak</label>
-            <label class="spec-item"><input type="checkbox" class="feat" value="Dragkrok"> Dragkrok</label>
+        <div class="section-title"><i class="fa-solid fa-gem"></i> Komfort & Utrustning</div>
+        <div class="feature-grid">
+            <label class="feature-item"><input type="checkbox" class="feat" value="HUD"> Head-up display (HUD)</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="360Cam"> 360° Kamera</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="Matrix"> Matrix LED-ljus</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="ApplePlay"> Apple CarPlay / Android Auto</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="Dragkrok"> Dragkrok</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="Panoramaglastak"> Panoramaglastak</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="Skinn"> Skinnklädsel</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="Vinterhjul"> Vinterhjul medföljer</label>
         </div>
 
-        <div class="section-header"><i class="fa-solid fa-camera"></i> Bilder & Beskrivning</div>
-        <input type="file" id="images" multiple accept="image/*" required style="margin-bottom:15px;">
-        <textarea id="description" rows="5" placeholder="Berätta mer om bilen (Servicehistorik, skick, etc)..." required></textarea>
+        <div class="section-title"><i class="fa-solid fa-camera"></i> Bilder & Detaljer</div>
+        <div class="form-grid">
+            <input type="number" id="seats" placeholder="Antal säten (t.ex. 5)">
+            <input type="text" id="color" placeholder="Färg (t.ex. Grå metallic)">
+        </div>
+        <input type="file" id="images" multiple accept="image/*" required style="margin-top:15px;">
+        <textarea id="description" rows="6" placeholder="Beskriv bilens skick, servicehistorik och övrig info..." required style="margin-top:15px;"></textarea>
         
-        <button type="submit" class="btn-submit" id="submitBtn">PUBLICERA ANNONSON</button>
+        <button type="submit" class="btn-submit" id="submitBtn">PUBLICERA ANNONSON NU</button>
     </form>
 </div>
 
@@ -127,7 +122,7 @@
     Object.keys(carData).sort().forEach(b => { bSel.innerHTML += `<option value="${b}">${b}</option>`; });
 
     bSel.onchange = () => {
-        mSel.innerHTML = '<option value="">Välj modell...</option>';
+        mSel.innerHTML = '<option value="">Modell...</option>';
         if(carData[bSel.value]) {
             mSel.disabled = false;
             carData[bSel.value].sort().forEach(m => { mSel.innerHTML += `<option value="${m}">${m}</option>`; });
@@ -136,10 +131,9 @@
 
     document.getElementById('sellForm').onsubmit = async (e) => {
         e.preventDefault();
-        if(!auth.currentUser) return Swal.fire('Fel', 'Du måste logga in!', 'error');
-
+        if(!auth.currentUser) return Swal.fire('Error', 'Logga in!', 'error');
         const btn = document.getElementById('submitBtn');
-        btn.disabled = true; btn.innerText = "Laddar upp...";
+        btn.disabled = true; btn.innerText = "Publicerar...";
 
         try {
             const files = document.getElementById('images').files, urls = [];
@@ -148,13 +142,11 @@
                 await uploadBytes(sRef, f);
                 urls.push(await getDownloadURL(sRef));
             }
-
             const features = Array.from(document.querySelectorAll('.feat:checked')).map(el => el.value);
 
             await addDoc(collection(db, "cars"), {
                 regNr: document.getElementById('regNr').value.toUpperCase(),
-                brand: bSel.value,
-                model: mSel.value,
+                brand: bSel.value, model: mSel.value,
                 year: Number(document.getElementById('year').value),
                 price: Number(document.getElementById('price').value),
                 mileage: Number(document.getElementById('mileage').value),
@@ -162,14 +154,16 @@
                 gearbox: document.getElementById('gearbox').value,
                 drive: document.getElementById('drive').value,
                 hp: Number(document.getElementById('hp').value),
+                seats: Number(document.getElementById('seats').value),
+                color: document.getElementById('color').value,
                 features: features,
                 description: document.getElementById('description').value,
                 images: urls,
-                sellerId: auth.currentUser.uid, // ضمان حماية المراسلة
+                sellerId: auth.currentUser.uid,
+                active: true,
                 createdAt: serverTimestamp()
             });
-
-            Swal.fire('Klart!', 'Din annons är nu publicerad.', 'success');
+            Swal.fire('Klart!', 'Annonsen är publicerad.', 'success');
             setTimeout(() => window.location.href="my-account.html", 2000);
         } catch (err) { Swal.fire('Fel', err.message, 'error'); btn.disabled = false; }
     };
