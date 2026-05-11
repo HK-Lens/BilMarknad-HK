@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detaljer | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -22,32 +22,21 @@
         .btn-msg { background: var(--dark); color: white; }
         .btn-fav { background: white; border: 2px solid var(--border); color: #64748b; }
         .btn-fav.active { color: var(--primary); border-color: var(--primary); background: #fff7ed; }
-        .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .spec-box { background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid var(--border); font-size: 14px; }
     </style>
 </head>
 <body>
 <header>
     <a href="index.html" style="text-decoration:none; font-size:24px; font-weight:900; color:var(--dark);">BIL<span style="color:var(--primary);">HK</span></a>
-    <button onclick="history.back()" style="background:none; border:none; font-weight:700; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i> Tillbaka</button>
 </header>
-
 <div class="container">
     <div class="main-card">
         <img id="activeImg" src="" class="main-img">
-        <div style="padding:30px;">
-            <h2 style="margin-bottom:15px; font-weight:900;">Beskrivning</h2>
-            <p id="carDesc" style="white-space:pre-line; color:#475569; line-height:1.7;"></p>
-        </div>
+        <div style="padding:30px;"><h2 style="margin-bottom:15px; font-weight:900;">Beskrivning</h2><p id="carDesc" style="white-space:pre-line; color:#475569; line-height:1.7;"></p></div>
     </div>
     <div class="sidebar">
         <div class="sidebar-card">
             <h1 id="carTitle" style="font-weight:900;">Laddar...</h1>
             <div id="carPrice" class="price">0 kr</div>
-            <div class="spec-grid">
-                <div class="spec-box"><strong>Årsmodell:</strong> <span id="specYear">-</span></div>
-                <div class="spec-box"><strong>Miltal:</strong> <span id="specMil">-</span></div>
-            </div>
             <button id="chatBtn" class="btn-action btn-msg"><i class="fa-solid fa-comment-dots"></i> Kontakta Säljaren</button>
             <button id="favBtn" class="btn-action btn-fav"><i class="fa-regular fa-heart" id="fIcon"></i> <span id="fText">Spara</span></button>
         </div>
@@ -62,7 +51,7 @@
     const carId = new URLSearchParams(window.location.search).get('id');
     let carData = null;
 
-    async function loadCar() {
+    onAuthStateChanged(auth, async (u) => {
         if(!carId) return;
         const snap = await getDoc(doc(db, "cars", carId));
         if (snap.exists()) {
@@ -71,11 +60,9 @@
             document.getElementById('carPrice').innerText = `${Number(carData.price).toLocaleString()} kr`;
             document.getElementById('carDesc').innerText = carData.description || "";
             document.getElementById('activeImg').src = carData.images?.[0] || "";
-            document.getElementById('specYear').innerText = carData.year || "-";
-            document.getElementById('specMil').innerText = carData.mileage || "-";
             checkFavStatus();
         }
-    }
+    });
 
     async function checkFavStatus() {
         if (!auth.currentUser) return;
@@ -106,11 +93,9 @@
 
     document.getElementById('chatBtn').onclick = () => {
         if (!auth.currentUser) return window.location.href = "login.html";
-        const carName = `${carData.brand} ${carData.model}`;
-        window.location.href = `messages.html?seller=${carData.sellerId}&carId=${carId}&name=${encodeURIComponent(carName)}`;
+        const name = `${carData.brand} ${carData.model}`;
+        window.location.href = `messages.html?seller=${carData.sellerId}&carId=${carId}&name=${encodeURIComponent(name)}`;
     };
-
-    onAuthStateChanged(auth, () => loadCar());
 </script>
 </body>
 </html>
