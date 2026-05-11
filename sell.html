@@ -23,7 +23,6 @@
         .btn-submit:hover { background: #1e293b; transform: translateY(-2px); }
         .checkbox-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; background: #f8fafc; padding: 15px; border-radius: 12px; }
         .check-item { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-        .check-item input { width: auto; }
     </style>
 </head>
 <body>
@@ -35,9 +34,9 @@
         <h3><i class="fa-solid fa-car"></i> Fordonsval</h3>
         <div class="form-grid">
             <div class="form-group">
-                <label>Märke (Märke från databas)</label>
+                <label>Märke</label>
                 <select id="brand" required>
-                    <option value="">Välj märke...</option>
+                    <option value="">Laddar märken...</option>
                 </select>
             </div>
             <div class="form-group">
@@ -57,7 +56,7 @@
         <div class="form-grid">
             <div class="form-group"><label>Miltal</label><input type="number" id="mileage" placeholder="Antal mil" required></div>
             <div class="form-group">
-                <label>Växellåda</label>
+                <label>Växellåدا</label>
                 <select id="transmission">
                     <option value="Automat">Automat</option>
                     <option value="Manuell">Manuell</option>
@@ -117,33 +116,47 @@
     import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // 💡 استخدام الكائن carData من الملف المرفق
     const brandSelect = document.getElementById('brand');
     const modelSelect = document.getElementById('model');
 
-    // تعبئة قائمة الماركات ديناميكياً
-    Object.keys(carData).forEach(brand => {
-        let opt = document.createElement('option');
-        opt.value = brand;
-        opt.textContent = brand;
-        brandSelect.appendChild(opt);
-    });
+    // 💡 دالة لانتظار تحميل carData في حال تأخر الملف
+    function initCarData() {
+        // التحقق من وجود carData في النطاق العام (window)
+        const data = window.carData || (typeof carData !== 'undefined' ? carData : null);
 
-    // تحديث الموديلات عند تغيير الماركة
-    brandSelect.onchange = () => {
-        modelSelect.innerHTML = '<option value="">Välj modell...</option>';
-        if (brandSelect.value) {
-            modelSelect.disabled = false;
-            carData[brandSelect.value].forEach(model => {
-                let opt = document.createElement('option');
-                opt.value = model;
-                opt.textContent = model;
-                modelSelect.appendChild(opt);
-            });
-        } else {
-            modelSelect.disabled = true;
+        if (!data) {
+            console.log("Väntar på car-data.js...");
+            setTimeout(initCarData, 100); // إعادة المحاولة كل 100 ملي ثانية
+            return;
         }
-    };
+
+        brandSelect.innerHTML = '<option value="">Välj märke...</option>';
+        Object.keys(data).forEach(brand => {
+            let opt = document.createElement('option');
+            opt.value = brand;
+            opt.textContent = brand;
+            brandSelect.appendChild(opt);
+        });
+
+        brandSelect.onchange = () => {
+            modelSelect.innerHTML = '<option value="">Välj modell...</option>';
+            const selectedBrand = brandSelect.value;
+            if (selectedBrand && data[selectedBrand]) {
+                modelSelect.disabled = false;
+                data[selectedBrand].forEach(model => {
+                    let opt = document.createElement('option');
+                    opt.value = model;
+                    opt.textContent = model;
+                    modelSelect.appendChild(opt);
+                });
+            } else {
+                modelSelect.disabled = true;
+            }
+        };
+    }
+
+    // بدء التشغيل
+    initCarData();
 
     let user = null;
     onAuthStateChanged(auth, u => { if(u) user = u; else window.location.href="login.html"; });
