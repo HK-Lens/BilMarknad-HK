@@ -14,19 +14,29 @@
         
         .app-container { display: flex; flex: 1; overflow: hidden; max-width: 1400px; margin: 0 auto; width: 100%; background: white; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
         
-        /* Sidebar & Chat List */
+        /* Sidebar & Chat Items */
         .sidebar { width: 350px; border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; background: #fff; }
         .sidebar-header { padding: 25px 20px; font-weight: 900; font-size: 1.2rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: white; z-index: 10; }
         
-        .chat-item { position: relative; padding: 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; }
+        .chat-item { 
+            position: relative; padding: 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; 
+            display: flex; justify-content: space-between; align-items: center; transition: 0.3s;
+        }
         .chat-item:hover { background: #f8fafc; }
         .chat-item.active { background: #fff7ed; border-left: 5px solid var(--primary); }
         
-        /* زر حذف الدردشة كاملة */
-        .delete-chat-btn { color: #cbd5e1; padding: 8px; transition: 0.3s; font-size: 14px; }
-        .delete-chat-btn:hover { color: var(--danger); transform: scale(1.2); }
+        .chat-info { flex: 1; margin-right: 10px; }
+        .chat-info strong { display: block; font-size: 15px; margin-bottom: 4px; }
+        .chat-info small { color: #64748b; font-size: 12px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; }
 
-        /* Chat Window */
+        /* زر حذف الدردشة - جعلته أحمر وواضح جداً */
+        .del-chat-icon { 
+            width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; color: #94a3b8; transition: 0.3s; z-index: 5;
+        }
+        .del-chat-icon:hover { background: #fee2e2; color: var(--danger); transform: scale(1.1); }
+
+        /* Chat Window Area */
         .chat-window { flex: 1; display: flex; flex-direction: column; background: #fdfdfd; position: relative; }
         @media (max-width: 768px) { 
             .sidebar.hide-mobile { display: none !important; } 
@@ -34,15 +44,14 @@
             .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 20; } 
         }
         
-        .msg-display { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #f9fafb; }
-        
-        .bubble { position: relative; padding: 14px 18px; border-radius: 20px; max-width: 75%; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
+        .msg-display { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #f9fafb; }
+        .bubble { position: relative; padding: 12px 16px; border-radius: 18px; max-width: 75%; font-size: 14px; line-height: 1.4; word-wrap: break-word; }
         .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
         .received { align-self: flex-start; background: white; border: 1px solid var(--border); border-bottom-left-radius: 4px; }
         
         .input-box { padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; background: white; }
-        input { flex: 1; padding: 14px 22px; border-radius: 30px; border: 1px solid var(--border); outline: none; }
-        .send-btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 30px; font-weight: 900; cursor: pointer; }
+        input { flex: 1; padding: 12px 20px; border-radius: 30px; border: 1px solid var(--border); outline: none; }
+        .send-btn { background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 30px; font-weight: 900; cursor: pointer; }
         
         .time-stamp { font-size: 9px; opacity: 0.6; margin-top: 4px; display: block; text-align: right; }
     </style>
@@ -55,20 +64,20 @@
 
 <div class="app-container">
     <div class="sidebar" id="sidebarView">
-        <div class="sidebar-header">Mina konversationer</div>
+        <div class="sidebar-header">Mina Konversationer</div>
         <div id="chatList"></div>
     </div>
     
     <div class="chat-window" id="chatWindowView">
         <div style="padding:15px 20px; border-bottom:1px solid var(--border); background:white; display:flex; align-items:center;">
             <button onclick="location.href='messages.html'" style="background:none; border:none; font-size:18px; margin-right:15px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
-            <div id="activeChatHeader" style="font-weight:900;">Välj en chatt</div>
+            <div id="activeChatHeader" style="font-weight:900;">Välj en chatt för att se meddelanden</div>
         </div>
         
         <div class="msg-display" id="msgArea">
             <div style="text-align:center; padding-top:100px; color:#94a3b8;">
-                <i class="fa-regular fa-comment-dots" style="font-size:50px; margin-bottom:20px;"></i>
-                <p>Välj en konversation för را بدأت الدردشة</p>
+                <i class="fa-regular fa-comments" style="font-size:50px; margin-bottom:20px;"></i>
+                <p>Ingen chatt vald</p>
             </div>
         </div>
         
@@ -82,7 +91,7 @@
 <script type="module">
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, setDoc, getDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let user = null, activeRoom = null, tempChatData = null;
     const urlParams = new URLSearchParams(window.location.search);
@@ -92,35 +101,33 @@
         else { window.location.href="login.html"; }
     });
 
-    // دالة حذف الدردشة بالكامل
-    window.deleteEntireChat = async (event, roomId) => {
-        event.stopPropagation(); // منع فتح الدردشة عند الضغط على زر الحذف
+    // 💡 دالة حذف المحادثة بالكامل - تعمل عند الضغط على سلة المهملات
+    window.confirmDeleteChat = async (e, roomId) => {
+        e.stopPropagation(); // يمنع فتح الدردشة عند محاولة حذفها
         
-        const { isConfirmed } = await Swal.fire({
-            title: 'Radera hela chatten?',
-            text: "All historik kommer att försvinna permanent.",
+        const result = await Swal.fire({
+            title: 'Radera konversation?',
+            text: "All chatthistorik tas bort för dig. Detta går inte att ångra.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Ja, radera allt'
+            confirmButtonText: 'Ja, radera',
+            cancelButtonText: 'Avbryt'
         });
 
-        if (isConfirmed) {
+        if (result.isConfirmed) {
             try {
-                // 1. حذف وثيقة الدردشة الأساسية
                 await deleteDoc(doc(db, "chats", roomId));
-                
-                // إذا كانت الدردشة المحذوفة هي المفتوحة حالياً، قم بتصفير الشاشة
                 if (activeRoom === roomId) {
                     activeRoom = null;
-                    document.getElementById('msgArea').innerHTML = "Chatten raderades.";
+                    document.getElementById('msgArea').innerHTML = "<p style='text-align:center; padding:50px;'>Chatten raderades.</p>";
                     document.getElementById('activeChatHeader').innerText = "Välj en chatt";
                     document.getElementById('msgInput').disabled = true;
                     document.getElementById('sendBtn').disabled = true;
                 }
-                Swal.fire('Raderad!', 'Konversationen har tagits bort.', 'success');
             } catch (err) {
-                console.error("Error deleting chat:", err);
+                console.error("Fel vid radering:", err);
+                Swal.fire('Fel', 'Kunde inte radera chatten.', 'error');
             }
         }
     };
@@ -133,7 +140,7 @@
     }
 
     async function initIncoming() {
-        const sellerId = urlParams.get('seller'), carId = urlParams.get('carId'), carName = urlParams.get('name');
+        const sellerId = urlParams.get('sellerId'), carId = urlParams.get('carId'), carName = urlParams.get('title');
         if (sellerId && carId) {
             const roomId = [user.uid, sellerId].sort().join('_') + '_' + carId;
             activeRoom = roomId;
@@ -147,21 +154,25 @@
     function loadRooms() {
         const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid), orderBy("updatedAt", "desc"));
         onSnapshot(q, snap => {
-            const list = document.getElementById('chatList'); list.innerHTML = "";
+            const list = document.getElementById('chatList');
+            list.innerHTML = "";
             snap.forEach(d => {
                 const r = d.data();
-                const div = document.createElement('div');
-                div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
                 const title = r.sellerId === user.uid ? `${r.carName} (Köpare: ${r.buyerName})` : r.carName;
                 
-                div.innerHTML = `
-                    <div style="flex:1" onclick="openRoom('${d.id}', '${title}')">
-                        <strong>${title}</strong><br>
-                        <small style="color:#64748b">${r.lastMessage || 'Inga meddelanden'}</small>
+                const item = document.createElement('div');
+                item.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
+                
+                item.innerHTML = `
+                    <div class="chat-info" onclick="openRoom('${d.id}', '${title}')">
+                        <strong>${title}</strong>
+                        <small>${r.lastMessage || 'Inga meddelanden än'}</small>
                     </div>
-                    <i class="fa-solid fa-trash-can delete-chat-btn" title="Radera chatt" onclick="deleteEntireChat(event, '${d.id}')"></i>
+                    <div class="del-chat-icon" onclick="confirmDeleteChat(event, '${d.id}')">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
                 `;
-                list.appendChild(div);
+                list.appendChild(item);
             });
         });
     }
