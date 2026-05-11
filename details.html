@@ -4,22 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fordonsdetaljer | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --reg-blue: #005599; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); margin: 0; padding-bottom: 50px; }
         .container { max-width: 1100px; margin: auto; padding: 20px; }
 
-        .header-action-area { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; }
+        /* الهيدر: اللوحة والزر */
+        .header-action-area { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; }
         .reg-plate { 
-            display: inline-flex; align-items: center; background: white; border: 2px solid #333; 
-            border-radius: 6px; padding: 2px 10px; font-weight: 800; font-size: 22px; letter-spacing: 2px; 
+            display: inline-flex; align-items: center; background: white; 
+            border: 2px solid #333; border-radius: 6px; padding: 2px 10px; 
+            font-weight: 800; font-size: 22px; letter-spacing: 2px; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); 
         }
-        .reg-plate .eu-symbol { background: var(--reg-blue); color: white; font-size: 10px; padding: 5px 3px; margin-right: 8px; border-radius: 2px; }
+        .reg-plate .eu-symbol { background: var(--reg-blue); color: white; font-size: 10px; padding: 5px 3px; margin-right: 8px; border-radius: 2px; display: flex; flex-direction: column; align-items: center; }
         
-        .btn-msg-small { background: var(--dark); color: white; border: none; padding: 10px 18px; border-radius: 50px; font-weight: 800; font-size: 13px; cursor: pointer; }
+        .btn-msg-small { 
+            background: var(--dark); color: white; border: none; padding: 10px 18px; 
+            border-radius: 50px; font-weight: 800; font-size: 13px; cursor: pointer; 
+            display: flex; align-items: center; gap: 8px; transition: 0.3s;
+        }
+        .btn-msg-small:hover { background: var(--primary); }
 
+        /* معرض الصور */
         .image-gallery { display: grid; grid-template-columns: 2fr 1.2fr; gap: 12px; height: 450px; margin-bottom: 30px; border-radius: 24px; overflow: hidden; }
         .main-img { width: 100%; height: 100%; object-fit: cover; }
         .side-imgs { display: grid; grid-template-rows: 1fr 1fr; gap: 12px; }
@@ -28,16 +36,20 @@
         .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
         .card { background: white; padding: 30px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 25px; }
         .price-big { font-size: 42px; font-weight: 900; color: var(--primary); margin: 15px 0; }
+        
+        /* شبكة المواصفات الشاملة */
         .full-specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
         .spec-item { display: flex; justify-content: space-between; padding: 15px; background: #f1f5f9; border-radius: 14px; font-size: 14px; font-weight: 700; }
         .spec-label { color: #64748b; font-weight: 500; }
+        
         .tech-pill { padding: 10px 18px; background: #fff5eb; color: var(--primary); border: 1px solid #fbd38d; border-radius: 50px; font-size: 11px; font-weight: 800; display: inline-block; margin: 4px; }
 
-        /* --- الأقسام الجديدة في أسفل الصفحة --- */
-        .footer-legal { margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border); }
-        .saker-affar { background: #f1f5f9; border-left: 5px solid var(--primary); padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-        .saker-affar h4 { margin-bottom: 10px; color: var(--dark); font-weight: 900; }
-        .disclaimer { font-size: 12px; color: #94a3b8; line-height: 1.6; text-align: justify; }
+        /* التذييل القانوني والأمان */
+        .footer-legal { margin-top: 40px; padding: 30px; border-top: 1px solid var(--border); }
+        .saker-affar { background: #fff5eb; border-left: 5px solid var(--primary); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .disclaimer { font-size: 12px; color: #94a3b8; line-height: 1.6; }
+
+        @media (max-width: 768px) { .image-gallery { grid-template-columns: 1fr; height: 300px; } .side-imgs { display: none; } .content-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -54,11 +66,18 @@
         const snap = await getDoc(doc(db, "cars", carId));
         if (!snap.exists()) return;
         const car = snap.data();
+        
         page.innerHTML = `
-            <div class="image-gallery"><img src="${car.images[0]}" class="main-img"><div class="side-imgs"><img src="${car.images[1] || car.images[0]}" class="side-img"><img src="${car.images[2] || car.images[0]}" class="side-img"></div></div>
+            <div class="image-gallery">
+                <img src="${car.images[0]}" class="main-img">
+                <div class="side-imgs">
+                    <img src="${car.images[1] || car.images[0]}" class="side-img">
+                    <img src="${car.images[2] || car.images[0]}" class="side-img">
+                </div>
+            </div>
             
             <div class="header-action-area">
-                <div class="reg-plate"><div class="eu-symbol"><span>S</span></div>${(car.regNo || 'EJ ANGIVET').toUpperCase()}</div>
+                <div class="reg-plate"><div class="eu-symbol"><span>S</span></div>${(car.regNo || '--- ---').toUpperCase()}</div>
                 <button class="btn-msg-small" onclick="location.href='messages.html?sellerId=${car.sellerId}&carId=${carId}'">
                     <i class="fa-solid fa-comments"></i> Kontakta säljaren
                 </button>
@@ -68,31 +87,48 @@
                 <div class="main">
                     <div class="card">
                         <h1 style="font-size:36px; font-weight:900;">${car.brand} ${car.model}</h1>
-                        <p style="color:#64748b; font-weight:700;">Årsmodell ${car.year} • ${car.mileage} mil</p>
+                        <p style="color:#64748b; font-weight:700;">Modellår: ${car.year} • ${car.mileage} mil</p>
                         <div class="price-big">${Number(car.price).toLocaleString()} kr</div>
+                        
                         <div class="full-specs-grid">
+                            <div class="spec-item"><span class="spec-label">Årsmodell</span><span>${car.year}</span></div>
                             <div class="spec-item"><span class="spec-label">Drivmedel</span><span>${car.fuel}</span></div>
-                            <div class="spec-item"><span class="spec-label">Växellåda</span><span>${car.transmission}</span></div>
-                            <div class="spec-item"><span class="spec-label">Drivning</span><span>${car.drive || '-'}</span></div>
+                            <div class="spec-item"><span class="spec-label">Växellåda</span><span>${car.transmission || car.gearbox}</span></div>
+                            <div class="spec-item"><span class="spec-label">Drivning</span><span>${car.drive || car.drivetrain || '-'}</span></div>
                             <div class="spec-item"><span class="spec-label">Hästkrafter</span><span>${car.hp || '-'} hk</span></div>
                             <div class="spec-item"><span class="spec-label">Årsskatt</span><span>${car.tax || '-'} kr</span></div>
-                            <div class="spec-item"><span class="spec-label">Ägare</span><span>${car.owners || '-'} st</span></div>
+                            <div class="spec-item"><span class="spec-label">Antal ägare</span><span>${car.owners || '-'} st</span></div>
                             <div class="spec-item"><span class="spec-label">Färg</span><span>${car.color || '-'}</span></div>
+                            <div class="spec-item"><span class="spec-label">Karosseri</span><span>${car.karosseri || '-'}</span></div>
                             <div class="spec-item"><span class="spec-label">Besiktigad till</span><span>${car.besiktning || '-'}</span></div>
                         </div>
-                        <div style="margin-top:20px;">${(car.features || []).map(f => `<span class="tech-pill">${f}</span>`).join('')}</div>
+
+                        <div style="margin-top:25px;">
+                            <h4 style="text-transform:uppercase; font-size:11px; color:#94a3b8; margin-bottom:12px;">Utrustning & Säkerhet</h4>
+                            ${(car.features || []).map(f => `<span class="tech-pill">${f}</span>`).join('')}
+                        </div>
                     </div>
-                    <div class="card"><h3>Beskrivning</h3><p style="white-space: pre-wrap; line-height:1.7;">${car.description}</p></div>
+                    <div class="card">
+                        <h3>Beskrivning</h3>
+                        <p style="white-space: pre-wrap; line-height:1.7;">${car.description}</p>
+                    </div>
+                </div>
+                <div class="side">
+                    <div class="card" style="text-align:center;">
+                        <i class="fa-solid fa-shield-check" style="font-size:40px; color:var(--primary); margin-bottom:15px;"></i>
+                        <h3>Säker affär</h3>
+                        <p style="font-size:13px; color:#64748b;">Kontrollera alltid historik och servicebok.</p>
+                    </div>
                 </div>
             </div>
 
             <div class="footer-legal">
                 <div class="saker-affar">
-                    <h4><i class="fa-solid fa-shield-halved"></i> Säker affär</h4>
-                    <p>Kontrollera alltid fordonets historik och servicebok innan köp. Vi rekommenderar även att provköra fordonet och undersöka det noggrant.</p>
+                    <h4><i class="fa-solid fa-circle-info"></i> Viktig information</h4>
+                    <p>Kontrollera alltid fordonets historik, mätarställning och servicebok innan köp. BILHK ansvarar ej för felaktig information i annonser.</p>
                 </div>
                 <div class="disclaimer">
-                    <strong>Ansvarsfriskrivning:</strong> BILHK är en öppen marknadsplats. Vi granskar inte fordonens faktiska skick eller säljarnas identitet. All handel sker direkt mellan privatpersoner eller företag. Vi tar inget ansvar för ekonomiska förluster, felaktig information i annonser eller tvister mellan parter. Användaren ansvarar själv för att verifiera all information mot officiella register (t.ex. Transportstyrelsen).
+                    <strong>Ansvarsfriskrivning:</strong> Denna plattform är en marknadsplats för fordon. Vi granskar inte fordonens skick eller säljarnas identitet. All handel sker direkt mellan parter. BILHK frånsäger sig allt ansvar för tvister, ekonomiska förluster eller skador som uppstår i samband med annonsering eller köp.
                 </div>
             </div>`;
     }
