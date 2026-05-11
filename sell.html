@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sälj din bil | BILHK Professional</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
@@ -36,7 +37,7 @@
             <div class="form-group">
                 <label>Märke</label>
                 <select id="brand" required>
-                    <option value="">Laddar märken...</option>
+                    <option value="">Laddar data...</option>
                 </select>
             </div>
             <div class="form-group">
@@ -48,15 +49,15 @@
         </div>
 
         <div class="form-grid">
-            <div class="form-group"><label>Årsmodell</label><input type="number" id="year" placeholder="t.ex. 2021" required></div>
-            <div class="form-group"><label>Pris (kr)</label><input type="number" id="price" placeholder="t.ex. 185000" required></div>
+            <div class="form-group"><label>Årsmodell</label><input type="number" id="year" placeholder="t.ex. 2022" required></div>
+            <div class="form-group"><label>Pris (kr)</label><input type="number" id="price" placeholder="t.ex. 245000" required></div>
         </div>
 
-        <h3><i class="fa-solid fa-microchip"></i> Specifikationer</h3>
+        <h3><i class="fa-solid fa-gears"></i> Teknisk Specifikation</h3>
         <div class="form-grid">
-            <div class="form-group"><label>Miltal</label><input type="number" id="mileage" placeholder="Antal mil" required></div>
+            <div class="form-group"><label>Miltal</label><input type="number" id="mileage" placeholder="Mil" required></div>
             <div class="form-group">
-                <label>Växellåدا</label>
+                <label>Växellåda</label>
                 <select id="transmission">
                     <option value="Automat">Automat</option>
                     <option value="Manuell">Manuell</option>
@@ -81,22 +82,29 @@
                     <option value="Coupé">Coupé</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label>Drivning</label>
+                <select id="drivetrain">
+                    <option value="Tvåhjulsdriven">2WD</option>
+                    <option value="Fyrhjulsdriven">4WD / AWD</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Färg</label><input type="text" id="color" placeholder="t.ex. Grå"></div>
         </div>
 
         <h3><i class="fa-solid fa-list-check"></i> Utrustning</h3>
         <div class="checkbox-group" id="equipmentList">
             <label class="check-item"><input type="checkbox" value="Dragkrok"> Dragkrok</label>
+            <label class="check-item"><input type="checkbox" value="Panoramatak"> Panoramatak</label>
             <label class="check-item"><input type="checkbox" value="GPS"> GPS</label>
-            <label class="check-item"><input type="checkbox" value="Farthållare"> Farthållare</label>
             <label class="check-item"><input type="checkbox" value="Backkamera"> Backkamera</label>
-            <label class="check-item"><input type="checkbox" value="Skinnklädsel"> Skinn</label>
             <label class="check-item"><input type="checkbox" value="Bluetooth"> Bluetooth</label>
-            <label class="check-item"><input type="checkbox" value="Motorvärmare"> Motorvärmare</label>
+            <label class="check-item"><input type="checkbox" value="Skinnklädsel"> Skinn</label>
         </div>
 
         <div class="form-group" style="margin-top:20px;">
             <label>Beskrivning</label>
-            <textarea id="description" rows="5" placeholder="Beskriv bilens skick..."></textarea>
+            <textarea id="description" rows="5" placeholder="Berätta mer om bilen..."></textarea>
         </div>
 
         <div class="form-group">
@@ -104,7 +112,7 @@
             <input type="file" id="images" multiple accept="image/*" required>
         </div>
 
-        <button type="submit" class="btn-submit" id="submitBtn">Publicera nu</button>
+        <button type="submit" class="btn-submit" id="submitBtn">Publicera Annons</button>
     </form>
 </div>
 
@@ -119,20 +127,20 @@
     const brandSelect = document.getElementById('brand');
     const modelSelect = document.getElementById('model');
 
-    // 💡 دالة لانتظار تحميل carData في حال تأخر الملف
-    function initCarData() {
-        // التحقق من وجود carData في النطاق العام (window)
+    // 💡 وظيفة تهيئة البيانات من ملف cars-data.js
+    function setupDropdowns() {
+        // التأكد من أن carData متاح عالمياً
         const data = window.carData || (typeof carData !== 'undefined' ? carData : null);
 
         if (!data) {
-            console.log("Väntar på car-data.js...");
-            setTimeout(initCarData, 100); // إعادة المحاولة كل 100 ملي ثانية
+            console.log("Söker efter bildata...");
+            setTimeout(setupDropdowns, 200); // محاولة البحث مرة أخرى بعد 200 ملي ثانية
             return;
         }
 
         brandSelect.innerHTML = '<option value="">Välj märke...</option>';
         Object.keys(data).forEach(brand => {
-            let opt = document.createElement('option');
+            const opt = document.createElement('option');
             opt.value = brand;
             opt.textContent = brand;
             brandSelect.appendChild(opt);
@@ -140,13 +148,13 @@
 
         brandSelect.onchange = () => {
             modelSelect.innerHTML = '<option value="">Välj modell...</option>';
-            const selectedBrand = brandSelect.value;
-            if (selectedBrand && data[selectedBrand]) {
+            const selected = brandSelect.value;
+            if (selected && data[selected]) {
                 modelSelect.disabled = false;
-                data[selectedBrand].forEach(model => {
-                    let opt = document.createElement('option');
-                    opt.value = model;
-                    opt.textContent = model;
+                data[selected].forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
                     modelSelect.appendChild(opt);
                 });
             } else {
@@ -155,8 +163,8 @@
         };
     }
 
-    // بدء التشغيل
-    initCarData();
+    // تشغيل القوائم فور جهوزية الصفحة
+    setupDropdowns();
 
     let user = null;
     onAuthStateChanged(auth, u => { if(u) user = u; else window.location.href="login.html"; });
@@ -169,7 +177,6 @@
         try {
             const files = document.getElementById('images').files;
             const imageUrls = [];
-            
             for (let file of files) {
                 const sRef = ref(storage, `cars/${Date.now()}_${file.name}`);
                 await uploadBytes(sRef, file);
@@ -187,20 +194,21 @@
                 transmission: document.getElementById('transmission').value,
                 fuelType: document.getElementById('fuelType').value,
                 bodyType: document.getElementById('bodyType').value,
-                description: document.getElementById('description').value,
+                drivetrain: document.getElementById('drivetrain').value,
+                color: document.getElementById('color').value,
                 equipment: equipment,
+                description: document.getElementById('description').value,
                 images: imageUrls,
                 sellerId: user.uid,
                 active: true,
                 createdAt: serverTimestamp()
             });
 
-            await Swal.fire('Klar!', 'Din annons är nu uppe.', 'success');
+            await Swal.fire('Klar!', 'Annonsen är publicerad.', 'success');
             window.location.href = "my-account.html";
-
         } catch (err) {
             Swal.fire('Fel', err.message, 'error');
-            btn.disabled = false; btn.innerText = "Publicera nu";
+            btn.disabled = false; btn.innerText = "Publicera Annons";
         }
     };
 </script>
