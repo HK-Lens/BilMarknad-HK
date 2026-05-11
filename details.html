@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Detaljer | BILHK Premium</title>
+    <title>Fordonsdetaljer | BILHK Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
@@ -20,9 +21,9 @@
         .thumb-strip img.active { border-color: var(--primary); }
         .price-card { background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
         .price-val { font-size: 36px; font-weight: 900; color: var(--primary); }
-        .btn-main { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; font-size: 16px; }
+        .btn-main { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; font-size: 16px; transition: 0.3s; }
         .btn-contact { background: var(--dark); color: white; }
-        .btn-fav { background: transparent; border: 2px solid var(--border); }
+        .btn-fav { background: transparent; border: 2px solid var(--border); color: var(--dark); }
         .btn-fav.active { color: var(--primary); border-color: var(--primary); background: #fff7ed; }
         .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
         .spec-box { background: #f1f5f9; padding: 15px; border-radius: 12px; text-align: center; font-size: 14px; }
@@ -75,8 +76,7 @@
             document.getElementById('sYear').innerText = carData.year;
             document.getElementById('sMil').innerText = carData.mileage;
             document.getElementById('carDesc').innerText = carData.description;
-            
-            if (carData.images && carData.images.length > 0) {
+            if (carData.images?.length > 0) {
                 const main = document.getElementById('activeImg');
                 const list = document.getElementById('thumbList');
                 main.src = carData.images[0];
@@ -87,54 +87,42 @@
                     list.appendChild(img);
                 });
             }
-            checkFav();
+            checkFavStatus();
         }
     }
 
-    async function checkFav() {
-        if (!auth.currentUser) return;
-        const snap = await getDoc(doc(db, "favorites", `${auth.currentUser.uid}_${carId}`));
-        if (snap.exists()) { document.getElementById('fIcon').className = 'fa-solid fa-heart'; document.getElementById('favBtn').classList.add('active'); }
+    async function checkFavStatus() {
+        if (!auth.currentUser || !carId) return;
+        const favRef = doc(db, "favorites", `${auth.currentUser.uid}_${carId}`);
+        const snap = await getDoc(favRef);
+        const fIcon = document.getElementById('fIcon');
+        const favBtn = document.getElementById('favBtn');
+        const fText = document.getElementById('fText');
+        if (snap.exists()) { fIcon.className = 'fa-solid fa-heart'; favBtn.classList.add('active'); fText.innerText = "Sparad"; }
+        else { fIcon.className = 'fa-regular fa-heart'; favBtn.classList.remove('active'); fText.innerText = "Spara"; }
     }
 
-    document.getElementById('chatBtn').onclick = async () => {
-        if (!auth.currentUser) return alert("Du måste logga in först.");
-        if (!carData) return;
-        if (auth.currentUser.uid === carData.sellerId) return alert("Du kan inte skicka meddelande till din egen annons.");
-
-        const btn = document.getElementById('chatBtn');
-        btn.disabled = true;
-        btn.innerText = "Öppnar chatt...";
-
+    document.getElementById('favBtn').onclick = async () => {
+        if (!auth.currentUser) return Swal.fire('Info', 'Logga in först', 'info');
+        const favRef = doc(db, "favorites", `${auth.currentUser.uid}_${carId}`);
+        const snap = await getDoc(favRef);
         try {
-            const roomId = [auth.currentUser.uid, carData.sellerId].sort().join('_') + '_' + carId;
-            const buyerName = auth.currentUser.displayName || auth.currentUser.email.split('@')[0] || "Köpare";
-            const chatTitle = `${carData.brand} ${carData.model}`;
-
-            // 💡 الخطة البديلة: تخزين الغرفة في الذاكرة المحلية للهاتف لتجنب أخطاء المتصفح
-            localStorage.setItem('targetChat', roomId);
-            localStorage.setItem('targetChatName', chatTitle);
-
-            await setDoc(doc(db, "chats", roomId), { 
-                carId: carId, 
-                carName: chatTitle, 
-                participants: [auth.currentUser.uid, carData.sellerId],
-                buyerId: auth.currentUser.uid,
-                buyerName: buyerName, 
-                sellerId: carData.sellerId, 
-                updatedAt: serverTimestamp() 
-            }, { merge: true });
-            
-            window.location.href = `messages.html?chat=${roomId}`;
-        } catch (error) {
-            alert("Databasfel: " + error.message);
-            console.error(error);
-            btn.disabled = false;
-            btn.innerText = "Kontakta Säljaren";
-        }
+            if (snap.exists()) { await deleteDoc(favRef); }
+            else { await setDoc(favRef, { userId: auth.currentUser.uid, carId: carId, brand: carData.brand, model: carData.model, price: carData.price, image: carData.images[0] || '', createdAt: serverTimestamp() }); }
+            checkFavStatus();
+        } catch (e) { console.error(e); }
     };
 
-    onAuthStateChanged(auth, () => loadCar());
+    document.getElementById('chatBtn').onclick = async () => {
+        if (!auth.currentUser) return Swal.fire('Info', 'Logga in först', 'info');
+        const roomId = [auth.currentUser.uid, carData.sellerId].sort().join('_') + '_' + carId;
+        const buyerName = auth.currentUser.displayName || auth.currentUser.email.split('@')[0];
+        await setDoc(doc(db, "chats", roomId), { carId, carName: carData.brand, participants: [auth.currentUser.uid, carData.sellerId], sellerId: carData.sellerId, buyerName, updatedAt: serverTimestamp() }, { merge: true });
+        localStorage.setItem('targetChat', roomId);
+        window.location.href = `messages.html?chat=${roomId}`;
+    };
+
+    onAuthStateChanged(auth, (user) => { loadCar(); });
 </script>
 </body>
 </html>
