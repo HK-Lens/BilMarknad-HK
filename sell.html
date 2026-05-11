@@ -10,24 +10,19 @@
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         body { background: var(--bg); padding: 20px; font-family: 'Inter', sans-serif; }
         .form-card { max-width: 800px; margin: 0 auto; background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-        input, select { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; }
-        .btn-submit { width: 100%; padding: 18px; background: var(--dark); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; margin-top: 25px; }
+        input, select { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; margin-bottom: 15px; }
+        .btn-submit { width: 100%; padding: 18px; background: var(--dark); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; }
     </style>
 </head>
 <body>
 <div class="form-card">
     <h1 style="text-align:center;">Publicera Annons</h1>
     <form id="sellForm">
-        <div class="form-grid">
-            <select id="brand" required><option value="">Välj märke...</option></select>
-            <select id="model" required disabled><option value="">Välj modell...</option></select>
-        </div>
-        <div class="form-grid">
-            <input type="number" id="year" placeholder="Årsmodell" required>
-            <input type="number" id="price" placeholder="Pris (kr)" required>
-        </div>
-        <input type="file" id="images" multiple accept="image/*" required style="margin-top:20px;">
+        <select id="brand" required><option value="">Välj märke...</option></select>
+        <select id="model" required disabled><option value="">Välj modell...</option></select>
+        <input type="number" id="year" placeholder="Årsmodell" required>
+        <input type="number" id="price" placeholder="Pris (kr)" required>
+        <input type="file" id="images" multiple accept="image/*" required>
         <button type="submit" class="btn-submit" id="submitBtn">Publicera</button>
     </form>
 </div>
