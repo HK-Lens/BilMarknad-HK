@@ -11,104 +11,129 @@
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); padding: 20px; color: var(--dark); }
-        .form-card { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 30px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .form-card { max-width: 950px; margin: 0 auto; background: white; padding: 40px; border-radius: 30px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         
-        .section-title { font-size: 13px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 30px 0 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .section-header { font-size: 13px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin: 35px 0 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
         
-        .reg-box { background: #0f172a; padding: 25px; border-radius: 20px; margin-bottom: 30px; display: flex; gap: 15px; align-items: flex-end; }
-        .reg-input { text-transform: uppercase; font-weight: 900; font-size: 26px; letter-spacing: 2px; text-align: center; border: none; background: white; height: 65px; border-radius: 12px; flex: 1; color: var(--dark); }
-        .btn-fetch { background: var(--primary); color: white; padding: 0 30px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; height: 65px; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .reg-panel { background: #0f172a; padding: 30px; border-radius: 20px; margin-bottom: 35px; display: flex; gap: 20px; align-items: flex-end; }
+        .reg-input { text-transform: uppercase; font-weight: 900; font-size: 28px; letter-spacing: 3px; text-align: center; border: none; background: white; height: 70px; border-radius: 12px; flex: 1; color: var(--dark); }
+        .btn-fetch { background: var(--primary); color: white; padding: 0 35px; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; height: 70px; font-size: 16px; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
 
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 15px; }
-        label { display: block; margin-bottom: 6px; font-weight: 700; color: #475569; font-size: 13px; }
-        input, select, textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; font-size: 15px; outline: none; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 15px; }
+        label { display: block; margin-bottom: 8px; font-weight: 800; color: #475569; font-size: 13px; }
+        input, select, textarea { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; font-size: 15px; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--primary); background: white; }
 
-        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
-        .feature-item { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 13px; cursor: pointer; background: white; padding: 10px; border-radius: 10px; border: 1px solid var(--border); }
-        .feature-item input { width: auto; margin: 0; }
+        /* شبكة الأيقونات والمواصفات */
+        .feature-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; background: #f8fafc; padding: 25px; border-radius: 18px; border: 1px solid var(--border); }
+        .feature-card { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 13px; cursor: pointer; background: white; padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
+        .feature-card input { width: auto; margin: 0; }
+        .feature-card i { color: var(--primary); width: 20px; text-align: center; }
 
-        .btn-submit { width: 100%; padding: 22px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 20px; margin-top: 40px; box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
+        .btn-submit { width: 100%; padding: 22px; background: var(--primary); color: white; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; font-size: 20px; margin-top: 45px; box-shadow: 0 12px 24px rgba(245, 130, 32, 0.25); transition: 0.3s; }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(245, 130, 32, 0.35); }
     </style>
 </head>
 <body>
 
 <div class="form-card">
-    <h1 style="text-align:center; font-weight:900; margin-bottom:5px;">Publicera Fordon</h1>
-    <p style="text-align:center; color:#64748b; margin-bottom:35px;">Komplett teknisk specifikation för seriösa köpare</p>
+    <h1 style="text-align:center; font-weight:900; margin-bottom:5px;">Sälj ditt fordon på BILHK</h1>
+    <p style="text-align:center; color:#64748b; margin-bottom:40px;">Komplett teknisk specifikation för det svenska marknaden</p>
     
-    <div class="reg-box">
+    <div class="reg-panel">
         <div style="flex:1">
-            <label style="color:white">Registreringsnummer (Reg-nr)</label>
+            <label style="color:white">Registreringsnummer (Hämta data)</label>
             <input type="text" id="regNr" class="reg-input" placeholder="ABC 123" maxlength="7">
         </div>
-        <button type="button" class="btn-fetch" id="fetchBtn"><i class="fa-solid fa-sync"></i> HÄMTA DATA</button>
+        <button type="button" class="btn-fetch" id="fetchBtn"><i class="fa-solid fa-cloud-arrow-down"></i> HÄMTA DATA</button>
     </div>
 
     <form id="sellForm">
-        <div class="section-title"><i class="fa-solid fa-car"></i> Grunduppgifter & Mekanik</div>
+        <div class="section-header"><i class="fa-solid fa-car-side"></i> Fordonsdata & Identitet</div>
         <div class="form-grid">
-            <select id="brand" required><option value="">Märke...</option></select>
-            <select id="model" required disabled><option value="">Modell...</option></select>
-            <input type="number" id="year" placeholder="Årsmodell" required>
+            <div>
+                <label>Märke</label>
+                <select id="brand" required><option value="">Välj märke...</option></select>
+            </div>
+            <div>
+                <label>Modell</label>
+                <select id="model" required disabled><option value="">Välj modell...</option></select>
+            </div>
+            <div>
+                <label>Årsmodell</label>
+                <input type="number" id="year" placeholder="t.ex. 2022" required>
+            </div>
         </div>
 
         <div class="form-grid">
-            <input type="number" id="price" placeholder="Pris (SEK)" required>
-            <input type="number" id="mileage" placeholder="Miltal (mil)" required>
-            <select id="fuel" required>
-                <option value="">Drivmedel...</option>
-                <option value="Bensin">Bensin</option>
-                <option value="Diesel">Diesel</option>
-                <option value="El">Elbil</option>
-                <option value="Hybrid">Laddhybrid/Hybrid</option>
-                <option value="Gas">Gasbil</option>
-            </select>
+            <div>
+                <label>Pris (SEK)</label>
+                <input type="number" id="price" placeholder="t.ex. 350000" required>
+            </div>
+            <div>
+                <label>Miltal (mil)</label>
+                <input type="number" id="mileage" placeholder="t.ex. 4500" required>
+            </div>
+            <div>
+                <label>Besiktigad till</label>
+                <input type="date" id="besiktning">
+            </div>
         </div>
 
+        <div class="section-header"><i class="fa-solid fa-engine"></i> Drivlina & Prestanda</div>
         <div class="form-grid">
-            <select id="gearbox">
-                <option value="Automat">Automatisk växellåda</option>
-                <option value="Manuell">Manuell växellåda</option>
-            </select>
-            <select id="drive">
-                <option value="FWD">Framhjulsdrift (FWD)</option>
-                <option value="RWD">Bakhjulsdrift (RWD)</option>
-                <option value="AWD">Fyrhjulsdrift (AWD/4WD)</option>
-            </select>
+            <div>
+                <label>Drivmedel</label>
+                <select id="fuel" required>
+                    <option value="">Välj drivmedel...</option>
+                    <option value="Bensin">Bensin</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="El">Elbil (EV)</option>
+                    <option value="Hybrid">Laddhybrid (PHEV)</option>
+                    <option value="Gas">Gasbil</option>
+                </select>
+            </div>
+            <div>
+                <label>Växellåda</label>
+                <select id="gearbox" required>
+                    <option value="Automat">Automatisk</option>
+                    <option value="Manuell">Manuell</option>
+                </select>
+            </div>
+            <div>
+                <label>Drivning</label>
+                <select id="drive">
+                    <option value="FWD">Framhjulsdrift</option>
+                    <option value="RWD">Bakhjulsdrift</option>
+                    <option value="AWD">Fyrhjulsdrift (AWD/4WD)</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-grid">
             <input type="number" id="hp" placeholder="Hästkrafter (hk)">
+            <input type="number" id="owners" placeholder="Antal ägare">
+            <input type="text" id="color" placeholder="Färg (t.ex. Vit Pearl)">
         </div>
 
-        <div class="section-title"><i class="fa-solid fa-shield-check"></i> Aktiv Säkerhet (ADAS)</div>
-        <div class="feature-grid">
-            <label class="feature-item"><input type="checkbox" class="feat" value="AEB"> Automatisk nödbroms (AEB)</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="ACC"> Adaptiv farthållare (ACC)</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="LKA"> Körfältsassistans (LKA)</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="BSM"> Döda vinkel-varnare (BLIS)</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="RCTA"> Backvarnare (RCTA)</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Trötthet"> Trötthetsvarnare</label>
+        <div class="section-header"><i class="fa-solid fa-shield-virus"></i> Aktiv Säkerhet (ADAS) & Teknik</div>
+        <div class="feature-container">
+            <label class="feature-card"><i class="fa-solid fa-stop-circle"></i><input type="checkbox" class="feat" value="AEB"> Autobroms (AEB)</label>
+            <label class="feature-card"><i class="fa-solid fa-gauge-high"></i><input type="checkbox" class="feat" value="ACC"> Adaptiv farthållare</label>
+            <label class="feature-card"><i class="fa-solid fa-arrows-left-right-to-line"></i><input type="checkbox" class="feat" value="LKA"> Filassistans (LKA)</label>
+            <label class="feature-card"><i class="fa-solid fa-eye"></i><input type="checkbox" class="feat" value="BSM"> Döda vinkel-varnare</label>
+            <label class="feature-card"><i class="fa-solid fa-video"></i><input type="checkbox" class="feat" value="360Cam"> 360° Kamera</label>
+            <label class="feature-card"><i class="fa-solid fa-bolt"></i><input type="checkbox" class="feat" value="Matrix"> Matrix LED-ljus</label>
+            <label class="feature-card"><i class="fa-solid fa-mobile-screen"></i><input type="checkbox" class="feat" value="ApplePlay"> CarPlay/AndroidAuto</label>
+            <label class="feature-card"><i class="fa-solid fa-anchor"></i><input type="checkbox" class="feat" value="Dragkrok"> Dragkrok</label>
+            <label class="feature-card"><i class="fa-solid fa-snowflake"></i><input type="checkbox" class="feat" value="Vinterhjul"> Vinterhjul ingår</label>
+            <label class="feature-card"><i class="fa-solid fa-book"></i><input type="checkbox" class="feat" value="Service"> Full servicehistorik</label>
         </div>
 
-        <div class="section-title"><i class="fa-solid fa-gem"></i> Komfort & Utrustning</div>
-        <div class="feature-grid">
-            <label class="feature-item"><input type="checkbox" class="feat" value="HUD"> Head-up display (HUD)</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="360Cam"> 360° Kamera</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Matrix"> Matrix LED-ljus</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="ApplePlay"> Apple CarPlay / Android Auto</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Dragkrok"> Dragkrok</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Panoramaglastak"> Panoramaglastak</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Skinn"> Skinnklädsel</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Vinterhjul"> Vinterhjul medföljer</label>
-        </div>
-
-        <div class="section-title"><i class="fa-solid fa-camera"></i> Bilder & Detaljer</div>
-        <div class="form-grid">
-            <input type="number" id="seats" placeholder="Antal säten (t.ex. 5)">
-            <input type="text" id="color" placeholder="Färg (t.ex. Grå metallic)">
-        </div>
-        <input type="file" id="images" multiple accept="image/*" required style="margin-top:15px;">
-        <textarea id="description" rows="6" placeholder="Beskriv bilens skick, servicehistorik och övrig info..." required style="margin-top:15px;"></textarea>
+        <div class="section-header"><i class="fa-solid fa-images"></i> Media & Beskrivning</div>
+        <input type="file" id="images" multiple accept="image/*" required style="margin-bottom: 20px;">
+        <textarea id="description" rows="6" placeholder="Beskriv bilens skick, utrustningsnivå (t.ex. R-Design, M-Sport) och övrig information..." required></textarea>
         
-        <button type="submit" class="btn-submit" id="submitBtn">PUBLICERA ANNONSON NU</button>
+        <button type="submit" class="btn-submit" id="submitBtn">PUBLICERA ANNONSON</button>
     </form>
 </div>
 
@@ -131,9 +156,9 @@
 
     document.getElementById('sellForm').onsubmit = async (e) => {
         e.preventDefault();
-        if(!auth.currentUser) return Swal.fire('Error', 'Logga in!', 'error');
+        if(!auth.currentUser) return Swal.fire('Error', 'Du måste vara inloggad', 'error');
         const btn = document.getElementById('submitBtn');
-        btn.disabled = true; btn.innerText = "Publicerar...";
+        btn.disabled = true; btn.innerText = "Laddar upp data...";
 
         try {
             const files = document.getElementById('images').files, urls = [];
@@ -142,6 +167,7 @@
                 await uploadBytes(sRef, f);
                 urls.push(await getDownloadURL(sRef));
             }
+
             const features = Array.from(document.querySelectorAll('.feat:checked')).map(el => el.value);
 
             await addDoc(collection(db, "cars"), {
@@ -154,8 +180,7 @@
                 gearbox: document.getElementById('gearbox').value,
                 drive: document.getElementById('drive').value,
                 hp: Number(document.getElementById('hp').value),
-                seats: Number(document.getElementById('seats').value),
-                color: document.getElementById('color').value,
+                besiktning: document.getElementById('besiktning').value,
                 features: features,
                 description: document.getElementById('description').value,
                 images: urls,
@@ -163,7 +188,8 @@
                 active: true,
                 createdAt: serverTimestamp()
             });
-            Swal.fire('Klart!', 'Annonsen är publicerad.', 'success');
+
+            Swal.fire('Klart!', 'Din annons är nu live!', 'success');
             setTimeout(() => window.location.href="my-account.html", 2000);
         } catch (err) { Swal.fire('Fel', err.message, 'error'); btn.disabled = false; }
     };
