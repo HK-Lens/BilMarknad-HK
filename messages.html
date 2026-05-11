@@ -15,16 +15,15 @@
         .sidebar { width: 350px; border-right: 1px solid var(--border); overflow-y: auto; background: var(--white); display: flex; flex-direction: column; }
         .chat-window { flex: 1; display: flex; flex-direction: column; background: #fdfdfd; }
         
-        /* 💡 الحل الجذري للهواتف: التبديل المخفي */
-        .back-btn { display: none; background: none; border: none; font-size: 20px; color: var(--dark); cursor: pointer; padding-right: 15px; }
-        
         @media (max-width: 768px) {
             .sidebar { width: 100%; border-right: none; }
-            .sidebar.hide-on-mobile { display: none !important; } /* إخفاء القائمة عند فتح الدردشة */
+            .sidebar.hide-on-mobile { display: none !important; } 
             .chat-window { display: none; width: 100%; }
-            .chat-window.show-on-mobile { display: flex !important; } /* إظهار الدردشة بالكامل */
-            .back-btn { display: inline-block; }
+            .chat-window.show-on-mobile { display: flex !important; }
         }
+        
+        .back-btn { display: none; background: none; border: none; font-size: 20px; color: var(--dark); cursor: pointer; padding-right: 15px; }
+        @media (max-width: 768px) { .back-btn { display: inline-block; } }
 
         .msg-display { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
         .bubble { padding: 12px 18px; border-radius: 20px; max-width: 80%; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
@@ -94,20 +93,32 @@
     });
 
     function loadRooms() {
-        const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid), orderBy("updatedAt", "desc"));
+        // إزالة orderBy لتجنب خطأ الفهرسة (Index Error) في فايبربيس
+        const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
+        
         onSnapshot(q, (snap) => {
-            const list = document.getElementById('chatList'); list.innerHTML = "";
+            const list = document.getElementById('chatList'); 
+            list.innerHTML = "";
             
             if(snap.empty) {
                 list.innerHTML = "<div class='empty-state'>Inga meddelanden än.</div>";
                 return;
             }
 
-            snap.forEach(d => {
-                const room = d.data();
+            // ترتيب الغرف برمجياً لتجنب مشاكل فايبربيس
+            let rooms = [];
+            snap.forEach(d => rooms.push({ id: d.id, ...d.data() }));
+            
+            rooms.sort((a, b) => {
+                const timeA = a.updatedAt ? a.updatedAt.toMillis() : 0;
+                const timeB = b.updatedAt ? b.updatedAt.toMillis() : 0;
+                return timeB - timeA; // الترتيب من الأحدث للأقدم
+            });
+
+            rooms.forEach(room => {
                 const div = document.createElement('div'); 
-                div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
-                div.setAttribute('data-id', d.id);
+                div.className = `chat-item ${activeRoom === room.id ? 'active' : ''}`;
+                div.setAttribute('data-id', room.id);
                 
                 let displayTitle = room.carName;
                 if (room.sellerId && user.uid === room.sellerId && room.buyerName) {
@@ -115,9 +126,13 @@
                 }
 
                 div.innerHTML = `<strong>${displayTitle}</strong><small style="color:#64748b; margin-top:4px;">${room.lastMessage || 'Skicka meddelande'}</small>`;
-                div.onclick = () => window.openRoom(d.id, displayTitle);
+                div.onclick = () => window.openRoom(room.id, displayTitle);
                 list.appendChild(div);
             });
+        }, (error) => {
+            // تنبيه يظهر الخطأ المباشر بدلاً من التعليق على التحميل
+            const list = document.getElementById('chatList');
+            list.innerHTML = `<div class='empty-state' style='color:#ef4444;'>Laddningsfel: ${error.message}</div>`;
         });
     }
 
@@ -131,7 +146,6 @@
         sendBtn.disabled = false;
         inputField.placeholder = "Skriv ett meddelande...";
 
-        // 💡 إخفاء القائمة وإظهار الدردشة في الهاتف
         document.getElementById('chatWindowView').classList.add('show-on-mobile');
         document.getElementById('sidebarView').classList.add('hide-on-mobile');
 
@@ -156,7 +170,6 @@
         });
     }
 
-    // 💡 برمجة سهم الرجوع: إخفاء الدردشة وإظهار القائمة
     document.getElementById('backBtn').onclick = () => {
         document.getElementById('chatWindowView').classList.remove('show-on-mobile');
         document.getElementById('sidebarView').classList.remove('hide-on-mobile');
