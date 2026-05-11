@@ -16,6 +16,7 @@
         label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 14px; color: #64748b; }
         input, select, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; outline: none; background: #f8fafc; transition: 0.3s; }
         input:focus, select:focus, textarea:focus { border-color: var(--primary); background: white; }
+        select:disabled { background: #e2e8f0; cursor: not-allowed; }
         .btn-submit { width: 100%; padding: 16px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 15px; transition: 0.3s; }
         .btn-submit:hover { background: #1e293b; }
         .btn-submit:disabled { background: #cbd5e1; cursor: not-allowed; }
@@ -25,10 +26,22 @@
 <div class="form-card">
     <h1>Publicera Annons</h1>
     <form id="sellForm">
+        
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="form-group"><label>Märke</label><input type="text" id="brand" required></div>
-            <div class="form-group"><label>Modell</label><input type="text" id="model" required></div>
+            <div class="form-group">
+                <label>Märke</label>
+                <select id="brand" required>
+                    <option value="">Välj märke...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Modell</label>
+                <select id="model" required disabled>
+                    <option value="">Välj modell först...</option>
+                </select>
+            </div>
         </div>
+
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div class="form-group"><label>År</label><input type="number" id="year" required></div>
             <div class="form-group"><label>Pris (kr)</label><input type="number" id="price" required></div>
@@ -45,7 +58,7 @@
             </div>
         </div>
         <div class="form-group"><label>Beskrivning</label><textarea id="description" rows="4"></textarea></div>
-        <div class="form-group"><label>Bilder (Max 5MB)</label><input type="file" id="images" multiple accept="image/*" required></div>
+        <div class="form-group"><label>Bilder (Max 5MB per bild)</label><input type="file" id="images" multiple accept="image/*" required></div>
         <button type="submit" class="btn-submit" id="submitBtn">Publicera nu</button>
     </form>
     <button onclick="window.location.href='index.html'" style="width:100%; padding:15px; background:transparent; border:none; color:#64748b; font-weight:700; cursor:pointer; margin-top:5px;">Avbryt</button>
@@ -56,6 +69,47 @@
     import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
     import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    // 💡 قاعدة بيانات الماركات والموديلات
+    const carDatabase = {
+        "Volvo": ["V60", "V90", "XC40", "XC60", "XC90", "S60", "S90"],
+        "BMW": ["1-serie", "3-serie", "5-serie", "X1", "X3", "X5", "i4"],
+        "Audi": ["A3", "A4", "A6", "Q3", "Q5", "Q7", "e-tron"],
+        "Volkswagen": ["Golf", "Passat", "Tiguan", "ID.4", "Polo"],
+        "Mercedes-Benz": ["A-Klass", "C-Klass", "E-Klass", "GLC", "GLE"],
+        "Toyota": ["Yaris", "Corolla", "RAV4", "Camry"],
+        "Övriga": ["Annan modell"]
+    };
+
+    const brandSelect = document.getElementById('brand');
+    const modelSelect = document.getElementById('model');
+
+    // تعبئة قائمة الماركات
+    for (let brand in carDatabase) {
+        let option = document.createElement('option');
+        option.value = brand;
+        option.textContent = brand;
+        brandSelect.appendChild(option);
+    }
+
+    // تغيير الموديلات بناءً على الماركة المختارة
+    brandSelect.addEventListener('change', function() {
+        modelSelect.innerHTML = '<option value="">Välj modell...</option>'; // تفريغ القائمة
+        const selectedBrand = this.value;
+        
+        if (selectedBrand) {
+            modelSelect.disabled = false;
+            carDatabase[selectedBrand].forEach(model => {
+                let option = document.createElement('option');
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            });
+        } else {
+            modelSelect.disabled = true;
+            modelSelect.innerHTML = '<option value="">Välj modell först...</option>';
+        }
+    });
 
     let currentUser = null;
     onAuthStateChanged(auth, (user) => { 
@@ -85,7 +139,7 @@
                 imageUrls.push(await getDownloadURL(sRef));
             }
 
-            // 💡 السر هنا: يجب التأكد من حفظ sellerId
+            // التأكد من حفظ بيانات البائع واختيارات القوائم
             await addDoc(collection(db, "cars"), {
                 brand: document.getElementById('brand').value,
                 model: document.getElementById('model').value,
@@ -96,13 +150,13 @@
                 transmission: document.getElementById('transmission').value,
                 description: document.getElementById('description').value,
                 images: imageUrls,
-                sellerId: currentUser.uid, // هذا السطر هو الذي يربط الإعلان بحسابك!
+                sellerId: currentUser.uid, 
                 active: true, 
                 createdAt: serverTimestamp()
             });
 
             await Swal.fire('Klar!', 'Din annons är nu publicerad.', 'success');
-            window.location.href = "my-account.html"; // توجيهك فوراً لحسابك لترى الإعلان
+            window.location.href = "my-account.html"; 
         } catch (err) { 
             Swal.fire('Fel!', 'Ett fel uppstod: ' + err.message, 'error');
             btn.disabled = false; 
