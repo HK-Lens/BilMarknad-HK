@@ -8,147 +8,116 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #ffffff; --light: #f8fafc; --border: #e2e8f0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding-bottom: 120px; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); padding-bottom: 120px; color: var(--dark); }
+        .content { padding: 25px 5%; max-width: 850px; margin: auto; }
+        
+        .section-label { font-size: 11px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin: 35px 0 12px; border-bottom: 2px solid #f1f5f9; padding-bottom: 5px; }
+        
+        select, input { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; background: var(--light); font-size: 15px; outline: none; }
+        
+        /* تصحيح أيقونات الهيكل */
+        .kar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .kar-card { border: 2px solid var(--border); border-radius: 18px; padding: 18px 5px; text-align: center; cursor: pointer; transition: 0.3s; background: white; }
+        .kar-card i { font-size: 24px; margin-bottom: 8px; color: #64748b; display: block; }
+        .kar-card span { font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase; }
+        .kar-card.active { border-color: var(--primary); background: #fff5eb; }
+        .kar-card.active i, .kar-card.active span { color: var(--primary); }
 
-        .container { padding: 25px 5%; max-width: 850px; margin: auto; }
-        .header { margin-bottom: 30px; }
-        .header h1 { font-weight: 900; font-size: 28px; }
-        .header p { color: #64748b; font-size: 15px; }
+        .dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .chip-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .chip { padding: 12px 20px; border: 2px solid var(--border); border-radius: 50px; font-size: 12px; font-weight: 800; cursor: pointer; background: white; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .chip.active { background: var(--dark); color: white; border-color: var(--dark); }
 
-        .section-label { font-size: 11px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin: 30px 0 12px; border-bottom: 2px solid #f1f5f9; padding-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-
-        /* شبكة الهيكل وتصحيح أيقونة Van */
-        .type-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .type-card { border: 2px solid var(--border); border-radius: 20px; padding: 22px 5px; text-align: center; cursor: pointer; transition: 0.3s; background: white; }
-        .type-card i { font-size: 28px; margin-bottom: 10px; color: #64748b; display: block; }
-        .type-card span { font-size: 10px; font-weight: 900; color: #64748b; text-transform: uppercase; }
-        .type-card.active { border-color: var(--primary); background: #fff5eb; box-shadow: 0 8px 20px rgba(245, 130, 32, 0.15); }
-        .type-card.active i, .type-card.active span { color: var(--primary); }
-
-        select, input { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; background: var(--light); font-size: 15px; outline: none; font-weight: 600; }
-        .range-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        /* وسوم التقنيات المتقدمة (ADAS & Comfort) */
-        .tech-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-        .tech-chip { padding: 12px 20px; border: 2px solid var(--border); border-radius: 50px; font-size: 13px; font-weight: 800; cursor: pointer; background: white; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
-        .tech-chip.active { background: var(--dark); color: white; border-color: var(--dark); }
-
-        /* البار السفلي */
-        .action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 25px 5%; border-top: 2px solid var(--border); display: flex; gap: 15px; z-index: 1000; }
-        .btn-apply { flex: 2; padding: 20px; background: var(--primary); color: white; border-radius: 50px; border: none; font-weight: 900; font-size: 18px; box-shadow: 0 10px 25px rgba(245, 130, 32, 0.3); cursor: pointer; }
-        .btn-clear { flex: 1; padding: 20px; border: 2px solid var(--border); border-radius: 50px; font-weight: 800; background: white; cursor: pointer; }
+        .sticky-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 25px 5%; border-top: 2px solid var(--border); display: flex; gap: 15px; z-index: 1000; }
+        .btn-apply { flex: 2; padding: 22px; background: var(--primary); color: white; border-radius: 50px; border: none; font-weight: 900; font-size: 18px; box-shadow: 0 10px 25px rgba(245, 130, 32, 0.3); }
+        .btn-reset { flex: 1; padding: 22px; border: 2px solid var(--border); border-radius: 50px; font-weight: 800; background: white; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h1>Djup Sökning</h1>
-        <p>Hitta fordonet med exakt den utrustning du behöver</p>
-    </div>
+<div class="content">
+    <h1 style="font-weight: 900; margin-bottom: 5px;">Avancerad Djup Sökning</h1>
+    <p style="color:#64748b; font-size: 15px;">Filtrera marknaden efter de mest avancerade kriterierna</p>
     
-    <div class="section-label"><i class="fa-solid fa-car"></i> Karosserityp</div>
-    <div class="type-grid">
-        <div class="type-card active" onclick="setK('all', this)"><i class="fa-solid fa-border-all"></i><span>Alla</span></div>
-        <div class="type-card" onclick="setK('Sedan', this)"><i class="fa-solid fa-car"></i><span>Sedan</span></div>
-        <div class="type-card" onclick="setK('SUV', this)"><i class="fa-solid fa-truck-pickup"></i><span>SUV</span></div>
-        <div class="type-card" onclick="setK('Van', this)"><i class="fa-solid fa-van-shuttle"></i><span>Skåpbil</span></div>
+    <div class="section-label">Karosserityp</div>
+    <div class="kar-grid">
+        <div class="kar-card active" onclick="setK('all', this)"><i class="fa-solid fa-list-ul"></i><span>Alla</span></div>
+        <div class="kar-card" onclick="setK('Sedan', this)"><i class="fa-solid fa-car"></i><span>Sedan</span></div>
+        <div class="kar-card" onclick="setK('SUV', this)"><i class="fa-solid fa-truck-pickup"></i><span>SUV</span></div>
+        <div class="kar-card" onclick="setK('Kombi', this)"><i class="fa-solid fa-car-rear"></i><span>Kombi</span></div>
+        <div class="kar-card" onclick="setK('Van', this)"><i class="fa-solid fa-van-shuttle"></i><span>Van</span></div>
     </div>
 
     <div class="section-label">Märke & Modell</div>
     <select id="brand" onchange="updateModels()"><option value="all">Alla Märken</option></select>
     <select id="model"><option value="all">Alla Modeller</option></select>
 
-    <div class="section-label">Pris & Mil</div>
-    <div class="range-row">
-        <input type="number" id="minP" placeholder="Pris från (kr)">
-        <input type="number" id="maxP" placeholder="Pris till (kr)">
+    <div class="section-label">Ekonomi & Mil (SEK)</div>
+    <div class="dual-row">
+        <input type="number" id="minP" placeholder="Pris från">
+        <input type="number" id="maxP" placeholder="Pris till">
     </div>
-    <div class="range-row">
-        <input type="number" id="minM" placeholder="Mil från">
+    <div class="dual-row">
         <input type="number" id="maxM" placeholder="Mil max">
+        <input type="number" id="maxTax" placeholder="Max årsskatt">
     </div>
 
-    <div class="section-label">Drivlina & Växellåda</div>
-    <select id="fuel"><option value="all">Alla Drivmedel</option><option value="Bensin">Bensin</option><option value="Diesel">Diesel</option><option value="El">Elbil (EV)</option><option value="Hybrid">Laddhybrid (PHEV)</option></select>
-    <div class="range-row">
+    <div class="section-label">Drivlina (Essentials)</div>
+    <select id="fuel"><option value="all">Alla Drivmedel</option><option value="El">Elbil</option><option value="Hybrid">Hybrid</option><option value="Diesel">Diesel</option><option value="Bensin">Bensin</option></select>
+    <div class="dual-row">
         <select id="gear"><option value="all">Växellåda...</option><option value="Automat">Automat</option><option value="Manuell">Manuell</option></select>
         <select id="drive"><option value="all">Drivning...</option><option value="FWD">FWD</option><option value="RWD">RWD</option><option value="AWD">AWD/4WD</option></select>
     </div>
 
-    <div class="section-label">Aktiv Säkerhet (ADAS)</div>
-    <div class="tech-group">
-        <div class="tech-chip" onclick="tT('ACC', this)"><i class="fa-solid fa-gauge-high"></i> Adaptiv farthållare</div>
-        <div class="tech-chip" onclick="tT('AEB', this)"><i class="fa-solid fa-stop-circle"></i> Autobroms</div>
-        <div class="tech-chip" onclick="tT('LKA', this)"><i class="fa-solid fa-arrows-left-right"></i> Filassistans</div>
-        <div class="tech-chip" onclick="tT('BSM', this)"><i class="fa-solid fa-eye"></i> Döda vinkel-varnare</div>
+    <div class="section-label">Säkerhetsteknik (ADAS)</div>
+    <div class="chip-group">
+        <div class="chip" onclick="tT('ACC', this)"><i class="fa-solid fa-gauge-high"></i> Adaptiv farthållare</div>
+        <div class="chip" onclick="tT('AEB', this)"><i class="fa-solid fa-stop-circle"></i> Autobroms</div>
+        <div class="chip" onclick="tT('LKA', this)"><i class="fa-solid fa-arrows-left-right"></i> Filassistans</div>
+        <div class="chip" onclick="tT('BSM', this)"><i class="fa-solid fa-eye"></i> Döda vinkel-varnare</div>
     </div>
 
-    <div class="section-label">Komfort & Premium</div>
-    <div class="tech-group">
-        <div class="tech-chip" onclick="tT('HUD', this)">Head-up display</div>
-        <div class="tech-chip" onclick="tT('360Cam', this)">360° Kamera</div>
-        <div class="tech-chip" onclick="tT('Matrix', this)">Matrix LED</div>
-        <div class="tech-chip" onclick="tT('Dragkrok', this)">Dragkrok</div>
-        <div class="tech-chip" onclick="tT('Panoramic', this)">Panoramaglastak</div>
-        <div class="tech-chip" onclick="tT('ApplePlay', this)">CarPlay/AndroidAuto</div>
+    <div class="section-label">Premiumutrustning</div>
+    <div class="chip-group">
+        <div class="chip" onclick="tT('HUD', this)">HUD</div>
+        <div class="chip" onclick="tT('360Cam', this)">360° Kamera</div>
+        <div class="chip" onclick="tT('Dragkrok', this)">Dragkrok</div>
+        <div class="chip" onclick="tT('Service', this)">Full Servicehistorik</div>
+        <div class="chip" onclick="tT('Vinterhjul', this)">Vinterhjul ingår</div>
     </div>
 </div>
 
-<div class="action-bar">
-    <button class="btn-clear" onclick="location.reload()">Rensa allt</button>
+<div class="sticky-footer">
+    <button class="btn-reset" onclick="location.reload()">Rensa</button>
     <button class="btn-apply" onclick="applyFilters()">VISA RESULTAT</button>
 </div>
 
 <script type="module">
     import { carData } from './cars-data.js';
     const bS = document.getElementById('brand'), mS = document.getElementById('model');
-    
-    // تحميل الماركات مع ترتيب أبجدي
-    Object.keys(carData).sort().forEach(b => {
-        bS.innerHTML += `<option value="${b}">${b}</option>`;
-    });
+    Object.keys(carData).sort().forEach(b => { bS.innerHTML += `<option value="${b}">${b}</option>`; });
 
     window.updateModels = () => {
         mS.innerHTML = '<option value="all">Alla Modeller</option>';
         if(carData[bS.value]) {
-            carData[bS.value].sort().forEach(m => {
-                mS.innerHTML += `<option value="${m}">${m}</option>`;
-            });
+            carData[bS.value].sort().forEach(m => { mS.innerHTML += `<option value="${m}">${m}</option>`; });
         }
     };
 
-    let searchParams = { kar: 'all', features: [] };
-
-    window.setK = (v, e) => {
-        document.querySelectorAll('.type-card').forEach(i => i.classList.remove('active'));
-        e.classList.add('active');
-        searchParams.kar = v;
-    };
-
-    window.tT = (v, e) => {
-        e.classList.toggle('active');
-        const idx = searchParams.features.indexOf(v);
-        if(idx > -1) searchParams.features.splice(idx, 1);
-        else searchParams.features.push(v);
-    };
+    let f = { kar: 'all', techs: [] };
+    window.setK = (v, e) => { document.querySelectorAll('.kar-card').forEach(i => i.classList.remove('active')); e.classList.add('active'); f.kar = v; };
+    window.tT = (v, e) => { e.classList.toggle('active'); const idx = f.techs.indexOf(v); if(idx > -1) f.techs.splice(idx, 1); else f.techs.push(v); };
 
     window.applyFilters = () => {
-        const query = new URLSearchParams({
-            brand: bS.value,
-            model: mS.value,
-            kar: searchParams.kar,
-            techs: searchParams.features.join(','),
-            minP: document.getElementById('minP').value,
-            maxP: document.getElementById('maxP').value,
-            minM: document.getElementById('minM').value,
-            maxM: document.getElementById('maxM').value,
-            fuel: document.getElementById('fuel').value,
-            gear: document.getElementById('gear').value,
-            drive: document.getElementById('drive').value
+        const p = new URLSearchParams({
+            brand: bS.value, model: mS.value, kar: f.kar, techs: f.techs.join(','),
+            minP: document.getElementById('minP').value, maxP: document.getElementById('maxP').value,
+            maxM: document.getElementById('maxM').value, fuel: document.getElementById('fuel').value,
+            gear: document.getElementById('gear').value, drive: document.getElementById('drive').value,
+            tax: document.getElementById('maxTax').value
         });
-        window.location.href = `index.html?${query.toString()}`;
+        window.location.href = `index.html?${p.toString()}`;
     };
 </script>
 </body>
