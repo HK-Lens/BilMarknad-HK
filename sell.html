@@ -16,14 +16,23 @@
         /* تصميم خانة رقم اللوحة السويدي */
         .reg-box { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 25px; display: flex; gap: 15px; align-items: flex-end; border: 2px solid var(--border); }
         .reg-input-group { flex: 1; }
-        .reg-input { text-transform: uppercase; font-weight: 900; font-size: 22px; letter-spacing: 2px; text-align: center; border: 2px solid var(--dark); color: var(--dark); background: white; }
-        .btn-fetch { background: var(--dark); color: white; padding: 14px 25px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; height: 55px; }
+        .reg-input { text-transform: uppercase; font-weight: 900; font-size: 22px; letter-spacing: 2px; text-align: center; border: 2px solid var(--dark); color: var(--dark); background: white; height: 55px; width: 100%; border-radius: 12px; }
+        
+        .btn-fetch { background: var(--dark); color: white; padding: 0 25px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; height: 55px; }
         .btn-fetch:hover { background: var(--primary); }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
         input, select, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; font-size: 16px; outline: none; }
         label { display: block; margin-bottom: 5px; font-weight: 700; color: #64748b; font-size: 13px; }
-        .btn-submit { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 18px; margin-top: 25px; }
+
+        /* قسم التقنيات والأمان */
+        .features-section { margin-top: 25px; background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
+        .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .feature-item { display: flex; align-items: center; gap: 10px; font-weight: 500; cursor: pointer; font-size: 14px; }
+        .feature-item input { width: auto; cursor: pointer; }
+
+        .btn-submit { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 18px; margin-top: 25px; transition: 0.3s; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
         .btn-submit:disabled { background: #cbd5e1; cursor: not-allowed; }
     </style>
 </head>
@@ -31,7 +40,7 @@
 
 <div class="form-card">
     <h1 style="text-align:center; font-weight:900; margin-bottom:10px;">Publicera Annons</h1>
-    <p style="text-align:center; color:#64748b; margin-bottom:30px;">Ange registreringsnummer för att hämta biluppgifter</p>
+    <p style="text-align:center; color:#64748b; margin-bottom:30px;">Fyll i uppgifter eller hämta via registreringsnummer</p>
 
     <div class="reg-box">
         <div class="reg-input-group">
@@ -58,18 +67,18 @@
         <div class="form-grid">
             <div class="form-group">
                 <label>Årsmodell</label>
-                <input type="number" id="year" placeholder="t.ex. 2021" required>
+                <input type="number" id="year" placeholder="t.ex. 2022" required>
             </div>
             <div class="form-group">
                 <label>Pris (kr)</label>
-                <input type="number" id="price" placeholder="t.ex. 185000" required>
+                <input type="number" id="price" placeholder="t.ex. 245000" required>
             </div>
         </div>
 
         <div class="form-grid">
             <div class="form-group">
                 <label>Miltal</label>
-                <input type="number" id="mileage" placeholder="t.ex. 4500" required>
+                <input type="number" id="mileage" placeholder="t.ex. 3200" required>
             </div>
             <div class="form-group">
                 <label>Drivmedel</label>
@@ -93,13 +102,29 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Bilder (Max 10)</label>
+                <label>Bilder</label>
                 <input type="file" id="images" multiple accept="image/*" required>
             </div>
         </div>
 
-        <label>Beskrivning</label>
-        <textarea id="description" rows="4" placeholder="Beskriv bilens skick, extrautrustning..." required></textarea>
+        <div class="features-section">
+            <h3 style="font-size: 15px; font-weight: 800; color: var(--dark);"><i class="fa-solid fa-microchip"></i> Teknik & Säkerhet</h3>
+            <div class="features-grid">
+                <label class="feature-item"><input type="checkbox" class="feat" value="Autobroms"> Autobroms (AEB)</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Regnsensor"> Regnsensor</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Elhissar"> Elhissar</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Avbländande spegel"> Avbländande spegel</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Adaptiv farthållare"> Adaptiv farthållare</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Backkamera"> Backkamera</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Döda vinkel-varning"> Döda vinkel-varning</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Parkeringssensorer"> Parkeringssensorer</label>
+            </div>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <label>Beskrivning</label>
+            <textarea id="description" rows="4" placeholder="Beskriv bilens skick, extrautrustning osv..." required></textarea>
+        </div>
 
         <button type="submit" class="btn-submit" id="submitBtn">Publicera Annons</button>
     </form>
@@ -114,7 +139,7 @@
 
     const brandSelect = document.getElementById('brand'), modelSelect = document.getElementById('model');
     
-    // تحميل الماركات من الملف المحلي
+    // تحميل الماركات
     Object.keys(carData).sort().forEach(b => {
         const opt = document.createElement('option'); opt.value = b; opt.textContent = b;
         brandSelect.appendChild(opt);
@@ -131,37 +156,36 @@
         }
     };
 
-    // 💡 منطق جلب البيانات (تجهيز للروابط السويدية)
+    // جلب البيانات من API (محاكاة للروابط السويدية)
     document.getElementById('fetchBtn').onclick = async () => {
         const reg = document.getElementById('regNr').value.trim().toUpperCase();
-        if(reg.length < 6) return Swal.fire('Info', 'Ange ett giltigt registreringsnummer', 'info');
+        if(reg.length < 6) return Swal.fire('Info', 'Ange ett giltigt reg-nummer', 'info');
         
         document.getElementById('fetchBtn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Söker...';
         
         try {
-            // محاكاة جلب البيانات - هنا يتم ربط الـ API الحقيقي لاحقاً
+            // محاكاة جلب البيانات - هنا يتم ربط API الحقيقي لاحقاً
             setTimeout(() => {
-                // مثال لبيانات مسترجعة (يجب تغييرها ببيانات الـ API الحقيقية)
-                document.getElementById('brand').value = "Tesla"; 
+                document.getElementById('brand').value = "Volvo"; 
                 brandSelect.onchange(); 
-                document.getElementById('model').value = "Model 3";
-                document.getElementById('year').value = 2022;
-                document.getElementById('fuel').value = "El";
+                document.getElementById('model').value = "XC40";
+                document.getElementById('year').value = 2021;
+                document.getElementById('fuel').value = "Hybrid";
                 document.getElementById('gearbox').value = "Automat";
                 
                 document.getElementById('fetchBtn').innerHTML = '<i class="fa-solid fa-check"></i> Klar';
-                Swal.fire('Hittad!', 'Biluppgifter har fyllts i.', 'success');
-            }, 1500);
+                Swal.fire('Hittad!', 'Fordonsuppgifter har fyllts i automatiskt.', 'success');
+            }, 1200);
         } catch (err) {
-            Swal.fire('Fel', 'Kunde inte hitta fordonet.', 'error');
+            Swal.fire('Fel', 'Kunde inte hämta data.', 'error');
             document.getElementById('fetchBtn').innerText = "Hämta data";
         }
     };
 
-    // عملية النشر المؤمنة
+    // عملية النشر النهائية
     document.getElementById('sellForm').onsubmit = async (e) => {
         e.preventDefault();
-        if (!auth.currentUser) return Swal.fire('Fel', 'Du måste vara inloggad!', 'error');
+        if (!auth.currentUser) return Swal.fire('Fel', 'Logga in för att publicera!', 'error');
 
         const btn = document.getElementById('submitBtn');
         btn.disabled = true; btn.innerText = "Laddar upp...";
@@ -170,12 +194,13 @@
             const files = document.getElementById('images').files, urls = [];
             for (let f of files) {
                 const sRef = ref(storage, `cars/${Date.now()}_${f.name}`);
-                const meta = { contentType: f.type };
-                await uploadBytes(sRef, f, meta);
+                await uploadBytes(sRef, f);
                 urls.push(await getDownloadURL(sRef));
             }
 
-            // 💡 الحفظ في مجموعة "cars" حصراً لتجنب أخطاء الـ Rules
+            const features = Array.from(document.querySelectorAll('.feat:checked')).map(el => el.value);
+
+            // الحفظ في مجموعة "cars" حصراً لضمان عمل الـ Rules والمراسلة
             await addDoc(collection(db, "cars"), {
                 regNr: document.getElementById('regNr').value.toUpperCase(),
                 brand: brandSelect.value,
@@ -186,17 +211,18 @@
                 fuel: document.getElementById('fuel').value,
                 gearbox: document.getElementById('gearbox').value,
                 description: document.getElementById('description').value,
+                features: features, // مصفوفة التقنيات الجديدة
                 images: urls,
-                sellerId: auth.currentUser.uid, // أساس الحماية والمراسلة
+                sellerId: auth.currentUser.uid, // الحقل الأهم للحماية والرسائل
                 active: true,
                 createdAt: serverTimestamp()
             });
 
-            Swal.fire('Klart!', 'Din annons ligger nu uppe!', 'success');
+            Swal.fire('Grattis!', 'Din bil är nu publicerad på BILHK.', 'success');
             setTimeout(() => window.location.href="my-account.html", 2000);
         } catch (err) {
             console.error(err);
-            Swal.fire('Fel', 'Kunde inte publicera. Kontrollera anslutningen.', 'error');
+            Swal.fire('Fel', 'Kunde inte publicera annonsen.', 'error');
             btn.disabled = false; btn.innerText = "Publicera Annons";
         }
     };
