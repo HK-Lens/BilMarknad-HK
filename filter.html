@@ -4,67 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Avancerad Sökning | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #ffffff; --light: #f8fafc; --border: #e2e8f0; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); padding-bottom: 120px; }
-        select, input { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; background: var(--light); outline: none; }
-        .content { padding: 20px 5%; max-width: 700px; margin: auto; }
-        .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 25px 0 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
+        .content { padding: 25px 5%; max-width: 800px; margin: auto; }
         
-        /* تصحيح أيقونة الباص والشبكة */
-        .karosseri-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .kar-item { border: 1px solid var(--border); border-radius: 12px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .kar-item i { font-size: 24px; margin-bottom: 5px; color: #64748b; display: block; }
-        .kar-item span { font-size: 10px; font-weight: 700; color: #64748b; }
+        .section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 30px 0 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
+        
+        select, input { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; background: var(--light); font-size: 15px; outline: none; }
+        
+        /* تصحيح أيقونة الباص Van */
+        .karosseri-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .kar-item { border: 1px solid var(--border); border-radius: 15px; padding: 15px 5px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .kar-item i { font-size: 26px; margin-bottom: 8px; color: #64748b; display: block; }
+        .kar-item span { font-size: 11px; font-weight: 700; color: #64748b; }
         .kar-item.active { border-color: var(--primary); background: #fff5eb; }
         .kar-item.active i, .kar-item.active span { color: var(--primary); }
 
-        .btn-search { position: fixed; bottom: 20px; left: 5%; width: 90%; background: var(--primary); color: white; padding: 18px; border-radius: 50px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 10px 20px rgba(245, 130, 32, 0.3); }
+        .range-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .tech-tag { padding: 10px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .tech-tag input { width: auto; margin: 0; }
+
+        .footer-actions { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 20px 5%; border-top: 1px solid var(--border); display: flex; gap: 15px; }
+        .btn-reset { flex: 1; padding: 18px; border: 1px solid var(--border); border-radius: 50px; font-weight: 700; background: white; }
+        .btn-search { flex: 2; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 50px; font-weight: 800; font-size: 16px; box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
     </style>
 </head>
 <body>
 
 <div class="content">
-    <h2 style="font-weight: 900; margin-bottom: 20px;">Filtrera Sökning</h2>
+    <h2 style="font-weight: 900; margin-bottom: 10px;">Avancerad Sökning</h2>
+    <p style="color: #64748b; font-size: 14px;">Hitta exakt den bil du söker</p>
     
-    <div class="section-title">Grunduppgifter</div>
-    <select id="brand" onchange="updateModels()"><option value="all">Alla Märken</option></select>
-    <select id="model"><option value="all">Alla Modeller</option></select>
-
-    <div class="section-title">Karosseri</div>
+    <div class="section-title">Fordonstyp (Karosseri)</div>
     <div class="karosseri-grid">
-        <div class="kar-item active" onclick="setKar('all', this)"><i class="fa-solid fa-car-side"></i><span>Alla</span></div>
+        <div class="kar-item active" onclick="setKar('all', this)"><i class="fa-solid fa-border-all"></i><span>Alla</span></div>
         <div class="kar-item" onclick="setKar('Sedan', this)"><i class="fa-solid fa-car"></i><span>Sedan</span></div>
-        <div class="kar-item" onclick="setKar('SUV', this)"><i class="fa-solid fa-truck-pickup"></i><span>SUV</span></div>
+        <div class="kar-item" onclick="setKar('SUV', this)"><i class="fa-solid fa-truck-monster"></i><span>SUV</span></div>
         <div class="kar-item" onclick="setKar('Van', this)"><i class="fa-solid fa-van-shuttle"></i><span>Skåpbil</span></div>
     </div>
 
-    <div class="section-title">Teknik & Säkerhet</div>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-        <label style="font-size:13px; font-weight:600;"><input type="checkbox" class="tech-filter" value="Autobroms"> Autobroms</label>
-        <label style="font-size:13px; font-weight:600;"><input type="checkbox" class="tech-filter" value="Regnsensor"> Regnsensor</label>
-        <label style="font-size:13px; font-weight:600;"><input type="checkbox" class="tech-filter" value="Backkamera"> Backkamera</label>
-        <label style="font-size:13px; font-weight:600;"><input type="checkbox" class="tech-filter" value="Elhissar"> Elhissar</label>
+    <div class="section-title">Märke & Modell</div>
+    <select id="brand" onchange="updateModels()"><option value="all">Alla Märken</option></select>
+    <select id="model"><option value="all">Alla Modeller</option></select>
+
+    <div class="section-title">Pris (SEK)</div>
+    <div class="range-grid">
+        <input type="number" id="minPrice" placeholder="Från">
+        <input type="number" id="maxPrice" placeholder="Till">
     </div>
 
-    <div class="section-title">Pris & År</div>
-    <div style="display:flex; gap:10px;">
-        <input type="number" id="minPrice" placeholder="Pris från">
-        <input type="number" id="maxPrice" placeholder="Pris till">
+    <div class="section-title">Årsmodell & Miltal</div>
+    <div class="range-grid">
+        <input type="number" id="minYear" placeholder="År från">
+        <input type="number" id="minMil" placeholder="Mil max">
+    </div>
+
+    <div class="section-title">Teknik & Egenskaper</div>
+    <div class="tech-grid">
+        <label class="tech-tag"><input type="checkbox" class="t-filt" value="Autobroms"> Autobroms</label>
+        <label class="tech-tag"><input type="checkbox" class="t-filt" value="Backkamera"> Backkamera</label>
+        <label class="tech-tag"><input type="checkbox" class="t-filt" value="Dragkrok"> Dragkrok</label>
+        <label class="tech-tag"><input type="checkbox" class="t-filt" value="Fyrhjulsdrift"> 4WD</label>
     </div>
 </div>
 
-<button class="btn-search" onclick="applyFilters()">Visa fordon</button>
+<div class="footer-actions">
+    <button class="btn-reset" onclick="location.reload()">Rensa</button>
+    <button class="btn-search" onclick="applyFilters()">Visa Resultat</button>
+</div>
 
 <script type="module">
     import { carData } from './cars-data.js';
-    const bSel = document.getElementById('brand');
+    const bSel = document.getElementById('brand'), mSel = document.getElementById('model');
     Object.keys(carData).sort().forEach(b => { bSel.innerHTML += `<option value="${b}">${b}</option>`; });
 
     window.updateModels = () => {
-        const mSel = document.getElementById('model');
         mSel.innerHTML = '<option value="all">Alla Modeller</option>';
         if(carData[bSel.value]) {
             carData[bSel.value].sort().forEach(m => { mSel.innerHTML += `<option value="${m}">${m}</option>`; });
@@ -79,13 +98,16 @@
     };
 
     window.applyFilters = () => {
-        const techs = Array.from(document.querySelectorAll('.tech-filter:checked')).map(el => el.value);
+        const techs = Array.from(document.querySelectorAll('.t-filt:checked')).map(el => el.value);
         const params = new URLSearchParams({
             brand: bSel.value,
-            model: document.getElementById('model').value,
+            model: mSel.value,
             kar: selectedKar,
-            techs: techs.join(','),
-            minP: document.getElementById('minPrice').value
+            minP: document.getElementById('minPrice').value,
+            maxP: document.getElementById('maxPrice').value,
+            minY: document.getElementById('minYear').value,
+            maxM: document.getElementById('minMil').value,
+            techs: techs.join(',')
         });
         window.location.href = `index.html?${params.toString()}`;
     };
