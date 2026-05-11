@@ -38,7 +38,6 @@
         .chat-content strong { display: block; font-size: 16px; font-weight: 800; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .chat-content small { color: #64748b; font-size: 13px; font-weight: 500; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* زر الإخفاء من القائمة الشخصية الذي يعمل بنجاح */
         .personal-delete-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 14px; color: #cbd5e1; transition: 0.3s; margin-left: 10px; }
         .personal-delete-btn:hover { background: #fee2e2; color: var(--danger); transform: scale(1.1); }
 
@@ -58,7 +57,6 @@
 
         .input-box { padding: 30px; border-top: 1px solid var(--border); display: flex; gap: 15px; background: white; align-items: center; }
         
-        /* التعديل هنا: إضافة تصميم خاص لحالة التفعيل */
         #msgInput { flex: 1; padding: 18px 26px; border-radius: 40px; border: 1px solid var(--border); outline: none; font-size: 15.5px; background: #f8fafc; transition: 0.3s; }
         #msgInput:focus { background: white; border-color: var(--primary); box-shadow: 0 0 0 5px rgba(245, 130, 32, 0.1); }
         #msgInput:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -113,7 +111,7 @@
 <script type="module">
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, getDoc, deleteDoc, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, getDoc, deleteDoc, updateDoc, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let user = null, activeRoom = null, chatUnsub = null;
 
@@ -122,28 +120,48 @@
             user = u; 
             document.getElementById('userBadge').innerText = u.email;
             loadRooms(); 
+            // تشغيل دالة الاستقبال عند الدخول للصفحة
+            initIncoming(); 
         } else { window.location.href="login.html"; }
     });
 
-    // دالة فتح خانة الكتابة بالقوة الجبرية
-    function unlockInput() {
-        try {
-            const inputField = document.getElementById('msgInput');
-            const sendButton = document.getElementById('sendBtn');
+    // إضافة الدالة المفقودة: لاستقبال المستخدمين الجدد من صفحة الإعلانات
+    async function initIncoming() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sId = urlParams.get('sellerId');
+        const cId = urlParams.get('carId');
+        const title = urlParams.get('title');
+        
+        if (sId && cId) {
+            // توليد معرف فريد للغرفة بناءً على البائع والمشتري والسيارة
+            const rId = [user.uid, sId].sort().join('_') + '_' + cId;
             
-            // استخدام removeAttribute هو الأضمن لإزالة حالة التعطيل تماماً
-            inputField.removeAttribute('disabled');
-            sendButton.removeAttribute('disabled');
-            
-            // تركيز المؤشر داخل الخانة
-            inputField.focus();
-            console.log("Input unlocked successfully!");
-        } catch (error) {
-            console.error("Error unlocking input:", error);
+            // التأكد إذا كانت الغرفة موجودة، وإلا نقوم بإنشائها
+            const roomSnap = await getDoc(doc(db, "chats", rId));
+            if (!roomSnap.exists()) {
+                await setDoc(doc(db, "chats", rId), {
+                    carId: cId,
+                    carName: title || 'Ny konversation',
+                    participants: [user.uid, sId],
+                    sellerId: sId,
+                    buyerId: user.uid,
+                    buyerName: user.email.split('@')[0],
+                    lastMessage: "",
+                    updatedAt: serverTimestamp()
+                });
+            }
+            // فتح المحادثة فوراً لكي تفتح خانة الكتابة
+            openRoom(rId, title || 'Ny konversation');
         }
     }
 
-    // الحذف الشخصي الذي طلبت بقاءه
+    // الطريقة الكلاسيكية والنظيفة لفتح خانة الكتابة
+    function unlockInput() {
+        document.getElementById('msgInput').disabled = false;
+        document.getElementById('sendBtn').disabled = false;
+        document.getElementById('msgInput').focus();
+    }
+
     window.deleteChatForMe = async (e, roomId) => {
         e.stopPropagation();
         const result = await Swal.fire({
@@ -169,8 +187,8 @@
         activeRoom = null;
         if(chatUnsub) chatUnsub();
         document.getElementById('msgArea').innerHTML = "<div style='text-align:center; padding-top:100px;'>Konversationen avslutad.</div>";
-        document.getElementById('msgInput').setAttribute('disabled', 'true');
-        document.getElementById('sendBtn').setAttribute('disabled', 'true');
+        document.getElementById('msgInput').disabled = true;
+        document.getElementById('sendBtn').disabled = true;
         document.getElementById('activeTitle').innerText = "Välj en person";
     }
 
@@ -201,46 +219,32 @@
     }
 
     window.openRoom = (id, name) => {
-        try {
-            if(chatUnsub) chatUnsub();
-            activeRoom = id;
-            
-            // استدعاء دالة الفتح فور النقر على الغرفة
-            unlockInput();
-            
-            document.getElementById('activeTitle').innerText = name;
-            document.getElementById('chatWindow').classList.add('show-mobile');
-            document.getElementById('sidebarArea').classList.add('hide-mobile');
+        if(chatUnsub) chatUnsub();
+        activeRoom = id;
+        
+        // تفعيل الخانة فور النقر
+        unlockInput();
+        
+        document.getElementById('activeTitle').innerText = name;
+        document.getElementById('chatWindow').classList.add('show-mobile');
+        document.getElementById('sidebarArea').classList.add('hide-mobile');
 
-            const q = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
-            chatUnsub = onSnapshot(q, snap => {
-                const area = document.getElementById('msgArea'); area.innerHTML = "";
-                snap.forEach(d => {
-                    const m = d.data();
-                    const isMine = m.senderId === user.uid;
-                    const div = document.createElement('div');
-                    div.className = `bubble ${isMine ? 'sent' : 'received'}`;
-                    div.innerHTML = `
-                        ${isMine ? `<div class="msg-actions" onclick="deleteMsg('${d.id}')">×</div>` : ''}
-                        ${m.text}
-                        <span class="timestamp">${m.createdAt?.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) || '...'}</span>`;
-                    area.appendChild(div);
-                });
-                area.scrollTop = area.scrollHeight;
-                
-                // تأكيد الفتح مرة أخرى في حال أعاد السيرفر بناء الواجهة
-                unlockInput();
-            }, (error) => {
-                console.error("Snapshot error:", error);
-                // حتى لو فشل جلب الرسائل، نفتح خانة الكتابة
-                unlockInput();
+        const q = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
+        chatUnsub = onSnapshot(q, snap => {
+            const area = document.getElementById('msgArea'); area.innerHTML = "";
+            snap.forEach(d => {
+                const m = d.data();
+                const isMine = m.senderId === user.uid;
+                const div = document.createElement('div');
+                div.className = `bubble ${isMine ? 'sent' : 'received'}`;
+                div.innerHTML = `
+                    ${isMine ? `<div class="msg-actions" onclick="deleteMsg('${d.id}')">×</div>` : ''}
+                    ${m.text}
+                    <span class="timestamp">${m.createdAt?.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) || '...'}</span>`;
+                area.appendChild(div);
             });
-        } catch (err) {
-            console.error("Open room execution error:", err);
-            // فتح الخانة قسرياً حتى لو توقف جزء من الكود
-            document.getElementById('msgInput').removeAttribute('disabled');
-            document.getElementById('sendBtn').removeAttribute('disabled');
-        }
+            area.scrollTop = area.scrollHeight;
+        });
     };
 
     window.sendMessage = async () => {
