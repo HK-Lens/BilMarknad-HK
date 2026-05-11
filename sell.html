@@ -2,68 +2,33 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sälj din bil | BILHK Professional</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sälj din bil | BILHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --blue-swede: #005293; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--dark); padding: 20px; }
-        .form-card { max-width: 900px; margin: 0 auto; background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        h1 { margin-bottom: 30px; font-weight: 900; font-size: 28px; text-align: center; }
-        h3 { margin: 25px 0 15px; font-size: 18px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
-        .reg-box { background: #f1f5f9; padding: 25px; border-radius: 20px; border: 2px solid var(--border); margin-bottom: 30px; }
-        .reg-wrapper { display: flex; gap: 10px; align-items: flex-end; }
-        .swedish-plate { text-transform: uppercase; font-weight: 900; font-size: 24px !important; letter-spacing: 2px; text-align: center; border: 3px solid var(--dark) !important; background: white !important; height: 60px; }
-        .btn-fetch { background: var(--blue-swede); color: white; border: none; padding: 0 25px; height: 60px; border-radius: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 13px; color: #64748b; }
-        input, select, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; outline: none; background: #f8fafc; }
-        .checkbox-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; background: #f8fafc; padding: 20px; border-radius: 15px; }
-        .check-item { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
-        .btn-submit { width: 100%; padding: 20px; background: var(--dark); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 17px; cursor: pointer; margin-top: 30px; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        body { background: var(--bg); padding: 20px; font-family: 'Inter', sans-serif; }
+        .form-card { max-width: 800px; margin: 0 auto; background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        input, select { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; }
+        .btn-submit { width: 100%; padding: 18px; background: var(--dark); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; margin-top: 25px; }
     </style>
 </head>
 <body>
 <div class="form-card">
-    <h1>Publicera Annons</h1>
-    <div class="reg-box">
-        <div class="reg-wrapper">
-            <div style="flex:1;"><label>Registreringsnummer</label><input type="text" id="regNo" class="swedish-plate" placeholder="ABC 123" maxlength="7"></div>
-            <button type="button" class="btn-fetch" id="fetchDataBtn"><i class="fa-solid fa-magnifying-glass"></i> Hämta info</button>
-        </div>
-    </div>
+    <h1 style="text-align:center;">Publicera Annons</h1>
     <form id="sellForm">
-        <h3><i class="fa-solid fa-car"></i> Fordonsval</h3>
         <div class="form-grid">
-            <div class="form-group"><label>Märke</label><select id="brand" required><option value="">Välj märke...</option></select></div>
-            <div class="form-group"><label>Modell</label><select id="model" required disabled><option value="">Välj modell...</option></select></div>
+            <select id="brand" required><option value="">Välj märke...</option></select>
+            <select id="model" required disabled><option value="">Välj modell...</option></select>
         </div>
         <div class="form-grid">
-            <div class="form-group"><label>Årsmodell</label><input type="number" id="year" required></div>
-            <div class="form-group"><label>Pris (kr)</label><input type="number" id="price" required></div>
+            <input type="number" id="year" placeholder="Årsmodell" required>
+            <input type="number" id="price" placeholder="Pris (kr)" required>
         </div>
-        <h3><i class="fa-solid fa-gears"></i> Specifikationer</h3>
-        <div class="form-grid">
-            <div class="form-group"><label>Miltal (mil)</label><input type="number" id="mileage" required></div>
-            <div class="form-group"><label>Växellåda</label><select id="transmission"><option value="Automat">Automat</option><option value="Manuell">Manuell</option></select></div>
-            <div class="form-group"><label>Bränsle</label><select id="fuelType"><option value="Bensin">Bensin</option><option value="Diesel">Diesel</option><option value="El">El</option><option value="Hybrid">Hybrid</option></select></div>
-            <div class="form-group"><label>Karosstyp</label><select id="bodyType"><option value="Sedan">Sedan</option><option value="Halvkombi">Halvkombi</option><option value="Kombi">Kombi</option><option value="SUV">SUV</option></select></div>
-        </div>
-        <h3><i class="fa-solid fa-list-check"></i> Utrustning</h3>
-        <div class="checkbox-group" id="equipmentList">
-            <label class="check-item"><input type="checkbox" value="Dragkrok"> Dragkrok</label>
-            <label class="check-item"><input type="checkbox" value="GPS"> GPS</label>
-            <label class="check-item"><input type="checkbox" value="Backkamera"> Backkamera</label>
-            <label class="check-item"><input type="checkbox" value="Skinnklädsel"> Skinn</label>
-        </div>
-        <div class="form-group" style="margin-top:20px;"><label>Beskrivning</label><textarea id="description" rows="5" placeholder="Skriv om bilen..."></textarea></div>
-        <div class="form-group"><label>Bilder</label><input type="file" id="images" multiple accept="image/*" required></div>
-        <button type="submit" class="btn-submit" id="submitBtn">Publicera nu</button>
+        <input type="file" id="images" multiple accept="image/*" required style="margin-top:20px;">
+        <button type="submit" class="btn-submit" id="submitBtn">Publicera</button>
     </form>
 </div>
 
@@ -72,55 +37,34 @@
     import { auth, db, storage } from './firebase-config.js';
     import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
     import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    const brandSelect = document.getElementById('brand');
-    const modelSelect = document.getElementById('model');
-
-    Object.keys(carData).forEach(brand => {
-        const opt = document.createElement('option');
-        opt.value = brand; opt.textContent = brand;
-        brandSelect.appendChild(opt);
-    });
-
+    const brandSelect = document.getElementById('brand'), modelSelect = document.getElementById('model');
+    Object.keys(carData).forEach(b => { const opt = document.createElement('option'); opt.value = b; opt.textContent = b; brandSelect.appendChild(opt); });
     brandSelect.onchange = () => {
         modelSelect.innerHTML = '<option value="">Välj modell...</option>';
-        if (brandSelect.value && carData[brandSelect.value]) {
+        if (brandSelect.value) {
             modelSelect.disabled = false;
-            carData[brandSelect.value].forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m; opt.textContent = m;
-                modelSelect.appendChild(opt);
-            });
-        } else { modelSelect.disabled = true; }
+            carData[brandSelect.value].forEach(m => { const opt = document.createElement('option'); opt.value = m; opt.textContent = m; modelSelect.appendChild(opt); });
+        }
     };
-
-    let user = null;
-    onAuthStateChanged(auth, u => { if(u) user = u; else window.location.href="login.html"; });
 
     document.getElementById('sellForm').onsubmit = async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true; btn.innerText = "Laddar upp...";
+        const btn = document.getElementById('submitBtn'); btn.disabled = true;
         try {
-            const files = document.getElementById('images').files;
-            const imageUrls = [];
-            for (let file of files) {
-                const sRef = ref(storage, `cars/${Date.now()}_${file.name}`);
-                await uploadBytes(sRef, file);
-                imageUrls.push(await getDownloadURL(sRef));
+            const files = document.getElementById('images').files, urls = [];
+            for (let f of files) {
+                const sRef = ref(storage, `cars/${Date.now()}_${f.name}`);
+                await uploadBytes(sRef, f);
+                urls.push(await getDownloadURL(sRef));
             }
             await addDoc(collection(db, "cars"), {
-                regNo: document.getElementById('regNo').value.toUpperCase(),
                 brand: brandSelect.value, model: modelSelect.value,
                 year: Number(document.getElementById('year').value),
                 price: Number(document.getElementById('price').value),
-                mileage: Number(document.getElementById('mileage').value),
-                fuelType: document.getElementById('fuelType').value,
-                transmission: document.getElementById('transmission').value,
-                images: imageUrls, sellerId: user.uid, active: true, createdAt: serverTimestamp()
+                images: urls, sellerId: auth.currentUser.uid, active: true, createdAt: serverTimestamp()
             });
-            Swal.fire('Klar!', 'Annonsen är publicerad.', 'success').then(() => window.location.href="my-account.html");
+            window.location.href="my-account.html";
         } catch (err) { Swal.fire('Fel', err.message, 'error'); btn.disabled = false; }
     };
 </script>
