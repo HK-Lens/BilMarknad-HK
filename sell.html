@@ -14,20 +14,19 @@
         .form-card { max-width: 950px; margin: 0 auto; background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .section-header { font-size: 13px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin: 30px 0 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
         .reg-panel { background: #0f172a; padding: 25px; border-radius: 20px; margin-bottom: 30px; display: flex; gap: 15px; align-items: flex-end; }
-        .reg-input { text-transform: uppercase; font-weight: 900; font-size: 26px; letter-spacing: 3px; text-align: center; border: none; background: white; height: 65px; border-radius: 12px; flex: 1; color: var(--dark); }
+        .reg-input { text-transform: uppercase; font-weight: 900; font-size: 26px; letter-spacing: 3px; text-align: center; border: none; background: white; height: 65px; border-radius: 12px; flex: 1; }
         .btn-fetch { background: var(--primary); color: white; padding: 0 30px; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; height: 65px; display: flex; align-items: center; gap: 10px; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 800; color: #475569; font-size: 13px; }
         input, select, textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; font-size: 15px; outline: none; }
-        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
-        .feature-item { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 13px; cursor: pointer; background: white; padding: 10px; border-radius: 10px; border: 1px solid var(--border); }
-        .feature-item input { width: auto; margin: 0; }
-        .btn-submit { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 20px; margin-top: 35px; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
+        .feature-item { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 12px; cursor: pointer; background: white; padding: 10px; border-radius: 10px; border: 1px solid var(--border); }
+        .btn-submit { width: 100%; padding: 22px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 20px; margin-top: 35px; }
     </style>
 </head>
 <body>
 <div class="form-card">
-    <h1 style="text-align:center; font-weight:900;">Publicera Annons</h1>
+    <h1 style="text-align:center; font-weight:900;">Publicera Fordon</h1>
     <div class="reg-panel">
         <div style="flex:1">
             <label style="color:white">Registreringsnummer (Reg-nr)</label>
@@ -45,16 +44,17 @@
         <div class="form-grid">
             <input type="number" id="price" placeholder="Pris (SEK)" required>
             <input type="number" id="mileage" placeholder="Miltal (mil)" required>
-            <div><label>Nästa Besiktning</label><input type="date" id="besiktning"></div>
+            <div><label>Besiktigad till</label><input type="date" id="besiktning"></div>
         </div>
 
         <div class="section-header">Mekanik & Ekonomi</div>
         <div class="form-grid">
             <select id="fuel" required>
-                <option value="Bensin">Bensin</option><option value="Diesel">Diesel</option><option value="El">Elbil (EV)</option><option value="Hybrid">Hybrid (PHEV)</option>
+                <option value="Bensin">Bensin</option><option value="Diesel">Diesel</option>
+                <option value="El">Elbil (EV)</option><option value="Hybrid">Laddhybrid</option>
             </select>
-            <select id="transmission" required><option value="Automat">Automat (AT)</option><option value="Manuell">Manuell (MT)</option></select>
-            <select id="drive"><option value="FWD">Framhjulsdrift (FWD)</option><option value="RWD">Bakhjulsdrift (RWD)</option><option value="AWD">Fyrhjulsdrift (AWD)</option></select>
+            <select id="transmission" required><option value="Automat">Automat</option><option value="Manuell">Manuell</option></select>
+            <select id="drive"><option value="FWD">FWD (Fram)</option><option value="RWD">RWD (Bak)</option><option value="AWD">AWD (4WD)</option></select>
         </div>
         <div class="form-grid">
             <input type="number" id="hp" placeholder="Hästkrafter (hk)">
@@ -64,27 +64,29 @@
             <input type="number" id="seats" placeholder="Antal säten">
             <select id="karosseri">
                 <option value="Sedan">Sedan</option><option value="SUV">SUV</option><option value="Kombi">Kombi</option>
-                <option value="Van">Van (Skåpbil)</option><option value="Cab">Cabriolet</option><option value="Halvkombi">Halvkombi</option>
+                <option value="Van">Van</option><option value="Cab">Cab</option>
             </select>
         </div>
 
-        <div class="section-header">Utrustning & Säkerhet (ADAS)</div>
+        <div class="section-header">Utrustning & ADAS (Bytbil Standard)</div>
         <div class="feature-grid">
-            <label class="feature-item"><input type="checkbox" class="feat" value="ABS"> ABS/EBD/ESP</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="ACC"> Adaptiv farthållare (ACC)</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="ABS"> ABS/ESP</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="ACC"> Adaptiv farthållare</label>
             <label class="feature-item"><input type="checkbox" class="feat" value="AEB"> Autobroms (AEB)</label>
             <label class="feature-item"><input type="checkbox" class="feat" value="LKA"> Filassistans (LKA)</label>
             <label class="feature-item"><input type="checkbox" class="feat" value="BSM"> Döda vinkel-varnare</label>
             <label class="feature-item"><input type="checkbox" class="feat" value="360Cam"> 360° Kamera</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="HUD"> Head-up display (HUD)</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Matrix"> Matrix LED-ljus</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="HUD"> Head-up display</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="Matrix"> Matrix LED</label>
             <label class="feature-item"><input type="checkbox" class="feat" value="Dragkrok"> Dragkrok</label>
             <label class="feature-item"><input type="checkbox" class="feat" value="Service"> Full servicehistorik</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Vinterhjul"> Vinterhjul ingår</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="Vinterhjul"> Vinterhjul</label>
             <label class="feature-item"><input type="checkbox" class="feat" value="Navi"> Navigation (GPS)</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="HSA"> Hill Start Assist</label>
+            <label class="feature-item"><input type="checkbox" class="feat" value="Isofix"> ISOFIX</label>
         </div>
 
-        <textarea id="description" rows="5" placeholder="Beskriv bilens skick, utrustning..." required style="margin-top:20px;"></textarea>
+        <textarea id="description" rows="5" placeholder="Beskrivning..." required style="margin-top:20px;"></textarea>
         <input type="file" id="images" multiple accept="image/*" required style="margin-top:15px;">
         <button type="submit" class="btn-submit" id="submitBtn">PUBLICERA ANNONSON</button>
     </form>
@@ -126,7 +128,7 @@
                 features: features, description: document.getElementById('description').value, images: urls,
                 sellerId: auth.currentUser.uid, active: true, createdAt: serverTimestamp()
             });
-            Swal.fire('Klart!', 'Annonsen är nu live!', 'success');
+            Swal.fire('Klart!', 'Annonsen är live!', 'success');
             setTimeout(() => window.location.href="index.html", 2000);
         } catch (err) { Swal.fire('Fel', err.message, 'error'); btn.disabled = false; }
     };
