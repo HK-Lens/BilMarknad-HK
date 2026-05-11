@@ -9,73 +9,78 @@
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #ffffff; --light: #f8fafc; --border: #e2e8f0; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); padding-bottom: 120px; }
-        .content { padding: 25px 5%; max-width: 800px; margin: auto; }
+        .content { padding: 20px 5%; max-width: 800px; margin: auto; }
         
-        .section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 30px 0 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
+        .section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 25px 0 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
         
-        select, input { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; background: var(--light); font-size: 15px; outline: none; }
+        select, input { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 10px; background: var(--light); font-size: 15px; outline: none; }
         
-        /* تصحيح أيقونة الباص Van */
-        .karosseri-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .kar-item { border: 1px solid var(--border); border-radius: 15px; padding: 15px 5px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .kar-item i { font-size: 26px; margin-bottom: 8px; color: #64748b; display: block; }
-        .kar-item span { font-size: 11px; font-weight: 700; color: #64748b; }
-        .kar-item.active { border-color: var(--primary); background: #fff5eb; }
-        .kar-item.active i, .kar-item.active span { color: var(--primary); }
+        /* تصحيح أيقونات الهيكل مع Van Shuttle */
+        .kar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .kar-card { border: 1px solid var(--border); border-radius: 15px; padding: 15px 5px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .kar-card i { font-size: 24px; margin-bottom: 6px; color: #64748b; display: block; }
+        .kar-card span { font-size: 10px; font-weight: 800; color: #64748b; }
+        .kar-card.active { border-color: var(--primary); background: #fff5eb; }
+        .kar-card.active i, .kar-card.active span { color: var(--primary); }
 
-        .range-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .range-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         
-        .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .tech-tag { padding: 10px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-        .tech-tag input { width: auto; margin: 0; }
+        .tech-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag-item { padding: 10px 15px; border: 1px solid var(--border); border-radius: 30px; font-size: 12px; font-weight: 700; cursor: pointer; background: var(--light); display: flex; align-items: center; gap: 6px; }
+        .tag-item.active { background: var(--dark); color: white; border-color: var(--dark); }
 
-        .footer-actions { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 20px 5%; border-top: 1px solid var(--border); display: flex; gap: 15px; }
+        .sticky-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 20px 5%; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+        .btn-show { flex: 2; padding: 18px; background: var(--primary); color: white; border-radius: 50px; border: none; font-weight: 900; font-size: 16px; box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
         .btn-reset { flex: 1; padding: 18px; border: 1px solid var(--border); border-radius: 50px; font-weight: 700; background: white; }
-        .btn-search { flex: 2; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 50px; font-weight: 800; font-size: 16px; box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
     </style>
 </head>
 <body>
 
 <div class="content">
-    <h2 style="font-weight: 900; margin-bottom: 10px;">Avancerad Sökning</h2>
-    <p style="color: #64748b; font-size: 14px;">Hitta exakt den bil du söker</p>
+    <h2 style="font-weight: 900; margin-bottom: 5px;">Filtrera Sökning</h2>
+    <p style="color:#64748b; font-size: 14px;">Hitta fordonet som matchar dina krav</p>
     
-    <div class="section-title">Fordonstyp (Karosseri)</div>
-    <div class="karosseri-grid">
-        <div class="kar-item active" onclick="setKar('all', this)"><i class="fa-solid fa-border-all"></i><span>Alla</span></div>
-        <div class="kar-item" onclick="setKar('Sedan', this)"><i class="fa-solid fa-car"></i><span>Sedan</span></div>
-        <div class="kar-item" onclick="setKar('SUV', this)"><i class="fa-solid fa-truck-monster"></i><span>SUV</span></div>
-        <div class="kar-item" onclick="setKar('Van', this)"><i class="fa-solid fa-van-shuttle"></i><span>Skåpbil</span></div>
+    <div class="section-label">Karosserityp</div>
+    <div class="kar-grid">
+        <div class="kar-card active" onclick="setKar('all', this)"><i class="fa-solid fa-border-all"></i><span>Alla</span></div>
+        <div class="kar-card" onclick="setKar('Sedan', this)"><i class="fa-solid fa-car"></i><span>Sedan</span></div>
+        <div class="kar-card" onclick="setKar('SUV', this)"><i class="fa-solid fa-truck-monster"></i><span>SUV</span></div>
+        <div class="kar-card" onclick="setKar('Van', this)"><i class="fa-solid fa-van-shuttle"></i><span>Skåpbil</span></div>
     </div>
 
-    <div class="section-title">Märke & Modell</div>
+    <div class="section-label">Märke & Modell</div>
     <select id="brand" onchange="updateModels()"><option value="all">Alla Märken</option></select>
     <select id="model"><option value="all">Alla Modeller</option></select>
 
-    <div class="section-title">Pris (SEK)</div>
+    <div class="section-label">Pris (SEK)</div>
     <div class="range-grid">
-        <input type="number" id="minPrice" placeholder="Från">
-        <input type="number" id="maxPrice" placeholder="Till">
+        <input type="number" id="minP" placeholder="Från">
+        <input type="number" id="maxP" placeholder="Till">
     </div>
 
-    <div class="section-title">Årsmodell & Miltal</div>
+    <div class="section-label">Årsmodell</div>
     <div class="range-grid">
-        <input type="number" id="minYear" placeholder="År från">
-        <input type="number" id="minMil" placeholder="Mil max">
+        <input type="number" id="minY" placeholder="Från år">
+        <input type="number" id="maxY" placeholder="Till år">
     </div>
 
-    <div class="section-title">Teknik & Egenskaper</div>
-    <div class="tech-grid">
-        <label class="tech-tag"><input type="checkbox" class="t-filt" value="Autobroms"> Autobroms</label>
-        <label class="tech-tag"><input type="checkbox" class="t-filt" value="Backkamera"> Backkamera</label>
-        <label class="tech-tag"><input type="checkbox" class="t-filt" value="Dragkrok"> Dragkrok</label>
-        <label class="tech-tag"><input type="checkbox" class="t-filt" value="Fyrhjulsdrift"> 4WD</label>
+    <div class="section-label">Drivmedel & Växellåda</div>
+    <select id="fuel"><option value="all">Alla Drivmedel</option><option value="El">Elbil</option><option value="Hybrid">Hybrid</option><option value="Diesel">Diesel</option><option value="Bensin">Bensin</option></select>
+    <select id="gear"><option value="all">Alla Växellådor</option><option value="Automat">Automat</option><option value="Manuell">Manuell</option></select>
+
+    <div class="section-label">Teknik & Säkerhet (ADAS)</div>
+    <div class="tech-tags" id="techContainer">
+        <div class="tag-item" onclick="toggleTech('ACC', this)">Adaptiv farthållare</div>
+        <div class="tag-item" onclick="toggleTech('AEB', this)">Autobroms</div>
+        <div class="tag-item" onclick="toggleTech('AWD', this)">Fyrhjulsdrift</div>
+        <div class="tag-item" onclick="toggleTech('360Cam', this)">360° Kamera</div>
+        <div class="tag-item" onclick="toggleTech('Matrix', this)">Matrix LED</div>
     </div>
 </div>
 
-<div class="footer-actions">
+<div class="sticky-footer">
     <button class="btn-reset" onclick="location.reload()">Rensa</button>
-    <button class="btn-search" onclick="applyFilters()">Visa Resultat</button>
+    <button class="btn-show" onclick="applyFilters()">Visa Resultat</button>
 </div>
 
 <script type="module">
@@ -90,24 +95,33 @@
         }
     };
 
-    let selectedKar = 'all';
+    let filterData = { kar: 'all', techs: [] };
+
     window.setKar = (val, el) => {
-        document.querySelectorAll('.kar-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.kar-card').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
-        selectedKar = val;
+        filterData.kar = val;
+    };
+
+    window.toggleTech = (val, el) => {
+        el.classList.toggle('active');
+        const idx = filterData.techs.indexOf(val);
+        if(idx > -1) filterData.techs.splice(idx, 1);
+        else filterData.techs.push(val);
     };
 
     window.applyFilters = () => {
-        const techs = Array.from(document.querySelectorAll('.t-filt:checked')).map(el => el.value);
         const params = new URLSearchParams({
             brand: bSel.value,
             model: mSel.value,
-            kar: selectedKar,
-            minP: document.getElementById('minPrice').value,
-            maxP: document.getElementById('maxPrice').value,
-            minY: document.getElementById('minYear').value,
-            maxM: document.getElementById('minMil').value,
-            techs: techs.join(',')
+            kar: filterData.kar,
+            techs: filterData.techs.join(','),
+            minP: document.getElementById('minP').value,
+            maxP: document.getElementById('maxP').value,
+            minY: document.getElementById('minY').value,
+            maxY: document.getElementById('maxY').value,
+            fuel: document.getElementById('fuel').value,
+            gear: document.getElementById('gear').value
         });
         window.location.href = `index.html?${params.toString()}`;
     };
