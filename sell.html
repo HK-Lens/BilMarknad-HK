@@ -37,7 +37,7 @@
             <div class="form-group">
                 <label>Märke</label>
                 <select id="brand" required>
-                    <option value="">Laddar data...</option>
+                    <option value="">Välj märke...</option>
                 </select>
             </div>
             <div class="form-group">
@@ -70,7 +70,6 @@
                     <option value="Diesel">Diesel</option>
                     <option value="El">El</option>
                     <option value="Hybrid">Hybrid</option>
-                    <option value="Gas">Gas</option>
                 </select>
             </div>
             <div class="form-group">
@@ -82,18 +81,8 @@
                     <option value="SUV">SUV</option>
                     <option value="Coupé">Coupé</option>
                     <option value="Cabriolet">Cabriolet</option>
-                    <option value="Transportbil">Transportbil</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>Drivning</label>
-                <select id="drivetrain">
-                    <option value="Tvåhjulsdriven">2WD</option>
-                    <option value="Fyrhjulsdriven">4WD / AWD</option>
-                </select>
-            </div>
-            <div class="form-group"><label>Hästkrafter (hk)</label><input type="number" id="horsepower" placeholder="t.ex. 190"></div>
-            <div class="form-group"><label>Färg</label><input type="text" id="color" placeholder="t.ex. Svart metallic"></div>
         </div>
 
         <h3><i class="fa-solid fa-list-check"></i> Utrustning</h3>
@@ -101,20 +90,18 @@
             <label class="check-item"><input type="checkbox" value="Dragkrok"> Dragkrok</label>
             <label class="check-item"><input type="checkbox" value="GPS"> GPS</label>
             <label class="check-item"><input type="checkbox" value="Backkamera"> Backkamera</label>
-            <label class="check-item"><input type="checkbox" value="Panoramatak"> Panoramatak</label>
             <label class="check-item"><input type="checkbox" value="Skinnklädsel"> Skinn</label>
             <label class="check-item"><input type="checkbox" value="Bluetooth"> Bluetooth</label>
-            <label class="check-item"><input type="checkbox" value="Svensksåld"> Svensksåld</label>
             <label class="check-item"><input type="checkbox" value="Farthållare"> Farthållare</label>
         </div>
 
-        <h3><i class="fa-solid fa-image"></i> Media & Beskrivning</h3>
-        <div class="form-group">
+        <div class="form-group" style="margin-top:20px;">
             <label>Beskrivning</label>
-            <textarea id="description" rows="5" placeholder="Berätta mer om bilens skick..."></textarea>
+            <textarea id="description" rows="5" placeholder="Berätta mer om bilen..."></textarea>
         </div>
+
         <div class="form-group">
-            <label>Bilder (Max 10 bilder)</label>
+            <label>Bilder</label>
             <input type="file" id="images" multiple accept="image/*" required>
         </div>
 
@@ -122,9 +109,9 @@
     </form>
 </div>
 
-<script src="cars-data.js"></script>
-
 <script type="module">
+    // 💡 الربط الجديد باستخدام import المباشر
+    import { carData } from './cars-data.js';
     import { auth, db, storage } from './firebase-config.js';
     import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
     import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -133,39 +120,34 @@
     const brandSelect = document.getElementById('brand');
     const modelSelect = document.getElementById('model');
 
-    // 💡 دالة ربط البيانات بشكل عالمي (Global)
-    function initCars() {
-        // الوصول للمتغير carData من ملف cars-data.js
-        const data = window.carData || (typeof carData !== 'undefined' ? carData : null);
-
-        if (!data) {
-            console.log("Väntar på cars-data.js...");
-            setTimeout(initCars, 200); // إعادة المحاولة حتى تظهر البيانات
-            return;
-        }
-
+    // دالة تعبئة القوائم (تعمل فوراً لأن البيانات تم استيرادها عبر import)
+    function setupDropdowns() {
         brandSelect.innerHTML = '<option value="">Välj märke...</option>';
-        Object.keys(data).forEach(brand => {
+        Object.keys(carData).forEach(brand => {
             const opt = document.createElement('option');
-            opt.value = brand; opt.textContent = brand;
+            opt.value = brand;
+            opt.textContent = brand;
             brandSelect.appendChild(opt);
         });
 
         brandSelect.onchange = () => {
             modelSelect.innerHTML = '<option value="">Välj modell...</option>';
             const selected = brandSelect.value;
-            if (selected && data[selected]) {
+            if (selected && carData[selected]) {
                 modelSelect.disabled = false;
-                data[selected].forEach(m => {
+                carData[selected].forEach(m => {
                     const opt = document.createElement('option');
-                    opt.value = m; opt.textContent = m;
+                    opt.value = m;
+                    opt.textContent = m;
                     modelSelect.appendChild(opt);
                 });
-            } else { modelSelect.disabled = true; }
+            } else {
+                modelSelect.disabled = true;
+            }
         };
     }
 
-    initCars();
+    setupDropdowns();
 
     let user = null;
     onAuthStateChanged(auth, u => { if(u) user = u; else window.location.href="login.html"; });
@@ -195,9 +177,6 @@
                 transmission: document.getElementById('transmission').value,
                 fuelType: document.getElementById('fuelType').value,
                 bodyType: document.getElementById('bodyType').value,
-                drivetrain: document.getElementById('drivetrain').value,
-                horsepower: Number(document.getElementById('horsepower').value) || 0,
-                color: document.getElementById('color').value,
                 equipment: equipment,
                 description: document.getElementById('description').value,
                 images: imageUrls,
@@ -206,7 +185,7 @@
                 createdAt: serverTimestamp()
             });
 
-            await Swal.fire('Klart!', 'Din annons är nu publicerad.', 'success');
+            await Swal.fire('Klar!', 'Annonsen är publicerad.', 'success');
             window.location.href = "my-account.html";
         } catch (err) {
             Swal.fire('Fel', err.message, 'error');
