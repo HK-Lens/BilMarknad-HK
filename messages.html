@@ -13,19 +13,15 @@
         .app-container { display: flex; flex: 1; overflow: hidden; max-width: 1400px; margin: 0 auto; width: 100%; position: relative; background: white; }
         .sidebar { width: 320px; border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; }
         .chat-window { flex: 1; display: flex; flex-direction: column; background: #fdfdfd; }
-        @media (max-width: 768px) {
-            .sidebar.hide-mobile { display: none !important; }
-            .chat-window { display: none; }
-            .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 10; }
-        }
+        @media (max-width: 768px) { .sidebar.hide-mobile { display: none !important; } .chat-window { display: none; } .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 10; } }
         .msg-display { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .bubble { padding: 12px 18px; border-radius: 18px; max-width: 80%; font-size: 15px; }
         .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
         .received { align-self: flex-start; background: #e2e8f0; border-bottom-left-radius: 4px; }
-        .chat-item { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+        .chat-item { padding: 18px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
         .chat-item.active { background: #fff7ed; border-left: 4px solid var(--primary); }
         .input-box { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: white; }
-        input { flex: 1; padding: 12px 25px; border-radius: 30px; border: 1px solid var(--border); outline: none; }
+        input { flex: 1; padding: 12px 20px; border-radius: 30px; border: 1px solid var(--border); outline: none; }
     </style>
 </head>
 <body>
@@ -33,6 +29,7 @@
     <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark); font-size:20px;">BIL<span>HK</span></a>
     <a href="my-account.html" style="text-decoration:none; font-weight:700; color:var(--dark); font-size:14px;">Konto</a>
 </header>
+
 <div class="app-container">
     <div class="sidebar" id="sidebarView">
         <div style="padding:20px; font-weight:900; border-bottom:1px solid var(--border);">Meddelanden</div>
@@ -40,13 +37,13 @@
     </div>
     <div class="chat-window" id="chatWindowView">
         <div style="padding:15px; border-bottom:1px solid var(--border); background:white; display:flex; align-items:center;">
-            <button onclick="window.location.href='messages.html'" style="background:none; border:none; font-size:18px; margin-right:15px;"><i class="fa-solid fa-arrow-left"></i></button>
-            <div id="activeChatHeader" style="font-weight:800;">Välj en konversation</div>
+            <button onclick="window.location.href='messages.html'" style="background:none; border:none; font-size:18px; margin-right:15px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
+            <div id="activeChatHeader" style="font-weight:800;">Välj en chatt</div>
         </div>
         <div class="msg-display" id="msgArea"></div>
         <div class="input-box">
-            <input type="text" id="msgInput" placeholder="Skriv..." disabled>
-            <button id="sendBtn" style="background:var(--primary); color:white; border:none; padding:10px 25px; border-radius:30px; font-weight:700;" disabled>Sänd</button>
+            <input type="text" id="msgInput" placeholder="Skriv ett meddelande..." disabled>
+            <button id="sendBtn" style="background:var(--primary); color:white; border:none; padding:10px 25px; border-radius:30px; font-weight:700; cursor:pointer;" disabled>Sänd</button>
         </div>
     </div>
 </div>
@@ -60,45 +57,49 @@
     const urlParams = new URLSearchParams(window.location.search);
 
     onAuthStateChanged(auth, async (u) => { 
-        if(u) { user = u; loadRooms(); initFromUrl(); } 
+        if(u) { user = u; loadRooms(); handleUrlParams(); } 
         else { window.location.href="login.html"; }
     });
 
-    async function initFromUrl() {
-        const sellerId = urlParams.get('seller'), carId = urlParams.get('carId'), name = urlParams.get('name');
+    async function handleUrlParams() {
+        const sellerId = urlParams.get('seller'), carId = urlParams.get('carId'), carName = urlParams.get('name');
         if (sellerId && carId) {
             const roomId = [user.uid, sellerId].sort().join('_') + '_' + carId;
-            const snap = await getDoc(doc(db, "chats", roomId));
-            if (snap.exists()) openRoom(roomId, name);
-            else { activeRoom = roomId; tempChatData = { sellerId, carId, carName: name }; setupChatUI(name); }
+            const docSnap = await getDoc(doc(db, "chats", roomId));
+            if (docSnap.exists()) openRoom(roomId, carName);
+            else { activeRoom = roomId; tempChatData = { sellerId, carId, carName }; showChatUI(carName); }
         }
     }
 
     function loadRooms() {
-        onSnapshot(query(collection(db, "chats"), where("participants", "array-contains", user.uid), orderBy("updatedAt", "desc")), snap => {
+        // الفلترة للتأكد من أن البائع والمشتري يريان نفس المحادثة
+        const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid), orderBy("updatedAt", "desc"));
+        onSnapshot(q, snap => {
             const list = document.getElementById('chatList'); list.innerHTML = "";
             snap.forEach(d => {
                 const r = d.data(); if (!r.lastMessage) return;
                 const div = document.createElement('div');
                 div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
                 const title = r.sellerId === user.uid ? `${r.carName} (Från: ${r.buyerName})` : r.carName;
-                div.innerHTML = `<strong>${title}</strong><br><small>${r.lastMessage}</small>`;
+                div.innerHTML = `<strong>${title}</strong><br><small style="color:#64748b;">${r.lastMessage}</small>`;
                 div.onclick = () => openRoom(d.id, title);
                 list.appendChild(div);
             });
         });
     }
 
-    function setupChatUI(name) {
+    function showChatUI(name) {
         document.getElementById('activeChatHeader').innerText = name;
         document.getElementById('msgInput').disabled = false;
         document.getElementById('sendBtn').disabled = false;
         document.getElementById('chatWindowView').classList.add('show-mobile');
+        document.getElementById('sidebarView').classList.add('hide-mobile');
     }
 
     window.openRoom = (id, name) => {
-        activeRoom = id; tempChatData = null; setupChatUI(name);
-        onSnapshot(query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc")), snap => {
+        activeRoom = id; tempChatData = null; showChatUI(name);
+        const q = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
+        onSnapshot(q, snap => {
             const area = document.getElementById('msgArea'); area.innerHTML = "";
             snap.forEach(d => {
                 const m = d.data();
@@ -114,6 +115,7 @@
         const input = document.getElementById('msgInput'), text = input.value.trim();
         if(!text) return; input.value = "";
         if (tempChatData) {
+            // إنشاء الغرفة وربطها بالبائع والمشتري معاً
             await setDoc(doc(db, "chats", activeRoom), {
                 carId: tempChatData.carId, carName: tempChatData.carName,
                 participants: [user.uid, tempChatData.sellerId],
