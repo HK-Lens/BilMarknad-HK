@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fordonsdetaljer | BILHK</title>
+    <title>Detaljer | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -20,31 +20,20 @@
         .price { font-size: 32px; font-weight: 900; color: var(--primary); margin-bottom: 15px; }
         .btn-main { width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; font-size: 16px; transition: 0.3s; }
         .btn-msg { background: var(--dark); color: white; }
-        .btn-msg:hover { background: #1e293b; }
-        .spec-item { background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 <header>
     <a href="index.html" style="text-decoration:none; font-size:22px; font-weight:900; color:var(--dark);">BIL<span style="color:var(--primary);">HK</span></a>
-    <button onclick="history.back()" style="background:none; border:none; font-weight:700; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i> Tillbaka</button>
 </header>
-
 <div class="container">
-    <div>
-        <div class="gallery-card"><img id="activeImg" src="" class="main-img"></div>
-        <div style="background:white; padding:30px; border-radius:20px; margin-top:20px; border:1px solid var(--border);">
-            <h2 style="margin-bottom:15px; font-weight:900;">Beskrivning</h2>
-            <p id="carDesc" style="white-space:pre-line; color:#475569; line-height:1.6;"></p>
-        </div>
-    </div>
+    <div class="gallery-card"><img id="activeImg" src="" class="main-img"></div>
     <div class="sidebar">
         <div class="info-card">
-            <h1 id="carTitle" style="font-size:24px; font-weight:900; margin-bottom:10px;">Laddar...</h1>
+            <h1 id="carTitle" style="font-weight:900; margin-bottom:10px;">Laddar...</h1>
             <div id="carPrice" class="price">0 kr</div>
-            <div class="spec-item"><strong>År:</strong> <span id="specYear">-</span></div>
-            <div class="spec-item"><strong>Mil:</strong> <span id="specMil">-</span></div>
-            <button id="chatBtn" class="btn-main btn-msg"><i class="fa-solid fa-comment-dots"></i> Kontakta Säljaren</button>
+            <button id="chatBtn" class="btn-main btn-msg"><i class="fa-solid fa-message"></i> Kontakta Säljaren</button>
+            <div id="carDesc" style="margin-top:20px; color:#475569; line-height:1.6;"></div>
         </div>
     </div>
 </div>
@@ -57,7 +46,7 @@
     const carId = new URLSearchParams(window.location.search).get('id');
     let carData = null;
 
-    async function loadCar() {
+    onAuthStateChanged(auth, async (u) => {
         if(!carId) return;
         const snap = await getDoc(doc(db, "cars", carId));
         if (snap.exists()) {
@@ -66,21 +55,16 @@
             document.getElementById('carPrice').innerText = `${Number(carData.price).toLocaleString()} kr`;
             document.getElementById('carDesc').innerText = carData.description || "";
             document.getElementById('activeImg').src = carData.images?.[0] || "";
-            document.getElementById('specYear').innerText = carData.year || "-";
-            document.getElementById('specMil').innerText = carData.mileage || "-";
         }
-    }
+    });
 
     document.getElementById('chatBtn').onclick = () => {
         if (!auth.currentUser) return window.location.href = "login.html";
         if (auth.currentUser.uid === carData.sellerId) return Swal.fire('Info', 'Detta är din egen annons.', 'info');
-
         const carName = `${carData.brand} ${carData.model}`;
-        // 💡 توجيه فقط إلى صفحة الرسائل مع البيانات في الرابط
+        // توجيه لصفحة الرسائل مع تمرير المعرفات
         window.location.href = `messages.html?seller=${carData.sellerId}&carId=${carId}&name=${encodeURIComponent(carName)}`;
     };
-
-    onAuthStateChanged(auth, () => loadCar());
 </script>
 </body>
 </html>
