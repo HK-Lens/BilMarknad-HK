@@ -27,7 +27,6 @@
 <body>
 <header style="background:white; padding:15px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
     <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark); font-size:20px;">BIL<span>HK</span></a>
-    <a href="my-account.html" style="text-decoration:none; font-weight:700; color:var(--dark); font-size:14px;">Konto</a>
 </header>
 <div class="app-container">
     <div class="sidebar" id="sidebarView">
@@ -63,14 +62,15 @@
     async function initIncoming() {
         const sellerId = urlParams.get('seller'), carId = urlParams.get('carId'), carName = urlParams.get('name');
         if (sellerId && carId) {
-            // 💡 معالجة الـ Room ID بشكل آمن لمنع الكراش
-            const ids = [user.uid, sellerId].filter(id => id).sort();
-            if (ids.length < 2) return;
-            const roomId = ids.join('_') + '_' + carId;
-            
+            const roomId = [user.uid, sellerId].sort().join('_') + '_' + carId;
             const snap = await getDoc(doc(db, "chats", roomId));
-            if (snap.exists()) openRoom(roomId, carName);
-            else { activeRoom = roomId; tempChatData = { sellerId, carId, carName }; showUI(carName); }
+            if (snap.exists()) {
+                openRoom(roomId, carName);
+            } else {
+                activeRoom = roomId;
+                tempChatData = { sellerId, carId, carName };
+                showUI(carName); // تفعيل الواجهة فوراً حتى لو الإعلان جديد
+            }
         }
     }
 
@@ -82,7 +82,7 @@
                 const r = d.data(); if (!r.lastMessage) return;
                 const div = document.createElement('div');
                 div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
-                const title = r.sellerId === user.uid ? `${r.carName} (Från: ${r.buyerName})` : r.carName;
+                const title = r.sellerId === user.uid ? `${r.carName} (Köpare: ${r.buyerName})` : r.carName;
                 div.innerHTML = `<strong>${title}</strong><br><small>${r.lastMessage}</small>`;
                 div.onclick = () => openRoom(d.id, title);
                 list.appendChild(div);
@@ -116,6 +116,7 @@
     document.getElementById('sendBtn').onclick = async () => {
         const input = document.getElementById('msgInput'), text = input.value.trim();
         if(!text) return; input.value = "";
+        
         if (tempChatData) {
             await setDoc(doc(db, "chats", activeRoom), {
                 carId: tempChatData.carId, carName: tempChatData.carName,
