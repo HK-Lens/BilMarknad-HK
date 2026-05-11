@@ -51,17 +51,21 @@
                         <div class="price-big">${Number(car.price).toLocaleString()} kr</div>
                         <div class="full-specs-grid">
                             <div class="spec-item"><span class="spec-label">Drivmedel</span><span>${car.fuel}</span></div>
-                            <div class="spec-item"><span class="spec-label">Växellåda</span><span>${car.gearbox}</span></div>
+                            <div class="spec-item"><span class="spec-label">Växellåda</span><span>${car.transmission}</span></div>
+                            <div class="spec-item"><span class="spec-label">Drivning</span><span>${car.drive || '-'}</span></div>
                             <div class="spec-item"><span class="spec-label">Hästkrafter</span><span>${car.hp || '-'} hk</span></div>
                             <div class="spec-item"><span class="spec-label">Årsskatt</span><span>${car.tax || '-'} kr</span></div>
                             <div class="spec-item"><span class="spec-label">Ägare</span><span>${car.owners || '-'} st</span></div>
-                            <div class="spec-item"><span class="spec-label">Besiktigad</span><span>${car.besiktning || '-'}</span></div>
+                            <div class="spec-item"><span class="spec-label">Karosseri</span><span>${car.karosseri || '-'}</span></div>
+                            <div class="spec-item"><span class="spec-label">Besiktigad till</span><span>${car.besiktning || '-'}</span></div>
                         </div>
                         <div style="margin-top:20px;">${(car.features || []).map(f => `<span class="tech-pill">${f}</span>`).join('')}</div>
                     </div>
+                    <div class="card"><h3>Beskrivning</h3><p style="white-space: pre-wrap; line-height:1.7;">${car.description}</p></div>
                 </div>
                 <div class="side">
                     <div class="card" style="text-align:center; background:var(--dark); color:white;">
+                        <i class="fa-solid fa-comments" style="font-size:40px; color:var(--primary); margin-bottom:15px;"></i>
                         <h2>Intresserad?</h2>
                         <button class="btn-contact" onclick="location.href='messages.html?sellerId=${car.sellerId}&carId=${carId}'">Kontakta Säljaren</button>
                     </div>
