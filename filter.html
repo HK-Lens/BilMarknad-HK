@@ -13,12 +13,12 @@
 
         .container { padding: 25px 5%; max-width: 900px; margin: auto; }
         .header { margin-bottom: 30px; text-align: center; }
-        .header h1 { font-weight: 900; font-size: 28px; color: var(--dark); }
+        .header h1 { font-weight: 900; font-size: 28px; }
         .header p { color: #64748b; font-size: 15px; margin-top: 5px; }
 
         .section-label { font-size: 11px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin: 35px 0 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
 
-        /* شبكة الهيكل مع أيقونة الباص الصحيحة */
+        /* تصحيح أيقونة الباص والشبكة */
         .type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 12px; }
         .type-card { border: 2px solid var(--border); border-radius: 20px; padding: 15px 5px; text-align: center; cursor: pointer; transition: 0.3s; background: white; }
         .type-card i { font-size: 26px; margin-bottom: 8px; color: #64748b; display: block; }
@@ -29,14 +29,13 @@
         select, input { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; background: var(--light); font-size: 15px; outline: none; font-weight: 600; }
         .dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        /* شبكة المواصفات التقنية ADAS & Premium */
+        /* شبكة المواصفات التقنية - مطابقة لصفحة البيع */
         .tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
         .tech-chip { padding: 12px 15px; border: 2px solid var(--border); border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; background: white; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
         .tech-chip.active { background: var(--dark); color: white; border-color: var(--dark); }
         .tech-chip i { color: var(--primary); width: 18px; text-align: center; }
         .tech-chip.active i { color: white; }
 
-        /* البار السفلي الثابت */
         .footer-action { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 25px 5%; border-top: 2px solid var(--border); display: flex; gap: 15px; z-index: 1000; }
         .btn-apply { flex: 2; padding: 20px; background: var(--primary); color: white; border-radius: 50px; border: none; font-weight: 900; font-size: 18px; box-shadow: 0 10px 25px rgba(245, 130, 32, 0.3); cursor: pointer; }
         .btn-reset { flex: 1; padding: 20px; border: 2px solid var(--border); border-radius: 50px; font-weight: 800; background: white; cursor: pointer; }
@@ -46,8 +45,8 @@
 
 <div class="container">
     <div class="header">
-        <h1>Avancerad Djup Sökning</h1>
-        <p>Filtrera marknaden baserat på kompletta fordonsspecifikationer</p>
+        <h1>Djup Sökning</h1>
+        <p>Hitta fordonet baserat på alla tillgängliga specifikationer</p>
     </div>
     
     <div class="section-label"><i class="fa-solid fa-car"></i> Karosserityp</div>
@@ -64,30 +63,38 @@
     <select id="brand" onchange="updateModels()"><option value="all">Alla Varumärken</option></select>
     <select id="model"><option value="all">Alla Modeller</option></select>
 
-    <div class="section-label">Ekonomi & Miltal</div>
+    <div class="section-label">Budget & Ekonomi</div>
     <div class="dual-row">
         <input type="number" id="minP" placeholder="Pris från (kr)">
         <input type="number" id="maxP" placeholder="Pris till (kr)">
     </div>
     <div class="dual-row">
-        <input type="number" id="maxMil" placeholder="Max miltal (mil)">
         <input type="number" id="maxTax" placeholder="Max årsskatt (kr)">
+        <input type="number" id="maxOwners" placeholder="Max antal ägare">
     </div>
 
-    <div class="section-label">Drivlina & Prestanda</div>
-    <select id="fuel"><option value="all">Alla Drivmedel</option><option value="Bensin">Bensin</option><option value="Diesel">Diesel</option><option value="El">Elbil</option><option value="Hybrid">Laddhybrid</option></select>
+    <div class="section-label">Prestanda & Historik</div>
+    <div class="dual-row">
+        <input type="number" id="maxMil" placeholder="Max miltal (mil)">
+        <input type="number" id="minHp" placeholder="Min hästkrafter (hk)">
+    </div>
+    <div class="dual-row">
+        <select id="fuel"><option value="all">Alla Drivmedel</option><option value="Bensin">Bensin</option><option value="Diesel">Diesel</option><option value="El">Elbil</option><option value="Hybrid">Laddhybrid</option></select>
+        <div>
+            <label style="font-size: 10px; font-weight: 800; color: #94a3b8;">Besiktigad till senast:</label>
+            <input type="date" id="besiktning">
+        </div>
+    </div>
+
+    <div class="section-label">Drivlina & Växellåda</div>
     <div class="dual-row">
         <select id="gear"><option value="all">Växellåda (Alla)</option><option value="Automat">Automat</option><option value="Manuell">Manuell</option></select>
-        <select id="drive"><option value="all">Drivning (Alla)</option><option value="FWD">Framhjulsdrift</option><option value="RWD">Bakhjulsdrift</option><option value="AWD">Fyrhjulsdrift</option></select>
-    </div>
-    <div class="dual-row">
-        <input type="number" id="minHp" placeholder="Min Hästkrafter (hk)">
-        <input type="date" id="minBes" title="Besiktigad senast">
+        <select id="drive"><option value="all">Drivning (Alla)</option><option value="FWD">FWD</option><option value="RWD">RWD</option><option value="AWD">AWD/4WD</option></select>
     </div>
 
-    <div class="section-label">Säkerhetsteknik (ADAS)</div>
+    <div class="section-label">Aktiv Säkerhet (ADAS)</div>
     <div class="tech-grid">
-        <div class="tech-chip" onclick="tT('ABS', this)"><i class="fa-solid fa-shield"></i> ABS/ESP</div>
+        <div class="tech-chip" onclick="tT('ABS', this)"><i class="fa-solid fa-shield-check"></i> ABS/EBD/ESP</div>
         <div class="tech-chip" onclick="tT('ACC', this)"><i class="fa-solid fa-gauge-high"></i> Adaptiv farthållare</div>
         <div class="tech-chip" onclick="tT('AEB', this)"><i class="fa-solid fa-stop-circle"></i> Autobroms</div>
         <div class="tech-chip" onclick="tT('LKA', this)"><i class="fa-solid fa-arrows-left-right"></i> Filassistans</div>
@@ -97,7 +104,7 @@
         <div class="tech-chip" onclick="tT('HSA', this)"><i class="fa-solid fa-mountain"></i> Hill Start Assist</div>
     </div>
 
-    <div class="section-label">Komfort & Utrustning</div>
+    <div class="section-label">Komfort & Premiumutrustning</div>
     <div class="tech-grid">
         <div class="tech-chip" onclick="tT('HUD', this)"><i class="fa-solid fa-window-maximize"></i> HUD</div>
         <div class="tech-chip" onclick="tT('360Cam', this)"><i class="fa-solid fa-video"></i> 360° Kamera</div>
@@ -106,8 +113,8 @@
         <div class="tech-chip" onclick="tT('Dragkrok', this)"><i class="fa-solid fa-link"></i> Dragkrok</div>
         <div class="tech-chip" onclick="tT('Panoramic', this)"><i class="fa-solid fa-sun"></i> Panoramaglastak</div>
         <div class="tech-chip" onclick="tT('Skinn', this)"><i class="fa-solid fa-chair"></i> Skinnklädsel</div>
+        <div class="tech-chip" onclick="tT('Vinterhjul', this)"><i class="fa-solid fa-snowflake"></i> Vinterhjul ingår</div>
         <div class="tech-chip" onclick="tT('Service', this)"><i class="fa-solid fa-book"></i> Full servicehistorik</div>
-        <div class="tech-chip" onclick="tT('Vinterhjul', this)"><i class="fa-solid fa-snowflake"></i> Vinterhjul</div>
     </div>
 </div>
 
@@ -120,7 +127,6 @@
     import { carData } from './cars-data.js';
     const bS = document.getElementById('brand'), mS = document.getElementById('model');
     
-    // تحميل الماركات
     Object.keys(carData).sort().forEach(b => {
         bS.innerHTML += `<option value="${b}">${b}</option>`;
     });
@@ -157,13 +163,14 @@
             techs: filter.techs.join(','),
             minP: document.getElementById('minP').value,
             maxP: document.getElementById('maxP').value,
-            maxM: document.getElementById('maxMil').value,
+            maxMil: document.getElementById('maxMil').value,
             tax: document.getElementById('maxTax').value,
+            owners: document.getElementById('maxOwners').value,
             fuel: document.getElementById('fuel').value,
             gear: document.getElementById('gear').value,
             drive: document.getElementById('drive').value,
             hp: document.getElementById('minHp').value,
-            bes: document.getElementById('minBes').value
+            bes: document.getElementById('besiktning').value
         });
         window.location.href = `index.html?${query.toString()}`;
     };
