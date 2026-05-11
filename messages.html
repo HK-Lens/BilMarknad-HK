@@ -13,62 +13,62 @@
     <style>
         :root { 
             --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; 
-            --danger: #ef4444; --success: #22c55e;
+            --danger: #ef4444; --glass: rgba(255, 255, 255, 0.98);
         }
         
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { background: var(--bg); height: 100vh; display: flex; flex-direction: column; font-family: 'Inter', sans-serif; overflow: hidden; color: var(--dark); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        header { background: white; padding: 18px 5%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
+        header { background: white; padding: 18px 5%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         header .logo { text-decoration: none; font-weight: 900; color: var(--dark); font-size: 26px; }
         header .logo span { color: var(--primary); }
-        #userStatus { font-size: 12px; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 50px; }
+        #userBadge { font-size: 12px; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 6px 14px; border-radius: 50px; }
 
         .app-container { display: flex; flex: 1; overflow: hidden; max-width: 1500px; margin: 0 auto; width: 100%; background: white; position: relative; }
 
-        .sidebar { width: 380px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #fff; z-index: 200; }
-        .sidebar-header { padding: 30px 20px; font-weight: 900; font-size: 1.4rem; border-bottom: 2px solid var(--bg); background: white; }
-        .chat-list { flex: 1; overflow-y: auto; }
+        .sidebar { width: 400px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #fff; z-index: 200; }
+        .sidebar-header { padding: 30px 25px; font-weight: 900; font-size: 1.5rem; border-bottom: 2px solid var(--bg); display: flex; align-items: center; gap: 15px; }
+        .chat-list { flex: 1; overflow-y: auto; scrollbar-width: thin; }
 
-        .chat-item { position: relative; padding: 22px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-        .chat-item:hover { background: #f8fafc; }
-        .chat-item.active { background: #fff7ed; border-left: 6px solid var(--primary); }
+        .chat-item { position: relative; padding: 25px 20px; border-bottom: 1px solid #f8fafc; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .chat-item:hover { background: #f9fafb; transform: translateX(5px); }
+        .chat-item.active { background: #fff5eb; border-left: 6px solid var(--primary); }
 
         .chat-content { flex: 1; min-width: 0; }
-        .chat-content strong { display: block; font-size: 15px; font-weight: 800; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .chat-content small { color: #64748b; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+        .chat-content strong { display: block; font-size: 16px; font-weight: 800; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .chat-content small { color: #64748b; font-size: 13px; font-weight: 500; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        .delete-chat-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #cbd5e1; transition: 0.3s; margin-left: 10px; }
-        .delete-chat-btn:hover { background: #fee2e2; color: var(--danger); }
+        /* زر الإخفاء من القائمة الشخصية */
+        .personal-delete-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 14px; color: #cbd5e1; transition: 0.3s; margin-left: 10px; }
+        .personal-delete-btn:hover { background: #fee2e2; color: var(--danger); transform: scale(1.1); }
 
         .chat-window { flex: 1; display: flex; flex-direction: column; background: #ffffff; position: relative; }
-        .chat-header { padding: 20px 25px; border-bottom: 1px solid var(--border); background: white; display: flex; align-items: center; }
+        .chat-window-header { padding: 20px 30px; border-bottom: 1px solid var(--border); background: white; display: flex; align-items: center; justify-content: space-between; }
 
-        .msg-display { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #fdfdfd; }
+        .msg-display { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: #fdfdfd; background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 30px 30px; }
         
-        .bubble { position: relative; padding: 14px 18px; border-radius: 22px; max-width: 75%; font-size: 15px; line-height: 1.5; word-wrap: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .bubble { position: relative; padding: 15px 22px; border-radius: 24px; max-width: 70%; font-size: 15px; line-height: 1.6; word-wrap: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.03); animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
         .received { align-self: flex-start; background: white; border: 1px solid var(--border); border-bottom-left-radius: 4px; }
 
-        .msg-del-btn { position: absolute; top: -10px; right: -10px; background: var(--danger); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; opacity: 0; border: 2px solid white; transition: 0.2s; }
-        .bubble.sent:hover .msg-del-btn { opacity: 1; }
+        .msg-actions { position: absolute; top: -12px; right: -12px; background: var(--danger); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; cursor: pointer; opacity: 0; transition: 0.2s; border: 2px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .bubble.sent:hover .msg-actions { opacity: 1; }
 
-        .input-box { padding: 25px; border-top: 1px solid var(--border); display: flex; gap: 15px; background: white; align-items: center; }
-        #msgInput { flex: 1; padding: 16px 24px; border-radius: 35px; border: 1px solid var(--border); outline: none; font-size: 15px; background: #f8fafc; }
-        #msgInput:focus { background: white; border-color: var(--primary); }
+        .input-box { padding: 30px; border-top: 1px solid var(--border); display: flex; gap: 15px; background: white; align-items: center; }
+        #msgInput { flex: 1; padding: 18px 26px; border-radius: 40px; border: 1px solid var(--border); outline: none; font-size: 15.5px; background: #f8fafc; transition: 0.3s; }
+        #msgInput:focus { background: white; border-color: var(--primary); box-shadow: 0 0 0 5px rgba(245, 130, 32, 0.1); }
         
-        .send-btn { background: var(--primary); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; }
-        .send-btn:hover { transform: scale(1.1); }
-        .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .send-btn { background: var(--primary); color: white; border: none; width: 58px; height: 58px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-size: 20px; }
+        .send-btn:hover { background: #e07210; transform: scale(1.1) rotate(-10deg); }
+        .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; }
 
-        .timestamp { font-size: 9px; opacity: 0.7; margin-top: 5px; display: block; text-align: right; }
+        .timestamp { font-size: 10px; opacity: 0.7; margin-top: 6px; display: block; text-align: right; font-weight: 600; }
 
-        @media (max-width: 850px) {
-            .sidebar { width: 100%; }
-            .sidebar.hide-mobile { display: none !important; }
-            .chat-window { display: none; }
-            .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 500; }
+        @media (max-width: 900px) {
+            .sidebar { width: 100%; } .sidebar.hide-mobile { display: none !important; }
+            .chat-window { display: none; } .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 500; }
         }
     </style>
 </head>
@@ -76,30 +76,32 @@
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div id="userStatus">Laddar...</div>
+    <div id="userBadge">Laddar...</div>
 </header>
 
 <div class="app-container">
-    <div class="sidebar" id="sidebarArea">
-        <div class="sidebar-header"><i class="fa-solid fa-comments"></i> Meddelanden</div>
+    <div class="sidebar animate__animated animate__fadeInLeft" id="sidebarArea">
+        <div class="sidebar-header"><i class="fa-solid fa-comments" style="color:var(--primary)"></i> Dina Chattar</div>
         <div class="chat-list" id="chatList"></div>
     </div>
     
     <div class="chat-window" id="chatWindow">
-        <div class="chat-header">
-            <button onclick="closeChatMobile()" style="background:none; border:none; font-size:20px; margin-right:15px; cursor:pointer;"><i class="fa-solid fa-chevron-left"></i></button>
-            <div id="activeTitle" style="font-weight:900;">Välj en chatt</div>
+        <div class="chat-window-header">
+            <div style="display:flex; align-items:center;">
+                <button onclick="closeChatMobile()" style="background:none; border:none; font-size:22px; margin-right:20px; cursor:pointer;"><i class="fa-solid fa-chevron-left"></i></button>
+                <div id="activeTitle" style="font-weight:900; font-size:18px;">Välj en person</div>
+            </div>
         </div>
         
         <div class="msg-display" id="msgArea">
-            <div style="text-align:center; padding-top:100px; color:#94a3b8;">
-                <i class="fa-regular fa-comment-dots" style="font-size:60px; margin-bottom:20px;"></i>
-                <p>Klicka på en konversation för att skriva</p>
+            <div style="text-align:center; padding-top:120px; color:#94a3b8;">
+                <i class="fa-regular fa-paper-plane animate__animated animate__pulse animate__infinite" style="font-size:70px; margin-bottom:20px; opacity:0.4;"></i>
+                <p style="font-weight:700;">Ingen aktiv konversation vald</p>
             </div>
         </div>
         
         <div class="input-box">
-            <input type="text" id="msgInput" placeholder="Skriv ditt medدلاند هير..." disabled>
+            <input type="text" id="msgInput" placeholder="Skriv ditt meddelande här..." disabled onkeypress="if(event.key==='Enter') sendMessage()">
             <button id="sendBtn" class="send-btn" disabled onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
@@ -110,50 +112,50 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, getDoc, deleteDoc, updateDoc, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let user = null;
-    let activeRoom = null;
-    let unsubMsg = null;
+    let user = null, activeRoom = null, chatUnsub = null;
 
     onAuthStateChanged(auth, (u) => { 
-        if(u) { user = u; document.getElementById('userStatus').innerText = u.email; loadRooms(); initIncoming(); } 
-        else { window.location.href="login.html"; }
+        if(u) { 
+            user = u; 
+            document.getElementById('userBadge').innerText = u.email;
+            loadRooms(); 
+        } else { window.location.href="login.html"; }
     });
 
-    // 💡 تفعيل الكتابة (الحل الجذري)
-    function unlockInput() {
-        const input = document.getElementById('msgInput');
-        const btn = document.getElementById('sendBtn');
-        input.disabled = false;
-        btn.disabled = false;
-        input.focus();
-    }
-
-    // 🔴 حذف الدردشة
-    window.deleteFullChat = async (e, roomId) => {
+    // 🟢 الحذف من طرفك فقط (يتم إزالة المعرف الخاص بك من مصفوفة الغرفة)
+    window.deleteChatForMe = async (e, roomId) => {
         e.stopPropagation();
-        const res = await Swal.fire({
-            title: 'Radera chatt?',
-            text: "Den tas bort från din lista.",
-            icon: 'warning',
+        const result = await Swal.fire({
+            title: 'Ta bort från listan?',
+            text: "Chatten döljs för dig, men motparten har kvar sin kopia.",
+            icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Ja, radera'
+            confirmButtonColor: '#f58220',
+            confirmButtonText: 'Ja, dölj den',
+            cancelButtonText: 'Avbryt'
         });
-        if (res.isConfirmed) {
+
+        if (result.isConfirmed) {
             try {
-                const ref = doc(db, "chats", roomId);
-                const snap = await getDoc(ref);
-                if (snap.exists()) {
-                    const p = snap.data().participants;
-                    if (p.length <= 1) await deleteDoc(ref);
-                    else await updateDoc(ref, { participants: arrayRemove(user.uid) });
-                }
-                if (activeRoom === roomId) location.reload();
-            } catch (err) { console.error(err); }
+                const chatRef = doc(db, "chats", roomId);
+                await updateDoc(chatRef, { participants: arrayRemove(user.uid) });
+                if (activeRoom === roomId) resetUI();
+                Swal.fire({ title: 'Dold!', icon: 'success', timer: 1000, showConfirmButton: false });
+            } catch (err) { console.error("Fel:", err); }
         }
     };
 
-    // 🗑️ حذف رسالة
-    window.deleteSingleMsg = async (id) => {
+    function resetUI() {
+        activeRoom = null;
+        if(chatUnsub) chatUnsub();
+        document.getElementById('msgArea').innerHTML = "<div style='text-align:center; padding-top:100px;'>Konversationen avslutad.</div>";
+        document.getElementById('msgInput').disabled = true;
+        document.getElementById('sendBtn').disabled = true;
+        document.getElementById('activeTitle').innerText = "Välj en person";
+    }
+
+    // 🗑️ حذف رسالة فردية لك
+    window.deleteMsg = async (id) => {
         try { await deleteDoc(doc(db, `chats/${activeRoom}/messages`, id)); } catch (e) {}
     };
 
@@ -164,46 +166,38 @@
             list.innerHTML = "";
             snap.forEach(d => {
                 const r = d.data();
-                const title = r.sellerId === user.uid ? `${r.carName} (Köpare)` : r.carName;
+                const title = r.sellerId === user.uid ? `${r.carName} (Köpare: ${r.buyerName})` : r.carName;
                 const div = document.createElement('div');
                 div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
                 div.innerHTML = `
                     <div class="chat-content" onclick="openRoom('${d.id}', '${title}')">
-                        <strong>${title}</strong><small>${r.lastMessage || '...'}</small>
+                        <strong>${title}</strong><small>${r.lastMessage || 'Skicka ett meddelande'}</small>
                     </div>
-                    <div class="delete-chat-btn" onclick="deleteFullChat(event, '${d.id}')"><i class="fa-solid fa-trash-can"></i></div>`;
+                    <div class="personal-delete-btn" onclick="deleteChatForMe(event, '${d.id}')" title="Dölj">
+                        <i class="fa-solid fa-eye-slash"></i>
+                    </div>`;
                 list.appendChild(div);
             });
         });
     }
 
-    async function initIncoming() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const sId = urlParams.get('sellerId'), cId = urlParams.get('carId'), title = urlParams.get('title');
-        if (sId && cId) {
-            const rId = [user.uid, sId].sort().join('_') + '_' + cId;
-            activeRoom = rId;
-            openRoom(rId, title);
-            const snap = await getDoc(doc(db, "chats", rId));
-            if (!snap.exists()) {
-                await setDoc(doc(db, "chats", rId), {
-                    carId: cId, carName: title, participants: [user.uid, sId],
-                    sellerId: sId, buyerId: user.uid, buyerName: user.email.split('@')[0],
-                    lastMessage: "", updatedAt: serverTimestamp()
-                });
-            }
-        }
+    // دالة تفعيل الإدخال
+    function unlockInput() {
+        document.getElementById('msgInput').disabled = false;
+        document.getElementById('sendBtn').disabled = false;
+        document.getElementById('msgInput').focus();
     }
 
     window.openRoom = (id, name) => {
-        if (unsubMsg) unsubMsg();
+        if(chatUnsub) chatUnsub();
         activeRoom = id;
-        unlockInput(); // تفعيل الحقول فوراً هنا
+        unlockInput();
         document.getElementById('activeTitle').innerText = name;
         document.getElementById('chatWindow').classList.add('show-mobile');
+        document.getElementById('sidebarArea').classList.add('hide-mobile');
 
         const q = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
-        unsubMsg = onSnapshot(q, snap => {
+        chatUnsub = onSnapshot(q, snap => {
             const area = document.getElementById('msgArea'); area.innerHTML = "";
             snap.forEach(d => {
                 const m = d.data();
@@ -211,17 +205,13 @@
                 const div = document.createElement('div');
                 div.className = `bubble ${isMine ? 'sent' : 'received'}`;
                 div.innerHTML = `
-                    ${isMine ? `<div class="msg-del-btn" onclick="deleteSingleMsg('${d.id}')">×</div>` : ''}
+                    ${isMine ? `<div class="msg-actions" onclick="deleteMsg('${d.id}')">×</div>` : ''}
                     ${m.text}
                     <span class="timestamp">${m.createdAt?.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) || '...'}</span>`;
                 area.appendChild(div);
             });
             area.scrollTop = area.scrollHeight;
-        }, (err) => {
-            console.error("Rules Error:", err);
-            // إذا فشل Snapshot بسبب القواعد، نحاول تفعيل الحقل على أي حال
-            unlockInput();
-        });
+        }, (err) => { unlockInput(); });
     };
 
     window.sendMessage = async () => {
@@ -230,14 +220,13 @@
         try {
             await addDoc(collection(db, `chats/${activeRoom}/messages`), { senderId: user.uid, text, createdAt: serverTimestamp() });
             await updateDoc(doc(db, "chats", activeRoom), { lastMessage: text, updatedAt: serverTimestamp() });
-        } catch (e) { console.error(e); }
+        } catch (e) {}
     };
 
     window.closeChatMobile = () => {
         document.getElementById('chatWindow').classList.remove('show-mobile');
+        document.getElementById('sidebarArea').classList.remove('hide-mobile');
     };
-
-    document.getElementById('msgInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
 </script>
 </body>
 </html>
