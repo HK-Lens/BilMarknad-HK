@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mina Meddelanden | BILHK</title>
+    <title>Chatt | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -30,7 +30,7 @@
 </head>
 <body>
 <header style="background:white; padding:15px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-    <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark); font-size:20px;">BIL<span>HK</span></a>
+    <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark); font-size:22px;">BIL<span>HK</span></a>
 </header>
 
 <div class="app-container">
@@ -45,7 +45,7 @@
         </div>
         <div class="msg-display" id="msgArea"></div>
         <div class="input-box">
-            <input type="text" id="msgInput" placeholder="Skriv ett meddelande..." disabled>
+            <input type="text" id="msgInput" placeholder="Skriv..." disabled>
             <button id="sendBtn" style="background:var(--primary); color:white; border:none; padding:10px 25px; border-radius:30px; font-weight:700; cursor:pointer;" disabled>Sänd</button>
         </div>
     </div>
@@ -60,14 +60,11 @@
     const urlParams = new URLSearchParams(window.location.search);
 
     onAuthStateChanged(auth, async (u) => { 
-        if(u) { 
-            user = u; 
-            loadRooms(); 
-            handleRedirection();
-        } else { window.location.href="login.html"; }
+        if(u) { user = u; loadRooms(); handleRedirect(); } 
+        else { window.location.href="login.html"; }
     });
 
-    async function handleRedirection() {
+    async function handleRedirect() {
         const sellerId = urlParams.get('seller');
         const carId = urlParams.get('carId');
         const carName = urlParams.get('name');
@@ -75,19 +72,17 @@
         if (sellerId && carId) {
             const roomId = [user.uid, sellerId].sort().join('_') + '_' + carId;
             const snap = await getDoc(doc(db, "chats", roomId));
-            
             if (snap.exists()) {
                 openRoom(roomId, carName, carId);
             } else {
-                // 💡 إجبار الواجهة على الفتح للدردشة الجديدة
                 activeRoom = roomId;
                 tempChatData = { sellerId, carId, carName };
-                forceUIUpdate(carName);
+                updateChatUI(carName);
             }
         }
     }
 
-    function forceUIUpdate(name) {
+    function updateChatUI(name) {
         document.getElementById('activeChatHeader').innerText = name;
         document.getElementById('msgInput').disabled = false;
         document.getElementById('sendBtn').disabled = false;
@@ -97,35 +92,31 @@
 
     function loadRooms() {
         const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid), orderBy("updatedAt", "desc"));
-        onSnapshot(q, (snap) => {
-            const list = document.getElementById('chatList');
-            list.innerHTML = "";
+        onSnapshot(q, snap => {
+            const list = document.getElementById('chatList'); list.innerHTML = "";
             snap.forEach(d => {
                 const r = d.data();
                 if (!r.lastMessage) return; // منع ظهور الغرف الفارغة
                 const div = document.createElement('div');
                 div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
-                const title = r.sellerId === user.uid ? `${r.carName} (Från: ${r.buyerName})` : r.carName;
-                div.innerHTML = `<strong>${title}</strong><br><small style="color:#64748b;">${r.lastMessage}</small>`;
-                div.onclick = () => openRoom(d.id, title, r.carId);
+                div.innerHTML = `<strong>${r.carName}</strong><br><small>${r.lastMessage}</small>`;
+                div.onclick = () => openRoom(d.id, r.carName, r.carId);
                 list.appendChild(div);
             });
         });
     }
 
     window.openRoom = (id, name, carId) => {
-        activeRoom = id;
-        tempChatData = null;
-        forceUIUpdate(name);
+        activeRoom = id; tempChatData = null;
+        updateChatUI(name);
         const q = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
-        onSnapshot(q, (snap) => {
+        onSnapshot(q, snap => {
             const area = document.getElementById('msgArea'); area.innerHTML = "";
             snap.forEach(d => {
                 const m = d.data();
                 const div = document.createElement('div');
                 div.className = `bubble ${m.senderId === user.uid ? 'sent' : 'received'}`;
-                div.innerText = m.text;
-                area.appendChild(div);
+                div.innerText = m.text; area.appendChild(div);
             });
             area.scrollTop = area.scrollHeight;
         });
@@ -137,7 +128,6 @@
         if(!text) return;
         input.value = "";
 
-        // إنشاء الغرفة فعلياً فقط عند إرسال أول رسالة
         if (tempChatData) {
             await setDoc(doc(db, "chats", activeRoom), {
                 carId: tempChatData.carId, carName: tempChatData.carName,
@@ -151,10 +141,7 @@
             openRoom(activeRoom, carName, carId);
         }
 
-        await addDoc(collection(db, `chats/${activeRoom}/messages`), {
-            senderId: user.uid, text: text, createdAt: serverTimestamp()
-        });
-
+        await addDoc(collection(db, `chats/${activeRoom}/messages`), { senderId: user.uid, text, createdAt: serverTimestamp() });
         await setDoc(doc(db, "chats", activeRoom), { lastMessage: text, updatedAt: serverTimestamp() }, { merge: true });
     };
 </script>
