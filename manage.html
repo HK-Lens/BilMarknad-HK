@@ -2,77 +2,186 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <title>Hantera Annonser | BilMarknad-HK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hantera Annonser | BILHK</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
-        .ad-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .ad-info img { width: 100px; height: 70px; object-fit: cover; border-radius: 5px; margin-right: 15px; }
-        .btn-delete { background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
-        .btn-edit { background: #ffc107; color: black; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-right: 5px; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --danger: #ef4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--dark); }
+
+        header { background: white; padding: 20px 5%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        header .logo { text-decoration: none; font-weight: 900; color: var(--dark); font-size: 26px; }
+        header .logo span { color: var(--primary); }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .page-title { font-size: 28px; font-weight: 900; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+
+        .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        
+        .ad-card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .ad-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
+        
+        .ad-image { width: 100%; height: 200px; object-fit: cover; }
+        .ad-details { padding: 20px; }
+        .ad-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .ad-price { color: var(--primary); font-size: 20px; font-weight: 900; margin-bottom: 15px; }
+        
+        /* أزرار التحكم */
+        .actions { display: flex; gap: 10px; }
+        .edit-btn { flex: 1; background: #f1f5f9; color: var(--dark); border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; transition: 0.2s; }
+        .edit-btn:hover { background: #e2e8f0; }
+        
+        .delete-btn { flex: 1; background: #fee2e2; color: var(--danger); border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .delete-btn:hover { background: var(--danger); color: white; }
+
+        .empty-state { text-align: center; padding: 80px 20px; color: #94a3b8; grid-column: 1 / -1; }
+        .empty-state i { font-size: 60px; margin-bottom: 20px; opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <h2>Mina Annonser (إدارة إعلاناتي)</h2>
-    <div id="adsList">Laddar annonser...</div>
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <a href="my-account.html" style="text-decoration:none; color:var(--dark); font-weight:700;"><i class="fa-solid fa-user"></i> Mitt konto</a>
+</header>
+
+<div class="container">
+    <div class="page-title">
+        <i class="fa-solid fa-list-check" style="color:var(--primary)"></i> Hantera mina annonser
+    </div>
+    
+    <div id="loading" style="text-align:center; padding:50px; font-weight:700; color:#64748b;">Hämtar annonser...</div>
+    <div class="ads-grid" id="adsContainer"></div>
+</div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import firebaseConfig from './firebase-config.js';
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { collection, query, where, getDocs, writeBatch, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    let currentUser = null;
 
-    async function loadAds() {
-        const querySnapshot = await getDocs(collection(db, "cars"));
-        const adsList = document.getElementById('adsList');
-        adsList.innerHTML = "";
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            loadMyAds();
+        } else {
+            window.location.href = "login.html";
+        }
+    });
 
-        querySnapshot.forEach((adDoc) => {
-            const data = adDoc.data();
-            const adId = adDoc.id;
+    async function loadMyAds() {
+        const container = document.getElementById('adsContainer');
+        const loading = document.getElementById('loading');
+        
+        try {
+            const q = query(collection(db, "cars"), where("sellerId", "==", currentUser.uid));
+            const querySnapshot = await getDocs(q);
+            
+            loading.style.display = 'none';
 
-            const div = document.createElement('div');
-            div.className = 'ad-card';
-            div.innerHTML = `
-                <div class="ad-info" style="display: flex; align-items: center;">
-                    <img src="${data.images[0] || 'placeholder.jpg'}" alt="car">
-                    <div>
-                        <strong>${data.brand} (${data.regNr})</strong><br>
-                        <span>Pris: ${data.price} SEK</span>
+            if (querySnapshot.empty) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-car-side"></i>
+                        <h3>Inga annonser hittades</h3>
+                        <p style="margin-top:10px;">Du har inte publicerat några bilar ännu.</p>
+                        <button onclick="location.href='sell.html'" style="margin-top:20px; padding:10px 25px; background:var(--primary); color:white; border:none; border-radius:50px; font-weight:800; cursor:pointer;">Sälj en bil</button>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = "";
+            querySnapshot.forEach((documentSnap) => {
+                const car = documentSnap.data();
+                const carId = documentSnap.id;
+                const imageSrc = (car.images && car.images.length > 0) ? car.images[0] : 'https://via.placeholder.com/300x200?text=Ingen+bild';
+
+                const card = document.createElement('div');
+                card.className = 'ad-card';
+                card.innerHTML = `
+                    <img src="${imageSrc}" class="ad-image" alt="Bil">
+                    <div class="ad-details">
+                        <div class="ad-title">${car.brand} ${car.model || ''}</div>
+                        <div class="ad-price">${Number(car.price).toLocaleString()} kr</div>
+                        
+                        <div class="actions">
+                            <a href="edit-car.html?id=${carId}" class="edit-btn"><i class="fa-solid fa-pen"></i> Ändra</a>
+                            <button class="delete-btn" onclick="deleteAdCompletely('${carId}')">
+                                <i class="fa-solid fa-trash-can"></i> Radera
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <button class="btn-edit" onclick="updatePrice('${adId}')">Ändra Pris</button>
-                    <button class="btn-delete" onclick="deleteAd('${adId}')">Radera</button>
-                </div>
-            `;
-            adsList.appendChild(div);
-        });
+                `;
+                container.appendChild(card);
+            });
+
+        } catch (error) {
+            console.error("Fel vid laddning:", error);
+            loading.innerText = "Kunde inte hämta annonser. Kontrollera behörigheter.";
+        }
     }
 
-    // وظيفة الحذف
-    window.deleteAd = async (id) => {
-        if(confirm("Är du säker på att du vill radera annonsen?")) {
-            await deleteDoc(doc(db, "cars", id));
-            alert("Annonsen raderades!");
-            loadAds(); // إعادة تحميل القائمة
+    // الدالة المسؤولة عن مسح الإعلان وكل ما يرتبط به من السيرفر
+    window.deleteAdCompletely = async (carId) => {
+        const confirmResult = await Swal.fire({
+            title: 'Är du helt säker?',
+            text: "Detta raderar annonsen, alla dess chattar och tar bort den från allas favoriter. Går ej att ångra!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ja, radera allt!',
+            cancelButtonText: 'Avbryt'
+        });
+
+        if (confirmResult.isConfirmed) {
+            try {
+                // استخدام الحزمة لتنفيذ عمليات الحذف المتعددة في نفس اللحظة
+                const batch = writeBatch(db);
+
+                // 1. مسح وثيقة السيارة
+                const carRef = doc(db, "cars", carId);
+                batch.delete(carRef);
+
+                // 2. مسح جميع الدردشات المرتبطة
+                const chatsQuery = query(collection(db, "chats"), where("carId", "==", carId));
+                const chatSnaps = await getDocs(chatsQuery);
+                chatSnaps.forEach((chatDoc) => {
+                    batch.delete(chatDoc.ref);
+                });
+
+                // 3. مسح جميع المفضلات المرتبطة
+                const favsQuery = query(collection(db, "favorites"), where("carId", "==", carId));
+                const favSnaps = await getDocs(favsQuery);
+                favSnaps.forEach((favDoc) => {
+                    batch.delete(favDoc.ref);
+                });
+
+                // تنفيذ الأوامر
+                await batch.commit();
+
+                Swal.fire({
+                    title: 'Raderad!',
+                    text: 'Annonsen och all historik har rensats från systemet.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                loadMyAds(); // تحديث القائمة فوراً
+
+            } catch (error) {
+                console.error("Kritiskt fel vid radering:", error);
+                Swal.fire('Fel', 'Kunde inte slutföra raderingen.', 'error');
+            }
         }
     };
-
-    // وظيفة تعديل السعر
-    window.updatePrice = async (id) => {
-        const newPrice = prompt("Ange nytt pris (أدخل السعر الجديد):");
-        if (newPrice) {
-            const adRef = doc(db, "cars", id);
-            await updateDoc(adRef, { price: newPrice });
-            alert("Priset har uppdaterats!");
-            loadAds();
-        }
-    };
-
-    loadAds();
 </script>
 </body>
 </html>
