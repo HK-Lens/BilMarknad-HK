@@ -6,158 +6,104 @@
     <title>Dashboard | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--dark); }
-
-        nav { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: var(--dark); }
-        .logo span { color: var(--primary); }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; margin-left: 20px; font-size: 14px; }
-        .logout-btn { color: #ef4444 !important; cursor: pointer; }
-
-        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
-        .welcome-section { margin-bottom: 30px; }
-        .welcome-section h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
-
-        .card { background: white; border-radius: 20px; padding: 25px; border: 1px solid var(--border); margin-bottom: 30px; }
-        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .info-item label { display: block; font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
-        .info-item span { font-size: 16px; font-weight: 600; }
-        .badge { background: #fff4eb; color: var(--primary); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        body { background: var(--bg); color: var(--dark); padding-bottom: 40px; }
+        nav { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 20px; padding: 25px; border: 1px solid var(--border); margin-bottom: 25px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
         .stat-box { background: white; padding: 20px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
-        .stat-box h3 { font-size: 24px; font-weight: 800; color: var(--primary); }
-        .stat-box p { font-size: 13px; color: #64748b; font-weight: 600; }
-
-        .actions { display: flex; gap: 15px; margin-bottom: 30px; }
-        .btn { padding: 15px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; transition: 0.3s; text-decoration: none; font-size: 14px; text-align: center; }
-        .btn-add { background: var(--primary); color: white; flex: 2; }
-        .btn-outline { background: white; color: var(--dark); border: 1px solid var(--border); flex: 1; }
-
-        .ad-list { display: grid; gap: 15px; }
-        .ad-item { background: white; padding: 15px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .empty-state { text-align: center; padding: 60px 20px; background: #f1f5f9; border-radius: 20px; border: 2px dashed #cbd5e1; color: #64748b; }
+        .stat-box h3 { font-size: 28px; font-weight: 900; color: var(--primary); }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .info-item label { font-size: 12px; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 5px; }
+        .info-item span { font-weight: 600; }
+        .btn { padding: 12px 20px; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .btn-primary { background: var(--dark); color: white; }
     </style>
 </head>
 <body>
 
 <nav>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div class="nav-links">
-        <a href="index.html">Hem</a>
-        <a id="logoutBtn" class="logout-btn">Logga ut</a>
-    </div>
+    <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark); font-size:22px;">BIL<span style="color:var(--primary);">HK</span></a>
+    <a href="my-account.html" style="text-decoration:none; font-weight:700; color:var(--dark); font-size:14px;">Tillbaka</a>
 </nav>
 
 <div class="container">
-    <div class="welcome-section">
-        <h1 id="welcomeUser">Hej, ...</h1>
-        <p>Här kan du hantera dina annonser och se din profil.</p>
-    </div>
-
-    <div class="card">
-        <div class="profile-grid">
-            <div class="info-item">
-                <label>Kontotyp</label>
-                <span id="displayUserType" class="badge">Laddar...</span>
-            </div>
-            <div class="info-item">
-                <label>E-post</label>
-                <span id="displayEmail">...</span>
-            </div>
-        </div>
+    <div style="margin-bottom:25px;">
+        <h1 id="welcomeUser" style="font-weight:900;">Hej, ...</h1>
+        <p style="color:#64748b;">Hantera din profil och se statistik.</p>
     </div>
 
     <div class="stats-grid">
-        <div class="stat-box">
-            <h3 id="carCount">0</h3>
-            <p>Aktiva annonser</p>
-        </div>
-        <div class="stat-box">
-            <h3 id="msgCount">0</h3>
-            <p>Meddelanden</p>
-        </div>
+        <div class="stat-box"><h3 id="carCount">0</h3><p>Aktiva annonser</p></div>
+        <div class="stat-box"><h3 id="msgCount">0</h3><p>Meddelanden</p></div>
     </div>
 
-    <div class="actions">
-        <a href="add-car.html" class="btn btn-add">+ Skapa ny annons</a>
-        <a href="messages.html" class="btn btn-outline">Mina meddelanden</a>
-    </div>
+    <div class="card">
+        <h3 style="margin-bottom:20px;"><i class="fa-solid fa-user-gear"></i> Personlig Information</h3>
+        <div class="info-grid">
+            <div class="info-item"><label>E-post</label><span id="displayEmail">...</span></div>
+            <div class="info-item"><label>Mobilnummer</label><span id="displayPhone">Ej angivet</span></div>
+            <div class="info-item"><label>Kontotyp</label><span id="displayUserType" style="color:var(--primary);">...</span></div>
+        </div>
+        
+        <div id="businessSection" style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid var(--border);">
+            <div class="info-grid">
+                <div class="info-item"><label>Organisationsnummer</label><span id="displayTaxId">...</span></div>
+                <div class="info-item"><label>Adress</label><span id="displayAddress">...</span></div>
+            </div>
+        </div>
 
-    <h2>Dina annonser</h2>
-    <div id="listingsContainer" class="ad-list">
-        <div class="empty-state">Laddar annonser...</div>
+        <div style="margin-top:25px; display:flex; gap:10px;">
+            <button onclick="resetPassword()" class="btn btn-primary">Byt lösenord</button>
+        </div>
     </div>
 </div>
 
 <script type="module">
     import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            await loadUserProfile(user);
-            await loadUserStatsAndListings(user);
-        } else {
-            window.location.href = "login.html";
-        }
+            document.getElementById('displayEmail').innerText = user.email;
+            await loadUserData(user.uid);
+            await loadStats(user.uid);
+        } else { window.location.href = "login.html"; }
     });
 
-    async function loadUserProfile(user) {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-            const data = userDoc.data();
+    async function loadUserData(uid) {
+        const snap = await getDoc(doc(db, "users", uid));
+        if (snap.exists()) {
+            const data = snap.data();
             document.getElementById('welcomeUser').innerText = `Hej, ${data.name || 'Användare'}!`;
-            document.getElementById('displayEmail').innerText = user.email;
+            document.getElementById('displayPhone').innerText = data.phone || 'Inget nummer sparat';
             document.getElementById('displayUserType').innerText = data.userType === 'business' ? 'Företag' : 'Privatperson';
-        }
-    }
-
-    async function loadUserStatsAndListings(user) {
-        try {
-            // 1. جلب الإعلانات الخاصة بالمستخدم
-            const carsQuery = query(collection(db, "cars"), where("sellerId", "==", user.uid));
-            const carsSnap = await getDocs(carsQuery);
-            document.getElementById('carCount').innerText = carsSnap.size;
-
-            const container = document.getElementById('listingsContainer');
-            if (carsSnap.empty) {
-                container.innerHTML = '<div class="empty-state"><p>Du har inga aktiva annonser än.</p></div>';
-            } else {
-                container.innerHTML = '';
-                carsSnap.forEach(doc => {
-                    const car = doc.data();
-                    container.innerHTML += `
-                        <div class="ad-item">
-                            <div>
-                                <strong>${car.brand} ${car.model}</strong>
-                                <p style="font-size: 12px; color: #64748b;">${car.price} kr</p>
-                            </div>
-                            <a href="details.html?id=${doc.id}" style="color: var(--primary); font-size: 14px; text-decoration: none;">Visa</a>
-                        </div>
-                    `;
-                });
+            
+            if(data.userType === 'business') {
+                document.getElementById('businessSection').style.display = 'block';
+                document.getElementById('displayTaxId').innerText = data.taxId || '-';
+                document.getElementById('displayAddress').innerText = data.address || '-';
             }
-
-            // 2. جلب عدد المحادثات (بناءً على الصورة التي أرفقتها)
-            const chatsQuery = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
-            const chatsSnap = await getDocs(chatsQuery);
-            document.getElementById('msgCount').innerText = chatsSnap.size;
-
-        } catch (error) {
-            console.error("Error loading dashboard data:", error);
         }
     }
 
-    document.getElementById('logoutBtn').onclick = async () => {
-        if (confirm("Är du säker?")) {
-            await signOut(auth);
-            window.location.href = "login.html";
-        }
+    async function loadStats(uid) {
+        const cars = await getDocs(query(collection(db, "cars"), where("sellerId", "==", uid)));
+        document.getElementById('carCount').innerText = cars.size;
+        
+        const chats = await getDocs(query(collection(db, "chats"), where("participants", "array-contains", uid)));
+        document.getElementById('msgCount').innerText = chats.size;
+    }
+
+    window.resetPassword = () => {
+        sendPasswordResetEmail(auth, auth.currentUser.email)
+            .then(() => Swal.fire('Klart!', 'Återställningslänk skickad till din e-post.', 'success'))
+            .catch(e => Swal.fire('Fel', e.message, 'error'));
     };
 </script>
 </body>
