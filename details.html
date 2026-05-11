@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fordonsdetaljer | BILHK</title>
+    <title>Detaljer | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -17,11 +17,10 @@
         .gallery-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
         .main-img { width: 100%; height: 400px; object-fit: contain; background: #000; }
         .info-card { background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border); position: sticky; top: 20px; }
-        .price-tag { font-size: 32px; font-weight: 900; color: var(--primary); margin-bottom: 15px; }
-        .btn-main { width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; font-size: 16px; }
+        .btn-main { width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; font-size: 16px; transition: 0.3s; }
         .btn-msg { background: var(--dark); color: white; }
         .btn-fav { background: white; border: 2px solid var(--border); color: #64748b; }
-        .spec-item { background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; margin-bottom: 10px; }
+        .price { font-size: 32px; font-weight: 900; color: var(--primary); margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -31,25 +30,14 @@
 </header>
 
 <div class="container">
-    <div>
-        <div class="gallery-card"><img id="activeImg" src="" class="main-img"></div>
-        <div style="background:white; padding:30px; border-radius:20px; margin-top:20px; border:1px solid var(--border);">
-            <h2 style="margin-bottom:15px; font-weight:900;">Beskrivning</h2>
-            <p id="carDesc" style="white-space:pre-line; color:#475569; line-height:1.6;"></p>
-        </div>
-    </div>
+    <div class="gallery-card"><img id="activeImg" src="" class="main-img"></div>
     <div class="sidebar">
         <div class="info-card">
-            <h1 id="carTitle" style="font-size:24px; font-weight:900; margin-bottom:10px;">Laddar...</h1>
-            <div id="carPrice" class="price-tag">0 kr</div>
-            
-            <div id="techSpecs">
-                <div class="spec-item"><strong>År:</strong> <span id="specYear">-</span></div>
-                <div class="spec-item"><strong>Mil:</strong> <span id="specMil">-</span></div>
-            </div>
-
+            <h1 id="carTitle" style="font-weight:900; margin-bottom:10px;">Laddar...</h1>
+            <div id="carPrice" class="price">0 kr</div>
             <button id="chatBtn" class="btn-main btn-msg"><i class="fa-solid fa-message"></i> Kontakta Säljaren</button>
-            <button id="favBtn" class="btn-main btn-fav"><i class="fa-regular fa-heart" id="fIcon"></i> <span id="fText">Spara</span></button>
+            <button id="favBtn" class="btn-main btn-fav"><i class="fa-regular fa-heart"></i> Spara</button>
+            <div id="carDesc" style="margin-top:20px; color:#475569; font-size:14px; line-height:1.6;"></div>
         </div>
     </div>
 </div>
@@ -57,12 +45,12 @@
 <script type="module">
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const carId = new URLSearchParams(window.location.search).get('id');
     let carData = null;
 
-    async function loadCar() {
+    onAuthStateChanged(auth, async (u) => {
         if(!carId) return;
         const snap = await getDoc(doc(db, "cars", carId));
         if (snap.exists()) {
@@ -71,31 +59,17 @@
             document.getElementById('carPrice').innerText = `${Number(carData.price).toLocaleString()} kr`;
             document.getElementById('carDesc').innerText = carData.description || "";
             document.getElementById('activeImg').src = carData.images?.[0] || "";
-            document.getElementById('specYear').innerText = carData.year || "-";
-            document.getElementById('specMil').innerText = carData.mileage || "-";
-            checkFavStatus();
         }
-    }
-
-    async function checkFavStatus() {
-        if (!auth.currentUser) return;
-        const favSnap = await getDoc(doc(db, "favorites", `${auth.currentUser.uid}_${carId}`));
-        if (favSnap.exists()) {
-            document.getElementById('fIcon').className = 'fa-solid fa-heart';
-            document.getElementById('fText').innerText = "Sparad";
-        }
-    }
+    });
 
     document.getElementById('chatBtn').onclick = () => {
         if (!auth.currentUser) return window.location.href = "login.html";
         if (auth.currentUser.uid === carData.sellerId) return Swal.fire('Info', 'Detta är din egen annons.', 'info');
 
         const carName = `${carData.brand} ${carData.model}`;
-        // 💡 توجيه فقط: نرسل المعلومات في الرابط ولا ننشئ الغرفة الآن
+        // 💡 التوجيه فقط دون المساس بقاعدة البيانات لضمان عدم وجود غرف فارغة
         window.location.href = `messages.html?seller=${carData.sellerId}&carId=${carId}&name=${encodeURIComponent(carName)}`;
     };
-
-    onAuthStateChanged(auth, () => loadCar());
 </script>
 </body>
 </html>
