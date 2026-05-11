@@ -5,15 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mina Meddelanden | BILHK</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --danger: #ef4444; }
+        :root { 
+            --primary: #f58220; 
+            --primary-light: #fff5eb;
+            --dark: #0f172a; 
+            --bg: #f8fafc; 
+            --border: #e2e8f0; 
+            --danger: #ef4444; 
+            --success: #22c55e;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
         
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
         body { 
             background: var(--bg); 
@@ -22,199 +31,248 @@
             flex-direction: column; 
             font-family: 'Inter', sans-serif; 
             overflow: hidden; 
+            color: var(--dark);
         }
 
-        /* Main Layout */
+        /* Top Header Styling */
+        header {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 18px 5%;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        header .logo { text-decoration: none; font-weight: 900; color: var(--dark); font-size: 26px; letter-spacing: -1px; }
+        header .logo span { color: var(--primary); }
+        #userEmail { font-size: 13px; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 50px; }
+
+        /* Main Application Layout */
         .app-container { 
             display: flex; 
             flex: 1; 
             overflow: hidden; 
-            max-width: 1400px; 
+            max-width: 1500px; 
             margin: 0 auto; 
             width: 100%; 
-            background: white; 
-            border-left: 1px solid var(--border); 
-            border-right: 1px solid var(--border); 
+            background: white;
+            position: relative;
         }
 
-        /* Sidebar Styling */
+        /* Sidebar: List of active chats */
         .sidebar { 
-            width: 360px; 
+            width: 380px; 
             border-right: 1px solid var(--border); 
-            overflow-y: auto; 
-            flex-shrink: 0; 
-            background: #fff; 
             display: flex;
             flex-direction: column;
+            background: #fff;
+            transition: 0.3s ease-in-out;
+            z-index: 200;
         }
 
         .sidebar-header { 
-            padding: 25px 20px; 
+            padding: 30px 20px; 
             font-weight: 900; 
-            font-size: 1.3rem; 
+            font-size: 1.4rem; 
             border-bottom: 2px solid var(--bg); 
-            position: sticky; 
-            top: 0; 
-            background: white; 
-            z-index: 10; 
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .chat-list { flex: 1; overflow-y: auto; }
+        .chat-list { flex: 1; overflow-y: auto; scrollbar-width: thin; }
 
-        /* Chat Item Layout */
+        /* Individual Chat Row */
         .chat-item { 
             position: relative; 
-            padding: 20px; 
+            padding: 22px 20px; 
             border-bottom: 1px solid #f1f5f9; 
             cursor: pointer; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            transition: all 0.25s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .chat-item:hover { background: #f8fafc; }
-        .chat-item.active { background: #fff7ed; border-left: 6px solid var(--primary); }
+        .chat-item:hover { background: #f8fafc; padding-left: 25px; }
+        .chat-item.active { background: var(--primary-light); border-left: 6px solid var(--primary); }
 
         .chat-content { flex: 1; min-width: 0; }
-        .chat-content strong { display: block; font-size: 15px; color: var(--dark); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .chat-content small { color: #64748b; font-size: 12px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-content strong { display: block; font-size: 15.5px; font-weight: 700; color: var(--dark); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-content small { color: #64748b; font-size: 12.5px; font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Delete Chat Button in Sidebar */
         .delete-chat-btn {
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
+            border-radius: 12px;
             color: #cbd5e1;
             transition: 0.3s;
-            margin-left: 10px;
-            flex-shrink: 0;
+            margin-left: 12px;
         }
-        .delete-chat-btn:hover { background: #fee2e2; color: var(--danger); transform: scale(1.1); }
+        .delete-chat-btn:hover { background: #fee2e2; color: var(--danger); transform: rotate(10deg); }
 
-        /* Chat Window Area */
+        /* Main Chat Window */
         .chat-window { flex: 1; display: flex; flex-direction: column; background: #ffffff; position: relative; }
         
         .chat-header {
-            padding: 15px 25px;
+            padding: 20px 25px;
             border-bottom: 1px solid var(--border);
             background: white;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
         .msg-display { 
             flex: 1; 
-            padding: 25px; 
+            padding: 30px; 
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
-            gap: 15px; 
-            background: #f9fafb; 
+            gap: 18px; 
+            background: #fdfdfd;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 24px 24px;
         }
 
-        /* Bubbles and Delete Message Logic */
+        /* Chat Bubbles */
         .bubble { 
             position: relative; 
-            padding: 12px 18px; 
-            border-radius: 20px; 
+            padding: 14px 20px; 
+            border-radius: 22px; 
             max-width: 75%; 
-            font-size: 14.5px; 
-            line-height: 1.5; 
+            font-size: 15px; 
+            line-height: 1.6; 
             word-wrap: break-word;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+            animation: fadeInMsg 0.4s ease forwards;
         }
+
+        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
         .received { align-self: flex-start; background: white; border: 1px solid var(--border); border-bottom-left-radius: 4px; }
 
-        /* Individual Message Delete Button */
+        /* Small Delete Button inside sent bubbles */
         .msg-del {
             position: absolute;
-            top: -10px;
-            right: -10px;
+            top: -12px;
+            right: -12px;
             background: var(--danger);
             color: white;
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 11px;
             cursor: pointer;
             opacity: 0;
-            transition: 0.2s;
+            transition: 0.25s ease;
             border: 2px solid white;
-            z-index: 5;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         .bubble.sent:hover .msg-del { opacity: 1; }
 
-        .input-box { padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; background: white; }
-        input { flex: 1; padding: 14px 22px; border-radius: 30px; border: 1px solid var(--border); outline: none; font-size: 15px; }
+        /* Input Area Control */
+        .input-box { padding: 25px; border-top: 1px solid var(--border); display: flex; gap: 15px; background: white; align-items: center; }
+        
+        #msgInput { 
+            flex: 1; 
+            padding: 16px 24px; 
+            border-radius: 35px; 
+            border: 1px solid var(--border); 
+            outline: none; 
+            font-size: 15px; 
+            transition: 0.3s;
+            background: #f8fafc;
+        }
+        #msgInput:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.1); }
         
         .send-btn { 
             background: var(--primary); 
             color: white; 
             border: none; 
-            padding: 12px 30px; 
-            border-radius: 30px; 
-            font-weight: 900; 
+            width: 55px;
+            height: 55px;
+            border-radius: 50%; 
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer; 
-            transition: 0.2s; 
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
-        .send-btn:hover { background: #e07210; transform: translateY(-1px); }
+        .send-btn:hover { background: #e07210; transform: scale(1.1) rotate(-10deg); }
+        .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; }
 
-        .timestamp { font-size: 9px; opacity: 0.6; margin-top: 5px; display: block; text-align: right; }
+        .timestamp { font-size: 10px; opacity: 0.65; margin-top: 6px; display: block; text-align: right; font-weight: 600; }
 
-        @media (max-width: 768px) {
+        /* Responsive Mobile Handling */
+        @media (max-width: 850px) {
             .sidebar { width: 100%; }
             .sidebar.hide-mobile { display: none !important; }
             .chat-window { display: none; }
-            .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 100; }
+            .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 1000; }
         }
     </style>
 </head>
 <body>
 
-<header style="background:white; padding:15px 5%; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-    <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark); font-size:24px;">BIL<span>HK</span></a>
-    <div id="userEmail" style="font-size:12px; font-weight:700; color:#64748b;"></div>
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <div id="userEmail">Laddar...</div>
 </header>
 
 <div class="app-container">
-    <div class="sidebar" id="sidebarArea">
-        <div class="sidebar-header">Konversationer</div>
+    <div class="sidebar animate__animated animate__fadeInLeft" id="sidebarArea">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-envelope-open-text" style="color:var(--primary)"></i>
+            Meddelanden
+        </div>
         <div class="chat-list" id="chatList"></div>
     </div>
     
     <div class="chat-window" id="chatWindow">
         <div class="chat-header">
             <div style="display:flex; align-items:center;">
-                <button onclick="closeChatMobile()" style="background:none; border:none; font-size:18px; margin-right:15px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
-                <div id="activeTitle" style="font-weight:900;">Välj en chatt</div>
+                <button onclick="closeChatMobile()" style="background:none; border:none; font-size:22px; margin-right:18px; cursor:pointer; color:var(--dark);">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <div id="activeTitle" style="font-weight:900; font-size:18px;">Välj en konversation</div>
             </div>
+            <div id="statusIndicator"></div>
         </div>
         
         <div class="msg-display" id="msgArea">
-            <div style="text-align:center; padding-top:100px; color:#94a3b8;">
-                <i class="fa-regular fa-comment-dots" style="font-size:60px; margin-bottom:20px;"></i>
-                <p>Ingen vald konversation</p>
+            <div style="text-align:center; padding-top:120px; color:#94a3b8;">
+                <div class="animate__animated animate__pulse animate__infinite">
+                    <i class="fa-regular fa-comments" style="font-size:70px; margin-bottom:20px; opacity:0.5;"></i>
+                </div>
+                <p style="font-weight:600;">Klicka på en chatt för att se historik</p>
             </div>
         </div>
         
         <div class="input-box">
-            <input type="text" id="msgInput" placeholder="Skriv ett meddelande..." disabled>
-            <button id="sendBtn" class="send-btn" disabled><i class="fa-solid fa-paper-plane"></i></button>
+            <input type="text" id="msgInput" placeholder="Skriv ett meddelande..." disabled onkeypress="handleKeyPress(event)">
+            <button id="sendBtn" class="send-btn" disabled onclick="sendMessage()">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 </div>
 
 <script type="module">
+    // Firebase Modular SDK Imports
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { 
@@ -222,29 +280,39 @@
         orderBy, doc, setDoc, getDoc, deleteDoc, updateDoc, arrayRemove 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let user = null, activeRoom = null;
+    let user = null;
+    let activeRoom = null;
+    let messageListener = null;
 
+    // Authentication Observer
     onAuthStateChanged(auth, (u) => { 
         if(u) { 
             user = u; 
             document.getElementById('userEmail').innerText = u.email;
-            loadRooms(); 
+            initApp(); 
         } else { 
             window.location.href="login.html"; 
         }
     });
 
-    // 🔴 حذف الدردشة بالكامل من واجهتك فقط
+    function initApp() {
+        console.log("BILHK Messenger initialized for:", user.uid);
+        loadRooms();
+    }
+
+    // 🔴 Delete Full Conversation (from personal view)
     window.deleteFullChat = async (e, roomId) => {
         e.stopPropagation();
         const result = await Swal.fire({
             title: 'Radera konversation?',
-            text: "Denna chatt försvinner för dig, men mottagaren har kvar sin kopia.",
+            text: "Chatten döljs för dig, men finns kvar hos motparten. Detta går inte att ångra.",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Ja, radera',
-            cancelButtonText: 'Avbryt'
+            confirmButtonColor: var(--danger),
+            confirmButtonText: 'Ja, radera den',
+            cancelButtonText: 'Avbryt',
+            background: '#fff',
+            borderRadius: '20px'
         });
 
         if (result.isConfirmed) {
@@ -256,48 +324,69 @@
                     if (participants.length <= 1) {
                         await deleteDoc(chatRef);
                     } else {
-                        // إزالتك برمجياً من المصفوفة لإخفاء الدردشة عنك تماماً
+                        // Securely remove current user from the participant array
                         await updateDoc(chatRef, { participants: arrayRemove(user.uid) });
                     }
                 }
+                
                 if (activeRoom === roomId) {
-                    activeRoom = null;
-                    document.getElementById('msgArea').innerHTML = "Chatten raderades.";
-                    document.getElementById('msgInput').disabled = true;
-                    document.getElementById('sendBtn').disabled = true;
+                    resetChatUI();
                 }
-                Swal.fire('Raderad!', 'Konversationen har tagits bort.', 'success');
+                
+                Swal.fire({ title: 'Raderad!', icon: 'success', timer: 1500, showConfirmButton: false });
             } catch (err) {
-                console.error("Delete Error:", err);
+                console.error("Critical error during chat deletion:", err);
+                Swal.fire('Fel', 'Kunde inte radera chatten just nu.', 'error');
             }
         }
     };
 
-    // 🗑️ حذف رسالة فردية مرسلة من قبلك
+    function resetChatUI() {
+        activeRoom = null;
+        if(messageListener) messageListener();
+        document.getElementById('msgArea').innerHTML = "<div style='text-align:center; padding-top:100px;'>Chatten raderades.</div>";
+        document.getElementById('msgInput').disabled = true;
+        document.getElementById('sendBtn').disabled = true;
+        document.getElementById('activeTitle').innerText = "Välj en chatt";
+    }
+
+    // 🗑️ Delete Single Message (Sent by current user)
     window.deleteMessage = async (msgId) => {
         try {
-            await deleteDoc(doc(db, `chats/${activeRoom}/messages`, msgId));
+            const msgRef = doc(db, `chats/${activeRoom}/messages`, msgId);
+            await deleteDoc(msgRef);
         } catch (err) {
-            console.error("Message delete failed:", err);
+            console.error("Message deletion failed:", err);
+            Swal.fire('Hoppsan!', 'Gick inte att ta bort meddelandet.', 'error');
         }
     };
 
+    // Load available chat rooms
     function loadRooms() {
         const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid), orderBy("updatedAt", "desc"));
         onSnapshot(q, snap => {
             const list = document.getElementById('chatList');
             list.innerHTML = "";
+            
+            if(snap.empty) {
+                list.innerHTML = `<div style="padding:40px; text-align:center; color:#94a3b8; font-weight:600;">Inga aktiva chattar</div>`;
+                return;
+            }
+
             snap.forEach(d => {
                 const r = d.data();
-                const title = r.sellerId === user.uid ? `${r.carName} (Köpare)` : r.carName;
+                const isSeller = r.sellerId === user.uid;
+                const title = isSeller ? `${r.carName} (Köpare: ${r.buyerName})` : r.carName;
+                const isActive = activeRoom === d.id;
+                
                 const item = document.createElement('div');
-                item.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
+                item.className = `chat-item ${isActive ? 'active' : ''} animate__animated animate__fadeIn`;
                 item.innerHTML = `
                     <div class="chat-content" onclick="openRoom('${d.id}', '${title}')">
                         <strong>${title}</strong>
-                        <small>${r.lastMessage || 'Inga meddelanden'}</small>
+                        <small>${r.lastMessage || 'Inga meddelanden än'}</small>
                     </div>
-                    <div class="delete-chat-btn" onclick="deleteFullChat(event, '${d.id}')">
+                    <div class="delete-chat-btn" onclick="deleteFullChat(event, '${d.id}')" title="Radera">
                         <i class="fa-solid fa-trash-can"></i>
                     </div>`;
                 list.appendChild(item);
@@ -305,7 +394,10 @@
         });
     }
 
+    // Open specific room and start listening to messages
     window.openRoom = (id, name) => {
+        if(messageListener) messageListener(); // Unsubscribe from previous room
+        
         activeRoom = id;
         document.getElementById('msgInput').disabled = false;
         document.getElementById('sendBtn').disabled = false;
@@ -313,18 +405,21 @@
         document.getElementById('chatWindow').classList.add('show-mobile');
         document.getElementById('sidebarArea').classList.add('hide-mobile');
 
-        onSnapshot(query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc")), snap => {
+        const qMsgs = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
+        messageListener = onSnapshot(qMsgs, snap => {
             const area = document.getElementById('msgArea');
             area.innerHTML = "";
+            
             snap.forEach(d => {
                 const m = d.data();
                 const isSent = m.senderId === user.uid;
                 const div = document.createElement('div');
                 div.className = `bubble ${isSent ? 'sent' : 'received'}`;
+                
                 div.innerHTML = `
                     ${isSent ? `<div class="msg-del" onclick="deleteMessage('${d.id}')">×</div>` : ''}
-                    ${m.text}
-                    <span class="timestamp">${m.createdAt?.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) || ''}</span>
+                    ${escapeHtml(m.text)}
+                    <span class="timestamp">${m.createdAt?.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) || 'Sänder...'}</span>
                 `;
                 area.appendChild(div);
             });
@@ -332,26 +427,41 @@
         });
     };
 
+    // Message Sending Logic
+    window.sendMessage = async () => {
+        const input = document.getElementById('msgInput');
+        const text = input.value.trim();
+        if(!text || !activeRoom) return;
+        
+        input.value = "";
+        try {
+            await addDoc(collection(db, `chats/${activeRoom}/messages`), {
+                senderId: user.uid,
+                text: text,
+                createdAt: serverTimestamp()
+            });
+            
+            await updateDoc(doc(db, "chats", activeRoom), {
+                lastMessage: text,
+                updatedAt: serverTimestamp()
+            });
+        } catch (err) {
+            console.error("Send Error:", err);
+            Swal.fire('Error', 'Kunde inte skicka meddelandet.', 'error');
+        }
+    };
+
+    window.handleKeyPress = (e) => { if(e.key === 'Enter') sendMessage(); };
     window.closeChatMobile = () => {
         document.getElementById('chatWindow').classList.remove('show-mobile');
         document.getElementById('sidebarArea').classList.remove('hide-mobile');
     };
 
-    document.getElementById('sendBtn').onclick = async () => {
-        const input = document.getElementById('msgInput'), text = input.value.trim();
-        if(!text) return; input.value = "";
-        
-        await addDoc(collection(db, `chats/${activeRoom}/messages`), {
-            senderId: user.uid,
-            text: text,
-            createdAt: serverTimestamp()
-        });
-        
-        await setDoc(doc(db, "chats", activeRoom), {
-            lastMessage: text,
-            updatedAt: serverTimestamp()
-        }, { merge: true });
-    };
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
 </script>
 </body>
 </html>
