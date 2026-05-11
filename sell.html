@@ -10,19 +10,24 @@
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         body { background: var(--bg); padding: 20px; font-family: 'Inter', sans-serif; }
         .form-card { max-width: 800px; margin: 0 auto; background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); }
-        input, select { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; margin-bottom: 15px; }
-        .btn-submit { width: 100%; padding: 18px; background: var(--dark); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        input, select { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; }
+        .btn-submit { width: 100%; padding: 18px; background: var(--dark); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; margin-top: 25px; }
     </style>
 </head>
 <body>
 <div class="form-card">
     <h1 style="text-align:center;">Publicera Annons</h1>
     <form id="sellForm">
-        <select id="brand" required><option value="">Välj märke...</option></select>
-        <select id="model" required disabled><option value="">Välj modell...</option></select>
-        <input type="number" id="year" placeholder="Årsmodell" required>
-        <input type="number" id="price" placeholder="Pris (kr)" required>
-        <input type="file" id="images" multiple accept="image/*" required>
+        <div class="form-grid">
+            <select id="brand" required><option value="">Välj märke...</option></select>
+            <select id="model" required disabled><option value="">Välj modell...</option></select>
+        </div>
+        <div class="form-grid">
+            <input type="number" id="year" placeholder="Årsmodell" required>
+            <input type="number" id="price" placeholder="Pris (kr)" required>
+        </div>
+        <input type="file" id="images" multiple accept="image/*" required style="margin-top:20px;">
         <button type="submit" class="btn-submit" id="submitBtn">Publicera</button>
     </form>
 </div>
@@ -32,6 +37,7 @@
     import { auth, db, storage } from './firebase-config.js';
     import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
     import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const brandSelect = document.getElementById('brand'), modelSelect = document.getElementById('model');
     Object.keys(carData).forEach(b => { const opt = document.createElement('option'); opt.value = b; opt.textContent = b; brandSelect.appendChild(opt); });
@@ -43,8 +49,12 @@
         }
     };
 
+    let user = null;
+    onAuthStateChanged(auth, u => user = u);
+
     document.getElementById('sellForm').onsubmit = async (e) => {
         e.preventDefault();
+        if(!user) return Swal.fire('Error', 'Logga in först', 'error');
         const btn = document.getElementById('submitBtn'); btn.disabled = true;
         try {
             const files = document.getElementById('images').files, urls = [];
@@ -57,7 +67,7 @@
                 brand: brandSelect.value, model: modelSelect.value,
                 year: Number(document.getElementById('year').value),
                 price: Number(document.getElementById('price').value),
-                images: urls, sellerId: auth.currentUser.uid, active: true, createdAt: serverTimestamp()
+                images: urls, sellerId: user.uid, active: true, createdAt: serverTimestamp()
             });
             window.location.href="my-account.html";
         } catch (err) { Swal.fire('Fel', err.message, 'error'); btn.disabled = false; }
