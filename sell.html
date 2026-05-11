@@ -5,34 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sälj din bil | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg); padding: 20px; }
-        .form-card { max-width: 800px; margin: 0 auto; background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-        input, select, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; font-size: 16px; margin-bottom: 15px; }
-        .btn-submit { width: 100%; padding: 18px; background: var(--dark); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; font-size: 18px; }
+        body { background: var(--bg); padding: 20px; color: var(--dark); }
+        .form-card { max-width: 850px; margin: 0 auto; background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        /* تصميم خانة رقم اللوحة السويدي */
+        .reg-box { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 25px; display: flex; gap: 15px; align-items: flex-end; border: 2px solid var(--border); }
+        .reg-input-group { flex: 1; }
+        .reg-input { text-transform: uppercase; font-weight: 900; font-size: 22px; letter-spacing: 2px; text-align: center; border: 2px solid var(--dark); color: var(--dark); background: white; }
+        .btn-fetch { background: var(--dark); color: white; padding: 14px 25px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; height: 55px; }
+        .btn-fetch:hover { background: var(--primary); }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        input, select, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; font-size: 16px; outline: none; }
+        label { display: block; margin-bottom: 5px; font-weight: 700; color: #64748b; font-size: 13px; }
+        .btn-submit { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 18px; margin-top: 25px; }
         .btn-submit:disabled { background: #cbd5e1; cursor: not-allowed; }
     </style>
 </head>
 <body>
+
 <div class="form-card">
-    <h1 style="text-align:center; font-weight:900;">Publicera Annons</h1>
+    <h1 style="text-align:center; font-weight:900; margin-bottom:10px;">Publicera Annons</h1>
+    <p style="text-align:center; color:#64748b; margin-bottom:30px;">Ange registreringsnummer för att hämta biluppgifter</p>
+
+    <div class="reg-box">
+        <div class="reg-input-group">
+            <label>Registreringsnummer (Reg-nr)</label>
+            <input type="text" id="regNr" class="reg-input" placeholder="ABC 123" maxlength="7">
+        </div>
+        <button type="button" class="btn-fetch" id="fetchBtn">
+            <i class="fa-solid fa-sync-alt"></i> Hämta data
+        </button>
+    </div>
+
     <form id="sellForm">
         <div class="form-grid">
-            <select id="brand" required><option value="">Välj märke...</option></select>
-            <select id="model" required disabled><option value="">Välj modell...</option></select>
+            <div class="form-group">
+                <label>Märke</label>
+                <select id="brand" required><option value="">Välj märke...</option></select>
+            </div>
+            <div class="form-group">
+                <label>Modell</label>
+                <select id="model" required disabled><option value="">Välj modell...</option></select>
+            </div>
         </div>
+
         <div class="form-grid">
-            <input type="number" id="year" placeholder="Årsmodell" required>
-            <input type="number" id="price" placeholder="Pris (kr)" required>
+            <div class="form-group">
+                <label>Årsmodell</label>
+                <input type="number" id="year" placeholder="t.ex. 2021" required>
+            </div>
+            <div class="form-group">
+                <label>Pris (kr)</label>
+                <input type="number" id="price" placeholder="t.ex. 185000" required>
+            </div>
         </div>
-        <input type="number" id="mileage" placeholder="Miltal" required>
-        <textarea id="description" rows="4" placeholder="Beskrivning..." required></textarea>
-        <input type="file" id="images" multiple accept="image/*" required>
-        <button type="submit" class="btn-submit" id="submitBtn">Publicera</button>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Miltal</label>
+                <input type="number" id="mileage" placeholder="t.ex. 4500" required>
+            </div>
+            <div class="form-group">
+                <label>Drivmedel</label>
+                <select id="fuel" required>
+                    <option value="">Välj bränsle...</option>
+                    <option value="Bensin">Bensin</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="El">El</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Växellåda</label>
+                <select id="gearbox" required>
+                    <option value="">Välj låda...</option>
+                    <option value="Automat">Automat</option>
+                    <option value="Manuell">Manuell</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Bilder (Max 10)</label>
+                <input type="file" id="images" multiple accept="image/*" required>
+            </div>
+        </div>
+
+        <label>Beskrivning</label>
+        <textarea id="description" rows="4" placeholder="Beskriv bilens skick, extrautrustning..." required></textarea>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Publicera Annons</button>
     </form>
 </div>
 
@@ -45,7 +114,7 @@
 
     const brandSelect = document.getElementById('brand'), modelSelect = document.getElementById('model');
     
-    // تحميل الماركات
+    // تحميل الماركات من الملف المحلي
     Object.keys(carData).sort().forEach(b => {
         const opt = document.createElement('option'); opt.value = b; opt.textContent = b;
         brandSelect.appendChild(opt);
@@ -62,58 +131,73 @@
         }
     };
 
+    // 💡 منطق جلب البيانات (تجهيز للروابط السويدية)
+    document.getElementById('fetchBtn').onclick = async () => {
+        const reg = document.getElementById('regNr').value.trim().toUpperCase();
+        if(reg.length < 6) return Swal.fire('Info', 'Ange ett giltigt registreringsnummer', 'info');
+        
+        document.getElementById('fetchBtn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Söker...';
+        
+        try {
+            // محاكاة جلب البيانات - هنا يتم ربط الـ API الحقيقي لاحقاً
+            setTimeout(() => {
+                // مثال لبيانات مسترجعة (يجب تغييرها ببيانات الـ API الحقيقية)
+                document.getElementById('brand').value = "Tesla"; 
+                brandSelect.onchange(); 
+                document.getElementById('model').value = "Model 3";
+                document.getElementById('year').value = 2022;
+                document.getElementById('fuel').value = "El";
+                document.getElementById('gearbox').value = "Automat";
+                
+                document.getElementById('fetchBtn').innerHTML = '<i class="fa-solid fa-check"></i> Klar';
+                Swal.fire('Hittad!', 'Biluppgifter har fyllts i.', 'success');
+            }, 1500);
+        } catch (err) {
+            Swal.fire('Fel', 'Kunde inte hitta fordonet.', 'error');
+            document.getElementById('fetchBtn').innerText = "Hämta data";
+        }
+    };
+
+    // عملية النشر المؤمنة
     document.getElementById('sellForm').onsubmit = async (e) => {
         e.preventDefault();
-        
-        // 💡 فحص الأمان الأول: هل المستخدم مسجل دخول الآن؟
-        if (!auth.currentUser) {
-            return Swal.fire('Fel', 'Du måste vara inloggad för att publicera. Logga in och försök igen.', 'error');
-        }
+        if (!auth.currentUser) return Swal.fire('Fel', 'Du måste vara inloggad!', 'error');
 
         const btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.innerText = "Laddar upp...";
+        btn.disabled = true; btn.innerText = "Laddar upp...";
 
         try {
             const files = document.getElementById('images').files, urls = [];
-            
             for (let f of files) {
-                // 💡 رفع الصور بمسار فريد
                 const sRef = ref(storage, `cars/${Date.now()}_${f.name}`);
-                const metadata = { contentType: f.type };
-                
-                await uploadBytes(sRef, f, metadata);
-                const url = await getDownloadURL(sRef);
-                urls.push(url);
+                const meta = { contentType: f.type };
+                await uploadBytes(sRef, f, meta);
+                urls.push(await getDownloadURL(sRef));
             }
 
-            // حفظ في Firestore
+            // 💡 الحفظ في مجموعة "cars" حصراً لتجنب أخطاء الـ Rules
             await addDoc(collection(db, "cars"), {
+                regNr: document.getElementById('regNr').value.toUpperCase(),
                 brand: brandSelect.value,
                 model: modelSelect.value,
                 year: Number(document.getElementById('year').value),
                 price: Number(document.getElementById('price').value),
                 mileage: Number(document.getElementById('mileage').value),
+                fuel: document.getElementById('fuel').value,
+                gearbox: document.getElementById('gearbox').value,
                 description: document.getElementById('description').value,
                 images: urls,
-                sellerId: auth.currentUser.uid,
+                sellerId: auth.currentUser.uid, // أساس الحماية والمراسلة
                 active: true,
                 createdAt: serverTimestamp()
             });
 
-            Swal.fire('Klart!', 'Annonsen är nu publicerad.', 'success');
+            Swal.fire('Klart!', 'Din annons ligger nu uppe!', 'success');
             setTimeout(() => window.location.href="my-account.html", 2000);
-
         } catch (err) {
             console.error(err);
-            // 💡 إذا ظهر خطأ unauthorized هنا، فهذا يعني أن الجلسة انتهت
-            if (err.code === 'storage/unauthorized') {
-                Swal.fire('Fel', 'Sessionen har gått ut. Logga ut och logga in igen.', 'error');
-            } else {
-                Swal.fire('Fel', err.message, 'error');
-            }
-            btn.disabled = false;
-            btn.innerText = "Publicera";
+            Swal.fire('Fel', 'Kunde inte publicera. Kontrollera anslutningen.', 'error');
+            btn.disabled = false; btn.innerText = "Publicera Annons";
         }
     };
 </script>
