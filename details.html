@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fordonsdetaljer | BILHK</title>
+    <title>Detaljer | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -18,8 +18,12 @@
         .main-img { width: 100%; height: 450px; object-fit: contain; background: #000; }
         .sidebar-card { background: white; padding: 25px; border-radius: 24px; border: 1px solid var(--border); position: sticky; top: 20px; }
         .price { font-size: 32px; font-weight: 900; color: var(--primary); margin: 15px 0; }
-        .btn-action { width: 100%; padding: 18px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; transition: 0.3s; margin-bottom: 12px; }
+        .btn-action { width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; transition: 0.3s; margin-bottom: 12px; }
         .btn-msg { background: var(--dark); color: white; }
+        .btn-fav { background: white; border: 2px solid var(--border); color: #64748b; }
+        .btn-fav.active { color: var(--primary); border-color: var(--primary); background: #fff7ed; }
+        .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .spec-box { background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid var(--border); font-size: 14px; }
     </style>
 </head>
 <body>
@@ -40,7 +44,12 @@
         <div class="sidebar-card">
             <h1 id="carTitle" style="font-weight:900;">Laddar...</h1>
             <div id="carPrice" class="price">0 kr</div>
+            <div class="spec-grid">
+                <div class="spec-box"><strong>Årsmodell:</strong> <span id="specYear">-</span></div>
+                <div class="spec-box"><strong>Miltal:</strong> <span id="specMil">-</span></div>
+            </div>
             <button id="chatBtn" class="btn-action btn-msg"><i class="fa-solid fa-comment-dots"></i> Kontakta Säljaren</button>
+            <button id="favBtn" class="btn-action btn-fav"><i class="fa-regular fa-heart" id="fIcon"></i> <span id="fText">Spara</span></button>
         </div>
     </div>
 </div>
@@ -48,12 +57,12 @@
 <script type="module">
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const carId = new URLSearchParams(window.location.search).get('id');
     let carData = null;
 
-    onAuthStateChanged(auth, async (u) => {
+    async function loadCar() {
         if(!carId) return;
         const snap = await getDoc(doc(db, "cars", carId));
         if (snap.exists()) {
@@ -62,15 +71,46 @@
             document.getElementById('carPrice').innerText = `${Number(carData.price).toLocaleString()} kr`;
             document.getElementById('carDesc').innerText = carData.description || "";
             document.getElementById('activeImg').src = carData.images?.[0] || "";
+            document.getElementById('specYear').innerText = carData.year || "-";
+            document.getElementById('specMil').innerText = carData.mileage || "-";
+            checkFavStatus();
         }
-    });
+    }
+
+    async function checkFavStatus() {
+        if (!auth.currentUser) return;
+        const favSnap = await getDoc(doc(db, "favorites", `${auth.currentUser.uid}_${carId}`));
+        if (favSnap.exists()) {
+            document.getElementById('fIcon').className = 'fa-solid fa-heart';
+            document.getElementById('favBtn').classList.add('active');
+            document.getElementById('fText').innerText = "Sparad";
+        }
+    }
+
+    document.getElementById('favBtn').onclick = async () => {
+        if (!auth.currentUser) return Swal.fire('Info', 'Logga in för att spara', 'info');
+        const favRef = doc(db, "favorites", `${auth.currentUser.uid}_${carId}`);
+        const snap = await getDoc(favRef);
+        if (snap.exists()) {
+            await deleteDoc(favRef);
+            document.getElementById('fIcon').className = 'fa-regular fa-heart';
+            document.getElementById('favBtn').classList.remove('active');
+            document.getElementById('fText').innerText = "Spara";
+        } else {
+            await setDoc(favRef, { userId: auth.currentUser.uid, carId, brand: carData.brand, price: carData.price, image: carData.images[0] });
+            document.getElementById('fIcon').className = 'fa-solid fa-heart';
+            document.getElementById('favBtn').classList.add('active');
+            document.getElementById('fText').innerText = "Sparad";
+        }
+    };
 
     document.getElementById('chatBtn').onclick = () => {
         if (!auth.currentUser) return window.location.href = "login.html";
-        if (auth.currentUser.uid === carData.sellerId) return Swal.fire('Info', 'Detta är din egen annons.', 'info');
         const carName = `${carData.brand} ${carData.model}`;
         window.location.href = `messages.html?seller=${carData.sellerId}&carId=${carId}&name=${encodeURIComponent(carName)}`;
     };
+
+    onAuthStateChanged(auth, () => loadCar());
 </script>
 </body>
 </html>
