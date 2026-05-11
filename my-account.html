@@ -9,30 +9,47 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --danger: #ef4444; }
-        body { background: var(--bg); font-family: 'Inter', sans-serif; padding: 20px; margin: 0; }
-        .wrapper { max-width: 1000px; margin: 20px auto; display: grid; grid-template-columns: 250px 1fr; gap: 30px; }
-        @media (max-width: 768px) { .wrapper { grid-template-columns: 1fr; } }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); margin: 0; color: var(--dark); padding-bottom: 50px; }
         
-        .sidebar { background: white; padding: 20px; border-radius: 20px; border: 1px solid var(--border); height: fit-content; }
-        .tab-btn { width: 100%; text-align: left; padding: 15px; cursor: pointer; border-radius: 12px; margin-bottom: 10px; font-weight: 700; color: #64748b; background: white; border: 1px solid var(--border); transition: 0.3s; }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        /* الهيدر */
+        header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
+        .logo span { color: var(--primary); }
+
+        .wrapper { max-width: 1100px; margin: 30px auto; display: grid; grid-template-columns: 280px 1fr; gap: 30px; padding: 0 15px; }
+        @media (max-width: 768px) { .wrapper { grid-template-columns: 1fr; margin: 15px auto; } }
+
+        /* القائمة الجانبية */
+        .sidebar { background: white; padding: 25px; border-radius: 24px; border: 1px solid var(--border); height: fit-content; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .tab-btn { width: 100%; text-align: left; padding: 16px; cursor: pointer; border-radius: 14px; margin-bottom: 12px; font-weight: 700; color: #64748b; background: white; border: 1px solid var(--border); transition: 0.3s; display: flex; align-items: center; gap: 12px; }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(245, 130, 32, 0.2); }
+        .tab-btn:hover:not(.active) { background: #f8fafc; border-color: #cbd5e1; }
         
-        .ad-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; flex-wrap: wrap; }
-        .ad-card img { width: 110px; height: 80px; object-fit: cover; border-radius: 12px; cursor: pointer; }
-        .ad-info { flex: 1; min-width: 200px; cursor: pointer; }
+        /* كروت الإعلانات */
+        .ad-card { display: flex; align-items: center; gap: 18px; padding: 18px; background: white; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; transition: 0.3s; }
+        .ad-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.04); }
+        .ad-card img { width: 120px; height: 85px; object-fit: cover; border-radius: 14px; cursor: pointer; }
+        .ad-info { flex: 1; cursor: pointer; }
+        .ad-info h4 { margin: 0; font-size: 18px; font-weight: 800; }
+        .ad-info p { margin: 6px 0 0 0; color: var(--primary); font-weight: 900; font-size: 16px; }
+        
+        /* أزرار التحكم */
         .ad-actions { display: flex; gap: 10px; }
-        
-        .btn-action { padding: 12px; border-radius: 12px; border: none; cursor: pointer; font-size: 16px; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; }
+        .btn-action { width: 45px; height: 45px; border-radius: 12px; border: none; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-edit { background: #f1f5f9; color: var(--dark); }
         .btn-delete { background: #fee2e2; color: var(--danger); }
-        
-        h2 { margin-bottom: 20px; font-weight: 900; color: var(--dark); }
-        .empty-state { text-align: center; padding: 40px; color: #64748b; background: white; border-radius: 18px; border: 1px solid var(--border); }
+        .btn-action:hover { opacity: 0.8; transform: scale(1.05); }
+
+        .empty-state { text-align: center; padding: 60px 20px; background: white; border-radius: 24px; border: 1px solid var(--border); color: #94a3b8; font-weight: 600; }
+        .logout-btn { color: var(--danger) !important; border-color: #fee2e2 !important; margin-top: 20px; }
     </style>
 </head>
 <body>
-<header style="background: white; padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-    <a href="index.html" style="text-decoration:none; font-size:22px; font-weight:900; color:var(--dark);">BIL<span style="color:var(--primary);">HK</span></a>
+
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;"><i class="fa-solid fa-house"></i> Hem</a>
 </header>
 
 <div class="wrapper">
@@ -40,10 +57,11 @@
         <button class="tab-btn active" id="btnAds" onclick="switchTab('ads')"><i class="fa-solid fa-car"></i> Mina Annonser</button>
         <button class="tab-btn" id="btnFavs" onclick="switchTab('favs')"><i class="fa-solid fa-heart"></i> Sparade Bilar</button>
         <button class="tab-btn" onclick="window.location.href='messages.html'"><i class="fa-solid fa-message"></i> Meddelanden</button>
-        <button class="tab-btn" style="color:var(--danger); border-color:#fee2e2; background:#fff5f5; margin-top:20px;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
+        <button class="tab-btn logout-btn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
     </div>
+
     <div class="content" id="mainContent">
-        <div class="empty-state">Laddar...</div>
+        <div class="empty-state"><i class="fa-solid fa-circle-notch fa-spin"></i> Laddar ditt konto...</div>
     </div>
 </div>
 
@@ -53,102 +71,135 @@
     import { collection, query, where, getDocs, deleteDoc, doc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let user = null;
+
     onAuthStateChanged(auth, (u) => { 
         if(u) { user = u; switchTab('ads'); } 
         else { window.location.href="login.html"; } 
     });
 
+    // التبديل بين الإعلانات والمفضلات
     window.switchTab = async (tab) => {
-        document.getElementById('btnAds').classList.toggle('active', tab === 'ads');
-        document.getElementById('btnFavs').classList.toggle('active', tab === 'favs');
+        const btnAds = document.getElementById('btnAds');
+        const btnFavs = document.getElementById('btnFavs');
         const container = document.getElementById('mainContent');
-        container.innerHTML = `<div class="empty-state">Hämtar data...</div>`;
-
-        const col = tab === 'ads' ? 'cars' : 'favorites';
-        const key = tab === 'ads' ? 'sellerId' : 'userId';
-        const q = query(collection(db, col), where(key, "==", user.uid));
-        const snap = await getDocs(q);
-
-        container.innerHTML = `<h2>${tab === 'ads' ? 'Mina Annonser' : 'Sparade Bilar'}</h2>`;
         
-        if (snap.empty) { 
-            container.innerHTML += `<div class="empty-state">Ingenting hittades.</div>`; 
-            return; 
-        }
+        btnAds.classList.toggle('active', tab === 'ads');
+        btnFavs.classList.toggle('active', tab === 'favs');
         
-        snap.forEach(d => {
-            const data = d.data();
-            const id = d.id;
-            const carId = tab === 'ads' ? id : data.carId;
-            const img = tab === 'ads' ? (data.images?.[0] || 'placeholder.jpg') : (data.image || 'placeholder.jpg');
-            const title = tab === 'ads' ? `${data.brand} ${data.model}` : data.brand;
+        container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-circle-notch fa-spin"></i> Hämtar data...</div>`;
 
-            const card = document.createElement('div');
-            card.className = "ad-card";
-            card.innerHTML = `
-                <img src="${img}" onclick="window.location.href='details.html?id=${carId}'">
-                <div class="ad-info" onclick="window.location.href='details.html?id=${carId}'">
-                    <h4 style="margin:0;">${title}</h4>
-                    <p style="margin:6px 0 0 0; color:#f58220; font-weight: 800;">${Number(data.price).toLocaleString()} kr</p>
-                </div>
-            `;
+        try {
+            const colName = tab === 'ads' ? 'cars' : 'favorites';
+            const queryField = tab === 'ads' ? 'sellerId' : 'userId';
+            
+            const q = query(collection(db, colName), where(queryField, "==", user.uid));
+            const snap = await getDocs(q);
 
-            if (tab === 'ads') {
-                const actions = document.createElement('div');
-                actions.className = "ad-actions";
-                actions.innerHTML = `
-                    <button class="btn-action btn-edit" onclick="window.location.href='edit-car.html?id=${id}'"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn-action btn-delete" onclick="deleteAdWithChats('${id}')"><i class="fa-solid fa-trash"></i></button>
-                `;
-                card.appendChild(actions);
+            container.innerHTML = `<h2 style="margin-bottom:25px; font-weight:900;">${tab === 'ads' ? 'Mina Annonser' : 'Sparade Bilar'}</h2>`;
+            
+            if (snap.empty) { 
+                container.innerHTML += `<div class="empty-state">Här var det tomt! Du har inga ${tab === 'ads' ? 'aktiva annonser' : 'sparade bilar'} än.</div>`; 
+                return; 
             }
-            container.appendChild(card);
-        });
+            
+            snap.forEach(d => {
+                const data = d.data();
+                const docId = d.id;
+                const carId = tab === 'ads' ? docId : data.carId;
+                const img = tab === 'ads' ? (data.images?.[0] || 'placeholder.jpg') : (data.image || 'placeholder.jpg');
+                const title = tab === 'ads' ? `${data.brand} ${data.model}` : data.brand;
+
+                const card = document.createElement('div');
+                card.className = "ad-card";
+                card.innerHTML = `
+                    <img src="${img}" onclick="window.location.href='details.html?id=${carId}'">
+                    <div class="ad-info" onclick="window.location.href='details.html?id=${carId}'">
+                        <h4>${title}</h4>
+                        <p>${Number(data.price).toLocaleString()} kr</p>
+                    </div>
+                `;
+
+                if (tab === 'ads') {
+                    const actions = document.createElement('div');
+                    actions.className = "ad-actions";
+                    actions.innerHTML = `
+                        <button class="btn-action btn-edit" title="Redigera" onclick="window.location.href='edit-car.html?id=${docId}'"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-action btn-delete" title="Ta bort" onclick="deleteAdWithCleanUp('${docId}')"><i class="fa-solid fa-trash"></i></button>
+                    `;
+                    card.appendChild(actions);
+                }
+                container.appendChild(card);
+            });
+        } catch (error) {
+            container.innerHTML = `<div class="empty-state" style="color:var(--danger);">Ett fel uppstod vid laddning.</div>`;
+        }
     }
 
     /**
-     * 💡 التحديث الجوهري: حذف الإعلان وكل المراسلات المرتبطة به
+     * 💡 خوارزمية التنظيف العميق: حذف الإعلان + الغرف + الرسائل
      */
-    window.deleteAdWithChats = async (carId) => {
+    window.deleteAdWithCleanUp = async (carId) => {
         const result = await Swal.fire({
-            title: 'Ta bort annons?',
-            text: "Detta kommer även radera alla meddelanden kopplade till bilen!",
+            title: 'Radera annonsen?',
+            text: "Detta kommer även att ta bort alla meddelanden som är kopplade till bilen permanent!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
             confirmButtonText: 'Ja, radera allt',
             cancelButtonText: 'Avbryt'
         });
 
         if (result.isConfirmed) {
-            Swal.fire({ title: 'Raderar...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            Swal.fire({ title: 'Raderar allt...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
 
             try {
-                // 1. حذف الإعلان نفسه
+                // 1. حذف مستند السيارة
                 await deleteDoc(doc(db, "cars", carId));
 
-                // 2. البحث عن المحادثات المرتبطة بهذا الإعلان وحذفها
-                const qChats = query(collection(db, "chats"), where("carId", "==", carId));
+                // 2. البحث عن غرف الدردشة المرتبطة بالمستخدم
+                const qChats = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
                 const chatSnap = await getDocs(qChats);
                 
                 const batch = writeBatch(db);
-                chatSnap.forEach((chatDoc) => {
-                    batch.delete(chatDoc.ref);
-                });
-                
-                // تنفيذ حذف جميع المحادثات دفعة واحدة
-                await batch.commit();
+                let count = 0;
 
-                Swal.fire('Klar!', 'Annonsen och dess chattar har raderats.', 'success');
+                for (const chatDoc of chatSnap.docs) {
+                    const chatData = chatDoc.data();
+                    
+                    // التحقق إذا كانت الغرفة تابعة لهذه السيارة المحذوفة
+                    if (chatData.carId === carId || chatDoc.id.includes(carId)) {
+                        count++;
+                        // حذف الرسائل داخل الغرفة (المجموعة الفرعية)
+                        const msgSnap = await getDocs(collection(db, `chats/${chatDoc.id}/messages`));
+                        msgSnap.forEach(msg => batch.delete(msg.ref));
+                        
+                        // حذف الغرفة نفسها
+                        batch.delete(chatDoc.ref);
+                    }
+                }
+                
+                if (count > 0) await batch.commit();
+
+                Swal.fire('Borttagen!', 'Annonsen och alla tillhörande chattar har raderats.', 'success');
                 switchTab('ads'); 
             } catch (error) {
-                Swal.fire('Fel!', error.message, 'error');
+                Swal.fire('Fel!', 'Kunde inte radera: ' + error.message, 'error');
             }
         }
     }
 
     window.logout = () => {
-        signOut(auth).then(() => window.location.href = 'index.html');
+        Swal.fire({
+            title: 'Vill du logga ut?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: var(--primary),
+            confirmButtonText: 'Ja, logga ut',
+            cancelButtonText: 'Avbryt'
+        }).then((res) => {
+            if(res.isConfirmed) signOut(auth).then(() => window.location.href = 'index.html');
+        });
     }
 </script>
 </body>
