@@ -11,62 +11,37 @@
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --reg-blue: #005599; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); margin: 0; padding-bottom: 50px; }
         .container { max-width: 1100px; margin: auto; padding: 20px; }
-
-        /* الهيدر: اللوحة والزر */
         .header-action-area { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-        .reg-plate { 
-            display: inline-flex; align-items: center; background: white; border: 2px solid #333; 
-            border-radius: 6px; padding: 2px 10px; font-weight: 800; font-size: 22px; letter-spacing: 2px; 
-        }
+        .reg-plate { display: inline-flex; align-items: center; background: white; border: 2px solid #333; border-radius: 6px; padding: 2px 10px; font-weight: 800; font-size: 22px; letter-spacing: 2px; }
         .reg-plate .eu-symbol { background: var(--reg-blue); color: white; font-size: 10px; padding: 5px 3px; margin-right: 8px; border-radius: 2px; display: flex; flex-direction: column; align-items: center; }
+        .btn-msg-small { background: var(--dark); color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; text-decoration: none; }
         
-        .btn-msg-small { background: var(--dark); color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
-        .btn-msg-small:hover { background: var(--primary); }
-
-        /* --- معرض الصور المتناسق (Fixed Aspect Ratio) --- */
+        /* معرض الصور المتناسق */
         .gallery-wrapper { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 30px; border-radius: 24px; overflow: hidden; }
-        
-        .main-img-link { display: block; width: 100%; height: 450px; overflow: hidden; position: relative; }
-        .main-img-link img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        
+        .main-img-link { display: block; width: 100%; height: 450px; overflow: hidden; }
+        .main-img-link img { width: 100%; height: 100%; object-fit: cover; }
         .side-imgs-column { display: grid; grid-template-rows: 1fr 1fr; gap: 12px; }
-        .side-img-link { display: block; width: 100%; height: 219px; overflow: hidden; position: relative; }
+        .side-img-link { display: block; width: 100%; height: 219px; overflow: hidden; }
         .side-img-link img { width: 100%; height: 100%; object-fit: cover; }
 
-        .main-img-link:hover img { transform: scale(1.05); }
-
-        /* محتوى السيارة */
         .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-        .card { background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        .price-big { font-size: 44px; font-weight: 900; color: var(--primary); margin: 15px 0; letter-spacing: -1px; }
-        
-        /* شبكة المواصفات */
-        .full-specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 20px; }
+        .card { background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); margin-bottom: 25px; }
+        .price-big { font-size: 44px; font-weight: 900; color: var(--primary); margin: 15px 0; }
+        .full-specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
         .spec-item { display: flex; justify-content: space-between; padding: 16px; background: #f1f5f9; border-radius: 14px; font-size: 14px; font-weight: 700; }
-        .spec-label { color: #64748b; font-weight: 500; }
+        .tech-pill { padding: 10px 18px; background: #fff5eb; color: var(--primary); border: 1px solid #fbd38d; border-radius: 50px; font-size: 11px; font-weight: 900; display: inline-block; margin: 4px; }
         
-        .tech-pill { padding: 10px 18px; background: #fff5eb; color: var(--primary); border: 1px solid #fbd38d; border-radius: 50px; font-size: 11px; font-weight: 900; display: inline-block; margin: 4px; text-transform: uppercase; }
-
-        /* التذييل والأمان */
-        .footer-legal { margin-top: 50px; padding: 40px; border-top: 1px solid var(--border); background: white; border-radius: 30px; }
+        .footer-legal { margin-top: 50px; padding: 40px; border-top: 1px solid var(--border); }
         .saker-affar { background: #fff5eb; border-left: 6px solid var(--primary); padding: 25px; border-radius: 15px; margin-bottom: 25px; }
-        .saker-affar h4 { margin-bottom: 10px; font-weight: 900; color: var(--dark); }
-        .disclaimer { font-size: 12px; color: #94a3b8; line-height: 1.8; text-align: justify; }
-
-        @media (max-width: 850px) { 
-            .gallery-wrapper { grid-template-columns: 1fr; } 
-            .main-img-link { height: 300px; }
-            .side-imgs-column { display: none; } 
-            .content-grid { grid-template-columns: 1fr; }
-        }
+        
+        @media (max-width: 850px) { .gallery-wrapper { grid-template-columns: 1fr; } .side-imgs-column { display: none; } .content-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-
 <div class="container" id="detailsContainer"></div>
 
 <script type="module">
-    import { db, auth } from './firebase-config.js';
+    import { db } from './firebase-config.js';
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe-lightbox.esm.min.js';
 
@@ -75,94 +50,82 @@
 
     async function loadFullData() {
         if (!carId) return;
-        const snap = await getDoc(doc(db, "cars", carId));
-        if (!snap.exists()) return;
-        const car = snap.data();
-        
-        container.innerHTML = `
-            <div class="pswp-gallery gallery-wrapper" id="carGallery">
-                <a href="${car.images[0]}" data-pswp-width="1600" data-pswp-height="1000" target="_blank" class="main-img-link">
-                    <img src="${car.images[0]}" alt="Huvudbild">
-                </a>
-                <div class="side-imgs-column">
-                    ${car.images.slice(1, 3).map(img => `
-                        <a href="${img}" data-pswp-width="1600" data-pswp-height="1000" target="_blank" class="side-img-link">
-                            <img src="${img}">
-                        </a>
-                    `).join('')}
-                </div>
-            </div>
+        try {
+            const snap = await getDoc(doc(db, "cars", carId));
+            if (!snap.exists()) { container.innerHTML = "Annonsen hittades inte."; return; }
+            const car = snap.data();
             
-            <div class="header-action-area">
-                <div class="reg-plate"><div class="eu-symbol"><span>S</span></div>${(car.regNo || 'EJ ANGIVET').toUpperCase()}</div>
-                <button class="btn-msg-small" onclick="location.href='messages.html?sellerId=${car.sellerId}&carId=${carId}'">
-                    <i class="fa-solid fa-comments"></i> Kontakta säljaren
-                </button>
-            </div>
+            container.innerHTML = `
+                <div class="pswp-gallery gallery-wrapper" id="carGallery">
+                    <a href="${car.images[0]}" data-pswp-width="1600" data-pswp-height="1000" target="_blank" class="main-img-link">
+                        <img src="${car.images[0]}">
+                    </a>
+                    <div class="side-imgs-column">
+                        ${car.images.slice(1, 3).map(img => `
+                            <a href="${img}" data-pswp-width="1600" data-pswp-height="1000" target="_blank" class="side-img-link">
+                                <img src="${img}">
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="header-action-area">
+                    <div class="reg-plate"><div class="eu-symbol"><span>S</span></div>${(car.regNo || 'EJ ANGIVET').toUpperCase()}</div>
+                    <a href="messages.html?sellerId=${car.sellerId}&carId=${carId}" class="btn-msg-small">
+                        <i class="fa-solid fa-comments"></i> Kontakta säljaren
+                    </a>
+                </div>
 
-            <div class="content-grid">
-                <div class="main-side">
-                    <div class="card">
-                        <h1 style="font-size:38px; font-weight:900; margin-bottom:5px;">${car.brand} ${car.model}</h1>
-                        <p style="color:#64748b; font-weight:700; font-size:18px;">Modellår: ${car.year} • ${car.mileage} mil</p>
-                        <div class="price-big">${Number(car.price).toLocaleString()} kr</div>
-                        
-                        <div class="full-specs-grid">
-                            <div class="spec-item"><span class="spec-label">Drivmedel</span><span>${car.fuel}</span></div>
-                            <div class="spec-item"><span class="spec-label">Växellåda</span><span>${car.transmission || car.gearbox}</span></div>
-                            <div class="spec-item"><span class="spec-label">Drivning</span><span>${car.drive || '-'}</span></div>
-                            <div class="spec-item"><span class="spec-label">Hästkrafter</span><span>${car.hp || '-'} hk</span></div>
-                            <div class="spec-item"><span class="spec-label">Årsskatt</span><span>${car.tax || '-'} kr</span></div>
-                            <div class="spec-item"><span class="spec-label">Ägare</span><span>${car.owners || '-'} st</span></div>
-                            <div class="spec-item"><span class="spec-label">Färg</span><span>${car.color || '-'}</span></div>
-                            <div class="spec-item"><span class="spec-label">Besiktigad till</span><span>${car.besiktning || '-'}</span></div>
-                            <div class="spec-item"><span class="spec-label">Säten</span><span>${car.seats || '-'}</span></div>
-                            <div class="spec-item"><span class="spec-label">Karosseri</span><span>${car.karosseri || '-'}</span></div>
+                <div class="content-grid">
+                    <div class="main-side">
+                        <div class="card">
+                            <h1 style="font-size:38px; font-weight:900;">${car.brand} ${car.model}</h1>
+                            <p style="color:#64748b; font-weight:700;">Modellår: ${car.year} • ${car.mileage} mil</p>
+                            <div class="price-big">${Number(car.price).toLocaleString()} kr</div>
+                            <div class="full-specs-grid">
+                                <div class="spec-item"><span>Årsmodell</span><span>${car.year}</span></div>
+                                <div class="spec-item"><span>Drivmedel</span><span>${car.fuel}</span></div>
+                                <div class="spec-item"><span>Växellåda</span><span>${car.transmission}</span></div>
+                                <div class="spec-item"><span>Hästkrafter</span><span>${car.hp || '-'} hk</span></div>
+                                <div class="spec-item"><span>Årsskatt</span><span>${car.tax || '-'} kr</span></div>
+                                <div class="spec-item"><span>Färg</span><span>${car.color || '-'}</span></div>
+                                <div class="spec-item"><span>Karosseri</span><span>${car.karosseri || '-'}</span></div>
+                                <div class="spec-item"><span>Besiktigad</span><span>${car.besiktning || '-'}</span></div>
+                            </div>
                         </div>
-
-                        <div style="margin-top:30px; border-top:1px solid #f1f5f9; padding-top:25px;">
-                            <h4 style="text-transform:uppercase; font-size:11px; color:#94a3b8; margin-bottom:15px; font-weight:900; letter-spacing:1px;">Utrustning & Säkerhet</h4>
-                            ${(car.features || []).map(f => `<span class="tech-pill">${f}</span>`).join('')}
+                        <div class="card">
+                            <h3>Beskrivning</h3>
+                            <p style="white-space: pre-wrap; line-height:1.8;">${car.description}</p>
                         </div>
                     </div>
-                    
-                    <div class="card">
-                        <h3 style="margin-bottom:20px; font-weight:900; font-size:20px;">Säljarens beskrivning</h3>
-                        <p style="white-space: pre-wrap; line-height:1.8; color:#334155; font-size:15px;">${car.description}</p>
+                    <div class="info-side">
+                        <div class="card" style="background:var(--dark); color:white; text-align:center;">
+                            <i class="fa-solid fa-shield-check" style="font-size:40px; color:var(--primary); margin-bottom:15px;"></i>
+                            <h3>Säker affär</h3>
+                            <p style="font-size:13px; color:#94a3b8;">Kontrollera historik och servicebok.</p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="info-side">
-                    <div class="card" style="text-align:center; position:sticky; top:100px; background:var(--dark); color:white;">
-                        <i class="fa-solid fa-shield-check" style="font-size:45px; color:var(--primary); margin-bottom:15px;"></i>
-                        <h3 style="margin-bottom:10px;">Intresserad?</h3>
-                        <p style="font-size:13px; color:#94a3b8; line-height:1.5;">Gör en trygg affär genom att skicka ett meddelande direkt till säljaren.</p>
-                        <button class="btn-msg-small" style="width:100%; margin-top:20px; padding:18px; justify-content:center; background:var(--primary);" onclick="location.href='messages.html?sellerId=${car.sellerId}&carId=${carId}'">
-                             BOKA VISNING
-                        </button>
+                <div class="footer-legal">
+                    <div class="saker-affar">
+                        <h4>Viktig information</h4>
+                        <p>Kontrollera alltid fordonets mätarställning och servicebok innan betalning.</p>
                     </div>
-                </div>
-            </div>
+                    <div class="disclaimer" style="font-size:12px; color:#94a3b8;">
+                        Ansvarsfriskrivning: BILHK är en öppen plattform. All handel sker på egen risk.
+                    </div>
+                </div>`;
 
-            <div class="footer-legal">
-                <div class="saker-affar">
-                    <h4><i class="fa-solid fa-shield-halved"></i> Säker affär</h4>
-                    <p style="font-size:14px; line-height:1.6;">Kontrollera alltid fordonets historik, servicebok och mätarställning innan betalning. Vi rekommenderar att du träffar säljaren på en säker plats.</p>
-                </div>
-                <div class="disclaimer">
-                    <strong>Ansvarsfriskrivning:</strong> BILHK är en öppen plattform. Vi ansvarar ej för fordons skick eller säljarnas identitet. All handel sker på egen risk. Läs våra fullständiga villkor för mer information.
-                </div>
-            </div>`;
-
-        // تفعيل ميزة عرض الصور بملء الشاشة مع دعم اللمس والتحريك
-        const lightbox = new PhotoSwipeLightbox({
-            gallery: '#carGallery',
-            children: 'a',
-            pswpModule: () => import('https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.esm.min.js')
-        });
-        lightbox.init();
+            const lightbox = new PhotoSwipeLightbox({
+                gallery: '#carGallery',
+                children: 'a',
+                pswpModule: () => import('https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.esm.min.js')
+            });
+            lightbox.init();
+        } catch (e) { container.innerHTML = "Error: " + e.message; }
     }
-    loadData();
+    loadFullData(); // استدعاء الدالة الصحيحة
 </script>
 </body>
 </html>
