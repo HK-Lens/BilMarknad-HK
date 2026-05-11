@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Detaljer | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -14,11 +14,11 @@
         header { background: white; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 900px) { .container { grid-template-columns: 1.6fr 1fr; } }
-        .main-card { background: white; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); }
+        .gallery-card { background: white; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); }
         .main-img { width: 100%; height: 450px; object-fit: contain; background: #000; }
         .sidebar-card { background: white; padding: 25px; border-radius: 24px; border: 1px solid var(--border); position: sticky; top: 20px; }
         .price { font-size: 32px; font-weight: 900; color: var(--primary); margin: 15px 0; }
-        .btn-action { width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; transition: 0.3s; margin-bottom: 12px; }
+        .btn-action { width: 100%; padding: 18px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; transition: 0.3s; margin-bottom: 12px; }
         .btn-msg { background: var(--dark); color: white; }
         .btn-fav { background: white; border: 2px solid var(--border); color: #64748b; }
         .btn-fav.active { color: var(--primary); border-color: var(--primary); background: #fff7ed; }
@@ -29,7 +29,7 @@
     <a href="index.html" style="text-decoration:none; font-size:24px; font-weight:900; color:var(--dark);">BIL<span style="color:var(--primary);">HK</span></a>
 </header>
 <div class="container">
-    <div class="main-card">
+    <div class="gallery-card">
         <img id="activeImg" src="" class="main-img">
         <div style="padding:30px;"><h2 style="margin-bottom:15px; font-weight:900;">Beskrivning</h2><p id="carDesc" style="white-space:pre-line; color:#475569; line-height:1.7;"></p></div>
     </div>
@@ -37,7 +37,7 @@
         <div class="sidebar-card">
             <h1 id="carTitle" style="font-weight:900;">Laddar...</h1>
             <div id="carPrice" class="price">0 kr</div>
-            <button id="chatBtn" class="btn-action btn-msg"><i class="fa-solid fa-comment-dots"></i> Kontakta Säljaren</button>
+            <button id="chatBtn" class="btn-action btn-msg"><i class="fa-solid fa-message"></i> Kontakta Säljaren</button>
             <button id="favBtn" class="btn-action btn-fav"><i class="fa-regular fa-heart" id="fIcon"></i> <span id="fText">Spara</span></button>
         </div>
     </div>
@@ -58,7 +58,7 @@
             carData = snap.data();
             document.getElementById('carTitle').innerText = `${carData.brand} ${carData.model}`;
             document.getElementById('carPrice').innerText = `${Number(carData.price).toLocaleString()} kr`;
-            document.getElementById('carDesc').innerText = carData.description || "";
+            document.getElementById('carDesc').innerText = carData.description || "Ingen beskrivning.";
             document.getElementById('activeImg').src = carData.images?.[0] || "";
             checkFavStatus();
         }
