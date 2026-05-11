@@ -11,34 +11,34 @@
         body { font-family: 'Inter', sans-serif; background: var(--bg); padding-bottom: 120px; color: var(--dark); }
         .content { padding: 25px 5%; max-width: 850px; margin: auto; }
         
-        .section-label { font-size: 11px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin: 35px 0 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 6px; }
+        .section-label { font-size: 11px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin: 30px 0 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 6px; }
         
         select, input { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; background: var(--light); font-size: 15px; outline: none; }
         
         /* تصحيح أيقونة الباص Shuttle Van */
         .kar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .kar-card { border: 2px solid var(--border); border-radius: 20px; padding: 22px 5px; text-align: center; cursor: pointer; transition: 0.3s; background: white; }
+        .kar-card { border: 2px solid var(--border); border-radius: 20px; padding: 20px 5px; text-align: center; cursor: pointer; transition: 0.3s; background: white; }
         .kar-card i { font-size: 30px; margin-bottom: 10px; color: #64748b; display: block; }
         .kar-card span { font-size: 11px; font-weight: 900; color: #64748b; text-transform: uppercase; }
-        .kar-card.active { border-color: var(--primary); background: #fff5eb; }
+        .kar-card.active { border-color: var(--primary); background: #fff5eb; box-shadow: 0 5px 15px rgba(245, 130, 32, 0.1); }
         .kar-card.active i, .kar-card.active span { color: var(--primary); }
 
         .range-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         
-        .tag-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-        .tag { padding: 12px 22px; border: 2px solid var(--border); border-radius: 50px; font-size: 13px; font-weight: 800; cursor: pointer; background: white; transition: 0.2s; }
+        .feature-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .tag { padding: 12px 20px; border: 2px solid var(--border); border-radius: 50px; font-size: 13px; font-weight: 800; cursor: pointer; background: white; transition: 0.2s; }
         .tag.active { background: var(--dark); color: white; border-color: var(--dark); }
 
-        .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 25px 5%; border-top: 2px solid var(--border); display: flex; gap: 15px; z-index: 1000; }
-        .btn-apply { flex: 2; padding: 22px; background: var(--primary); color: white; border-radius: 50px; border: none; font-weight: 900; font-size: 18px; box-shadow: 0 10px 25px rgba(245, 130, 32, 0.3); cursor: pointer; }
-        .btn-clear { flex: 1; padding: 22px; border: 2px solid var(--border); border-radius: 50px; font-weight: 800; background: white; cursor: pointer; }
+        .sticky-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 25px 5%; border-top: 2px solid var(--border); display: flex; gap: 12px; z-index: 1000; }
+        .btn-apply { flex: 2; padding: 20px; background: var(--primary); color: white; border-radius: 50px; border: none; font-weight: 900; font-size: 18px; box-shadow: 0 10px 25px rgba(245, 130, 32, 0.3); }
+        .btn-clear { flex: 1; padding: 20px; border: 2px solid var(--border); border-radius: 50px; font-weight: 800; background: white; }
     </style>
 </head>
 <body>
 
 <div class="content">
-    <h1 style="font-weight: 900; margin-bottom: 5px;">Djup Sökning (Filters)</h1>
-    <p style="color:#64748b; font-size: 16px;">Hitta fordonet med exakt rätt specifikation</p>
+    <h1 style="font-weight: 900; margin-bottom: 5px;">Avancerad Sökning</h1>
+    <p style="color:#64748b; font-size: 15px;">Filtrera marknaden efter dina exakta krav</p>
     
     <div class="section-label">Karosserityp</div>
     <div class="kar-grid">
@@ -52,29 +52,33 @@
     <select id="brand" onchange="updateModels()"><option value="all">Alla Märken</option></select>
     <select id="model"><option value="all">Alla Modeller</option></select>
 
-    <div class="section-label">Budget & Mil</div>
+    <div class="section-label">Pris & Mil</div>
     <div class="range-box">
-        <input type="number" id="minP" placeholder="Pris från">
-        <input type="number" id="maxP" placeholder="Pris till">
+        <input type="number" id="minP" placeholder="Pris från (SEK)">
+        <input type="number" id="maxP" placeholder="Pris till (SEK)">
+    </div>
+    <div class="range-box">
+        <input type="number" id="minM" placeholder="Mil från">
+        <input type="number" id="maxM" placeholder="Mil max">
     </div>
 
     <div class="section-label">Drivmedel & Växellåda (Essentials)</div>
-    <select id="fuel"><option value="all">Alla Drivmedel</option><option value="El">Elbil</option><option value="Hybrid">Laddhybrid</option><option value="Diesel">Diesel</option><option value="Bensin">Bensin</option></select>
-    <select id="gear"><option value="all">Alla Växellådor</option><option value="AT">Automatisk</option><option value="MT">Manuell</option></select>
-    <select id="drive"><option value="all">Alla Drivningar</option><option value="FWD">FWD</option><option value="RWD">RWD</option><option value="AWD">AWD/4WD</option></select>
+    <select id="fuel"><option value="all">Alla Drivmedel</option><option value="Bensin">Bensin</option><option value="Diesel">Diesel</option><option value="El">Elbil</option><option value="Hybrid">Laddhybrid</option></select>
+    <select id="gear"><option value="all">Alla Växellådor</option><option value="Automat">Automatisk</option><option value="Manuell">Manuell</option></select>
+    <select id="drive"><option value="all">Alla Drivningar</option><option value="FWD">Framhjulsdrift</option><option value="RWD">Bakhjulsdrift</option><option value="AWD">Fyrhjulsdrift</option></select>
 
     <div class="section-label">Avancerad Säkerhet & ADAS</div>
-    <div class="tag-group">
+    <div class="feature-tags">
         <div class="tag" onclick="tT('ACC', this)">Adaptiv Farthållare</div>
         <div class="tag" onclick="tT('AEB', this)">Autobroms</div>
         <div class="tag" onclick="tT('360Cam', this)">360° Kamera</div>
         <div class="tag" onclick="tT('LKA', this)">Filassistans</div>
         <div class="tag" onclick="tT('Dragkrok', this)">Dragkrok</div>
-        <div class="tag" onclick="tT('HUD', this)">Head-up Display</div>
+        <div class="tag" onclick="tT('Matrix', this)">Matrix LED</div>
     </div>
 </div>
 
-<div class="footer-nav">
+<div class="sticky-footer">
     <button class="btn-clear" onclick="location.reload()">Rensa allt</button>
     <button class="btn-apply" onclick="applyFilters()">VISA RESULTAT</button>
 </div>
@@ -91,14 +95,15 @@
         }
     };
 
-    let f = { kar: 'all', techs: [] };
+    let f = { kar: 'all', t: [] };
     window.setK = (v, e) => { document.querySelectorAll('.kar-card').forEach(i => i.classList.remove('active')); e.classList.add('active'); f.kar = v; };
-    window.tT = (v, e) => { e.classList.toggle('active'); const i = f.techs.indexOf(v); if(i > -1) f.techs.splice(i, 1); else f.t.push(v); };
+    window.tT = (v, e) => { e.classList.toggle('active'); const i = f.t.indexOf(v); if(i > -1) f.t.splice(i, 1); else f.t.push(v); };
 
     window.applyFilters = () => {
         const p = new URLSearchParams({
-            brand: bS.value, model: mS.value, kar: f.kar, techs: f.techs.join(','),
+            brand: bS.value, model: mS.value, kar: f.kar, techs: f.t.join(','),
             minP: document.getElementById('minP').value, maxP: document.getElementById('maxP').value,
+            minM: document.getElementById('minM').value, maxM: document.getElementById('maxM').value,
             fuel: document.getElementById('fuel').value, gear: document.getElementById('gear').value,
             drive: document.getElementById('drive').value
         });
