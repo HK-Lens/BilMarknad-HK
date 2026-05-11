@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatt | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -13,12 +13,11 @@
         .app-container { display: flex; flex: 1; overflow: hidden; max-width: 1400px; margin: 0 auto; width: 100%; background: white; }
         .sidebar { width: 320px; border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; }
         .chat-window { flex: 1; display: flex; flex-direction: column; background: #fdfdfd; }
-        @media (max-width: 768px) { .sidebar.hide-mobile { display: none !important; } .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 10; } .chat-window { display: none; } }
         .msg-display { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { padding: 12px 18px; border-radius: 18px; max-width: 80%; font-size: 15px; }
-        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
-        .received { align-self: flex-start; background: #e2e8f0; border-bottom-left-radius: 4px; }
-        .chat-item { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
+        .bubble { padding: 12px 18px; border-radius: 18px; max-width: 80%; }
+        .sent { align-self: flex-end; background: var(--primary); color: white; }
+        .received { align-self: flex-start; background: #e2e8f0; }
+        .chat-item { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
         .chat-item.active { background: #fff7ed; border-left: 4px solid var(--primary); }
     </style>
 </head>
@@ -28,14 +27,11 @@
 </header>
 <div class="app-container">
     <div class="sidebar" id="sidebarView">
-        <div style="padding:20px; font-weight:900; border-bottom:1px solid var(--border);">Dina Chattar</div>
+        <div style="padding:20px; font-weight:900; border-bottom:1px solid var(--border);">Meddelanden</div>
         <div id="chatList"></div>
     </div>
     <div class="chat-window" id="chatWindowView">
-        <div style="padding:15px; border-bottom:1px solid var(--border); background:white; display:flex; align-items:center;">
-            <button onclick="window.location.href='messages.html'" style="background:none; border:none; font-size:18px; margin-right:15px;"><i class="fa-solid fa-arrow-left"></i></button>
-            <div id="activeChatHeader" style="font-weight:800;">Välj en konversation</div>
-        </div>
+        <div style="padding:15px; border-bottom:1px solid var(--border); background:white; font-weight:800;" id="chatTitle">Välj chatt</div>
         <div class="msg-display" id="msgArea"></div>
         <div style="padding:15px; border-top:1px solid var(--border); display:flex; gap:10px; background:white;">
             <input type="text" id="msgInput" style="flex:1; padding:12px; border-radius:30px; border:1px solid var(--border); outline:none;" placeholder="Skriv..." disabled>
@@ -49,50 +45,47 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let user = null, activeRoom = null, tempChatData = null;
-    const urlParams = new URLSearchParams(window.location.search);
+    let user = null, activeRoom = null, tempChat = null;
+    const params = new URLSearchParams(window.location.search);
 
     onAuthStateChanged(auth, async (u) => { 
-        if(u) { user = u; loadRooms(); initIncoming(); } 
+        if(u) { user = u; loadRooms(); initChat(); } 
         else { window.location.href="login.html"; }
     });
 
-    async function initIncoming() {
-        const sellerId = urlParams.get('seller'), carId = urlParams.get('carId'), name = urlParams.get('name');
+    async function initChat() {
+        const sellerId = params.get('seller'), carId = params.get('carId'), name = params.get('name');
         if (sellerId && carId) {
             const roomId = [user.uid, sellerId].sort().join('_') + '_' + carId;
             const snap = await getDoc(doc(db, "chats", roomId));
             if (snap.exists()) openRoom(roomId, name);
-            else { activeRoom = roomId; tempChatData = { sellerId, carId, carName: name }; setupChatUI(name); }
+            else { activeRoom = roomId; tempChat = { sellerId, carId, carName: name }; setupUI(name); }
         }
     }
 
     function loadRooms() {
-        // الفلترة الصحيحة: جلب الغرف التي يشارك فيها المستخدم ولديها رسالة أخيرة
         const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid), orderBy("updatedAt", "desc"));
         onSnapshot(q, snap => {
             const list = document.getElementById('chatList'); list.innerHTML = "";
             snap.forEach(d => {
-                const r = d.data(); if (!r.lastMessage) return;
+                const r = d.data(); if(!r.lastMessage) return;
                 const div = document.createElement('div');
                 div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
-                const title = r.sellerId === user.uid ? `${r.carName} (Från: ${r.buyerName})` : r.carName;
-                div.innerHTML = `<strong>${title}</strong><br><small>${r.lastMessage}</small>`;
-                div.onclick = () => openRoom(d.id, title);
+                div.innerHTML = `<strong>${r.carName}</strong><br><small>${r.lastMessage}</small>`;
+                div.onclick = () => openRoom(d.id, r.carName);
                 list.appendChild(div);
             });
         });
     }
 
-    function setupChatUI(name) {
-        document.getElementById('activeChatHeader').innerText = name;
+    function setupUI(name) {
+        document.getElementById('chatTitle').innerText = name;
         document.getElementById('msgInput').disabled = false;
         document.getElementById('sendBtn').disabled = false;
-        document.getElementById('chatWindowView').classList.add('show-mobile');
     }
 
     window.openRoom = (id, name) => {
-        activeRoom = id; tempChatData = null; setupChatUI(name);
+        activeRoom = id; tempChat = null; setupUI(name);
         onSnapshot(query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc")), snap => {
             const area = document.getElementById('msgArea'); area.innerHTML = "";
             snap.forEach(d => {
@@ -108,19 +101,18 @@
     document.getElementById('sendBtn').onclick = async () => {
         const input = document.getElementById('msgInput'), text = input.value.trim();
         if(!text) return; input.value = "";
-        
-        // 💡 الجزء الحاسم: إنشاء الغرفة مع مصفوفة المشاركين الصحيحة (المشتري + البائع)
-        if (tempChatData) {
+
+        if (tempChat) {
             await setDoc(doc(db, "chats", activeRoom), {
-                carId: tempChatData.carId, carName: tempChatData.carName,
-                participants: [user.uid, tempChatData.sellerId],
-                sellerId: tempChatData.sellerId, buyerId: user.uid,
+                carId: tempChat.carId, carName: tempChat.carName,
+                participants: [user.uid, tempChat.sellerId],
+                sellerId: tempChat.sellerId, buyerId: user.uid,
                 buyerName: user.displayName || user.email.split('@')[0],
                 lastMessage: text, updatedAt: serverTimestamp()
             });
-            const { carName } = tempChatData; tempChatData = null; openRoom(activeRoom, carName);
+            const name = tempChat.carName; tempChat = null; openRoom(activeRoom, name);
         }
-        await addDoc(collection(db, `chats/${activeRoom}/messages`), { senderId: user.uid, text: text, createdAt: serverTimestamp() });
+        await addDoc(collection(db, `chats/${activeRoom}/messages`), { senderId: user.uid, text, createdAt: serverTimestamp() });
         await setDoc(doc(db, "chats", activeRoom), { lastMessage: text, updatedAt: serverTimestamp() }, { merge: true });
     };
 </script>
