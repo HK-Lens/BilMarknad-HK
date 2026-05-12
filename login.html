@@ -11,53 +11,108 @@
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        
         .auth-card { background: white; width: 100%; max-width: 440px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
-        .logo { text-align: center; margin-bottom: 30px; text-decoration: none; font-weight: 900; font-size: 32px; color: var(--dark); display: block; }
+        .logo { text-align: center; margin-bottom: 30px; display: block; text-decoration: none; font-weight: 900; font-size: 32px; color: var(--dark); }
         .logo span { color: var(--primary); }
+
         .tabs { display: flex; background: #f1f5f9; padding: 5px; border-radius: 14px; margin-bottom: 25px; }
         .tab { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; background: none; color: #64748b; }
         .tab.active { background: white; color: var(--dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
         .form-group { margin-bottom: 20px; }
         label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
-        input { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 14px; outline: none; font-size: 15px; background: #f9fafb; }
+        input { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 14px; outline: none; font-size: 15px; background: #f9fafb; transition: 0.2s; }
+        input:focus { border-color: var(--primary); background: white; }
+
+        .terms-check { font-size: 13px; color: #64748b; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; cursor: pointer; line-height: 1.4; }
+        .terms-check b { color: var(--primary); text-decoration: underline; }
+
         .btn-auth { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        .google-btn { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 14px; background: white; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 700; cursor: pointer; margin-top: 20px; }
+        .btn-auth:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        .google-btn { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 14px; background: white; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: 0.2s; }
+        .google-btn:hover { background: #f8fafc; }
+
+        /* Modal for Terms */
+        .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 24px; width: 90%; max-width: 500px; max-height: 70vh; overflow-y: auto; }
+        .btn-close { padding: 10px 25px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; float: right; margin-top: 20px; }
     </style>
 </head>
 <body>
+
 <div class="auth-card">
     <a href="index.html" class="logo">BIL<span>HK</span></a>
+    
     <div class="tabs">
-        <button class="tab active" id="tabP" onclick="setLoginMode('Privat')">Privatperson</button>
-        <button class="tab" id="tabF" onclick="setLoginMode('Foretag')">Företag</button>
+        <button class="tab active" id="tabP" onclick="switchLogin('Privat')">Privatperson</button>
+        <button class="tab" id="tabF" onclick="switchLogin('Foretag')">Företag</button>
     </div>
+
     <form id="loginForm">
         <div class="form-group"><label>E-post</label><input type="email" id="email" required></div>
-        <div class="form-group"><label>Lösenord</label><input type="password" id="pass" required></div>
-        <button type="submit" class="btn-auth">Logga in</button>
+        <div class="form-group"><label>Lösenord</label><input type="password" id="password" required></div>
+
+        <div class="terms-check">
+            <input type="checkbox" id="termsCheck" style="width:20px; height:20px;">
+            <span onclick="openModal()">Jag godkänner <b>Användarvillkor & Säkerhet</b></span>
+        </div>
+
+        <button type="submit" class="btn-auth" id="loginBtn" disabled>Logga in</button>
     </form>
-    <div id="googleSection">
-        <div style="text-align:center; margin:15px 0; font-size:12px; color:#cbd5e1;">ELLER</div>
-        <button class="google-btn" id="googleBtn"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Logga in med Google</button>
+
+    <div id="googleArea">
+        <div style="text-align:center; margin:15px 0; font-size:12px; color:#cbd5e1; font-weight: 800;">ELLER</div>
+        <button class="google-btn" id="googleBtn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Logga in med Google
+        </button>
     </div>
-    <p style="text-align:center; margin-top:25px; font-size:14px; color:#64748b;">Ny på BILHK? <a href="register.html" style="color:var(--primary); font-weight:800; text-decoration:none;">Skapa konto</a></p>
+
+    <p style="text-align:center; margin-top:25px; font-size:14px; color:#64748b;">
+        Ny på BILHK? <a href="register.html" style="color:var(--primary); font-weight:800; text-decoration:none;">Skapa konto</a>
+    </p>
 </div>
+
+<div id="termsModal" class="modal">
+    <div class="modal-content">
+        <h2 style="font-weight:900; margin-bottom:15px;">Säkerhet & Villkor</h2>
+        <div style="font-size:14px; color:#475569; line-height:1.6;">
+            <p>• BILHK är en oberoende teknisk plattform. Vi ansvarar inte för fordonens skick.</p>
+            <p>• Som användare ansvarar du själv för att verifiera motpartens identitet.</p>
+            <p>• Genom att logga in samtycker du till att följa svensk lag och våra säkerhetsrutiner.</p>
+        </div>
+        <button class="btn-close" onclick="closeModal()">Jag förstår</button>
+    </div>
+</div>
+
 <script type="module">
     import { auth } from './firebase-config.js';
     import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    window.setLoginMode = (mode) => {
-        document.getElementById('tabP').classList.toggle('active', mode === 'Privat');
-        document.getElementById('tabF').classList.toggle('active', mode === 'Foretag');
-        document.getElementById('googleSection').style.display = (mode === 'Privat') ? 'block' : 'none';
+
+    window.openModal = () => document.getElementById('termsModal').style.display = 'block';
+    window.closeModal = () => document.getElementById('termsModal').style.display = 'none';
+
+    document.getElementById('termsCheck').onchange = (e) => {
+        document.getElementById('loginBtn').disabled = !e.target.checked;
     };
+
+    window.switchLogin = (type) => {
+        document.getElementById('tabP').classList.toggle('active', type === 'Privat');
+        document.getElementById('tabF').classList.toggle('active', type === 'Foretag');
+        document.getElementById('googleArea').style.display = (type === 'Privat') ? 'block' : 'none';
+    };
+
     document.getElementById('loginForm').onsubmit = async (e) => {
         e.preventDefault();
         try {
-            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value);
+            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
             window.location.href = "index.html";
-        } catch (error) { Swal.fire('Fel', 'Felaktig e-post eller lösenord.', 'error'); }
+        } catch (error) { Swal.fire('Fel', 'Inloggning misslyckades.', 'error'); }
     };
+
     document.getElementById('googleBtn').onclick = async () => {
+        if(!document.getElementById('termsCheck').checked) return Swal.fire('Obs', 'Godkänn villkoren först', 'warning');
         try { await signInWithPopup(auth, new GoogleAuthProvider()); window.location.href = "index.html"; } catch (e) {}
     };
 </script>
