@@ -19,7 +19,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--light); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Banner */
         .dev-banner {
             background: var(--danger); color: white; padding: 12px; text-align: center;
             font-weight: 800; font-size: 14px; text-transform: uppercase;
@@ -55,7 +54,6 @@
         .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
         .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; }
 
-        /* معرض الصور المطور - مرن وليس 3x2 إجباري */
         .gallery-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
@@ -67,13 +65,12 @@
             overflow: hidden; 
             box-shadow: 0 10px 20px rgba(0,0,0,0.05); 
             background: #f1f5f9; 
-            position: relative;
         }
         .gallery-item img { 
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
-            transition: opacity 1.2s ease-in-out, transform 0.8s; 
+            transition: opacity 1.2s ease-in-out; 
             opacity: 1;
         }
 
@@ -83,18 +80,11 @@
         .container { flex: 1; padding: 0 6% 80px; }
         .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
 
-        /* Footer */
         footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; margin-top: auto; border-top: 4px solid var(--primary); }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto; }
         .disclaimer-box h4 { color: var(--white); margin-bottom: 15px; font-weight: 800; }
         .disclaimer-box p { font-size: 13px; line-height: 1.6; color: #cbd5e1; }
         .disclaimer-link { color: var(--primary); text-decoration: none; font-weight: 700; border-bottom: 1px solid var(--primary); }
-        
-        @media (max-width: 768px) {
-            .search-actions { flex-direction: column; }
-            .footer-grid { grid-template-columns: 1fr; text-align: center; }
-            .gallery-item { height: 220px; }
-        }
     </style>
 </head>
 <body>
@@ -146,8 +136,7 @@
 
 <div class="container">
     <h2 class="section-title" id="resultsTitle">Senaste Toppmodeller</h2>
-    <div id="featuredGallery" class="gallery-grid">
-        </div>
+    <div id="featuredGallery" class="gallery-grid"></div>
     <div id="carsGrid" class="cars-grid"></div>
 </div>
 
@@ -156,7 +145,7 @@
         <div class="disclaimer-box">
             <h4>Ansvarsfriskrivning</h4>
             <p>
-                BilMarknad-HK är en plattform för köp och försäljning. Vi ansvarar inte för felaktig information eller transaktioner mellan användare. 
+                BilMarknad-HK är en plattform för köp och försäljning. Vi ansvarار inte för felaktig information eller transaktioner mellan användare. 
                 Läs mer om vår <a href="terms.html" class="disclaimer-link">Säkerhet & Ansvarsfriskrivning</a>.
             </p>
         </div>
@@ -177,9 +166,8 @@
     const gallery = document.getElementById('featuredGallery');
     const carsGrid = document.getElementById('carsGrid');
     const resultsTitle = document.getElementById('resultsTitle');
-    let selectedType = "";
 
-    // 1. تعبئة الماركات والموديلات
+    // 1. القوائم المنسدلة
     Object.keys(carData).sort().forEach(b => {
         brandSelect.innerHTML += `<option value="${b}">${b}</option>`;
     });
@@ -192,28 +180,28 @@
         }
     };
 
-    // 2. إدارة معرض الصور (20 صورة مستقرة)
+    // 2. تحديث قائمة الصور (20 صورة مستقرة وشغالة 100%)
     const allCarImages = [
         'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800',
         'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800',
         'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800',
         'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800',
         'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1525609004556-c46c7d6cf0a3?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1542362567-b055002b9174?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1493238792060-6c51c9ad1764?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800',
         'https://images.unsplash.com/photo-1494905998402-395d579af36f?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1502877335914-2f9a9a341142?auto=format&fit=crop&w=800',
+        'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800',
         'https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&w=800',
         'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800',
         'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800',
         'https://images.unsplash.com/photo-1469285994282-454ceb49e63c?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1526726538690-5cbf95642cb8?auto=format&fit=crop&w=800',
         'https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1506469717960-433cebe3f181?auto=format&fit=crop&w=800'
+        'https://images.unsplash.com/photo-1506469717960-433cebe3f181?auto=format&fit=crop&w=800',
+        'https://images.unsplash.com/photo-1567818735868-e71b99932e29?auto=format&fit=crop&w=800',
+        'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=800',
+        'https://images.unsplash.com/photo-1502161739991-eea3d235bc58?auto=format&fit=crop&w=800',
+        'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=800',
+        'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800',
+        'https://images.unsplash.com/photo-1532581291347-9c39cf10a73c?auto=format&fit=crop&w=800',
+        'https://images.unsplash.com/photo-1514316454349-750a7fd3da3a?auto=format&fit=crop&w=800'
     ];
 
     let currentOffset = 0;
@@ -229,23 +217,22 @@
     }
 
     function rotateGallery() {
-        currentOffset = (currentOffset + 1) % allCarImages.length;
+        currentOffset = (currentOffset + 6) % allCarImages.length;
         for (let i = 0; i < 6; i++) {
             const img = document.getElementById(`gImg${i}`);
             const nextIndex = (currentOffset + i) % allCarImages.length;
-            
             img.style.opacity = 0;
             setTimeout(() => {
                 img.src = allCarImages[nextIndex];
                 img.style.opacity = 1;
-            }, 1000); // وقت التلاشي
+            }, 1000);
         }
     }
 
     initGallery();
-    setInterval(rotateGallery, 12000); // تبديل كل 12 ثانية
+    setInterval(rotateGallery, 12000);
 
-    // 3. إدارة المستخدم (تسجيل الخروج والإشعارات)
+    // 3. إدارة المستخدم والبحث
     onAuthStateChanged(auth, (user) => {
         const authStatus = document.getElementById('authStatusContainer');
         const bell = document.getElementById('notifBell');
@@ -256,7 +243,6 @@
                 <button id="logoutBtn" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer; font-size:13px; margin-left:10px;">Logga ut</button>
             `;
             document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
-
             onSnapshot(query(collection(db, "chats"), where("participants", "array-contains", user.uid)), snap => {
                 let unread = 0;
                 snap.forEach(d => { if(d.data().lastMessage) unread++; });
@@ -269,36 +255,27 @@
         }
     });
 
-    // 4. تنفيذ البحث
     document.getElementById('searchBtn').onclick = async () => {
         gallery.style.display = "none";
         carsGrid.style.display = "grid";
         resultsTitle.innerText = "Sökresultat";
         carsGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Hämtar bilar...</p>";
-        
-        try {
-            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(30));
-            const snap = await getDocs(q);
-            carsGrid.innerHTML = "";
-            let found = 0;
-            snap.forEach(doc => {
-                const car = doc.data();
-                if((!brandSelect.value || car.brand === brandSelect.value) && 
-                   (!modelSelect.value || car.model === modelSelect.value) && 
-                   (!selectedType || car.karosseri === selectedType)) {
-                    found++;
-                    carsGrid.innerHTML += `
-                        <div class="car-card" onclick="location.href='details.html?id=${doc.id}'">
-                            <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:180px; object-fit:cover;">
-                            <div style="padding:15px;">
-                                <h3 style="color:var(--primary); font-weight:900;">${Number(car.price).toLocaleString()} kr</h3>
-                                <p style="font-weight:700;">${car.brand} ${car.model}</p>
-                            </div>
-                        </div>`;
-                }
-            });
-            if(found === 0) carsGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga resultat.</p>";
-        } catch (e) { console.error(e); }
+        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(30));
+        const snap = await getDocs(q);
+        carsGrid.innerHTML = "";
+        let found = 0;
+        snap.forEach(doc => {
+            const car = doc.data();
+            if((!brandSelect.value || car.brand === brandSelect.value) && (!modelSelect.value || car.model === modelSelect.value)) {
+                found++;
+                carsGrid.innerHTML += `
+                    <div class="car-card" onclick="location.href='details.html?id=${doc.id}'">
+                        <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:180px; object-fit:cover;">
+                        <div style="padding:15px;"><h3 style="color:var(--primary); font-weight:900;">${Number(car.price).toLocaleString()} kr</h3><p style="font-weight:700;">${car.brand} ${car.model}</p></div>
+                    </div>`;
+            }
+        });
+        if(found === 0) carsGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga resultat.</p>";
     };
 
     window.checkAuthBeforeSell = () => {
@@ -309,7 +286,6 @@
     window.filterByType = (type, btn) => {
         document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        selectedType = type;
     };
 </script>
 </body>
