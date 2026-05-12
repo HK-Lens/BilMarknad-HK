@@ -19,7 +19,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--light); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Beta/Dev Banner */
         .dev-banner {
             background: var(--danger); color: white; padding: 10px; text-align: center;
             font-weight: 800; font-size: 13px; text-transform: uppercase;
@@ -40,7 +39,6 @@
         .hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 80px 6% 120px; text-align: center; color: white; }
         .hero h1 { font-size: 3rem; font-weight: 900; margin-bottom: 15px; letter-spacing: -1px; }
 
-        /* Deep Search Wrapper */
         .filter-wrapper { max-width: 1200px; margin: -60px auto 40px; padding: 0 20px; width: 100%; }
         .filter-card { background: var(--white); padding: 35px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid var(--border); }
         
@@ -167,7 +165,6 @@
     <div class="section-header">
         <h2 class="section-title" id="gridTitle">Senaste inkomna bilar</h2>
     </div>
-    
     <div id="carsGrid" class="cars-grid"></div>
 </div>
 
@@ -175,7 +172,7 @@
     <div class="footer-grid">
         <div class="disclaimer-box">
             <h4>Ansvarsfriskrivning</h4>
-            <p>BilMarknad-HK är en teknisk plattform som underlättar köپ och försäljning av fordon i Sverige. Vi ansvarar inte för fordonens mekaniska skick eller lagligheten i dokumentationen. Vi rekommenderar alltid en noggrann inspektion innan köp.</p>
+            <p>BilMarknad-HK är en teknisk plattform som underlättar köp och försäljning av fordon i Sverige. Vi ansvarar inte för fordonens mekaniska skick eller lagligheten i dokumentationen. Vi rekommenderar alltid en noggrann inspektion innan köp.</p>
             <p style="margin-top:15px;"><a href="terms.html" class="disclaimer-link">Säkerhet & Användarvillkor</a></p>
         </div>
         <div style="text-align: right;">
@@ -195,7 +192,6 @@
     const modelSelect = document.getElementById('modelSelect');
     const carsGrid = document.getElementById('carsGrid');
 
-    // Populate Brands
     Object.keys(carData).sort().forEach(b => brandSelect.innerHTML += `<option value="${b}">${b}</option>`);
 
     brandSelect.onchange = () => {
@@ -205,7 +201,6 @@
         }
     };
 
-    // User Auth Management
     onAuthStateChanged(auth, (user) => {
         const container = document.getElementById('authStatusContainer');
         if(user) {
@@ -220,7 +215,7 @@
     });
 
     async function loadLatestCars() {
-        carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Hämtar de senaste bilarna...</p>";
+        carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Hämtار de senaste bilarna...</p>";
         try {
             const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(8));
             const snap = await getDocs(q);
@@ -249,7 +244,6 @@
             const minP = document.getElementById('minPrice').value;
             const maxP = document.getElementById('maxPrice').value;
             const maxM = document.getElementById('maxMil').value;
-            const minY = document.getElementById('minYear').value;
             const fuel = document.getElementById('fuelType').value;
             const gear = document.getElementById('gearbox').value;
             const body = document.getElementById('bodyType').value;
@@ -257,18 +251,11 @@
             const color = document.getElementById('carColor').value;
             const tow = document.getElementById('towbar').value;
 
-            // Comprehensive Filtering Logic
-            if((!b || car.brand === b) && 
-               (!m || car.model === m) && 
-               (!minP || car.price >= Number(minP)) &&
-               (!maxP || car.price <= Number(maxP)) &&
-               (!maxM || car.mil <= Number(maxM)) &&
-               (!minY || car.year >= Number(minY)) &&
-               (!fuel || car.fuel === fuel) &&
-               (!gear || car.gearbox === gear) &&
-               (!body || car.bodyType === body) &&
-               (!drive || car.driveType === drive) &&
-               (!color || car.color === color) &&
+            if((!b || car.brand === b) && (!m || car.model === m) && 
+               (!minP || car.price >= Number(minP)) && (!maxP || car.price <= Number(maxP)) &&
+               (!maxM || car.mil <= Number(maxM)) && (!fuel || car.fuel === fuel) &&
+               (!gear || car.gearbox === gear) && (!body || car.bodyType === body) &&
+               (!drive || car.driveType === drive) && (!color || car.color === color) &&
                (!tow || car.towbar === tow)) {
                 
                 found++;
@@ -285,7 +272,7 @@
                     </div>`;
             }
         });
-        if(found === 0) carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Inga bilar hittades som matchar dina val.</p>";
+        if(found === 0) carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Inga bilar hittades.</p>";
     }
 
     window.resetFilters = () => {
