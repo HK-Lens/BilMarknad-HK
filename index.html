@@ -40,8 +40,10 @@
         .hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 80px 6% 120px; text-align: center; color: white; }
         .hero h1 { font-size: 3rem; font-weight: 900; margin-bottom: 15px; letter-spacing: -1px; }
 
+        /* Deep Search Wrapper */
         .filter-wrapper { max-width: 1200px; margin: -60px auto 40px; padding: 0 20px; width: 100%; }
         .filter-card { background: var(--white); padding: 35px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid var(--border); }
+        
         .filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
         .filter-group label { font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; display: block; }
         input, select { padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: #f1f5f9; font-size: 14px; outline: none; width: 100%; color: var(--dark); transition: 0.2s; }
@@ -49,7 +51,7 @@
 
         .search-actions { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
         .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(245, 130, 32, 0.2); }
-        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; }
+        .btn-reset { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; }
 
         .container { flex: 1; padding: 0 6% 80px; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
@@ -96,15 +98,66 @@
         <div class="filter-grid">
             <div class="filter-group"><label>Märke</label><select id="brandSelect"><option value="">Alla märken</option></select></div>
             <div class="filter-group"><label>Modell</label><select id="modelSelect"><option value="">Alla modeller</option></select></div>
-            <div class="filter-group"><label>Max Pris</label><input type="number" id="maxPrice" placeholder="Kr"></div>
             <div class="filter-group"><label>Min Pris</label><input type="number" id="minPrice" placeholder="Kr"></div>
-            <div class="filter-group"><label>Max Mil</label><input type="number" id="maxMil" placeholder="Mil"></div>
+            <div class="filter-group"><label>Max Pris</label><input type="number" id="maxPrice" placeholder="Kr"></div>
             <div class="filter-group"><label>Årsmodell (från)</label><input type="number" id="minYear" placeholder="ÅÅÅÅ"></div>
-            <div class="filter-group"><label>Drivmedel</label><select id="fuelType"><option value="">Alla</option><option value="Bensin">Bensin</option><option value="Diesel">Diesel</option><option value="El">El</option></select></div>
-            <div class="filter-group"><label>Växellåda</label><select id="gearbox"><option value="">Alla</option><option value="Automat">Automat</option><option value="Manuell">Manuell</option></select></div>
+            <div class="filter-group"><label>Max Mil</label><input type="number" id="maxMil" placeholder="Mil"></div>
+            <div class="filter-group">
+                <label>Drivmedel</label>
+                <select id="fuelType">
+                    <option value="">Alla</option>
+                    <option value="Bensin">Bensin</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="El">El</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Växellåda</label>
+                <select id="gearbox">
+                    <option value="">Alla</option>
+                    <option value="Automat">Automat</option>
+                    <option value="Manuell">Manuell</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Karosstyp</label>
+                <select id="bodyType">
+                    <option value="">Alla</option>
+                    <option value="SUV">SUV</option>
+                    <option value="Sedan">Sedan</option>
+                    <option value="Kombi">Kombi</option>
+                    <option value="Halvkombi">Halvkombi</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Drivning</label>
+                <select id="driveType">
+                    <option value="">Alla</option>
+                    <option value="2WD">2WD</option>
+                    <option value="4WD">4WD / AWD</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Färg</label>
+                <select id="carColor">
+                    <option value="">Alla färger</option>
+                    <option value="Svart">Svart</option>
+                    <option value="Vit">Vit</option>
+                    <option value="Grå">Grå</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Dragkrok</label>
+                <select id="towbar">
+                    <option value="">Alla</option>
+                    <option value="Ja">Ja</option>
+                    <option value="Nej">Nej</option>
+                </select>
+            </div>
         </div>
         <div class="search-actions">
-            <a href="filter.html" class="btn-deep">Avancerad Sökning</a>
+            <button class="btn-reset" onclick="resetFilters()">Nollställ</button>
             <button class="btn-results" id="searchBtn">Sök bilar nu</button>
         </div>
     </div>
@@ -115,15 +168,14 @@
         <h2 class="section-title" id="gridTitle">Senaste inkomna bilar</h2>
     </div>
     
-    <div id="carsGrid" class="cars-grid">
-        </div>
+    <div id="carsGrid" class="cars-grid"></div>
 </div>
 
 <footer>
     <div class="footer-grid">
         <div class="disclaimer-box">
             <h4>Ansvarsfriskrivning</h4>
-            <p>BilMarknad-HK är en teknisk plattform som underlättar köp och försäljning av fordon i Sverige. Vi ansvarar inte för fordonens mekaniska skick eller lagligheten i dokumentationen. Vi rekommenderar alltid en noggrann inspektion innan köp.</p>
+            <p>BilMarknad-HK är en teknisk plattform som underlättar köپ och försäljning av fordon i Sverige. Vi ansvarar inte för fordonens mekaniska skick eller lagligheten i dokumentationen. Vi rekommenderar alltid en noggrann inspektion innan köp.</p>
             <p style="margin-top:15px;"><a href="terms.html" class="disclaimer-link">Säkerhet & Användarvillkor</a></p>
         </div>
         <div style="text-align: right;">
@@ -135,7 +187,7 @@
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { collection, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { carData } from './cars-data.js';
 
@@ -143,7 +195,7 @@
     const modelSelect = document.getElementById('modelSelect');
     const carsGrid = document.getElementById('carsGrid');
 
-    // Populate Brands from external data
+    // Populate Brands
     Object.keys(carData).sort().forEach(b => brandSelect.innerHTML += `<option value="${b}">${b}</option>`);
 
     brandSelect.onchange = () => {
@@ -153,7 +205,7 @@
         }
     };
 
-    // Global Auth Watcher
+    // User Auth Management
     onAuthStateChanged(auth, (user) => {
         const container = document.getElementById('authStatusContainer');
         if(user) {
@@ -167,26 +219,23 @@
         }
     });
 
-    // Auto-load latest cars on page entry
     async function loadLatestCars() {
         carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Hämtar de senaste bilarna...</p>";
         try {
             const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(8));
             const snap = await getDocs(q);
             renderCars(snap);
-        } catch (e) { console.error("Initial load error:", e); }
+        } catch (e) { console.error(e); }
     }
 
-    // Search Execution
     document.getElementById('searchBtn').onclick = async () => {
         document.getElementById('gridTitle').innerText = "Sökresultat";
         carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Söker...</p>";
         try {
-            // General query to filter locally for speed, or customize Firestore query
-            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(24));
+            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(50));
             const snap = await getDocs(q);
             renderCars(snap, true);
-        } catch (e) { console.error("Search error:", e); }
+        } catch (e) { console.error(e); }
     };
 
     function renderCars(snap, filterActive = false) {
@@ -197,10 +246,31 @@
             const car = doc.data();
             const b = brandSelect.value;
             const m = modelSelect.value;
-            const p = document.getElementById('maxPrice').value;
+            const minP = document.getElementById('minPrice').value;
+            const maxP = document.getElementById('maxPrice').value;
+            const maxM = document.getElementById('maxMil').value;
+            const minY = document.getElementById('minYear').value;
+            const fuel = document.getElementById('fuelType').value;
+            const gear = document.getElementById('gearbox').value;
+            const body = document.getElementById('bodyType').value;
+            const drive = document.getElementById('driveType').value;
+            const color = document.getElementById('carColor').value;
+            const tow = document.getElementById('towbar').value;
 
-            // Simple client-side filtering logic
-            if((!b || car.brand === b) && (!m || car.model === m) && (!p || car.price <= Number(p))) {
+            // Comprehensive Filtering Logic
+            if((!b || car.brand === b) && 
+               (!m || car.model === m) && 
+               (!minP || car.price >= Number(minP)) &&
+               (!maxP || car.price <= Number(maxP)) &&
+               (!maxM || car.mil <= Number(maxM)) &&
+               (!minY || car.year >= Number(minY)) &&
+               (!fuel || car.fuel === fuel) &&
+               (!gear || car.gearbox === gear) &&
+               (!body || car.bodyType === body) &&
+               (!drive || car.driveType === drive) &&
+               (!color || car.color === color) &&
+               (!tow || car.towbar === tow)) {
+                
                 found++;
                 carsGrid.innerHTML += `
                     <div class="car-card animate__animated animate__fadeIn" onclick="location.href='details.html?id=${doc.id}'">
@@ -218,12 +288,17 @@
         if(found === 0) carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Inga bilar hittades som matchar dina val.</p>";
     }
 
+    window.resetFilters = () => {
+        document.querySelectorAll('.filter-group input, .filter-group select').forEach(el => el.value = "");
+        loadLatestCars();
+        document.getElementById('gridTitle').innerText = "Senaste inkomna bilar";
+    };
+
     window.handleSellClick = () => {
         if(auth.currentUser) location.href = "sell.html";
         else location.href = "login.html";
     };
 
-    // Run on startup
     loadLatestCars();
 </script>
 </body>
