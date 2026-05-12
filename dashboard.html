@@ -19,11 +19,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--light); color: var(--dark); }
 
-        .dev-banner {
-            background: var(--danger); color: white; padding: 10px; text-align: center;
-            font-weight: 800; font-size: 13px; text-transform: uppercase;
-        }
-
         header {
             background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center;
@@ -34,212 +29,189 @@
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
         .grid-layout { display: grid; grid-template-columns: 1fr 3fr; gap: 30px; }
 
-        /* Sidebar */
         .sidebar { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); height: fit-content; }
-        .sidebar h3 { margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
         .menu-item { display: block; padding: 12px 15px; color: var(--dark); text-decoration: none; border-radius: 10px; margin-bottom: 5px; font-weight: 600; transition: 0.3s; }
         .menu-item:hover, .menu-item.active { background: var(--primary); color: white; }
 
-        /* Main Content Cards */
         .card { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 30px; }
         .card-title { font-size: 20px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
-        .card-title i { color: var(--primary); }
 
-        /* Statistics UI */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .stat-box { background: #f1f5f9; padding: 20px; border-radius: 15px; text-align: center; }
-        .stat-box span { display: block; font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; }
-        .stat-box h2 { font-size: 28px; color: var(--primary); margin-top: 5px; }
+        .stat-box h2 { font-size: 26px; color: var(--primary); }
 
-        /* Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { text-align: left; padding: 12px; background: #f8fafc; font-size: 12px; color: #64748b; }
-        td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 600; }
+        /* Ads List Table */
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #eee; color: #64748b; font-size: 12px; text-transform: uppercase; }
+        td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
 
-        /* Form Styling */
+        .btn-action { padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-edit { background: #fef3c7; color: #92400e; margin-right: 5px; }
+        .btn-delete { background: #fee2e2; color: #b91c1c; }
+
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--primary); }
-        .btn-save { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .btn-save:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; }
+        .btn-save { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 800; cursor: pointer; }
 
         @media (max-width: 900px) { .grid-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<div class="dev-banner">Dashboard - Hantera ditt konto och dina annonser</div>
-
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;"><i class="fa-solid fa-arrow-left"></i> Tillbaka</a>
+    <nav>
+        <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Hem</a>
+    </nav>
 </header>
 
 <div class="container">
     <div class="grid-layout">
         <aside class="sidebar">
-            <h3>Min Meny</h3>
-            <a href="#stats" class="menu-item active"><i class="fa-solid fa-chart-line"></i> Statistik</a>
-            <a href="#profile" class="menu-item"><i class="fa-solid fa-user-pen"></i> Redigera profil</a>
-            <a href="my-account.html" class="menu-item"><i class="fa-solid fa-car"></i> Mina Annonser</a>
-            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
-            <a href="#" onclick="logout()" class="menu-item" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</a>
+            <a href="#stats" class="menu-item active">Statistik</a>
+            <a href="#ads" class="menu-item">Mina Annonser</a>
+            <a href="#settings" class="menu-item">Inställningar</a>
+            <button onclick="logout()" class="menu-item" style="width:100%; text-align:left; color:var(--danger); background:none; border:none; cursor:pointer;">Logga ut</button>
         </aside>
 
         <main>
-            <section id="stats" class="card">
-                <div class="card-title"><i class="fa-solid fa-chart-pie"></i> Annonsstatistik</div>
-                
+            <div id="stats" class="card">
+                <div class="card-title"><i class="fa-solid fa-chart-simple"></i> Översikt</div>
                 <div class="stats-grid">
-                    <div class="stat-box"><span>Totala Visningar</span><h2 id="totalViews">0</h2></div>
-                    <div class="stat-box"><span>Sparade som Favorit</span><h2 id="totalFavs">0</h2></div>
-                    <div class="stat-box"><span>Aktiva Annonser</span><h2 id="activeAds">0</h2></div>
+                    <div class="stat-box"><p>Visningar</p><h2 id="totalViews">0</h2></div>
+                    <div class="stat-box"><p>Favoriter</p><h2 id="totalFavs">0</h2></div>
+                    <div class="stat-box"><p>Annonser</p><h2 id="totalAds">0</h2></div>
                 </div>
+                <canvas id="mainChart" style="max-height: 250px;"></canvas>
+            </div>
 
-                <canvas id="statsChart" style="max-height: 300px; width: 100%;"></canvas>
+            <div id="ads" class="card">
+                <div class="card-title"><i class="fa-solid fa-car"></i> Mina Annonser</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fordon</th>
+                            <th>Visningar</th>
+                            <th>Favoriter</th>
+                            <th>Åtgärder</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adsTableBody">
+                        </tbody>
+                </table>
+            </div>
 
-                <div style="margin-top: 40px;">
-                    <h4 style="margin-bottom: 15px;">Detaljer per bil</h4>
-                    <table id="carStatsTable">
-                        <thead>
-                            <tr>
-                                <th>Bil</th>
-                                <th>Pris</th>
-                                <th>Visningar</th>
-                                <th>Favoriter</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="profile" class="card">
-                <div class="card-title"><i class="fa-solid fa-user-gear"></i> Personlig Information</div>
+            <div id="settings" class="card">
+                <div class="card-title"><i class="fa-solid fa-user-gear"></i> Profilinställningar</div>
                 <form id="profileForm">
-                    <div class="form-group">
-                        <label>Telefonnummer</label>
-                        <input type="text" id="userPhone" placeholder="T.ex 070 123 45 67">
-                    </div>
-                    <div class="form-group">
-                        <label>Adress</label>
-                        <input type="text" id="userAddress" placeholder="Gatunamn, Postnummer, Stad">
-                    </div>
-                    <div class="form-group">
-                        <label>E-post (Endast visning)</label>
-                        <input type="email" id="userEmail" disabled style="background: #f1f5f9; cursor: not-allowed;">
-                    </div>
+                    <div class="form-group"><label>Telefon</label><input type="text" id="phoneField"></div>
+                    <div class="form-group"><label>Adress</label><input type="text" id="addressField"></div>
+                    <div class="form-group"><label>E-post</label><input type="text" id="emailField" disabled style="opacity: 0.6;"></div>
                     <button type="submit" class="btn-save">Spara ändringar</button>
                 </form>
-            </section>
+            </div>
         </main>
     </div>
 </div>
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { doc, getDoc, updateDoc, collection, query, where, getDocs, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    let chart;
+    let chartInstance = null;
 
     onAuthStateChanged(auth, async (user) => {
-        if (!user) {
-            window.location.href = "login.html";
-            return;
+        if (!user) { window.location.href = "login.html"; return; }
+        
+        // 1. Load Profile
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+            const data = userSnap.data();
+            document.getElementById('phoneField').value = data.phone || "";
+            document.getElementById('addressField').value = data.address || "";
+            document.getElementById('emailField').value = user.email;
         }
 
-        // 1. جلب بيانات المستخدم الشخصية
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-            const data = userDoc.data();
-            document.getElementById('userPhone').value = data.phone || "";
-            document.getElementById('userAddress').value = data.address || "";
-            document.getElementById('userEmail').value = user.email;
-        }
-
-        // 2. جلب إحصائيات السيارات التابعة للمستخدم
-        fetchCarStats(user.uid);
+        // 2. Load Ads & Stats
+        loadAdsData(user.uid);
     });
 
-    async function fetchCarStats(uid) {
-        const q = query(collection(db, "cars"), where("sellerId", "==", uid));
+    async function loadAdsData(uid) {
+        const q = query(collection(db, "cars"), where("sellerId", "==", uid), orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
         
-        const tableBody = document.querySelector("#carStatsTable tbody");
-        tableBody.innerHTML = "";
+        const table = document.getElementById('adsTableBody');
+        table.innerHTML = "";
         
-        let totalViews = 0;
-        let totalFavs = 0;
-        let carLabels = [];
-        let viewData = [];
-        let favData = [];
+        let tViews = 0, tFavs = 0;
+        let labels = [], viewsData = [];
 
-        snap.forEach(doc => {
-            const car = doc.data();
+        snap.forEach(adDoc => {
+            const car = adDoc.data();
+            const carId = adDoc.id;
             const views = car.views || 0;
-            const favs = car.favoritedBy ? car.favoritedBy.length : 0; // نعتبر أن الإعجابات مصفوفة يوزرات
+            const favs = car.favoritesCount || 0;
 
-            totalViews += views;
-            totalFavs += favs;
+            tViews += views;
+            tFavs += favs;
+            labels.push(car.model);
+            viewsData.push(views);
 
-            carLabels.push(`${car.brand} ${car.model}`);
-            viewData.push(views);
-            favData.push(favs);
-
-            tableBody.innerHTML += `
+            table.innerHTML += `
                 <tr>
-                    <td>${car.brand} ${car.model}</td>
-                    <td>${Number(car.price).toLocaleString()} kr</td>
-                    <td style="color:var(--primary)">${views}</td>
-                    <td style="color:#9d50bb">${favs}</td>
+                    <td><b>${car.brand} ${car.model}</b></td>
+                    <td>${views}</td>
+                    <td>${favs}</td>
+                    <td>
+                        <a href="edit.html?id=${carId}" class="btn-action btn-edit"><i class="fa-solid fa-pen"></i></a>
+                        <button onclick="deleteAd('${carId}')" class="btn-action btn-delete"><i class="fa-solid fa-trash"></i></button>
+                    </td>
                 </tr>
             `;
         });
 
-        document.getElementById('totalViews').innerText = totalViews;
-        document.getElementById('totalFavs').innerText = totalFavs;
-        document.getElementById('activeAds').innerText = snap.size;
+        document.getElementById('totalViews').innerText = tViews;
+        document.getElementById('totalFavs').innerText = tFavs;
+        document.getElementById('totalAds').innerText = snap.size;
 
-        renderChart(carLabels, viewData, favData);
+        renderChart(labels, viewsData);
     }
 
-    function renderChart(labels, views, favs) {
-        const ctx = document.getElementById('statsChart').getContext('2d');
-        if (chart) chart.destroy();
-        
-        chart = new Chart(ctx, {
+    function renderChart(labels, data) {
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        if (chartInstance) chartInstance.destroy();
+        chartInstance = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
-                datasets: [
-                    { label: 'Visningar', data: views, backgroundColor: '#f58220' },
-                    { label: 'Favoriter', data: favs, backgroundColor: '#9d50bb' }
-                ]
+                datasets: [{ label: 'Visningar per bil', data: data, backgroundColor: '#f58220' }]
             },
-            options: { responsive: true, plugins: { legend: { position: 'top' } } }
+            options: { responsive: true, plugins: { legend: { display: false } } }
         });
     }
 
-    // 3. حفظ تعديلات الملف الشخصي
-    document.getElementById('profileForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const user = auth.currentUser;
-        try {
-            await updateDoc(doc(db, "users", user.uid), {
-                phone: document.getElementById('userPhone').value,
-                address: document.getElementById('userAddress').value
-            });
-            Swal.fire("Sparat!", "Din profil har uppdaterats.", "success");
-        } catch (error) {
-            Swal.fire("Fel", "Kunde inte spara informationen.", "error");
+    window.deleteAd = async (id) => {
+        const confirm = await Swal.fire({ title: 'Radera?', text: 'Vill du verkligen ta bort annonsen?', icon: 'warning', showCancelButton: true });
+        if (confirm.isConfirmed) {
+            await deleteDoc(doc(db, "cars", id));
+            location.reload();
         }
     };
 
-    window.logout = () => signOut(auth).then(() => location.href="login.html");
-</script>
+    document.getElementById('profileForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const user = auth.currentUser;
+        await updateDoc(doc(db, "users", user.uid), {
+            phone: document.getElementById('phoneField').value,
+            address: document.getElementById('addressField').value
+        });
+        Swal.fire('Sparat!', 'Din profil har uppdaterats.', 'success');
+    };
 
+    window.logout = () => signOut(auth).then(() => location.href = "login.html");
+</script>
 </body>
 </html>
