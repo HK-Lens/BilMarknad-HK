@@ -72,8 +72,13 @@
         input, select { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f1f5f9; font-size: 14px; outline: none; width: 100%; color: var(--dark); }
 
         .search-actions { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
-        .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; }
-        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; line-height: 1.2; display: flex; align-items: center; justify-content: center; }
+        /* زر إظهار النتائج - اللون الأساسي */
+        .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-results:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        
+        /* زر البحث العميق - لون هادئ */
+        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .btn-deep:hover { background: #cbd5e1; }
 
         .container { flex: 1; padding: 0 6% 80px; }
         .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
@@ -168,7 +173,7 @@
     
     let selectedType = "";
 
-    // 1. تسجيل الدخول والإشعارات
+    // 1. إدارة تسجيل الدخول والإشعارات
     onAuthStateChanged(auth, (user) => {
         if (user) {
             notifBell.style.display = 'block';
@@ -191,7 +196,7 @@
         }
     });
 
-    // 2. تعبئة قوائم الماركات
+    // 2. تعبئة الماركات والموديلات
     const brands = Object.keys(carData).sort();
     brands.forEach(b => {
         const opt = document.createElement('option');
@@ -210,7 +215,7 @@
         }
     };
 
-    // 3. زر البيع
+    // 3. حماية زر البيع
     window.checkAuthBeforeSell = () => {
         if (auth.currentUser) { window.location.href = "sell.html"; }
         else {
@@ -224,7 +229,7 @@
         }
     };
 
-    // 4. معرض الصور
+    // 4. معرض الصور المتزامن
     const galleryImages = [
         'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800',
         'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800',
@@ -245,7 +250,6 @@
         selected.forEach((src, i) => {
             const item = document.createElement('div');
             item.className = 'gallery-item animate__animated animate__fadeIn';
-            item.style.animationDelay = `${i * 0.1}s`;
             const img = new Image();
             img.src = src;
             img.onload = () => img.classList.add('loaded');
@@ -254,7 +258,7 @@
         });
     }
 
-    // 5. منطق زر Visa Resultat (يفتح صفحة الفلتر بالبيانات المحددة)
+    // 5. تعديل منطق زر إظهار النتيجة (Visa Resultat)
     document.querySelectorAll('.type-btn').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
@@ -275,7 +279,8 @@
             minYear: document.getElementById('minYear').value,
             type: selectedType
         });
-        // يتم توجيه المستخدم لصفحة النتائج filter.html مع المعايير
+        
+        // التوجه إلى صفحة الفلتر مع إرسال القيم؛ هناك سيتم جلب السيارات المطابقة فقط
         window.location.href = `filter.html?${params.toString()}`;
     };
 
