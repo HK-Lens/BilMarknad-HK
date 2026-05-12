@@ -12,14 +12,8 @@
 
     <style>
         :root {
-            --primary: #f58220;
-            --primary-hover: #e07210;
-            --dark: #0f172a;
-            --light: #f8fafc;
-            --border: #e2e8f0;
-            --white: #ffffff;
-            --danger: #ef4444;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --primary: #f58220; --primary-hover: #e07210; --dark: #0f172a;
+            --light: #f8fafc; --border: #e2e8f0; --white: #ffffff; --danger: #ef4444;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -30,9 +24,7 @@
             font-weight: 800; font-size: 14px; text-transform: uppercase;
             animation: pulse-danger 2s infinite; position: relative; z-index: 2000;
         }
-        @keyframes pulse-danger {
-            0% { background-color: #ef4444; } 50% { background-color: #b91c1c; } 100% { background-color: #ef4444; }
-        }
+        @keyframes pulse-danger { 0% { background-color: #ef4444; } 50% { background-color: #b91c1c; } 100% { background-color: #ef4444; } }
 
         header {
             background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
@@ -41,68 +33,52 @@
         }
         .logo { font-size: 1.8rem; font-weight: 900; color: var(--dark); text-decoration: none; }
         .logo span { color: var(--primary); }
-        
         .nav-links { display: flex; align-items: center; gap: 20px; }
         .btn-sell { background: var(--primary); color: white !important; padding: 10px 25px; border-radius: 50px; border: none; cursor: pointer; font-weight: 800; transition: 0.3s; text-decoration: none; }
 
         .notif-wrapper { position: relative; cursor: pointer; margin-right: 10px; }
-        .notif-badge {
-            position: absolute; top: -5px; right: -5px; background: var(--danger);
-            color: white; border-radius: 50%; width: 18px; height: 18px;
-            font-size: 10px; display: none; align-items: center; justify-content: center;
-            border: 2px solid white; font-weight: 900;
-        }
+        .notif-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: none; align-items: center; justify-content: center; border: 2px solid white; font-weight: 900; }
 
-        .hero {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            padding: 50px 6% 90px; text-align: center; color: white;
-        }
+        .hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 50px 6% 90px; text-align: center; color: white; }
         .car-types-container { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 25px; }
-        .type-btn {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            color: white; padding: 12px 20px; border-radius: 50px; cursor: pointer;
-            font-size: 13px; font-weight: 600; transition: 0.3s;
-        }
+        .type-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px 20px; border-radius: 50px; cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.3s; }
         .type-btn.active { background: var(--primary); border-color: var(--primary); }
 
         .filter-wrapper { max-width: 1200px; margin: -45px auto 40px; padding: 0 20px; width: 100%; }
-        .filter-card { background: var(--white); padding: 35px; border-radius: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .filter-card { background: var(--white); padding: 35px; border-radius: 24px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border: 1px solid var(--border); }
         .filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .filter-group label { font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; display: block; }
         input, select { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f1f5f9; font-size: 14px; outline: none; width: 100%; color: var(--dark); }
 
         .search-actions { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
-        /* زر إظهار النتائج - اللون الأساسي */
         .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        .btn-results:hover { background: var(--primary-hover); transform: translateY(-2px); }
-        
-        /* زر البحث العميق - لون هادئ */
-        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        .btn-deep:hover { background: #cbd5e1; }
+        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; }
+
+        /* حاوية الصور 3x2 */
+        .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 300px); gap: 20px; }
+        .gallery-item { border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* حاوية النتائج الحقيقية (تكون مخفية في البداية) */
+        .cars-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.3s; }
+        .car-card:hover { transform: translateY(-5px); }
 
         .container { flex: 1; padding: 0 6% 80px; }
         .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
+
+        footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; margin-top: auto; }
         
-        .gallery-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 300px); gap: 20px;
-        }
-        .gallery-item { width: 100%; height: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s ease; opacity: 0; }
-        .gallery-item img.loaded { opacity: 1; }
-
-        footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; }
-        .legal-box { margin-top: 50px; text-align: center; font-size: 12px; }
-
         @media (max-width: 900px) {
             .filter-grid { grid-template-columns: repeat(2, 1fr); }
-            .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 220px); }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 200px); }
             .search-actions { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
-<div class="dev-banner">Sidan är under uppbyggnad - Funktioner och annonser är begränsade just nu</div>
+<div class="dev-banner">Sidan är under uppbyggnad</div>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
@@ -120,14 +96,11 @@
 
 <section class="hero">
     <h1>Hitta din nästa bil snabbt och enkelt</h1>
-    <div class="car-types-container" id="bodyTypes">
-        <button class="type-btn active" data-type="">Alla bilar</button>
-        <button class="type-btn" data-type="SUV">SUV / 4x4</button>
-        <button class="type-btn" data-type="Van">Skåpbil</button>
-        <button class="type-btn" data-type="Sedan">Sedan</button>
-        <button class="type-btn" data-type="Kombi">Kombi</button>
-        <button class="type-btn" data-type="Småbil">Småbil</button>
-        <button class="type-btn" data-type="Cab">Cabriolet</button>
+    <div class="car-types-container">
+        <button class="type-btn active" onclick="filterByType('', this)">Alla bilar</button>
+        <button class="type-btn" onclick="filterByType('SUV', this)">SUV</button>
+        <button class="type-btn" onclick="filterByType('Sedan', this)">Sedan</button>
+        <button class="type-btn" onclick="filterByType('Kombi', this)">Kombi</button>
     </div>
 </section>
 
@@ -135,13 +108,13 @@
     <div class="filter-card">
         <div class="filter-grid">
             <div class="filter-group"><label>Märke</label><select id="brandSelect"><option value="">Alla märken</option></select></div>
-            <div class="filter-group"><label>Modell</label><select id="modelSelect"><option value="">Välj märke först</option></select></div>
-            <div class="filter-group"><label>Högsta Pris</label><input type="number" id="maxPrice"></div>
-            <div class="filter-group"><label>Lägsta Pris</label><input type="number" id="minPrice"></div>
-            <div class="filter-group"><label>Mest Mil</label><input type="number" id="maxMil"></div>
-            <div class="filter-group"><label>Minst Mil</label><input type="number" id="minMil"></div>
-            <div class="filter-group"><label>Nyaste Årsmodell</label><input type="number" id="maxYear"></div>
-            <div class="filter-group"><label>Äldsta Årsmodell</label><input type="number" id="minYear"></div>
+            <div class="filter-group"><label>Modell</label><select id="modelSelect"><option value="">Välj märke</option></select></div>
+            <div class="filter-group"><label>Max Pris</label><input type="number" id="maxPrice"></div>
+            <div class="filter-group"><label>Min Pris</label><input type="number" id="minPrice"></div>
+            <div class="filter-group"><label>Max Mil</label><input type="number" id="maxMil"></div>
+            <div class="filter-group"><label>Min Mil</label><input type="number" id="minMil"></div>
+            <div class="filter-group"><label>Nyaste År</label><input type="number" id="maxYear"></div>
+            <div class="filter-group"><label>Äldsta År</label><input type="number" id="minYear"></div>
         </div>
         <div class="search-actions">
             <a href="filter.html" class="btn-deep">Djup Sökning</a>
@@ -151,141 +124,137 @@
 </div>
 
 <div class="container">
-    <h2 class="section-title">Senaste Toppmodeller</h2>
+    <h2 class="section-title" id="resultsTitle">Senaste Toppmodeller</h2>
+    
     <div id="featuredGallery" class="gallery-grid"></div>
+
+    <div id="carsGrid" class="cars-grid"></div>
 </div>
 
 <footer>
-    <div class="legal-box">&copy; 2026 BilMarknad-HK.</div>
+    <div style="text-align: center;">&copy; 2026 BilMarknad-HK.</div>
 </footer>
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, getDocs, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { carData } from './cars-data.js';
 
-    const authContainer = document.getElementById('authStatusContainer');
-    const notifBell = document.getElementById('notifBell');
-    const notifCount = document.getElementById('notifCount');
     const brandSelect = document.getElementById('brandSelect');
     const modelSelect = document.getElementById('modelSelect');
-    
+    const gallery = document.getElementById('featuredGallery');
+    const carsGrid = document.getElementById('carsGrid');
+    const resultsTitle = document.getElementById('resultsTitle');
     let selectedType = "";
 
-    // 1. إدارة تسجيل الدخول والإشعارات
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            notifBell.style.display = 'block';
-            authContainer.innerHTML = `
-                <a href="my-account.html" style="color: var(--primary); font-weight: 800; text-decoration:none;"><i class="fa-solid fa-circle-user"></i> Mitt Konto</a>
-                <a href="#" id="logoutBtn" style="color: #ef4444; font-size: 12px; margin-left:10px; text-decoration:none;">Logga ut</a>
-            `;
-            document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
-
-            const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
-            onSnapshot(q, (snap) => {
-                let unread = 0;
-                snap.forEach(d => { if(d.data().lastMessage) unread++; });
-                if(unread > 0) { notifCount.innerText = unread; notifCount.style.display = 'flex'; }
-                else { notifCount.style.display = 'none'; }
-            });
-        } else {
-            authContainer.innerHTML = `<a href="login.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Logga in</a>`;
-            notifBell.style.display = 'none';
-        }
-    });
-
-    // 2. تعبئة الماركات والموديلات
-    const brands = Object.keys(carData).sort();
-    brands.forEach(b => {
-        const opt = document.createElement('option');
-        opt.value = b; opt.textContent = b;
-        brandSelect.appendChild(opt);
+    // 1. تعبئة القوائم
+    Object.keys(carData).sort().forEach(b => {
+        brandSelect.innerHTML += `<option value="${b}">${b}</option>`;
     });
 
     brandSelect.onchange = () => {
         modelSelect.innerHTML = '<option value="">Alla modeller</option>';
-        if (carData[brandSelect.value]) {
+        if(carData[brandSelect.value]) {
             carData[brandSelect.value].sort().forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m; opt.textContent = m;
-                modelSelect.appendChild(opt);
+                modelSelect.innerHTML += `<option value="${m}">${m}</option>`;
             });
         }
     };
 
-    // 3. حماية زر البيع
-    window.checkAuthBeforeSell = () => {
-        if (auth.currentUser) { window.location.href = "sell.html"; }
-        else {
-            Swal.fire({
-                title: 'Logga in',
-                text: 'Du måste vara inloggad för att sälja en bil.',
-                icon: 'info',
-                confirmButtonText: 'Logga in',
-                showCancelButton: true
-            }).then(r => { if(r.isConfirmed) location.href='login.html'; });
+    // 2. معرض الصور المتزامن (3x2)
+    const galleryImages = [
+        'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600',
+        'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600',
+        'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600',
+        'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600',
+        'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600',
+        'https://images.unsplash.com/photo-1525609004556-c46c7d6cf0a3?w=600'
+    ];
+
+    function showGallery() {
+        gallery.innerHTML = "";
+        galleryImages.forEach(src => {
+            gallery.innerHTML += `<div class="gallery-item"><img src="${src}"></div>`;
+        });
+    }
+    showGallery();
+
+    // 3. دالة البحث الحقيقية (عند الضغط على Visa Resultat)
+    document.getElementById('searchBtn').onclick = async () => {
+        // تغيير الواجهة
+        gallery.style.display = "none";
+        carsGrid.style.display = "grid";
+        resultsTitle.innerText = "Sökresultat";
+        carsGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Laddar resultat...</p>";
+
+        try {
+            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(20));
+            const snap = await getDocs(q);
+            carsGrid.innerHTML = "";
+
+            let found = 0;
+            snap.forEach(doc => {
+                const car = doc.data();
+                
+                // فلترة برمجية دقيقة للنتائج
+                const matchBrand = !brandSelect.value || car.brand === brandSelect.value;
+                const matchModel = !modelSelect.value || car.model === modelSelect.value;
+                const matchType = !selectedType || car.karosseri === selectedType;
+
+                if(matchBrand && matchModel && matchType) {
+                    found++;
+                    carsGrid.innerHTML += `
+                        <div class="car-card" onclick="location.href='details.html?id=${doc.id}'">
+                            <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:180px; object-fit:cover;">
+                            <div style="padding:15px;">
+                                <h3 style="color:var(--primary); font-weight:900;">${Number(car.price).toLocaleString()} kr</h3>
+                                <p style="font-weight:700;">${car.brand} ${car.model}</p>
+                                <p style="font-size:12px; color:#64748b;">${car.year} | ${car.mileage} mil</p>
+                            </div>
+                        </div>`;
+                }
+            });
+
+            if(found === 0) carsGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga bilar matchade din sökning.</p>";
+
+        } catch (e) {
+            console.error(e);
+            carsGrid.innerHTML = "Ett fel uppstod.";
         }
     };
 
-    // 4. معرض الصور المتزامن
-    const galleryImages = [
-        'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800',
-        'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800',
-        'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800',
-        'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800',
-        'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800',
-        'https://images.unsplash.com/photo-1525609004556-c46c7d6cf0a3?w=800',
-        'https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=800',
-        'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800'
-    ];
-
-    function updateGallery() {
-        const gallery = document.getElementById('featuredGallery');
-        const now = new Date();
-        const start = now.getMinutes() % (galleryImages.length - 5);
-        const selected = galleryImages.slice(start, start + 6);
-        gallery.innerHTML = "";
-        selected.forEach((src, i) => {
-            const item = document.createElement('div');
-            item.className = 'gallery-item animate__animated animate__fadeIn';
-            const img = new Image();
-            img.src = src;
-            img.onload = () => img.classList.add('loaded');
-            item.appendChild(img);
-            gallery.appendChild(item);
-        });
-    }
-
-    // 5. تعديل منطق زر إظهار النتيجة (Visa Resultat)
-    document.querySelectorAll('.type-btn').forEach(btn => {
-        btn.onclick = () => {
-            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            selectedType = btn.dataset.type;
-        };
+    // 4. إدارة المستخدم والإشعارات
+    onAuthStateChanged(auth, (user) => {
+        const container = document.getElementById('authStatusContainer');
+        const bell = document.getElementById('notifBell');
+        if(user) {
+            bell.style.display = "block";
+            container.innerHTML = `<a href="my-account.html" style="text-decoration:none; font-weight:800; color:var(--primary);">Mitt Konto</a>`;
+            
+            // مراقبة الرسائل
+            const qChat = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
+            onSnapshot(qChat, snap => {
+                let unread = 0;
+                snap.forEach(d => { if(d.data().lastMessage) unread++; });
+                document.getElementById('notifCount').innerText = unread;
+                document.getElementById('notifCount').style.display = unread > 0 ? "flex" : "none";
+            });
+        } else {
+            container.innerHTML = `<a href="login.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Logga in</a>`;
+        }
     });
 
-    document.getElementById('searchBtn').onclick = () => {
-        const params = new URLSearchParams({
-            brand: brandSelect.value,
-            model: modelSelect.value,
-            maxPrice: document.getElementById('maxPrice').value,
-            minPrice: document.getElementById('minPrice').value,
-            maxMil: document.getElementById('maxMil').value,
-            minMil: document.getElementById('minMil').value,
-            maxYear: document.getElementById('maxYear').value,
-            minYear: document.getElementById('minYear').value,
-            type: selectedType
-        });
-        
-        // التوجه إلى صفحة الفلتر مع إرسال القيم؛ هناك سيتم جلب السيارات المطابقة فقط
-        window.location.href = `filter.html?${params.toString()}`;
+    window.checkAuthBeforeSell = () => {
+        if(auth.currentUser) location.href="sell.html";
+        else Swal.fire("Logga in", "Du måste vara inloggad för att sälja.", "info").then(() => location.href="login.html");
     };
 
-    updateGallery();
-    setInterval(updateGallery, 600000);
+    window.filterByType = (type, btn) => {
+        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedType = type;
+    };
 </script>
 </body>
 </html>
