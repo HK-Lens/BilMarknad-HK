@@ -3,71 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skapa konto | BILHK</title>
-    
+    <title>Skapa Konto | BILHK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--dark); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .auth-card { background: white; width: 100%; max-width: 500px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
+        .logo { text-align: center; margin-bottom: 25px; font-weight: 900; font-size: 30px; color: var(--dark); text-decoration: none; display: block; }
+        .logo span { color: var(--primary); }
+        
+        .tabs { display: flex; background: #f1f5f9; padding: 5px; border-radius: 12px; margin-bottom: 20px; }
+        .tab { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; background: none; color: #64748b; }
+        .tab.active { background: white; color: var(--dark); }
 
-        .auth-card { background: white; width: 100%; max-width: 450px; padding: 40px; border-radius: 30px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        .logo-area { text-align: center; margin-bottom: 30px; text-decoration: none; display: block; }
-        .logo-area h1 { font-weight: 900; font-size: 28px; color: var(--dark); }
-        .logo-area span { color: var(--primary); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f9fafb; font-size: 14px; }
 
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
-        input { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f1f5f9; outline: none; font-size: 14px; transition: 0.3s; }
-        input:focus { border-color: var(--primary); background: white; }
+        .btn-reg { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 15px; }
 
-        .btn-register { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        .btn-register:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(245, 130, 32, 0.3); }
-
-        .footer-links { text-align: center; margin-top: 25px; font-size: 14px; color: #64748b; }
-        .footer-links a { color: var(--primary); text-decoration: none; font-weight: 700; }
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); }
+        .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 24px; width: 90%; max-width: 550px; }
+        .modal-body { max-height: 300px; overflow-y: auto; font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 20px; text-align: left; }
     </style>
 </head>
 <body>
 
 <div class="auth-card">
-    <a href="index.html" class="logo-area"><h1>BIL<span>HK</span></h1></a>
-    <h2 style="margin-bottom: 25px; font-weight: 900; text-align: center;">Skapa nytt konto</h2>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    
+    <div class="tabs">
+        <button class="tab active" id="pTab" onclick="setMode('Privat')">Privat</button>
+        <button class="tab" id="fTab" onclick="setMode('Foretag')">Företag</button>
+    </div>
 
-    <form id="registerForm">
-        <div class="form-group">
-            <label>E-postadress</label>
-            <input type="email" id="email" placeholder="Din e-post" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Mobilnummer</label>
-            <input type="text" id="phone" placeholder="T.ex 0701234567" required>
+    <form id="regForm">
+        <div id="privatFields">
+            <div class="form-group"><label>Fullständigt namn</label><input type="text" id="fullName"></div>
         </div>
 
-        <div class="form-group">
-            <label>Adress</label>
-            <input type="text" id="address" placeholder="Stad, Gata" required>
+        <div id="bizFields" style="display: none;">
+            <div class="form-group"><label>Företagsnamn</label><input type="text" id="compName"></div>
+            <div class="form-group"><label>Organisationsnummer</label><input type="text" id="taxId" placeholder="XXXXXX-XXXX"></div>
+            <div class="form-group"><label>Telefon (Växel)</label><input type="text" id="compPhone" placeholder="010-XXX XX XX"></div>
+            <div class="form-group"><label>Företagsadress</label><input type="text" id="compAddress"></div>
         </div>
 
-        <div class="form-group">
-            <label>Lösenord</label>
-            <input type="password" id="password" placeholder="Minst 6 tecken" required>
-        </div>
+        <div class="form-group"><label>E-postadress</label><input type="email" id="email" required></div>
+        <div class="form-group"><label>Lösenord</label><input type="password" id="pass" placeholder="Minst 8 tecken" required></div>
+        <div class="form-group"><label>Bekräfta Lösenord</label><input type="password" id="confirmPass" required></div>
 
-        <div class="form-group">
-            <label>Bekräfta Lösenord</label>
-            <input type="password" id="confirmPassword" placeholder="Upprepa lösenord" required>
-        </div>
-
-        <button type="submit" class="btn-register" id="regBtn">Registrera konto</button>
+        <button type="button" class="btn-reg" onclick="openTermsModal()">Skapa konto</button>
     </form>
+</div>
 
-    <div class="footer-links">
-        Har du redan ett konto? <a href="login.html">Logga in här</a>
+<div id="termsModal" class="modal">
+    <div class="modal-content">
+        <h2 style="margin-bottom: 15px; font-weight: 900;">ANSVARSFRISKRIVNING & JURIDISK INFORMATION</h2>
+        <div class="modal-body">
+            <p><b>1. Ansvar:</b> BILHK är en teknisk plattform. Vi ansvarar inte för skicket på fordonen.</p>
+            <p><b>2. Ålder:</b> Du bekräftar att du är över 18 år.</p>
+            <p><b>3. GDPR:</b> Du godkänner att vi hanterar dina uppgifter enligt GDPR.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 13px;">
+            <input type="checkbox" id="finalCheck" style="width:20px; height:20px;">
+            <span>Jag godkänner villkoren och slutför registreringen.</span>
+        </div>
+        <div style="margin-top:20px; text-align:right;">
+            <button onclick="closeModal()" style="background:#f1f5f9; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; margin-right:10px;">Avbryt</button>
+            <button onclick="processRegistration()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer;">Bekräfta</button>
+        </div>
     </div>
 </div>
 
@@ -76,62 +85,47 @@
     import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    document.getElementById('registerForm').onsubmit = async (e) => {
-        e.preventDefault();
+    let currentMode = 'Privat';
+
+    window.setMode = (m) => {
+        currentMode = m;
+        document.getElementById('pTab').classList.toggle('active', m === 'Privat');
+        document.getElementById('fTab').classList.toggle('active', m === 'Foretag');
+        document.getElementById('privatFields').style.display = (m === 'Privat') ? 'block' : 'none';
+        document.getElementById('bizFields').style.display = (m === 'Foretag') ? 'block' : 'none';
+    };
+
+    window.openTermsModal = () => {
+        if (document.getElementById('pass').value !== document.getElementById('confirmPass').value) return Swal.fire('Obs', 'Lösenorden matchar inte!', 'warning');
+        document.getElementById('termsModal').style.display = 'block';
+    };
+
+    window.closeModal = () => document.getElementById('termsModal').style.display = 'none';
+
+    window.processRegistration = async () => {
+        if (!document.getElementById('finalCheck').checked) return Swal.fire('Info', 'Acceptera villkoren först.', 'info');
         
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const address = document.getElementById('address').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        const btn = document.getElementById('regBtn');
-
-        // Validation
-        if (password !== confirmPassword) {
-            Swal.fire('Fel', 'Lösenorden matchar inte.', 'error');
-            return;
-        }
-
-        if (password.length < 6) {
-            Swal.fire('Fel', 'Lösenordet måste vara minst 6 tecken.', 'warning');
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = "Skapar konto...";
-
         try {
-            // 1. Create User in Firebase Auth
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+            const cred = await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value);
+            const userData = {
+                uid: cred.user.uid,
+                email: document.getElementById('email').value,
+                userType: currentMode,
+                termsAccepted: true,
+                agreementDate: serverTimestamp()
+            };
 
-            // 2. Save Additional Info in Firestore
-            await setDoc(doc(db, "users", user.uid), {
-                uid: user.uid,
-                email: email,
-                phone: phone,
-                address: address,
-                createdAt: serverTimestamp()
-            });
+            if (currentMode === 'Privat') userData.fullName = document.getElementById('fullName').value;
+            else {
+                userData.companyName = document.getElementById('compName').value;
+                userData.taxId = document.getElementById('taxId').value;
+                userData.phone = document.getElementById('compPhone').value;
+                userData.address = document.getElementById('compAddress').value;
+            }
 
-            await Swal.fire({
-                title: 'Välkommen!',
-                text: 'Ditt konto har skapats framgångsrikt.',
-                icon: 'success',
-                confirmButtonColor: '#f58220'
-            });
-
-            window.location.href = "dashboard.html";
-
-        } catch (error) {
-            console.error(error);
-            let msg = "Kunde inte registrera kontot.";
-            if (error.code === 'auth/email-already-in-use') msg = "E-postadressen används redan.";
-            
-            Swal.fire('Ett fel uppstod', msg, 'error');
-            btn.disabled = false;
-            btn.innerText = "Registrera konto";
-        }
+            await setDoc(doc(db, "users", cred.user.uid), userData);
+            window.location.href = "index.html";
+        } catch (error) { Swal.fire('Fel', error.message, 'error'); }
     };
 </script>
 </body>
