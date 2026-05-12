@@ -70,7 +70,7 @@
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
-            transition: opacity 1.2s ease-in-out; 
+            transition: opacity 1.5s ease-in-out; 
             opacity: 1;
         }
 
@@ -85,6 +85,11 @@
         .disclaimer-box h4 { color: var(--white); margin-bottom: 15px; font-weight: 800; }
         .disclaimer-box p { font-size: 13px; line-height: 1.6; color: #cbd5e1; }
         .disclaimer-link { color: var(--primary); text-decoration: none; font-weight: 700; border-bottom: 1px solid var(--primary); }
+        
+        @media (max-width: 768px) {
+            .search-actions { flex-direction: column; }
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -145,7 +150,7 @@
         <div class="disclaimer-box">
             <h4>Ansvarsfriskrivning</h4>
             <p>
-                BilMarknad-HK är en plattform för köp och försäljning. Vi ansvarار inte för felaktig information eller transaktioner mellan användare. 
+                BilMarknad-HK är en plattform för köp och försäljning. Vi ansvarar inte för felaktig information eller transaktioner mellan användare. 
                 Läs mer om vår <a href="terms.html" class="disclaimer-link">Säkerhet & Ansvarsfriskrivning</a>.
             </p>
         </div>
@@ -167,7 +172,7 @@
     const carsGrid = document.getElementById('carsGrid');
     const resultsTitle = document.getElementById('resultsTitle');
 
-    // 1. القوائم المنسدلة
+    // 1. تعبئة القوائم المنسدلة
     Object.keys(carData).sort().forEach(b => {
         brandSelect.innerHTML += `<option value="${b}">${b}</option>`;
     });
@@ -180,28 +185,28 @@
         }
     };
 
-    // 2. تحديث قائمة الصور (20 صورة مستقرة وشغالة 100%)
+    // 2. قائمة الصور الـ 20 الجديدة والمستقرة (تم حذف المعطلة والمكررة)
     const allCarImages = [
-        'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1494905998402-395d579af36f?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1469285994282-454ceb49e63c?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1506469717960-433cebe3f181?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1567818735868-e71b99932e29?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1502161739991-eea3d235bc58?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1532581291347-9c39cf10a73c?auto=format&fit=crop&w=800',
-        'https://images.unsplash.com/photo-1514316454349-750a7fd3da3a?auto=format&fit=crop&w=800'
+        'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800', // Porsche
+        'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800', // Mustang
+        'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800', // BMW
+        'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800', // Mercedes
+        'https://images.unsplash.com/photo-1614162482210-9966115faa31?auto=format&fit=crop&w=800', // Audi
+        'https://images.unsplash.com/photo-1560958089-18ae177651c5?auto=format&fit=crop&w=800', // Tesla
+        'https://images.unsplash.com/photo-1541443131-d7f000d17666?auto=format&fit=crop&w=800', // VW
+        'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800', // Sport
+        'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800', // Luxury
+        'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800', // SUV
+        'https://images.unsplash.com/photo-1542362567-b055002b9174?auto=format&fit=crop&w=800', // Volvo
+        'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800', // Ferrari
+        'https://images.unsplash.com/photo-1506469717960-433cebe3f181?auto=format&fit=crop&w=800', // Bugatti
+        'https://images.unsplash.com/photo-1469285994282-454ceb49e63c?auto=format&fit=crop&w=800', // Classic
+        'https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=800', // Hypercar
+        'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=800', // Modern
+        'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=800', // Sports Car
+        'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800', // White Car
+        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800', // Ford
+        'https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&w=800'  // Blue Car
     ];
 
     let currentOffset = 0;
