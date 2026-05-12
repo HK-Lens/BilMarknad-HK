@@ -28,23 +28,23 @@
         .btn-reg { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 15px; transition: 0.3s; }
         .btn-reg:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
 
-        /* Modal Styles */
-        .modal-overlay { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); }
-        .modal-content { background: white; margin: 2% auto; padding: 35px; border-radius: 28px; width: 95%; max-width: 600px; position: relative; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        /* Advanced Modal Styles */
+        .modal-overlay { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); }
+        .modal-content { background: white; margin: 2% auto; padding: 35px; border-radius: 28px; width: 95%; max-width: 650px; position: relative; animation: slideIn 0.4s ease; }
+        @keyframes slideIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
         .modal-header { font-size: 22px; font-weight: 900; color: var(--dark); margin-bottom: 15px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .modal-body { max-height: 400px; overflow-y: auto; font-size: 13px; color: #475569; line-height: 1.6; margin-bottom: 20px; padding-right: 10px; text-align: left; }
-        .modal-body h4 { color: var(--dark); margin: 15px 0 5px; font-size: 14px; text-transform: uppercase; }
+        .modal-body { max-height: 450px; overflow-y: auto; font-size: 13px; color: #475569; line-height: 1.7; margin-bottom: 25px; padding-right: 15px; text-align: left; }
+        .modal-body h4 { color: var(--dark); margin: 15px 0 5px; font-size: 14px; text-transform: uppercase; border-left: 4px solid var(--primary); padding-left: 10px; }
         
-        .terms-acceptance { display: flex; align-items: flex-start; gap: 12px; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; }
-        .terms-acceptance input { width: 22px; height: 22px; cursor: pointer; }
-        .terms-acceptance span { font-size: 13px; font-weight: 700; color: var(--dark); line-height: 1.4; }
+        .consent-box { background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: flex-start; gap: 15px; cursor: pointer; }
+        .consent-box input { width: 22px; height: 22px; cursor: pointer; margin-top: 3px; }
+        .consent-box span { font-size: 13px; font-weight: 700; color: var(--dark); }
 
-        .modal-footer { margin-top: 20px; display: flex; gap: 15px; }
-        .btn-confirm { flex: 2; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        .modal-footer { margin-top: 25px; display: flex; gap: 15px; }
+        .btn-confirm { flex: 2; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; }
         .btn-confirm:disabled { background: #cbd5e1; cursor: not-allowed; }
-        .btn-cancel { flex: 1; padding: 15px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .btn-cancel { flex: 1; padding: 16px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -84,33 +84,36 @@
             <h4>1. Allmänt</h4>
             <p>BILHK är en teknisk plattform och mötesplats som syftar till att sammanföra användare inom fordonsmarknaden. Genom att använda webbplatsen godkänner du dessa villkor i sin helhet. BILHK tillhandahåller endast den tekniska infrastrukturen och är inte en del av, eller ombud för, någon transaktion som sker mellan användare.</p>
 
-            <h4>2. Tjänstens natur</h4>
+            <h4>2. Tjänstens natur (Gratis och oberoende)</h4>
             <p>BILHK är en kostnadsfri tjänst. Vi agerar inte som mellanhand, mäklare eller part i något köp- eller försäljningsavtal. All kommunikation och affärsuppgörelse sker direkt mellan användarna utanför BILHK:s kontroll.</p>
 
-            <h4>3. Uppförandekod och kontoradering</h4>
-            <p>Det är strängt förbjudet att skicka förolämpningar, hot, förtal eller använda ett kränkande språk på plattformen. <b>BILHK förbehåller sig rätten att när som helst och utan förvarning radera konton</b> som bryter mot dessa regler eller på annat sätt missbrukar tjänsten.</p>
+            <h4>3. Uppförandekod och Kontoradering</h4>
+            <p>Det är strängt förbjudet att skicka förolämpningar, hot, förtal eller använda ett kränkande språk på plattformen. <b>BILHK förbehåller sig rätten att när som helst och utan förvarning radera konton</b> som bryter mot dessa regler eller som vi bedömer agerar oseriöst.</p>
 
             <h4>4. Kommunikation och Chatt</h4>
-            <p>Webbplatsens chattfunktion får <b>endast användas för frågor och information gällande den specifika annonsen</b>. Det är förbjudet att använda systemet för spam, reklam eller ovidkommande diskussioner.</p>
+            <p>Webbplatsens chattfunktion får <b>endast användas för frågor och information gällande den specifika annonsen</b>. Det är förbjudet att använda systemet för spam, reklam, trakasserier eller ovidkommande diskussioner.</p>
 
             <h4>5. Ansvarsbegränsning</h4>
-            <p>All handel sker helt på användarens egen risk. BILHK ansvarar inte för fordonens skick, laglighet, dolda fel eller eventuella bedrägerier. Köparen ansvarar för att verifiera säljarens identitet före betalning.</p>
+            <p>All användning av plattformen sker helt på användarens egen risk. BILHK ansvarar inte för fordonens skick, dolda fel, felaktig information eller eventuella bedrägerier. Köparen ansvarar för att verifiera säljarens identitet fysiskt före betalning. Betala aldrig handpenning online.</p>
 
             <h4>6. Åldersgräns</h4>
-            <p>Du bekräftar att du är <b>minst 18 år gammal</b> för att skapa ett konto och använda denna tjänst.</p>
+            <p>Genom att använda denna tjänst bekräftar du att du är <b>minst 18 år gammal</b> och har juridisk rätt att ingå avtal.</p>
 
-            <h4>7. Dataskydd och GDPR</h4>
-            <p>All data lagras via Google Firebase. Genom att använda tjänsten godkänner du deras säkerhetspolicy. Vi följer GDPR gällande din rätt till radering och information. Läs mer i <a href="https://policies.google.com/privacy" target="_blank">Googles sekretesspolicy</a>.</p>
+            <h4>7. Dataskydd och GDPR (Google Firebase)</h4>
+            <p>Din data hanteras via tredjepartstjänsten Google Firebase. BILHK sparar en digital logg på din acceptans av dessa villkor. Läs mer i <a href="https://policies.google.com/privacy" target="_blank">Googles sekretesspolicy</a>.</p>
+
+            <h4>8. Tvister</h4>
+            <p>BILHK åtar sig inget ansvar för att lösa tvister mellan användare. Eventuella rättsliga anspråk ska riktas direkt mot motparten.</p>
         </div>
         
-        <label class="terms-acceptance">
+        <label class="consent-box">
             <input type="checkbox" id="finalConsent">
-            <span>Jag accepterar användarvillkoren och bekräftar att jag är över 18 år.</span>
+            <span>Jag intygar att jag är över 18 år, har läst och godkänner samtliga användarvillkor och ansvarsfriskrivningar ovan.</span>
         </label>
 
         <div class="modal-footer">
             <button class="btn-cancel" onclick="closeModal()">Avbryt</button>
-            <button id="confirmRegBtn" class="btn-confirm" onclick="executeRegistration()" disabled>Godkänn och Skapa Konto</button>
+            <button id="confirmRegBtn" class="btn-confirm" onclick="executeRegistration()" disabled>Godkänn och Slutför</button>
         </div>
     </div>
 </div>
@@ -134,7 +137,7 @@
         const p = document.getElementById('pass').value;
         const c = document.getElementById('confirmPass').value;
         if (!p || p.length < 8) return Swal.fire('Obs', 'Lösenordet måste vara minst 8 tecken.', 'warning');
-        if (p !== c) return Swal.fire('Obs', 'Lösenorden matchar inte!', 'warning');
+        if (p !== c) return Swal.fire('Obs', 'Lösenorden matchار مرتين!', 'warning');
         document.getElementById('termsModal').style.display = 'block';
     };
 
@@ -150,7 +153,7 @@
         const btn = document.getElementById('confirmRegBtn');
 
         btn.disabled = true;
-        btn.innerText = "Behandlar...";
+        btn.innerText = "Registrerar...";
 
         try {
             const cred = await createUserWithEmailAndPassword(auth, email, pass);
@@ -159,7 +162,7 @@
                 email: email,
                 userType: currentMode,
                 termsAccepted: true,
-                consentTimestamp: serverTimestamp(),
+                consentDate: serverTimestamp(),
                 createdAt: serverTimestamp()
             };
 
@@ -173,13 +176,13 @@
             }
 
             await setDoc(doc(db, "users", cred.user.uid), userData);
-            Swal.fire('Succé!', 'Ditt konto har skapats.', 'success').then(() => {
+            Swal.fire('Välkommen!', 'Ditt konto har skapats.', 'success').then(() => {
                 window.location.href = "index.html";
             });
         } catch (error) {
             Swal.fire('Fel', error.message, 'error');
             btn.disabled = false;
-            btn.innerText = "Godkänn och Skapa Konto";
+            btn.innerText = "Godkänn och Slutför";
         }
     };
 </script>
