@@ -54,10 +54,10 @@
         .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
         .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; }
 
-        /* معرض الصور المتغير 3x2 */
+        /* معرض الصور المطور 3x2 */
         .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 300px); gap: 20px; }
         .gallery-item { border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); background: #eee; position: relative; }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: opacity 1.5s ease-in-out, transform 0.8s; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: opacity 2s ease-in-out, transform 1s; opacity: 1; }
         .gallery-item:hover img { transform: scale(1.05); }
 
         .cars-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
@@ -66,7 +66,7 @@
         .container { flex: 1; padding: 0 6% 80px; }
         .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
 
-        /* Footer */
+        /* Footer المطور */
         footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; margin-top: auto; border-top: 4px solid var(--primary); }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto; }
         .disclaimer-box h4 { color: var(--white); margin-bottom: 15px; font-weight: 800; }
@@ -77,7 +77,6 @@
             .filter-grid { grid-template-columns: repeat(2, 1fr); }
             .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 200px); }
             .search-actions { flex-direction: column; }
-            .footer-grid { grid-template-columns: 1fr; text-align: center; }
         }
     </style>
 </head>
@@ -146,7 +145,7 @@
         <div class="disclaimer-box">
             <h4>Ansvarsfriskrivning</h4>
             <p>
-                BilMarknad-HK är en plattform för köp och försäljning. Vi ansvarar inte för felaktig information eller transaktioner mellan användare. 
+                BilMarknad-HK är en plattform för köپ och försäljning. Vi ansvarar inte för felaktig information eller transaktioner mellan användare. 
                 Läs mer om vår <a href="terms.html" class="disclaimer-link">Säkerhet & Ansvarsfriskrivning</a>.
             </p>
         </div>
@@ -183,7 +182,7 @@
         }
     };
 
-    // --- منطق تبديل الصور التلقائي ---
+    // --- منطق تبديل الصور التلقائي المطور (20 صورة) ---
     const allCarImages = [
         'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800',
         'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800',
@@ -194,32 +193,46 @@
         'https://images.unsplash.com/photo-1542362567-b055002b9174?w=800',
         'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800',
         'https://images.unsplash.com/photo-1493238792060-6c51c9ad1764?w=800',
-        'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'
+        'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800',
+        'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=800',
+        'https://images.unsplash.com/photo-1494905998402-395d579af36f?w=800',
+        'https://images.unsplash.com/photo-1502877335914-2f9a9a341142?w=800',
+        'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=800',
+        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800',
+        'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=800',
+        'https://images.unsplash.com/photo-1469285994282-454ceb49e63c?w=800',
+        'https://images.unsplash.com/photo-1526726538690-5cbf95642cb8?w=800',
+        'https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800',
+        'https://images.unsplash.com/photo-1506469717960-433cebe3f181?w=800'
     ];
 
     let currentStartIndex = 0;
 
     function rotateImages() {
+        // نختار 6 صور من القائمة الـ 20
         for (let i = 0; i < 6; i++) {
             const imgElement = document.getElementById(`img${i}`);
+            // نستخدم عملية % لضمان العودة للبداية عند انتهاء الـ 20 صورة
             const nextImgIndex = (currentStartIndex + i) % allCarImages.length;
             
-            // إضافة تأثير اختفاء بسيط قبل التغيير
+            // تأثير Fade Out سلس
             imgElement.style.opacity = 0;
             
             setTimeout(() => {
                 imgElement.src = allCarImages[nextImgIndex];
                 imgElement.style.opacity = 1;
-            }, 800);
+            }, 1000); // وقت الاختفاء والظهور (1 ثانية)
         }
-        currentStartIndex = (currentStartIndex + 1) % allCarImages.length;
+        // الانتقال للـ 6 صور التالية في المرة القادمة
+        currentStartIndex = (currentStartIndex + 6) % allCarImages.length;
     }
 
-    // تشغيل التبديل فوراً ثم كل 5 ثوانٍ
+    // تشغيل التبديل الأول
     rotateImages();
-    setInterval(rotateImages, 5000);
+    // التبديل كل 10 ثوانٍ (10000 مللي ثانية)
+    setInterval(rotateImages, 10000);
 
-    // تسجيل الخروج والحساب
+    // تسجيل الخروج والحساب والإشعارات
     onAuthStateChanged(auth, (user) => {
         const authStatus = document.getElementById('authStatusContainer');
         const bell = document.getElementById('notifBell');
@@ -253,7 +266,33 @@
         carsGrid.style.display = "grid";
         resultsTitle.innerText = "Sökresultat";
         carsGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Laddar...</p>";
-        // ... (كود جلب النتائج يظل كما هو)
+        
+        try {
+            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(30));
+            const snap = await getDocs(q);
+            carsGrid.innerHTML = "";
+            let found = 0;
+
+            snap.forEach(doc => {
+                const car = doc.data();
+                const matchBrand = !brandSelect.value || car.brand === brandSelect.value;
+                const matchModel = !modelSelect.value || car.model === modelSelect.value;
+                const matchType = !selectedType || car.karosseri === selectedType;
+
+                if(matchBrand && matchModel && matchType) {
+                    found++;
+                    carsGrid.innerHTML += `
+                        <div class="car-card" onclick="location.href='details.html?id=${doc.id}'">
+                            <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:180px; object-fit:cover;">
+                            <div style="padding:15px;">
+                                <h3 style="color:var(--primary); font-weight:900;">${Number(car.price).toLocaleString()} kr</h3>
+                                <p style="font-weight:700;">${car.brand} ${car.model}</p>
+                            </div>
+                        </div>`;
+                }
+            });
+            if(found === 0) carsGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga bilar matchade din sökning.</p>";
+        } catch (e) { console.error(e); }
     };
 
     window.checkAuthBeforeSell = () => {
