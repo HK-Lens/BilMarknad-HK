@@ -2,124 +2,174 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Redigera Annons | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redigera Annons | BILHK</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        body { background: var(--bg); font-family: 'Inter', sans-serif; padding: 20px; color: var(--dark); margin: 0; }
-        .form-card { max-width: 600px; margin: 30px auto; background: white; padding: 35px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
-        h2 { margin-bottom: 25px; font-weight: 900; text-align: center; }
-        .form-group { margin-bottom: 18px; }
-        label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 14px; color: #64748b; }
-        input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); outline: none; font-size: 15px; background: #f8fafc; transition: 0.3s; }
-        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: white; }
-        .btn-save { width: 100%; padding: 16px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 16px; transition: 0.3s; margin-top: 10px; }
-        .btn-save:hover { background: #1e293b; }
-        .btn-save:disabled { background: #cbd5e1; cursor: not-allowed; }
-        .btn-cancel { width: 100%; padding: 16px; background: transparent; color: #64748b; border: none; font-weight: 700; cursor: pointer; margin-top: 5px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--dark); line-height: 1.6; }
+
+        header { background: white; padding: 15px 5%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .logo { text-decoration: none; font-weight: 900; color: var(--dark); font-size: 24px; }
+        .logo span { color: var(--primary); }
+
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .form-card { background: white; padding: 40px; border-radius: 25px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .form-title { font-size: 26px; font-weight: 900; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full { grid-column: 1 / -1; }
+
+        label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f1f5f9; outline: none; font-size: 14px; transition: 0.3s; }
+        input:focus { border-color: var(--primary); background: white; }
+
+        .btn-update { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 30px; transition: 0.3s; }
+        .btn-update:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245, 130, 32, 0.3); }
+        
+        .loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); display:flex; align-items:center; justify-content:center; z-index:2000; font-weight:900; }
+
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<div class="form-card">
-    <h2>Redigera din annons</h2>
-    <form id="editForm">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="form-group"><label>Märke</label><input type="text" id="brand" required></div>
-            <div class="form-group"><label>Modell</label><input type="text" id="model" required></div>
-        </div>
+<div id="loader" class="loading-overlay">Hämtar uppgifter...</div>
+
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <a href="dashboard.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Avbryt</a>
+</header>
+
+<div class="container">
+    <div class="form-card">
+        <h1 class="form-title"><i class="fa-solid fa-pen-to-square" style="color:var(--primary)"></i> Redigera Annons</h1>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="form-group"><label>Årsmodell</label><input type="number" id="year" required></div>
-            <div class="form-group"><label>Pris (kr)</label><input type="number" id="price" required></div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="form-group"><label>Miltal</label><input type="number" id="mileage" required></div>
-            <div class="form-group">
-                <label>Växellåda</label>
-                <select id="transmission">
-                    <option value="Automat">Automat</option>
-                    <option value="Manuell">Manuell</option>
-                </select>
+        <form id="editForm">
+            <div class="grid">
+                <div>
+                    <label>Märke</label>
+                    <input type="text" id="brand" disabled style="opacity: 0.6; cursor: not-allowed;">
+                </div>
+                <div>
+                    <label>Modell</label>
+                    <input type="text" id="model" disabled style="opacity: 0.6; cursor: not-allowed;">
+                </div>
+                <div>
+                    <label>Pris (kr)</label>
+                    <input type="number" id="price" required>
+                </div>
+                <div>
+                    <label>Årsmodell</label>
+                    <input type="number" id="year" required>
+                </div>
+                <div>
+                    <label>Miltal</label>
+                    <input type="number" id="mil" required>
+                </div>
+                <div>
+                    <label>Drivmedel</label>
+                    <select id="fuel">
+                        <option value="Bensin">Bensin</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="El">El</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div class="full">
+                    <label>Beskrivning</label>
+                    <textarea id="description" rows="6"></textarea>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label>Drivmedel</label>
-            <select id="fuelType">
-                <option value="Bensin">Bensin</option>
-                <option value="Diesel">Diesel</option>
-                <option value="El">El</option>
-                <option value="Hybrid">Hybrid</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>Beskrivning</label>
-            <textarea id="description" rows="5"></textarea>
-        </div>
-
-        <button type="submit" class="btn-save" id="saveBtn">Spara ändringar</button>
-    </form>
-    <button class="btn-cancel" onclick="window.location.href='my-account.html'">Avbryt</button>
+            <button type="submit" class="btn-update" id="saveBtn">Spara ändringar</button>
+        </form>
+    </div>
 </div>
 
 <script type="module">
     import { auth, db } from './firebase-config.js';
-    import { doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    const carId = new URLSearchParams(window.location.search).get('id');
+    const urlParams = new URLSearchParams(window.location.search);
+    const carId = urlParams.get('id');
 
-    onAuthStateChanged(auth, (user) => {
-        if (!user) window.location.href = "login.html";
-        else fetchCar();
+    if (!carId) window.location.href = "dashboard.html";
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "login.html";
+        } else {
+            loadCarData();
+        }
     });
 
-    async function fetchCar() {
-        const snap = await getDoc(doc(db, "cars", carId));
-        if (snap.exists()) {
-            const data = snap.data();
-            document.getElementById('brand').value = data.brand || '';
-            document.getElementById('model').value = data.model || '';
-            document.getElementById('year').value = data.year || '';
-            document.getElementById('price').value = data.price || '';
-            document.getElementById('mileage').value = data.mileage || '';
-            document.getElementById('transmission').value = data.transmission || 'Automat';
-            document.getElementById('fuelType').value = data.fuelType || 'Bensin';
-            document.getElementById('description').value = data.description || '';
-        } else {
-            Swal.fire('Fel', 'Annonsen hittades inte.', 'error').then(() => {
-                window.location.href = "my-account.html";
-            });
+    async function loadCarData() {
+        try {
+            const docRef = doc(db, "cars", carId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const car = docSnap.data();
+                
+                // Security check: Only the owner can edit
+                if (car.sellerId !== auth.currentUser.uid) {
+                    window.location.href = "dashboard.html";
+                    return;
+                }
+
+                // Fill inputs
+                document.getElementById('brand').value = car.brand;
+                document.getElementById('model').value = car.model;
+                document.getElementById('price').value = car.price;
+                document.getElementById('year').value = car.year;
+                document.getElementById('mil').value = car.mil;
+                document.getElementById('fuel').value = car.fuel;
+                document.getElementById('description').value = car.description || "";
+                
+                document.getElementById('loader').style.display = 'none';
+            } else {
+                window.location.href = "dashboard.html";
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Error', 'Kunde inte hämta data.', 'error');
         }
     }
 
     document.getElementById('editForm').onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('saveBtn');
-        btn.disabled = true; 
+        btn.disabled = true;
         btn.innerText = "Sparar...";
 
         try {
-            await updateDoc(doc(db, "cars", carId), {
-                brand: document.getElementById('brand').value,
-                model: document.getElementById('model').value,
-                year: Number(document.getElementById('year').value),
+            const carRef = doc(db, "cars", carId);
+            await updateDoc(carRef, {
                 price: Number(document.getElementById('price').value),
-                mileage: Number(document.getElementById('mileage').value),
-                transmission: document.getElementById('transmission').value,
-                fuelType: document.getElementById('fuelType').value,
-                description: document.getElementById('description').value,
-                updatedAt: serverTimestamp()
+                year: Number(document.getElementById('year').value),
+                mil: Number(document.getElementById('mil').value),
+                fuel: document.getElementById('fuel').value,
+                description: document.getElementById('description').value
             });
-            await Swal.fire('Sparat!', 'Din annons har uppdaterats framgångsrikt.', 'success');
-            window.location.href = "my-account.html";
+
+            await Swal.fire({
+                title: 'Uppdaterad!',
+                text: 'Dina ändringar har sparats framgångsrikt.',
+                icon: 'success',
+                confirmButtonColor: '#f58220'
+            });
+            window.location.href = "dashboard.html";
+
         } catch (error) {
-            Swal.fire('Fel!', 'Ett fel uppstod: ' + error.message, 'error');
+            console.error(error);
+            Swal.fire('Fel', 'Kunde inte uppdatera annonsen.', 'error');
             btn.disabled = false;
             btn.innerText = "Spara ändringar";
         }
