@@ -19,6 +19,16 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--light); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
 
+        /* --- التنبيه الأحمر في أعلى الصفحة --- */
+        .dev-banner {
+            background: var(--danger); color: white; padding: 12px; text-align: center;
+            font-weight: 800; font-size: 14px; text-transform: uppercase;
+            animation: pulse-danger 2s infinite; position: relative; z-index: 2000;
+        }
+        @keyframes pulse-danger {
+            0% { background-color: #ef4444; } 50% { background-color: #b91c1c; } 100% { background-color: #ef4444; }
+        }
+
         /* Header */
         header {
             background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
@@ -45,7 +55,7 @@
         .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
         .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; }
 
-        /* Visual Grid (Icons instead of broken images) */
+        /* Visual Grid */
         .visual-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
         .visual-item { 
             height: 250px; background: #f1f5f9; border-radius: 24px; 
@@ -72,6 +82,8 @@
     </style>
 </head>
 <body>
+
+<div class="dev-banner">Sidan är under uppbyggnad - Funktioner och annonser är begränsade just nu</div>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
@@ -132,10 +144,8 @@
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { carData } from './cars-data.js';
 
-    // 1. تعبئة الماركة والموديل
     const brandSelect = document.getElementById('brandSelect');
     const modelSelect = document.getElementById('modelSelect');
-
     Object.keys(carData).sort().forEach(b => brandSelect.innerHTML += `<option value="${b}">${b}</option>`);
 
     brandSelect.onchange = () => {
@@ -145,7 +155,6 @@
         }
     };
 
-    // 2. إدارة المستخدم ( Mitt Konto + Logga ut)
     onAuthStateChanged(auth, (user) => {
         const container = document.getElementById('authStatusContainer');
         if(user) {
@@ -159,30 +168,22 @@
         }
     });
 
-    // 3. البحث في نفس الصفحة
     document.getElementById('searchBtn').onclick = async () => {
         const visualGrid = document.getElementById('visualGrid');
         const carsGrid = document.getElementById('carsGrid');
-        
         visualGrid.style.display = "none";
         carsGrid.style.display = "grid";
         document.getElementById('resultsTitle').innerText = "Resultat för din sökning";
-        carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Söker efter fordon...</p>";
+        carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Söker...</p>";
 
         try {
             const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(24));
             const snap = await getDocs(q);
             carsGrid.innerHTML = "";
             let found = 0;
-
             snap.forEach(doc => {
                 const car = doc.data();
-                // فلترة برمجية سريعة
-                const mBrand = !brandSelect.value || car.brand === brandSelect.value;
-                const mModel = !modelSelect.value || car.model === modelSelect.value;
-                const mPrice = (!document.getElementById('maxPrice').value || car.price <= document.getElementById('maxPrice').value);
-
-                if(mBrand && mModel && mPrice) {
+                if((!brandSelect.value || car.brand === brandSelect.value) && (!modelSelect.value || car.model === modelSelect.value)) {
                     found++;
                     carsGrid.innerHTML += `
                         <div class="car-card animate__animated animate__fadeIn" onclick="location.href='details.html?id=${doc.id}'">
@@ -194,7 +195,7 @@
                         </div>`;
                 }
             });
-            if(found === 0) carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Tyvärr, inga bilar matchade din sökning.</p>";
+            if(found === 0) carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Inga bilar matchades.</p>";
         } catch (e) { console.error(e); }
     };
 
