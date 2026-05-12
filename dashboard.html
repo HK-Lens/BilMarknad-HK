@@ -3,64 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Dashboard | BilMarknad HK</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        body { background: var(--bg); font-family: 'Inter', sans-serif; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; }
-        .card { background: white; border-radius: 20px; padding: 25px; border: 1px solid var(--border); margin-bottom: 25px; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
-        .stat-box { background: white; padding: 20px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
-        .stat-box h3 { font-size: 28px; font-weight: 900; color: var(--primary); }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .btn-reset { background: var(--dark); color: white; padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; }
+        :root {
+            --primary: #f58220; --primary-hover: #e07210; --dark: #0f172a;
+            --light: #f8fafc; --border: #e2e8f0; --white: #ffffff; --danger: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light); color: var(--dark); }
+
+        .dev-banner {
+            background: var(--danger); color: white; padding: 10px; text-align: center;
+            font-weight: 800; font-size: 13px; text-transform: uppercase;
+        }
+
+        header {
+            background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: 900; color: var(--dark); text-decoration: none; }
+        .logo span { color: var(--primary); }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .grid-layout { display: grid; grid-template-columns: 1fr 3fr; gap: 30px; }
+
+        /* Sidebar */
+        .sidebar { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); height: fit-content; }
+        .sidebar h3 { margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
+        .menu-item { display: block; padding: 12px 15px; color: var(--dark); text-decoration: none; border-radius: 10px; margin-bottom: 5px; font-weight: 600; transition: 0.3s; }
+        .menu-item:hover, .menu-item.active { background: var(--primary); color: white; }
+
+        /* Main Content Cards */
+        .card { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .card-title { font-size: 20px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        .card-title i { color: var(--primary); }
+
+        /* Statistics UI */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-box { background: #f1f5f9; padding: 20px; border-radius: 15px; text-align: center; }
+        .stat-box span { display: block; font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .stat-box h2 { font-size: 28px; color: var(--primary); margin-top: 5px; }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; padding: 12px; background: #f8fafc; font-size: 12px; color: #64748b; }
+        td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 600; }
+
+        /* Form Styling */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
+        .btn-save { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-save:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        @media (max-width: 900px) { .grid-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-<nav style="margin-bottom:30px;"><a href="my-account.html" style="text-decoration:none; font-weight:800; color:var(--dark);"><i class="fa-solid fa-arrow-left"></i> Tillbaka</a></nav>
+
+<div class="dev-banner">Dashboard - Hantera ditt konto och dina annonser</div>
+
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;"><i class="fa-solid fa-arrow-left"></i> Tillbaka</a>
+</header>
+
 <div class="container">
-    <h1 id="welcomeUser" style="margin-bottom:20px; font-weight:900;">Hej...</h1>
-    <div class="stats-grid">
-        <div class="stat-box"><h3 id="carCount">0</h3><p>Aktiva annonser</p></div>
-        <div class="stat-box"><h3 id="msgCount">0</h3><p>Aktiva chattar</p></div>
-    </div>
-    <div class="card">
-        <h3>Personlig Information</h3>
-        <div class="info-grid" style="margin:20px 0;">
-            <div><label style="color:#94a3b8; font-size:12px;">E-POST</label><p id="displayEmail">...</p></div>
-            <div><label style="color:#94a3b8; font-size:12px;">TELEFON</label><p id="displayPhone">Ej angivet</p></div>
-        </div>
-        <button class="btn-reset" onclick="resetPass()">Byt lösenord</button>
+    <div class="grid-layout">
+        <aside class="sidebar">
+            <h3>Min Meny</h3>
+            <a href="#stats" class="menu-item active"><i class="fa-solid fa-chart-line"></i> Statistik</a>
+            <a href="#profile" class="menu-item"><i class="fa-solid fa-user-pen"></i> Redigera profil</a>
+            <a href="my-account.html" class="menu-item"><i class="fa-solid fa-car"></i> Mina Annonser</a>
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+            <a href="#" onclick="logout()" class="menu-item" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</a>
+        </aside>
+
+        <main>
+            <section id="stats" class="card">
+                <div class="card-title"><i class="fa-solid fa-chart-pie"></i> Annonsstatistik</div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box"><span>Totala Visningar</span><h2 id="totalViews">0</h2></div>
+                    <div class="stat-box"><span>Sparade som Favorit</span><h2 id="totalFavs">0</h2></div>
+                    <div class="stat-box"><span>Aktiva Annonser</span><h2 id="activeAds">0</h2></div>
+                </div>
+
+                <canvas id="statsChart" style="max-height: 300px; width: 100%;"></canvas>
+
+                <div style="margin-top: 40px;">
+                    <h4 style="margin-bottom: 15px;">Detaljer per bil</h4>
+                    <table id="carStatsTable">
+                        <thead>
+                            <tr>
+                                <th>Bil</th>
+                                <th>Pris</th>
+                                <th>Visningar</th>
+                                <th>Favoriter</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="profile" class="card">
+                <div class="card-title"><i class="fa-solid fa-user-gear"></i> Personlig Information</div>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label>Telefonnummer</label>
+                        <input type="text" id="userPhone" placeholder="T.ex 070 123 45 67">
+                    </div>
+                    <div class="form-group">
+                        <label>Adress</label>
+                        <input type="text" id="userAddress" placeholder="Gatunamn, Postnummer, Stad">
+                    </div>
+                    <div class="form-group">
+                        <label>E-post (Endast visning)</label>
+                        <input type="email" id="userEmail" disabled style="background: #f1f5f9; cursor: not-allowed;">
+                    </div>
+                    <button type="submit" class="btn-save">Spara ändringar</button>
+                </form>
+            </section>
+        </main>
     </div>
 </div>
 
 <script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { db, auth } from './firebase-config.js';
+    import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    onAuthStateChanged(auth, async (u) => {
-        if (u) {
-            document.getElementById('displayEmail').innerText = u.email;
-            const userSnap = await getDoc(doc(db, "users", u.uid));
-            if(userSnap.exists()){
-                const data = userSnap.data();
-                document.getElementById('welcomeUser').innerText = `Hej, ${data.name}!`;
-                document.getElementById('displayPhone').innerText = data.phone || 'Inget nummer';
-            }
-            const ads = await getDocs(query(collection(db, "cars"), where("sellerId", "==", u.uid)));
-            document.getElementById('carCount').innerText = ads.size;
-            const chats = await getDocs(query(collection(db, "chats"), where("participants", "array-contains", u.uid)));
-            document.getElementById('msgCount').innerText = chats.size;
-        } else { window.location.href="login.html"; }
+    let chart;
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        // 1. جلب بيانات المستخدم الشخصية
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+            const data = userDoc.data();
+            document.getElementById('userPhone').value = data.phone || "";
+            document.getElementById('userAddress').value = data.address || "";
+            document.getElementById('userEmail').value = user.email;
+        }
+
+        // 2. جلب إحصائيات السيارات التابعة للمستخدم
+        fetchCarStats(user.uid);
     });
 
-    window.resetPass = () => {
-        sendPasswordResetEmail(auth, auth.currentUser.email).then(() => Swal.fire('Skickat!', 'Kolla din e-post.', 'success'));
+    async function fetchCarStats(uid) {
+        const q = query(collection(db, "cars"), where("sellerId", "==", uid));
+        const snap = await getDocs(q);
+        
+        const tableBody = document.querySelector("#carStatsTable tbody");
+        tableBody.innerHTML = "";
+        
+        let totalViews = 0;
+        let totalFavs = 0;
+        let carLabels = [];
+        let viewData = [];
+        let favData = [];
+
+        snap.forEach(doc => {
+            const car = doc.data();
+            const views = car.views || 0;
+            const favs = car.favoritedBy ? car.favoritedBy.length : 0; // نعتبر أن الإعجابات مصفوفة يوزرات
+
+            totalViews += views;
+            totalFavs += favs;
+
+            carLabels.push(`${car.brand} ${car.model}`);
+            viewData.push(views);
+            favData.push(favs);
+
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${car.brand} ${car.model}</td>
+                    <td>${Number(car.price).toLocaleString()} kr</td>
+                    <td style="color:var(--primary)">${views}</td>
+                    <td style="color:#9d50bb">${favs}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('totalViews').innerText = totalViews;
+        document.getElementById('totalFavs').innerText = totalFavs;
+        document.getElementById('activeAds').innerText = snap.size;
+
+        renderChart(carLabels, viewData, favData);
+    }
+
+    function renderChart(labels, views, favs) {
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        if (chart) chart.destroy();
+        
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Visningar', data: views, backgroundColor: '#f58220' },
+                    { label: 'Favoriter', data: favs, backgroundColor: '#9d50bb' }
+                ]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'top' } } }
+        });
+    }
+
+    // 3. حفظ تعديلات الملف الشخصي
+    document.getElementById('profileForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const user = auth.currentUser;
+        try {
+            await updateDoc(doc(db, "users", user.uid), {
+                phone: document.getElementById('userPhone').value,
+                address: document.getElementById('userAddress').value
+            });
+            Swal.fire("Sparat!", "Din profil har uppdaterats.", "success");
+        } catch (error) {
+            Swal.fire("Fel", "Kunde inte spara informationen.", "error");
+        }
     };
+
+    window.logout = () => signOut(auth).then(() => location.href="login.html");
 </script>
+
 </body>
 </html>
