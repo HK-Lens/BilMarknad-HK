@@ -11,24 +11,40 @@
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        
         .auth-card { background: white; width: 100%; max-width: 500px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
         .logo { text-align: center; margin-bottom: 25px; font-weight: 900; font-size: 30px; color: var(--dark); text-decoration: none; display: block; }
         .logo span { color: var(--primary); }
         
-        .tabs { display: flex; background: #f1f5f9; padding: 5px; border-radius: 12px; margin-bottom: 20px; }
-        .tab { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; background: none; color: #64748b; }
-        .tab.active { background: white; color: var(--dark); }
+        .tabs { display: flex; background: #f1f5f9; padding: 5px; border-radius: 12px; margin-bottom: 25px; }
+        .tab { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; background: none; color: #64748b; transition: 0.3s; }
+        .tab.active { background: white; color: var(--dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
         .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f9fafb; font-size: 14px; }
+        label { display: block; font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: #f9fafb; font-size: 14px; outline: none; }
+        input:focus { border-color: var(--primary); background: white; }
 
-        .btn-reg { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+        .btn-reg { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .btn-reg:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
 
-        /* Modal Structure */
-        .modal { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); }
-        .modal-content { background: white; margin: 5% auto; padding: 30px; border-radius: 24px; width: 95%; max-width: 550px; }
-        .modal-body { max-height: 300px; overflow-y: auto; font-size: 14px; color: #475569; line-height: 1.6; margin: 20px 0; text-align: left; border: 1px solid #eee; padding: 15px; border-radius: 10px; }
+        /* Modal Styles (Professional Standard) */
+        .modal-overlay { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); }
+        .modal-content { background: white; margin: 5% auto; padding: 35px; border-radius: 28px; width: 95%; max-width: 550px; position: relative; animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-header { font-size: 22px; font-weight: 900; color: var(--dark); margin-bottom: 20px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .modal-body { max-height: 250px; overflow-y: auto; font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 25px; padding-right: 10px; }
+        .modal-body b { color: var(--dark); }
+        
+        .terms-acceptance { display: flex; align-items: flex-start; gap: 12px; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; }
+        .terms-acceptance input { width: 22px; height: 22px; cursor: pointer; }
+        .terms-acceptance span { font-size: 13px; font-weight: 700; color: var(--dark); line-height: 1.4; }
+
+        .modal-footer { margin-top: 30px; display: flex; gap: 15px; }
+        .btn-confirm { flex: 2; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        .btn-confirm:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .btn-cancel { flex: 1; padding: 15px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -49,7 +65,7 @@
         <div id="bizFields" style="display: none;">
             <div class="form-group"><label>Företagsnamn</label><input type="text" id="compName"></div>
             <div class="form-group"><label>Organisationsnummer</label><input type="text" id="taxId" placeholder="XXXXXX-XXXX"></div>
-            <div class="form-group"><label>Telefon (Växel)</label><input type="text" id="compPhone" placeholder="010-XXX XX XX"></div>
+            <div class="form-group"><label>Telefon (Växel)</label><input type="text" id="compPhone"></div>
             <div class="form-group"><label>Företagsadress</label><input type="text" id="address"></div>
         </div>
 
@@ -57,25 +73,28 @@
         <div class="form-group"><label>Lösenord</label><input type="password" id="pass" placeholder="Minst 8 tecken" required></div>
         <div class="form-group"><label>Bekräfta Lösenord</label><input type="password" id="confirmPass" required></div>
 
-        <button type="button" class="btn-reg" onclick="openTermsModal()">Skapa konto</button>
+        <button type="button" class="btn-reg" onclick="handlePreRegister()">Skapa konto</button>
     </form>
 </div>
 
-<div id="termsModal" class="modal">
+<div id="termsModal" class="modal-overlay">
     <div class="modal-content">
-        <h2 style="font-weight: 900; margin-bottom: 10px;">ANSVARSFRISKRIVNING</h2>
+        <div class="modal-header">ANSVARSFRISKRIVNING & VILLKOR</div>
         <div class="modal-body">
-            <p><b>1. Plattform:</b> BILHK är en teknisk mötesplats. Vi är inte part i fordonsaffärer.</p>
-            <p><b>2. Ansvar:</b> All handel sker på egen risk. Vi ansvarar inte för dolda fel eller dokumentation.</p>
-            <p><b>3. Ålder & Data:</b> Du bekräftar att du är över 18 år och godkänner GDPR-hantering.</p>
+            <p><b>1. Plattformens Roll:</b> BILHK är en teknisk mötesplats. Vi är inte part i fordonsaffärer och ansvarar inte för transaktioner.</p><br>
+            <p><b>2. Fordonets Skick:</b> All handel sker på egen risk. Vi ansvarar INTE för mekaniska fel, dolda defekter eller dokumentation.</p><br>
+            <p><b>3. Undersökningsplikt:</b> Som köpare är det din skyldighet att kontrollera fordonet och säljarens identitet fysiskt före betalning.</p><br>
+            <p><b>4. Säkerhet:</b> Betala aldrig handpenning online. Genom att skapa ett konto godkänner du att vi sparar din digitala acceptans av dessa villkor enligt svensk lag.</p>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 13px; margin-bottom: 20px;">
-            <input type="checkbox" id="finalCheck" style="width:20px; height:20px;">
-            <span>Jag godkänner villkoren och bekräftar registreringen.</span>
-        </div>
-        <div style="text-align:right;">
-            <button onclick="closeModal()" style="background:#f1f5f9; border:none; padding:10px 20px; border-radius:10px; cursor:pointer;">Avbryt</button>
-            <button onclick="processRegistration()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer; margin-left:10px;">Slutför</button>
+        
+        <label class="terms-acceptance">
+            <input type="checkbox" id="finalConsent">
+            <span>Jag har läst ansvarsfriskrivningen och accepterar användarvillkoren i sin helhet.</span>
+        </label>
+
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal()">Avbryt</button>
+            <button id="confirmRegBtn" class="btn-confirm" onclick="executeRegistration()" disabled>Slutför Registrering</button>
         </div>
     </div>
 </div>
@@ -95,26 +114,38 @@
         document.getElementById('bizFields').style.display = (m === 'Foretag') ? 'block' : 'none';
     };
 
-    window.openTermsModal = () => {
-        if (document.getElementById('pass').value !== document.getElementById('confirmPass').value) return Swal.fire('Obs', 'Lösenorden matchar inte!', 'warning');
-        if (document.getElementById('pass').value.length < 8) return Swal.fire('Obs', 'Lösenordet måste vara minst 8 tecken!', 'warning');
+    window.handlePreRegister = () => {
+        const p = document.getElementById('pass').value;
+        const c = document.getElementById('confirmPass').value;
+        if (!p || p.length < 8) return Swal.fire('Obs', 'Lösenordet måste vara minst 8 tecken.', 'warning');
+        if (p !== c) return Swal.fire('Obs', 'Lösenorden matchar inte!', 'warning');
+        
         document.getElementById('termsModal').style.display = 'block';
     };
 
     window.closeModal = () => document.getElementById('termsModal').style.display = 'none';
 
-    window.processRegistration = async () => {
-        if (!document.getElementById('finalCheck').checked) return Swal.fire('Info', 'Du måste acceptera villkoren.', 'info');
-        
+    document.getElementById('finalConsent').onchange = (e) => {
+        document.getElementById('confirmRegBtn').disabled = !e.target.checked;
+    };
+
+    window.executeRegistration = async () => {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('pass').value;
+        const btn = document.getElementById('confirmRegBtn');
+
+        btn.disabled = true;
+        btn.innerText = "Behandlar...";
+
         try {
-            const cred = await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value);
+            const cred = await createUserWithEmailAndPassword(auth, email, pass);
             
             const userData = {
                 uid: cred.user.uid,
-                email: document.getElementById('email').value,
+                email: email,
                 userType: currentMode,
-                termsAccepted: true,
-                agreementDate: serverTimestamp(),
+                legalConsent: true, // تـوثيق الموافقة قانونياً
+                consentTimestamp: serverTimestamp(),
                 createdAt: serverTimestamp()
             };
 
@@ -128,8 +159,21 @@
             }
 
             await setDoc(doc(db, "users", cred.user.uid), userData);
+            
+            await Swal.fire({
+                title: 'Välkommen!',
+                text: 'Ditt konto har skapats framgångsrikt.',
+                icon: 'success',
+                confirmButtonColor: '#f58220'
+            });
+            
             window.location.href = "index.html";
-        } catch (error) { Swal.fire('Fel', error.message, 'error'); }
+
+        } catch (error) {
+            Swal.fire('Fel', error.message, 'error');
+            btn.disabled = false;
+            btn.innerText = "Slutför Registrering";
+        }
     };
 </script>
 </body>
