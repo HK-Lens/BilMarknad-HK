@@ -17,7 +17,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--light); color: var(--dark); }
+        body { background-color: var(--light); color: var(--dark); min-height: 100vh; }
 
         header {
             background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
@@ -29,30 +29,45 @@
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
         .grid-layout { display: grid; grid-template-columns: 1fr 3fr; gap: 30px; }
 
+        /* Sidebar */
         .sidebar { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); height: fit-content; }
-        .menu-item { display: block; padding: 12px 15px; color: var(--dark); text-decoration: none; border-radius: 10px; margin-bottom: 5px; font-weight: 600; transition: 0.3s; }
+        .menu-item { 
+            display: block; padding: 12px 15px; color: var(--dark); text-decoration: none; 
+            border-radius: 10px; margin-bottom: 5px; font-weight: 600; transition: 0.3s; 
+            width: 100%; text-align: left; border: none; background: none; cursor: pointer;
+        }
+        .menu-item i { margin-right: 10px; width: 20px; }
         .menu-item:hover, .menu-item.active { background: var(--primary); color: white; }
 
+        /* Content Sections */
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
         .card { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        .card-title { font-size: 20px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        .card-title { font-size: 20px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; color: var(--dark); }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-box { background: #f1f5f9; padding: 20px; border-radius: 15px; text-align: center; }
-        .stat-box h2 { font-size: 26px; color: var(--primary); }
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-box { background: #f1f5f9; padding: 25px; border-radius: 15px; text-align: center; border: 1px solid var(--border); }
+        .stat-box p { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .stat-box h2 { font-size: 32px; color: var(--primary); margin-top: 8px; }
 
-        /* Ads List Table */
+        /* Table */
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 12px; border-bottom: 2px solid #eee; color: #64748b; font-size: 12px; text-transform: uppercase; }
+        th { text-align: left; padding: 12px; background: #f8fafc; font-size: 11px; color: #64748b; text-transform: uppercase; }
         td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
 
-        .btn-action { padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
-        .btn-edit { background: #fef3c7; color: #92400e; margin-right: 5px; }
-        .btn-delete { background: #fee2e2; color: #b91c1c; }
+        .btn-action { padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; color: white; font-weight: 700; font-size: 12px; margin-right: 5px; }
+        .btn-edit { background: #f59e0b; }
+        .btn-delete { background: var(--danger); }
 
+        /* Settings Form */
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; }
-        .btn-save { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 800; cursor: pointer; }
+        input { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
+        .btn-save { background: var(--primary); color: white; border: none; padding: 14px 40px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-save:hover { background: var(--primary-hover); }
 
         @media (max-width: 900px) { .grid-layout { grid-template-columns: 1fr; } }
     </style>
@@ -61,39 +76,38 @@
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <nav>
-        <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Hem</a>
-    </nav>
+    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;"><i class="fa-solid fa-house"></i> Hem</a>
 </header>
 
 <div class="container">
     <div class="grid-layout">
         <aside class="sidebar">
-            <a href="#stats" class="menu-item active">Statistik</a>
-            <a href="#ads" class="menu-item">Mina Annonser</a>
-            <a href="#settings" class="menu-item">Inställningar</a>
-            <button onclick="logout()" class="menu-item" style="width:100%; text-align:left; color:var(--danger); background:none; border:none; cursor:pointer;">Logga ut</button>
+            <button onclick="showSection('stats')" id="btn-stats" class="menu-item active"><i class="fa-solid fa-chart-line"></i> Statistik</button>
+            <button onclick="showSection('ads')" id="btn-ads" class="menu-item"><i class="fa-solid fa-car"></i> Mina Annonser</button>
+            <button onclick="showSection('settings')" id="btn-settings" class="menu-item"><i class="fa-solid fa-user-gear"></i> Inställningar</button>
+            <hr style="margin: 15px 0; border:0; border-top: 1px solid #eee;">
+            <button onclick="logout()" class="menu-item" style="color:var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
         </aside>
 
         <main>
-            <div id="stats" class="card">
-                <div class="card-title"><i class="fa-solid fa-chart-simple"></i> Översikt</div>
+            <div id="stats" class="content-section active card">
+                <div class="card-title"><i class="fa-solid fa-chart-pie"></i> Kontoöversikt</div>
                 <div class="stats-grid">
-                    <div class="stat-box"><p>Visningar</p><h2 id="totalViews">0</h2></div>
-                    <div class="stat-box"><p>Favoriter</p><h2 id="totalFavs">0</h2></div>
-                    <div class="stat-box"><p>Annonser</p><h2 id="totalAds">0</h2></div>
+                    <div class="stat-box"><p>Totala Visningar</p><h2 id="totalViews">0</h2></div>
+                    <div class="stat-box"><p>Favoritmarkeringar</p><h2 id="totalFavs">0</h2></div>
+                    <div class="stat-box"><p>Aktiva Annonser</p><h2 id="totalAds">0</h2></div>
                 </div>
-                <canvas id="mainChart" style="max-height: 250px;"></canvas>
+                <canvas id="performanceChart" style="max-height: 300px;"></canvas>
             </div>
 
-            <div id="ads" class="card">
-                <div class="card-title"><i class="fa-solid fa-car"></i> Mina Annonser</div>
+            <div id="ads" class="content-section card">
+                <div class="card-title"><i class="fa-solid fa-list-check"></i> Hantera Annonser</div>
                 <table>
                     <thead>
                         <tr>
                             <th>Fordon</th>
+                            <th>Pris</th>
                             <th>Visningar</th>
-                            <th>Favoriter</th>
                             <th>Åtgärder</th>
                         </tr>
                     </thead>
@@ -102,13 +116,13 @@
                 </table>
             </div>
 
-            <div id="settings" class="card">
-                <div class="card-title"><i class="fa-solid fa-user-gear"></i> Profilinställningar</div>
+            <div id="settings" class="content-section card">
+                <div class="card-title"><i class="fa-solid fa-id-card"></i> Profilinställningar</div>
                 <form id="profileForm">
-                    <div class="form-group"><label>Telefon</label><input type="text" id="phoneField"></div>
-                    <div class="form-group"><label>Adress</label><input type="text" id="addressField"></div>
-                    <div class="form-group"><label>E-post</label><input type="text" id="emailField" disabled style="opacity: 0.6;"></div>
-                    <button type="submit" class="btn-save">Spara ändringar</button>
+                    <div class="form-group"><label>Telefonnummer</label><input type="text" id="userPhone" placeholder="T.ex 070 123 45 67"></div>
+                    <div class="form-group"><label>Adress</label><input type="text" id="userAddress" placeholder="Gata, Postnummer, Stad"></div>
+                    <div class="form-group"><label>E-post (Kan ej ändras)</label><input type="text" id="userEmail" disabled style="background:#f1f5f9; cursor:not-allowed;"></div>
+                    <button type="submit" class="btn-save">Spara Information</button>
                 </form>
             </div>
         </main>
@@ -117,29 +131,37 @@
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { doc, getDoc, updateDoc, collection, query, where, getDocs, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { doc, getDoc, updateDoc, setDoc, collection, query, where, getDocs, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    let chartInstance = null;
+    let chart = null;
+
+    // Navigation Logic
+    window.showSection = (sectionId) => {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        
+        document.getElementById(sectionId).classList.add('active');
+        document.getElementById('btn-' + sectionId).classList.add('active');
+    };
 
     onAuthStateChanged(auth, async (user) => {
         if (!user) { window.location.href = "login.html"; return; }
-        
-        // 1. Load Profile
+
+        // Load User Info
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
             const data = userSnap.data();
-            document.getElementById('phoneField').value = data.phone || "";
-            document.getElementById('addressField').value = data.address || "";
-            document.getElementById('emailField').value = user.email;
+            document.getElementById('userPhone').value = data.phone || "";
+            document.getElementById('userAddress').value = data.address || "";
+            document.getElementById('userEmail').value = user.email;
         }
 
-        // 2. Load Ads & Stats
-        loadAdsData(user.uid);
+        loadDashboardData(user.uid);
     });
 
-    async function loadAdsData(uid) {
+    async function loadDashboardData(uid) {
         const q = query(collection(db, "cars"), where("sellerId", "==", uid), orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
         
@@ -147,27 +169,27 @@
         table.innerHTML = "";
         
         let tViews = 0, tFavs = 0;
-        let labels = [], viewsData = [];
+        let carLabels = [], carViews = [];
 
         snap.forEach(adDoc => {
             const car = adDoc.data();
-            const carId = adDoc.id;
+            const id = adDoc.id;
             const views = car.views || 0;
             const favs = car.favoritesCount || 0;
 
             tViews += views;
             tFavs += favs;
-            labels.push(car.model);
-            viewsData.push(views);
+            carLabels.push(car.model);
+            carViews.push(views);
 
             table.innerHTML += `
                 <tr>
                     <td><b>${car.brand} ${car.model}</b></td>
+                    <td>${Number(car.price).toLocaleString()} kr</td>
                     <td>${views}</td>
-                    <td>${favs}</td>
                     <td>
-                        <a href="edit.html?id=${carId}" class="btn-action btn-edit"><i class="fa-solid fa-pen"></i></a>
-                        <button onclick="deleteAd('${carId}')" class="btn-action btn-delete"><i class="fa-solid fa-trash"></i></button>
+                        <a href="edit.html?id=${id}" class="btn-action btn-edit"><i class="fa-solid fa-pen"></i></a>
+                        <button onclick="deleteAd('${id}')" class="btn-action btn-delete"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `;
@@ -177,38 +199,49 @@
         document.getElementById('totalFavs').innerText = tFavs;
         document.getElementById('totalAds').innerText = snap.size;
 
-        renderChart(labels, viewsData);
+        renderChart(carLabels, carViews);
     }
 
     function renderChart(labels, data) {
-        const ctx = document.getElementById('mainChart').getContext('2d');
-        if (chartInstance) chartInstance.destroy();
-        chartInstance = new Chart(ctx, {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        if (chart) chart.destroy();
+        chart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
-                datasets: [{ label: 'Visningar per bil', data: data, backgroundColor: '#f58220' }]
+                datasets: [{ label: 'Visningar', data: data, backgroundColor: '#f58220' }]
             },
             options: { responsive: true, plugins: { legend: { display: false } } }
         });
     }
 
+    // Save Profile Logic (Fix)
+    document.getElementById('profileForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const user = auth.currentUser;
+        const userRef = doc(db, "users", user.uid);
+        
+        try {
+            // Using setDoc with merge to ensure document exists
+            await setDoc(userRef, {
+                phone: document.getElementById('userPhone').value,
+                address: document.getElementById('userAddress').value,
+                updatedAt: new Date()
+            }, { merge: true });
+
+            Swal.fire({ title: 'Sparat!', text: 'Din profil har uppdaterats.', icon: 'success', confirmButtonColor: '#f58220' });
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Error', 'Kunde inte spara informationen.', 'error');
+        }
+    };
+
     window.deleteAd = async (id) => {
-        const confirm = await Swal.fire({ title: 'Radera?', text: 'Vill du verkligen ta bort annonsen?', icon: 'warning', showCancelButton: true });
+        const confirm = await Swal.fire({ title: 'Radera?', text: 'Vill du verkligen ta bort denna annons?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444' });
         if (confirm.isConfirmed) {
             await deleteDoc(doc(db, "cars", id));
             location.reload();
         }
-    };
-
-    document.getElementById('profileForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const user = auth.currentUser;
-        await updateDoc(doc(db, "users", user.uid), {
-            phone: document.getElementById('phoneField').value,
-            address: document.getElementById('addressField').value
-        });
-        Swal.fire('Sparat!', 'Din profil har uppdaterats.', 'success');
     };
 
     window.logout = () => signOut(auth).then(() => location.href = "login.html");
