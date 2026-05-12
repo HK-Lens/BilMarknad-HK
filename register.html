@@ -25,10 +25,10 @@
 
         .btn-reg { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 15px; }
 
-        /* Modal Styles */
+        /* Modal Structure */
         .modal { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); }
-        .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 24px; width: 90%; max-width: 550px; }
-        .modal-body { max-height: 300px; overflow-y: auto; font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 20px; text-align: left; }
+        .modal-content { background: white; margin: 5% auto; padding: 30px; border-radius: 24px; width: 95%; max-width: 550px; }
+        .modal-body { max-height: 300px; overflow-y: auto; font-size: 14px; color: #475569; line-height: 1.6; margin: 20px 0; text-align: left; border: 1px solid #eee; padding: 15px; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -37,7 +37,7 @@
     <a href="index.html" class="logo">BIL<span>HK</span></a>
     
     <div class="tabs">
-        <button class="tab active" id="pTab" onclick="setMode('Privat')">Privat</button>
+        <button class="tab active" id="pTab" onclick="setMode('Privat')">Privatperson</button>
         <button class="tab" id="fTab" onclick="setMode('Foretag')">Företag</button>
     </div>
 
@@ -50,7 +50,7 @@
             <div class="form-group"><label>Företagsnamn</label><input type="text" id="compName"></div>
             <div class="form-group"><label>Organisationsnummer</label><input type="text" id="taxId" placeholder="XXXXXX-XXXX"></div>
             <div class="form-group"><label>Telefon (Växel)</label><input type="text" id="compPhone" placeholder="010-XXX XX XX"></div>
-            <div class="form-group"><label>Företagsadress</label><input type="text" id="compAddress"></div>
+            <div class="form-group"><label>Företagsadress</label><input type="text" id="address"></div>
         </div>
 
         <div class="form-group"><label>E-postadress</label><input type="email" id="email" required></div>
@@ -63,19 +63,19 @@
 
 <div id="termsModal" class="modal">
     <div class="modal-content">
-        <h2 style="margin-bottom: 15px; font-weight: 900;">ANSVARSFRISKRIVNING & JURIDISK INFORMATION</h2>
+        <h2 style="font-weight: 900; margin-bottom: 10px;">ANSVARSFRISKRIVNING</h2>
         <div class="modal-body">
-            <p><b>1. Ansvar:</b> BILHK är en teknisk plattform. Vi ansvarar inte för skicket på fordonen.</p>
-            <p><b>2. Ålder:</b> Du bekräftar att du är över 18 år.</p>
-            <p><b>3. GDPR:</b> Du godkänner att vi hanterar dina uppgifter enligt GDPR.</p>
+            <p><b>1. Plattform:</b> BILHK är en teknisk mötesplats. Vi är inte part i fordonsaffärer.</p>
+            <p><b>2. Ansvar:</b> All handel sker på egen risk. Vi ansvarar inte för dolda fel eller dokumentation.</p>
+            <p><b>3. Ålder & Data:</b> Du bekräftar att du är över 18 år och godkänner GDPR-hantering.</p>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 13px;">
+        <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 13px; margin-bottom: 20px;">
             <input type="checkbox" id="finalCheck" style="width:20px; height:20px;">
-            <span>Jag godkänner villkoren och slutför registreringen.</span>
+            <span>Jag godkänner villkoren och bekräftar registreringen.</span>
         </div>
-        <div style="margin-top:20px; text-align:right;">
-            <button onclick="closeModal()" style="background:#f1f5f9; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; margin-right:10px;">Avbryt</button>
-            <button onclick="processRegistration()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer;">Bekräfta</button>
+        <div style="text-align:right;">
+            <button onclick="closeModal()" style="background:#f1f5f9; border:none; padding:10px 20px; border-radius:10px; cursor:pointer;">Avbryt</button>
+            <button onclick="processRegistration()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer; margin-left:10px;">Slutför</button>
         </div>
     </div>
 </div>
@@ -97,30 +97,34 @@
 
     window.openTermsModal = () => {
         if (document.getElementById('pass').value !== document.getElementById('confirmPass').value) return Swal.fire('Obs', 'Lösenorden matchar inte!', 'warning');
+        if (document.getElementById('pass').value.length < 8) return Swal.fire('Obs', 'Lösenordet måste vara minst 8 tecken!', 'warning');
         document.getElementById('termsModal').style.display = 'block';
     };
 
     window.closeModal = () => document.getElementById('termsModal').style.display = 'none';
 
     window.processRegistration = async () => {
-        if (!document.getElementById('finalCheck').checked) return Swal.fire('Info', 'Acceptera villkoren först.', 'info');
+        if (!document.getElementById('finalCheck').checked) return Swal.fire('Info', 'Du måste acceptera villkoren.', 'info');
         
         try {
             const cred = await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value);
+            
             const userData = {
                 uid: cred.user.uid,
                 email: document.getElementById('email').value,
                 userType: currentMode,
                 termsAccepted: true,
-                agreementDate: serverTimestamp()
+                agreementDate: serverTimestamp(),
+                createdAt: serverTimestamp()
             };
 
-            if (currentMode === 'Privat') userData.fullName = document.getElementById('fullName').value;
-            else {
+            if (currentMode === 'Privat') {
+                userData.fullName = document.getElementById('fullName').value;
+            } else {
                 userData.companyName = document.getElementById('compName').value;
                 userData.taxId = document.getElementById('taxId').value;
                 userData.phone = document.getElementById('compPhone').value;
-                userData.address = document.getElementById('compAddress').value;
+                userData.address = document.getElementById('address').value;
             }
 
             await setDoc(doc(db, "users", cred.user.uid), userData);
