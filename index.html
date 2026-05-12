@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BilMarknad HK | Köp & Sälj Bilar i Sverige</title>
+    <title>BilMarknad HK | Din trygga bilmarknad i Sverige</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,6 +19,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--light); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
 
+        /* Beta/Dev Banner */
         .dev-banner {
             background: var(--danger); color: white; padding: 10px; text-align: center;
             font-weight: 800; font-size: 13px; text-transform: uppercase;
@@ -122,7 +123,7 @@
     <div class="footer-grid">
         <div class="disclaimer-box">
             <h4>Ansvarsfriskrivning</h4>
-            <p>BilMarknad-HK هو وسيط تقني لتسهيل عملية بيع وشراء السيارات في السويد. نحن لا نتحمل مسؤولية الحالة الفنية للمركبات أو صحة البيانات القانونية. يرجى دائماً إجراء فحص فني وتدقيق الوثائق قبل إتمام أي عملية شراء.</p>
+            <p>BilMarknad-HK är en teknisk plattform som underlättar köp och försäljning av fordon i Sverige. Vi ansvarar inte för fordonens mekaniska skick eller lagligheten i dokumentationen. Vi rekommenderar alltid en noggrann inspektion innan köp.</p>
             <p style="margin-top:15px;"><a href="terms.html" class="disclaimer-link">Säkerhet & Användarvillkor</a></p>
         </div>
         <div style="text-align: right;">
@@ -142,7 +143,7 @@
     const modelSelect = document.getElementById('modelSelect');
     const carsGrid = document.getElementById('carsGrid');
 
-    // Populate Brands
+    // Populate Brands from external data
     Object.keys(carData).sort().forEach(b => brandSelect.innerHTML += `<option value="${b}">${b}</option>`);
 
     brandSelect.onchange = () => {
@@ -152,7 +153,7 @@
         }
     };
 
-    // User Auth Management
+    // Global Auth Watcher
     onAuthStateChanged(auth, (user) => {
         const container = document.getElementById('authStatusContainer');
         if(user) {
@@ -166,21 +167,26 @@
         }
     });
 
-    // Load Initial Cars (Latest 8)
+    // Auto-load latest cars on page entry
     async function loadLatestCars() {
-        carsGrid.innerHTML = "<p>Hämtar de senaste bilarna...</p>";
-        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(8));
-        const snap = await getDocs(q);
-        renderCars(snap);
+        carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Hämtar de senaste bilarna...</p>";
+        try {
+            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(8));
+            const snap = await getDocs(q);
+            renderCars(snap);
+        } catch (e) { console.error("Initial load error:", e); }
     }
 
-    // Search Logic
+    // Search Execution
     document.getElementById('searchBtn').onclick = async () => {
         document.getElementById('gridTitle').innerText = "Sökresultat";
-        carsGrid.innerHTML = "<p>Söker...</p>";
-        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(24));
-        const snap = await getDocs(q);
-        renderCars(snap, true);
+        carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Söker...</p>";
+        try {
+            // General query to filter locally for speed, or customize Firestore query
+            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(24));
+            const snap = await getDocs(q);
+            renderCars(snap, true);
+        } catch (e) { console.error("Search error:", e); }
     };
 
     function renderCars(snap, filterActive = false) {
@@ -193,12 +199,12 @@
             const m = modelSelect.value;
             const p = document.getElementById('maxPrice').value;
 
-            // Simple client-side filtering for fast UX
+            // Simple client-side filtering logic
             if((!b || car.brand === b) && (!m || car.model === m) && (!p || car.price <= Number(p))) {
                 found++;
                 carsGrid.innerHTML += `
                     <div class="car-card animate__animated animate__fadeIn" onclick="location.href='details.html?id=${doc.id}'">
-                        <img src="${car.images?.[0] || 'placeholder.jpg'}" class="car-img">
+                        <img src="${car.images?.[0] || 'placeholder.jpg'}" class="car-img" loading="lazy">
                         <div class="car-body">
                             <div class="car-price">${Number(car.price).toLocaleString()} kr</div>
                             <div class="car-name">${car.brand} ${car.model}</div>
@@ -209,7 +215,7 @@
                     </div>`;
             }
         });
-        if(found === 0) carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Inga bilar matchade din sökning.</p>";
+        if(found === 0) carsGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Inga bilar hittades som matchar dina val.</p>";
     }
 
     window.handleSellClick = () => {
@@ -217,6 +223,7 @@
         else location.href = "login.html";
     };
 
+    // Run on startup
     loadLatestCars();
 </script>
 </body>
