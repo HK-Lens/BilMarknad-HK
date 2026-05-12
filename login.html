@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logga in | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -12,117 +12,110 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         
-        .auth-card { background: white; width: 100%; max-width: 440px; padding: 40px; border-radius: 30px; border: 1px solid var(--border); box-shadow: 0 15px 40px rgba(0,0,0,0.06); }
-        .logo { text-align: center; margin-bottom: 30px; display: block; text-decoration: none; font-weight: 900; font-size: 30px; color: var(--dark); }
+        .auth-card { background: white; width: 100%; max-width: 420px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
+        .logo { text-align: center; margin-bottom: 30px; display: block; text-decoration: none; font-weight: 900; font-size: 32px; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        /* Marquee Security Bar */
-        .marquee-wrapper { width: 100%; overflow: hidden; background: #fff7ed; border: 1px solid #ffedd5; border-radius: 12px; padding: 10px 0; margin-bottom: 25px; white-space: nowrap; }
-        .marquee-content { display: inline-block; animation: scroll-text 40s linear infinite; font-size: 13px; font-weight: 700; color: #9a3412; }
-        .marquee-content span { padding-right: 60px; }
-        @keyframes scroll-text { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-        .marquee-wrapper:hover .marquee-content { animation-play-state: paused; }
-
         .tabs { display: flex; background: #f1f5f9; padding: 5px; border-radius: 14px; margin-bottom: 25px; }
-        .tab { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; background: none; color: #64748b; transition: 0.3s; }
+        .tab { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; background: none; color: #64748b; }
         .tab.active { background: white; color: var(--dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
         .form-group { margin-bottom: 20px; }
         label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
-        input { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 14px; outline: none; font-size: 15px; background: #f9fafb; transition: 0.2s; }
+        input { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 14px; outline: none; font-size: 15px; background: #f9fafb; }
         input:focus { border-color: var(--primary); background: white; }
 
-        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 25px; font-size: 13px; font-weight: 600; cursor: pointer; }
-        .checkbox-group input { width: 20px; height: 20px; cursor: pointer; }
+        .terms-text { font-size: 13px; color: #64748b; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+        .terms-text b { color: var(--primary); text-decoration: underline; }
 
         .btn-auth { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        .btn-auth:disabled { background: #cbd5e1; cursor: not-allowed; opacity: 0.7; }
-        
-        .google-btn { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 14px; background: white; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: 0.2s; }
-        .google-btn:hover { background: #f8fafc; }
+        .btn-auth:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 24px; width: 90%; max-width: 500px; max-height: 70vh; overflow-y: auto; }
+        .modal-header { font-size: 20px; font-weight: 900; margin-bottom: 20px; color: var(--dark); }
+        .modal-body { font-size: 14px; color: #475569; line-height: 1.6; text-align: left; }
+        .modal-footer { margin-top: 25px; text-align: right; }
+        .btn-close { padding: 10px 25px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
+
+        .google-btn { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 14px; background: white; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 700; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="auth-card">
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-
-    <div class="marquee-wrapper">
-        <div class="marquee-content">
-            <span>⚠️ SÄKERHETSINFORMATION: BILHK är endast en annonsplattform. Vi ansvarar INTE för fordonens mekaniska skick eller dolda fel.</span>
-            <span>🛡️ Köparen har eget ansvar att verifiera säljarens identitet och fordonets dokumentation före betalning.</span>
-            <span>🚫 VARNING: Skicka aldrig handpenning online. Genom inloggning godkänner du våra fullständiga användarvillkor enligt svensk lag.</span>
-        </div>
-    </div>
     
     <div class="tabs">
-        <button class="tab active" id="tabPrivat" onclick="switchTab('Privat')">Privatperson</button>
-        <button class="tab" id="tabForetag" onclick="switchTab('Foretag')">Företag</button>
+        <button class="tab active" id="tabPrivat" onclick="switchLogin('Privat')">Privat</button>
+        <button class="tab" id="tabForetag" onclick="switchLogin('Foretag')">Företag</button>
     </div>
 
     <form id="loginForm">
-        <div class="form-group">
-            <label>E-postadress</label>
-            <input type="email" id="email" placeholder="namn@exempel.se" required>
-        </div>
-        <div class="form-group">
-            <label>Lösenord</label>
-            <input type="password" id="password" placeholder="••••••••" required>
-        </div>
+        <div class="form-group"><label>E-post</label><input type="email" id="email" required></div>
+        <div class="form-group"><label>Lösenord</label><input type="password" id="password" required></div>
 
-        <label class="checkbox-group">
-            <input type="checkbox" id="termsCheck">
-            <span>Jag bekräftar att jag har läst säkerhetsinformationen och accepterar villkoren.</span>
-        </label>
+        <div class="terms-text">
+            <input type="checkbox" id="termsCheck" style="width:20px; height:20px;">
+            <span onclick="openModal()">Jag har läst och godkänner <b id="openTerms">Användarvillkoren</b></span>
+        </div>
 
         <button type="submit" class="btn-auth" id="loginBtn" disabled>Logga in</button>
     </form>
 
-    <div id="googleSection">
-        <div style="text-align:center; margin: 20px 0; font-size: 12px; color: #94a3b8; font-weight: 700;">ELLER</div>
+    <div id="googleArea">
+        <div style="text-align:center; margin:15px 0; font-size:12px; color:#cbd5e1;">ELLER</div>
         <button class="google-btn" id="googleBtn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="20"> Logga in med Google
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Google Login
         </button>
     </div>
+</div>
 
-    <p style="text-align:center; margin-top:25px; font-size:14px; color:#64748b;">
-        Ny här? <a href="register.html" style="color:var(--primary); font-weight:800; text-decoration:none;">Skapa ett konto</a>
-    </p>
+<div id="termsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">Säkerhetsinformation & Villkor</div>
+        <div class="modal-body">
+            <p><b>1. Plattformens roll:</b> BILHK är endast en teknisk mötesplats för köpare och säljare. Vi är inte part i affären.</p><br>
+            <p><b>2. Ansvar:</b> Vi ansvarar inte för fordonets skick, dolda fel eller dokumentationens giltighet.</p><br>
+            <p><b>3. Undersökningsplikt:</b> Som köpare är det ditt ansvar att kontrollera fordonet noggrant och verifiera säljarens ID innan betalning.</p><br>
+            <p><b>4. Betalning:</b> Skicka aldrig handpenning eller förskottsbetalning digitalt till okända personer.</p><br>
+            <p><b>5. Lagar:</b> Genom att använda tjänsten samtycker du till att följa svensk lag och våra säkerhetsrutiner.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-close" onclick="closeModal()">Jag har förstått</button>
+        </div>
+    </div>
 </div>
 
 <script type="module">
     import { auth, db } from './firebase-config.js';
     import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    const termsCheck = document.getElementById('termsCheck');
-    const loginBtn = document.getElementById('loginBtn');
-    let currentMode = 'Privat';
+    window.openModal = () => document.getElementById('termsModal').style.display = 'block';
+    window.closeModal = () => document.getElementById('termsModal').style.display = 'none';
 
-    window.switchTab = (mode) => {
-        currentMode = mode;
-        document.getElementById('tabPrivat').classList.toggle('active', mode === 'Privat');
-        document.getElementById('tabForetag').classList.toggle('active', mode === 'Foretag');
-        document.getElementById('googleSection').style.display = (mode === 'Privat') ? 'block' : 'none';
+    document.getElementById('termsCheck').onchange = (e) => {
+        document.getElementById('loginBtn').disabled = !e.target.checked;
     };
 
-    termsCheck.onchange = () => loginBtn.disabled = !termsCheck.checked;
+    window.switchLogin = (type) => {
+        document.getElementById('tabPrivat').classList.toggle('active', type === 'Privat');
+        document.getElementById('tabForetag').classList.toggle('active', type === 'Foretag');
+        document.getElementById('googleArea').style.display = (type === 'Privat') ? 'block' : 'none';
+    };
 
     document.getElementById('loginForm').onsubmit = async (e) => {
         e.preventDefault();
         try {
             await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
             window.location.href = "index.html";
-        } catch (error) {
-            Swal.fire('Fel', 'Inloggningen misslyckades. Kontrollera dina uppgifter.', 'error');
-        }
+        } catch (error) { Swal.fire('Fel', 'Inloggning misslyckades', 'error'); }
     };
 
     document.getElementById('googleBtn').onclick = async () => {
-        if(!termsCheck.checked) return Swal.fire('Info', 'Du måste acceptera villkoren först.', 'info');
-        try {
-            await signInWithPopup(auth, new GoogleAuthProvider());
-            window.location.href = "index.html";
-        } catch (error) { console.error(error); }
+        if(!document.getElementById('termsCheck').checked) return Swal.fire('Obs', 'Godkänn villkoren först', 'warning');
+        try { await signInWithPopup(auth, new GoogleAuthProvider()); window.location.href = "index.html"; } catch (e) {}
     };
 </script>
 </body>
