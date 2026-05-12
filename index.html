@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BilMarknad HK | Köp och sälj bilar i Sverige</title>
+    <title>BilMarknad HK | AI-Powered Future</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,264 +12,206 @@
 
     <style>
         :root {
-            --primary: #f58220; --primary-hover: #e07210; --dark: #0f172a;
-            --light: #f8fafc; --border: #e2e8f0; --white: #ffffff; --danger: #ef4444;
+            --primary: #f58220; --primary-glow: rgba(245, 130, 32, 0.6);
+            --dark: #0f172a; --ai-bg: #020617; --light: #f8fafc; --border: #1e293b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--light); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
+        body { background-color: var(--ai-bg); color: #fff; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
 
-        .dev-banner {
-            background: var(--danger); color: white; padding: 12px; text-align: center;
-            font-weight: 800; font-size: 14px; text-transform: uppercase;
-            animation: pulse-danger 2s infinite; position: relative; z-index: 2000;
-        }
-        @keyframes pulse-danger { 0% { background-color: #ef4444; } 50% { background-color: #b91c1c; } 100% { background-color: #ef4444; } }
-
+        /* Header AI Style */
         header {
-            background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px);
+            padding: 1rem 6%; border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center;
             position: sticky; top: 0; z-index: 1000;
         }
-        .logo { font-size: 1.8rem; font-weight: 900; color: var(--dark); text-decoration: none; }
-        .logo span { color: var(--primary); }
-        .nav-links { display: flex; align-items: center; gap: 20px; }
-        .btn-sell { background: var(--primary); color: white !important; padding: 10px 25px; border-radius: 50px; border: none; cursor: pointer; font-weight: 800; transition: 0.3s; text-decoration: none; }
+        .logo { font-size: 1.8rem; font-weight: 900; color: #fff; text-decoration: none; }
+        .logo span { color: var(--primary); text-shadow: 0 0 15px var(--primary-glow); }
+        
+        .btn-sell { background: var(--primary); color: white !important; padding: 12px 28px; border-radius: 50px; cursor: pointer; font-weight: 800; transition: 0.4s; text-decoration: none; border: none; box-shadow: 0 0 20px var(--primary-glow); }
+        .btn-sell:hover { transform: scale(1.05); filter: brightness(1.1); }
 
-        .notif-wrapper { position: relative; cursor: pointer; margin-right: 10px; }
-        .notif-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: none; align-items: center; justify-content: center; border: 2px solid white; font-weight: 900; }
-
-        .hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 50px 6% 90px; text-align: center; color: white; }
-        .car-types-container { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 25px; }
-        .type-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px 20px; border-radius: 50px; cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.3s; }
-        .type-btn.active { background: var(--primary); border-color: var(--primary); }
-
-        .filter-wrapper { max-width: 1200px; margin: -45px auto 40px; padding: 0 20px; width: 100%; }
-        .filter-card { background: var(--white); padding: 35px; border-radius: 24px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border: 1px solid var(--border); }
-        .filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .filter-group label { font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; display: block; }
-        input, select { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f1f5f9; font-size: 14px; outline: none; width: 100%; color: var(--dark); }
-
-        .search-actions { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
-        .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; }
-
-        /* معرض الصور: 6 صور بتوزيع انسيابي */
-        .gallery-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 25px; 
-        }
-        .gallery-item { 
-            height: 300px; 
-            border-radius: 24px; 
-            overflow: hidden; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05); 
-            background: #f1f5f9; 
+        /* Hero AI Animation */
+        .hero { 
+            padding: 100px 6% 140px; text-align: center; 
+            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
             position: relative;
         }
-        .gallery-item img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            transition: opacity 1.5s ease-in-out, transform 1s; 
-            opacity: 1;
+        .hero h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 15px; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Glass Search Box */
+        .filter-wrapper { max-width: 1200px; margin: -70px auto 40px; padding: 0 20px; width: 100%; position: relative; z-index: 10; }
+        .filter-card { 
+            background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px);
+            padding: 40px; border-radius: 35px; border: 1px solid rgba(245, 130, 32, 0.2);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
-        .gallery-item:hover img { transform: scale(1.05); }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        input, select { padding: 16px; border: 1px solid var(--border); border-radius: 18px; background: rgba(15, 23, 42, 0.5); color: #fff; font-size: 14px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
 
-        .cars-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 22px; border-radius: 20px; font-weight: 900; font-size: 18px; cursor: pointer; box-shadow: 0 10px 30px var(--primary-glow); transition: 0.4s; }
+        .btn-deep { flex: 1; background: #334155; color: #fff; border: none; padding: 22px; border-radius: 20px; font-weight: 700; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; }
 
-        .container { flex: 1; padding: 0 6% 80px; }
-        .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
+        /* AI Visualization Area (Instead of Images) */
+        .ai-visual-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-top: 50px; }
+        .ai-card { 
+            height: 250px; background: linear-gradient(145deg, #0f172a, #1e293b); 
+            border-radius: 30px; position: relative; overflow: hidden;
+            border: 1px solid rgba(245, 130, 32, 0.15); display: flex; align-items: center; justify-content: center;
+        }
+        .ai-card::before {
+            content: ''; position: absolute; width: 150%; height: 2px; background: var(--primary);
+            top: 0; left: -150%; animation: scan 4s linear infinite; opacity: 0.3;
+        }
+        @keyframes scan { 0% { top: 0; left: -150%; } 100% { top: 100%; left: 150%; } }
+        
+        .ai-icon { font-size: 50px; color: var(--primary); opacity: 0.5; filter: blur(1px); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.4; } 50% { transform: scale(1.1); opacity: 0.7; } }
+
+        /* Result Grid */
+        .cars-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; padding-top: 40px; }
+        .car-card { background: #1e293b; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: 0.4s; }
+        .car-card:hover { transform: translateY(-10px); border-color: var(--primary); }
+
+        .container { flex: 1; padding: 0 6% 100px; }
+        .section-title { font-size: 28px; font-weight: 900; margin-bottom: 40px; color: var(--primary); }
 
         /* Footer */
-        footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; margin-top: auto; border-top: 4px solid var(--primary); }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto; }
-        .disclaimer-box h4 { color: var(--white); margin-bottom: 15px; font-weight: 800; }
-        .disclaimer-box p { font-size: 13px; line-height: 1.6; color: #cbd5e1; }
+        footer { background: #020617; padding: 80px 6% 40px; border-top: 4px solid var(--primary); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 60px; max-width: 1200px; margin: 0 auto; }
+        .disclaimer-box p { font-size: 14px; line-height: 1.8; color: #94a3b8; }
         .disclaimer-link { color: var(--primary); text-decoration: none; font-weight: 700; border-bottom: 1px solid var(--primary); }
-        
+
         @media (max-width: 900px) {
-            .filter-grid { grid-template-columns: repeat(2, 1fr); }
-            .gallery-item { height: 220px; }
-            .search-actions { flex-direction: column; }
-            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .ai-visual-container { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.2rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="dev-banner">Sidan är under uppbyggnad</div>
-
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
     <nav class="nav-links">
-        <button onclick="checkAuthBeforeSell()" class="btn-sell">Sälj din bil</button>
+        <button onclick="checkAuthBeforeSell()" class="btn-sell"><i class="fa-solid fa-microchip"></i> Sälj din bil</button>
         <div id="userMenu" style="display: flex; align-items: center; gap: 15px;">
-            <div class="notif-wrapper" id="notifBell" style="display: none;" onclick="location.href='messages.html'">
-                <i class="fa-solid fa-bell" style="font-size: 22px; color: var(--dark);"></i>
-                <span class="notif-badge" id="notifCount">0</span>
-            </div>
             <div id="authStatusContainer" style="display: flex; align-items: center; gap: 15px;"></div>
         </div>
     </nav>
 </header>
 
 <section class="hero">
-    <h1>Hitta din nästa bil snabbt och enkelt</h1>
-    <div class="car-types-container">
-        <button class="type-btn active" onclick="filterByType('', this)">Alla bilar</button>
-        <button class="type-btn" onclick="filterByType('SUV', this)">SUV</button>
-        <button class="type-btn" onclick="filterByType('Sedan', this)">Sedan</button>
-        <button class="type-btn" onclick="filterByType('Kombi', this)">Kombi</button>
-    </div>
+    <h1 class="animate__animated animate__fadeIn">AI-Drivet Bilmarknad</h1>
+    <p style="color: #94a3b8; font-size: 1.2rem;">Nästa generation av fordonsförsäljning i Sverige</p>
 </section>
 
 <div class="filter-wrapper">
     <div class="filter-card">
         <div class="filter-grid">
-            <div class="filter-group"><label>Märke</label><select id="brandSelect"><option value="">Alla märken</option></select></div>
-            <div class="filter-group"><label>Modell</label><select id="modelSelect"><option value="">Välj مärke</option></select></div>
-            <div class="filter-group"><label>Max Pris</label><input type="number" id="maxPrice"></div>
-            <div class="filter-group"><label>Min Pris</label><input type="number" id="minPrice"></div>
-            <div class="filter-group"><label>Max Mil</label><input type="number" id="maxMil"></div>
-            <div class="filter-group"><label>Min Mil</label><input type="number" id="minMil"></div>
-            <div class="filter-group"><label>Nyaste År</label><input type="number" id="maxYear"></div>
-            <div class="filter-group"><label>Äldsta År</label><input type="number" id="minYear"></div>
+            <select id="brandSelect"><option value="">Välj Märke</option></select>
+            <input type="number" id="maxPrice" placeholder="Max Pris (Kr)">
+            <input type="number" id="maxMil" placeholder="Max Mil">
+            <input type="number" id="minYear" placeholder="Från Årsmodell">
         </div>
         <div class="search-actions">
             <a href="filter.html" class="btn-deep">Djup Sökning</a>
-            <button class="btn-results" id="searchBtn">Visa Resultat</button>
+            <button class="btn-results" id="searchBtn">Analysera & Visa Resultat</button>
         </div>
     </div>
 </div>
 
 <div class="container">
-    <h2 class="section-title" id="resultsTitle">Senaste Toppmodeller</h2>
-    <div id="featuredGallery" class="gallery-grid"></div>
+    <h2 class="section-title" id="resultsTitle">AI Intelligens System</h2>
+    
+    <div id="aiVisuals" class="ai-visual-container">
+        <div class="ai-card"><i class="fa-solid fa-brain ai-icon"></i></div>
+        <div class="ai-card"><i class="fa-solid fa-network-wired ai-icon"></i></div>
+        <div class="ai-card"><i class="fa-solid fa-bolt-lightning ai-icon"></i></div>
+        <div class="ai-card"><i class="fa-solid fa-car-side ai-icon"></i></div>
+        <div class="ai-card"><i class="fa-solid fa-shield-halved ai-icon"></i></div>
+        <div class="ai-card"><i class="fa-solid fa-magnifying-glass-chart ai-icon"></i></div>
+    </div>
+
     <div id="carsGrid" class="cars-grid"></div>
 </div>
 
 <footer>
     <div class="footer-grid">
         <div class="disclaimer-box">
-            <h4>Ansvarsfriskrivning</h4>
+            <h4><i class="fa-solid fa-circle-exclamation"></i> Ansvarsfriskrivning</h4>
             <p>
-                BilMarknad-HK är en plattform för köp och försäljning. Vi ansvarar inte för felaktig information eller transaktioner mellan användare. 
-                Läs mer om vår <a href="terms.html" class="disclaimer-link">Säkerhet & Ansvarsfriskrivning</a>.
+                BilMarknad-HK هو نظام تقني متقدم للربط بين البائع والمشتري. نحن نستخدم تقنيات تحليل البيانات لتوفير أفضل تجربة، ولكننا لا نتحمل مسؤولية الحالة الميكانيكية للمركبات. 
+                يرجى مراجعة <a href="terms.html" class="disclaimer-link">شروط الأمان والخصوصية</a>.
             </p>
         </div>
-        <div style="text-align: right;">
-            <p style="font-size: 12px;">&copy; 2026 BilMarknad-HK. <br> Alla rättigheter förbehållna.</p>
+        <div style="text-align: right; color: #94a3b8;">
+            <p style="font-weight: 900; color: #fff;">BILHK &copy; 2026</p>
+            <p>Smart Bilmarknad i Sverige</p>
         </div>
     </div>
 </footer>
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { collection, query, where, getDocs, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { carData } from './cars-data.js';
 
+    // 1. القوائم المنسدلة
     const brandSelect = document.getElementById('brandSelect');
-    const modelSelect = document.getElementById('modelSelect');
-    const gallery = document.getElementById('featuredGallery');
-    const carsGrid = document.getElementById('carsGrid');
-    const resultsTitle = document.getElementById('resultsTitle');
+    Object.keys(carData).sort().forEach(b => brandSelect.innerHTML += `<option value="${b}">${b}</option>`);
 
-    // القوائم المنسدلة
-    Object.keys(carData).sort().forEach(b => {
-        brandSelect.innerHTML += `<option value="${b}">${b}</option>`;
-    });
-    brandSelect.onchange = () => {
-        modelSelect.innerHTML = '<option value="">Alla modeller</option>';
-        if(carData[brandSelect.value]) {
-            carData[brandSelect.value].sort().forEach(m => {
-                modelSelect.innerHTML += `<option value="${m}">${m}</option>`;
-            });
+    // 2. إدارة المستخدم (تسجيل الخروج)
+    onAuthStateChanged(auth, (user) => {
+        const container = document.getElementById('authStatusContainer');
+        if(user) {
+            container.innerHTML = `
+                <a href="my-account.html" style="text-decoration:none; font-weight:800; color:var(--primary);">Mitt Konto</a>
+                <button id="logoutBtn" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer; font-size:13px; margin-left:12px;">Logga ut</button>
+            `;
+            document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
+        } else {
+            container.innerHTML = `<a href="login.html" style="text-decoration:none; color:#fff; font-weight:700;">Logga in</a>`;
         }
+    });
+
+    // 3. البحث الحقيقي (إخفاء الجرافيكس وإظهار السيارات)
+    document.getElementById('searchBtn').onclick = async () => {
+        const aiVisuals = document.getElementById('aiVisuals');
+        const grid = document.getElementById('carsGrid');
+        
+        aiVisuals.style.display = "none";
+        grid.style.display = "grid";
+        document.getElementById('resultsTitle').innerText = "Analyserade Resultat";
+        grid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Bearbetar data...</p>";
+
+        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(20));
+        const snap = await getDocs(q);
+        grid.innerHTML = "";
+        let found = 0;
+
+        snap.forEach(doc => {
+            const car = doc.data();
+            if(!brandSelect.value || car.brand === brandSelect.value) {
+                found++;
+                grid.innerHTML += `
+                    <div class="car-card animate__animated animate__fadeInUp" onclick="location.href='details.html?id=${doc.id}'">
+                        <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:200px; object-fit:cover;">
+                        <div style="padding:20px;">
+                            <h3 style="color:var(--primary); font-weight:900;">${Number(car.price).toLocaleString()} kr</h3>
+                            <p style="color:#cbd5e1; font-weight:700; margin-top:5px;">${car.brand} ${car.model}</p>
+                        </div>
+                    </div>`;
+            }
+        });
+        if(found === 0) grid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Inga matchningar hittades i systemet.</p>";
     };
 
-    // --- مصفوفة الروابط الـ 15 التي اخترتها ---
-    const MY_CHOSEN_IMAGES = [
-        "https://www.vecteezy.com/photo/60599996-bright-orange-sports-car-being-washed-in-an-auto-detailing-shop-with-water-splashing-around-during-daytime",
-        "https://www.vecteezy.com/photo/56839007-classic-red-muscle-car-in-autumn-sunlight",
-        "https://www.vecteezy.com/photo/48608612-urban-sports-car-parked-on-rooftop-parking-lot-with-skyscrapers-in-the-background-during-sunset",
-        "https://www.vecteezy.com/photo/53733069-a-modern-car-captured-in-perfect-precision-showcasing-every-detail",
-        "https://www.vecteezy.com/photo/30662388-natural-photography-front-view-car-racing",
-        "https://www.vecteezy.com/photo/23847342-the-car-is-drifting-with-ai-generated",
-        "https://www.vecteezy.com/photo/57799111-drive-in-night-forest",
-        "https://www.vecteezy.com/photo/70099291-a-sleek-white-car-parked-against-a-bright-blue-sky-and-a-lone-tree-creating-a-serene-and-modern-landscape",
-        "https://www.vecteezy.com/photo/69891760-a-sports-car-driving-down-the-street-at-night",
-        "https://www.vecteezy.com/photo/68570074-a-classic-car-is-driving-down-a-city-street",
-        "https://www.vecteezy.com/photo/67295614-a-car-with-smoke-coming-out-of-its-tail-lights",
-        "https://www.vecteezy.com/photo/53733072-precision-close-up-of-a-modern-car-featuring-every-elegant-detail",
-        "https://www.vecteezy.com/photo/53733071-sleek-modern-car-close-up-highlighting-style-and-automotive-innovation",
-        "https://www.vecteezy.com/photo/53733070-sleek-modern-car-close-up-photography-showcasing-design-and-innovation",
-        "https://www.vecteezy.com/photo/24399701-night-car-racing-illustration-ai-generative"
-    ];
-
-    let currentOffset = 0;
-
-    function initGallery() {
-        gallery.innerHTML = "";
-        for (let i = 0; i < 6; i++) {
-            const item = document.createElement('div');
-            item.className = 'gallery-item';
-            item.innerHTML = `<img id="gImg${i}" src="${MY_CHOSEN_IMAGES[i]}">`;
-            gallery.appendChild(item);
-        }
-    }
-
-    function rotateGallery() {
-        currentOffset = (currentOffset + 1) % MY_CHOSEN_IMAGES.length;
-        for (let i = 0; i < 6; i++) {
-            const img = document.getElementById(`gImg${i}`);
-            const nextIndex = (currentOffset + i) % MY_CHOSEN_IMAGES.length;
-            
-            img.style.opacity = 0;
-            setTimeout(() => {
-                img.src = MY_CHOSEN_IMAGES[nextIndex];
-                img.style.opacity = 1;
-            }, 1500); // تأثير تلاشي أبطأ
-        }
-    }
-
-    initGallery();
-    setInterval(rotateGallery, 15000); // تبديل كل 15 ثانية (وقت أطول)
-
-    // إدارة تسجيل الدخول وتنبيهات الرسائل
-    onAuthStateChanged(auth, (user) => {
-        const authStatus = document.getElementById('authStatusContainer');
-        const bell = document.getElementById('notifBell');
-        
-        if(user) {
-            bell.style.display = "block";
-            authStatus.innerHTML = `
-                <a href="my-account.html" style="text-decoration:none; font-weight:800; color:var(--primary);">Mitt Konto</a>
-                <button id="logoutBtn" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer; font-size:13px; margin-left:10px;">Logga ut</button>
-            `;
-            
-            document.getElementById('logoutBtn').onclick = () => {
-                signOut(auth).then(() => location.reload());
-            };
-
-            const qChat = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
-            onSnapshot(qChat, snap => {
-                let unread = 0;
-                snap.forEach(d => { if(d.data().lastMessage) unread++; });
-                document.getElementById('notifCount').innerText = unread;
-                document.getElementById('notifCount').style.display = unread > 0 ? "flex" : "none";
-            });
-        } else {
-            bell.style.display = "none";
-            authStatus.innerHTML = `<a href="login.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Logga in</a>`;
-        }
-    });
-
     window.checkAuthBeforeSell = () => {
-        if(auth.currentUser) location.href="sell.html";
-        else Swal.fire("Logga in", "Du måste logga in för att sälja.", "info").then(() => location.href="login.html");
+        if(auth.currentUser) location.href = "sell.html";
+        else Swal.fire("Inloggning", "Logga in för att använda AI-systemet.", "info").then(() => location.href="login.html");
     };
 </script>
 </body>
