@@ -46,7 +46,7 @@
 
         .filter-wrapper { max-width: 1200px; margin: -45px auto 40px; padding: 0 20px; width: 100%; }
         .filter-card { background: var(--white); padding: 35px; border-radius: 24px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border: 1px solid var(--border); }
-        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .filter-group label { font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; display: block; }
         input, select { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f1f5f9; font-size: 14px; outline: none; width: 100%; color: var(--dark); }
 
@@ -54,6 +54,7 @@
         .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
         .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; }
 
+        /* معرض الصور: 6 صور بتوزيع انسيابي */
         .gallery-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
@@ -65,28 +66,32 @@
             overflow: hidden; 
             box-shadow: 0 10px 20px rgba(0,0,0,0.05); 
             background: #f1f5f9; 
+            position: relative;
         }
         .gallery-item img { 
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
-            transition: opacity 1.5s ease-in-out; 
+            transition: opacity 1.5s ease-in-out, transform 1s; 
             opacity: 1;
         }
+        .gallery-item:hover img { transform: scale(1.05); }
 
         .cars-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.3s; }
 
         .container { flex: 1; padding: 0 6% 80px; }
         .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
 
+        /* Footer */
         footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; margin-top: auto; border-top: 4px solid var(--primary); }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto; }
         .disclaimer-box h4 { color: var(--white); margin-bottom: 15px; font-weight: 800; }
         .disclaimer-box p { font-size: 13px; line-height: 1.6; color: #cbd5e1; }
         .disclaimer-link { color: var(--primary); text-decoration: none; font-weight: 700; border-bottom: 1px solid var(--primary); }
         
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
+            .filter-grid { grid-template-columns: repeat(2, 1fr); }
+            .gallery-item { height: 220px; }
             .search-actions { flex-direction: column; }
             .footer-grid { grid-template-columns: 1fr; text-align: center; }
         }
@@ -124,7 +129,7 @@
     <div class="filter-card">
         <div class="filter-grid">
             <div class="filter-group"><label>Märke</label><select id="brandSelect"><option value="">Alla märken</option></select></div>
-            <div class="filter-group"><label>Modell</label><select id="modelSelect"><option value="">Välj märke</option></select></div>
+            <div class="filter-group"><label>Modell</label><select id="modelSelect"><option value="">Välj مärke</option></select></div>
             <div class="filter-group"><label>Max Pris</label><input type="number" id="maxPrice"></div>
             <div class="filter-group"><label>Min Pris</label><input type="number" id="minPrice"></div>
             <div class="filter-group"><label>Max Mil</label><input type="number" id="maxMil"></div>
@@ -172,7 +177,7 @@
     const carsGrid = document.getElementById('carsGrid');
     const resultsTitle = document.getElementById('resultsTitle');
 
-    // 1. تعبئة القوائم المنسدلة
+    // القوائم المنسدلة
     Object.keys(carData).sort().forEach(b => {
         brandSelect.innerHTML += `<option value="${b}">${b}</option>`;
     });
@@ -185,28 +190,23 @@
         }
     };
 
-    // 2. قائمة الصور الـ 20 الجديدة والمستقرة (تم حذف المعطلة والمكررة)
-    const allCarImages = [
-        'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800', // Porsche
-        'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800', // Mustang
-        'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800', // BMW
-        'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800', // Mercedes
-        'https://images.unsplash.com/photo-1614162482210-9966115faa31?auto=format&fit=crop&w=800', // Audi
-        'https://images.unsplash.com/photo-1560958089-18ae177651c5?auto=format&fit=crop&w=800', // Tesla
-        'https://images.unsplash.com/photo-1541443131-d7f000d17666?auto=format&fit=crop&w=800', // VW
-        'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800', // Sport
-        'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800', // Luxury
-        'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800', // SUV
-        'https://images.unsplash.com/photo-1542362567-b055002b9174?auto=format&fit=crop&w=800', // Volvo
-        'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800', // Ferrari
-        'https://images.unsplash.com/photo-1506469717960-433cebe3f181?auto=format&fit=crop&w=800', // Bugatti
-        'https://images.unsplash.com/photo-1469285994282-454ceb49e63c?auto=format&fit=crop&w=800', // Classic
-        'https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=800', // Hypercar
-        'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=800', // Modern
-        'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=800', // Sports Car
-        'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800', // White Car
-        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800', // Ford
-        'https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&w=800'  // Blue Car
+    // --- مصفوفة الروابط الـ 15 التي اخترتها ---
+    const MY_CHOSEN_IMAGES = [
+        "https://www.vecteezy.com/photo/60599996-bright-orange-sports-car-being-washed-in-an-auto-detailing-shop-with-water-splashing-around-during-daytime",
+        "https://www.vecteezy.com/photo/56839007-classic-red-muscle-car-in-autumn-sunlight",
+        "https://www.vecteezy.com/photo/48608612-urban-sports-car-parked-on-rooftop-parking-lot-with-skyscrapers-in-the-background-during-sunset",
+        "https://www.vecteezy.com/photo/53733069-a-modern-car-captured-in-perfect-precision-showcasing-every-detail",
+        "https://www.vecteezy.com/photo/30662388-natural-photography-front-view-car-racing",
+        "https://www.vecteezy.com/photo/23847342-the-car-is-drifting-with-ai-generated",
+        "https://www.vecteezy.com/photo/57799111-drive-in-night-forest",
+        "https://www.vecteezy.com/photo/70099291-a-sleek-white-car-parked-against-a-bright-blue-sky-and-a-lone-tree-creating-a-serene-and-modern-landscape",
+        "https://www.vecteezy.com/photo/69891760-a-sports-car-driving-down-the-street-at-night",
+        "https://www.vecteezy.com/photo/68570074-a-classic-car-is-driving-down-a-city-street",
+        "https://www.vecteezy.com/photo/67295614-a-car-with-smoke-coming-out-of-its-tail-lights",
+        "https://www.vecteezy.com/photo/53733072-precision-close-up-of-a-modern-car-featuring-every-elegant-detail",
+        "https://www.vecteezy.com/photo/53733071-sleek-modern-car-close-up-highlighting-style-and-automotive-innovation",
+        "https://www.vecteezy.com/photo/53733070-sleek-modern-car-close-up-photography-showcasing-design-and-innovation",
+        "https://www.vecteezy.com/photo/24399701-night-car-racing-illustration-ai-generative"
     ];
 
     let currentOffset = 0;
@@ -216,39 +216,46 @@
         for (let i = 0; i < 6; i++) {
             const item = document.createElement('div');
             item.className = 'gallery-item';
-            item.innerHTML = `<img id="gImg${i}" src="${allCarImages[i]}">`;
+            item.innerHTML = `<img id="gImg${i}" src="${MY_CHOSEN_IMAGES[i]}">`;
             gallery.appendChild(item);
         }
     }
 
     function rotateGallery() {
-        currentOffset = (currentOffset + 6) % allCarImages.length;
+        currentOffset = (currentOffset + 1) % MY_CHOSEN_IMAGES.length;
         for (let i = 0; i < 6; i++) {
             const img = document.getElementById(`gImg${i}`);
-            const nextIndex = (currentOffset + i) % allCarImages.length;
+            const nextIndex = (currentOffset + i) % MY_CHOSEN_IMAGES.length;
+            
             img.style.opacity = 0;
             setTimeout(() => {
-                img.src = allCarImages[nextIndex];
+                img.src = MY_CHOSEN_IMAGES[nextIndex];
                 img.style.opacity = 1;
-            }, 1000);
+            }, 1500); // تأثير تلاشي أبطأ
         }
     }
 
     initGallery();
-    setInterval(rotateGallery, 12000);
+    setInterval(rotateGallery, 15000); // تبديل كل 15 ثانية (وقت أطول)
 
-    // 3. إدارة المستخدم والبحث
+    // إدارة تسجيل الدخول وتنبيهات الرسائل
     onAuthStateChanged(auth, (user) => {
         const authStatus = document.getElementById('authStatusContainer');
         const bell = document.getElementById('notifBell');
+        
         if(user) {
             bell.style.display = "block";
             authStatus.innerHTML = `
                 <a href="my-account.html" style="text-decoration:none; font-weight:800; color:var(--primary);">Mitt Konto</a>
                 <button id="logoutBtn" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer; font-size:13px; margin-left:10px;">Logga ut</button>
             `;
-            document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
-            onSnapshot(query(collection(db, "chats"), where("participants", "array-contains", user.uid)), snap => {
+            
+            document.getElementById('logoutBtn').onclick = () => {
+                signOut(auth).then(() => location.reload());
+            };
+
+            const qChat = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
+            onSnapshot(qChat, snap => {
                 let unread = 0;
                 snap.forEach(d => { if(d.data().lastMessage) unread++; });
                 document.getElementById('notifCount').innerText = unread;
@@ -260,37 +267,9 @@
         }
     });
 
-    document.getElementById('searchBtn').onclick = async () => {
-        gallery.style.display = "none";
-        carsGrid.style.display = "grid";
-        resultsTitle.innerText = "Sökresultat";
-        carsGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Hämtar bilar...</p>";
-        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(30));
-        const snap = await getDocs(q);
-        carsGrid.innerHTML = "";
-        let found = 0;
-        snap.forEach(doc => {
-            const car = doc.data();
-            if((!brandSelect.value || car.brand === brandSelect.value) && (!modelSelect.value || car.model === modelSelect.value)) {
-                found++;
-                carsGrid.innerHTML += `
-                    <div class="car-card" onclick="location.href='details.html?id=${doc.id}'">
-                        <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:180px; object-fit:cover;">
-                        <div style="padding:15px;"><h3 style="color:var(--primary); font-weight:900;">${Number(car.price).toLocaleString()} kr</h3><p style="font-weight:700;">${car.brand} ${car.model}</p></div>
-                    </div>`;
-            }
-        });
-        if(found === 0) carsGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga resultat.</p>";
-    };
-
     window.checkAuthBeforeSell = () => {
         if(auth.currentUser) location.href="sell.html";
         else Swal.fire("Logga in", "Du måste logga in för att sälja.", "info").then(() => location.href="login.html");
-    };
-
-    window.filterByType = (type, btn) => {
-        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
     };
 </script>
 </body>
