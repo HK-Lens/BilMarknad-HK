@@ -2,179 +2,207 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Avancerad Djup Sökning | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sök Bil | BILHK</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #ffffff; --light: #f8fafc; --border: #e2e8f0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding-bottom: 120px; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--dark); line-height: 1.6; }
 
-        .container { padding: 25px 5%; max-width: 900px; margin: auto; }
-        .header { margin-bottom: 30px; text-align: center; }
-        .header h1 { font-weight: 900; font-size: 28px; }
-        .header p { color: #64748b; font-size: 15px; margin-top: 5px; }
+        header { background: white; padding: 15px 5%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo { text-decoration: none; font-weight: 900; color: var(--dark); font-size: 24px; }
+        .logo span { color: var(--primary); }
 
-        .section-label { font-size: 11px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin: 35px 0 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        
+        /* Filter Sidebar & Layout */
+        .search-layout { display: grid; grid-template-columns: 300px 1fr; gap: 30px; }
+        
+        .filter-card { background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border); height: fit-content; position: sticky; top: 100px; }
+        .filter-title { font-size: 18px; font-weight: 900; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        .filter-group { margin-bottom: 18px; }
+        .filter-group label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
+        select, input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f1f5f9; outline: none; font-size: 14px; }
+        select:focus, input:focus { border-color: var(--primary); background: white; }
 
-        /* تصحيح أيقونة الباص والشبكة */
-        .type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(85px, 1fr)); gap: 12px; }
-        .type-card { border: 2px solid var(--border); border-radius: 20px; padding: 15px 5px; text-align: center; cursor: pointer; transition: 0.3s; background: white; }
-        .type-card i { font-size: 26px; margin-bottom: 8px; color: #64748b; display: block; }
-        .type-card span { font-size: 10px; font-weight: 900; color: #64748b; text-transform: uppercase; }
-        .type-card.active { border-color: var(--primary); background: #fff5eb; box-shadow: 0 8px 20px rgba(245, 130, 32, 0.15); }
-        .type-card.active i, .type-card.active span { color: var(--primary); }
+        .btn-search { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn-search:hover { filter: brightness(1.1); }
 
-        select, input { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; background: var(--light); font-size: 15px; outline: none; font-weight: 600; }
-        .dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        /* Results Grid */
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .car-card { background: white; border-radius: 20px; border: 1px solid var(--border); overflow: hidden; transition: 0.3s; cursor: pointer; }
+        .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .car-img { width: 100%; height: 180px; object-fit: cover; }
+        .car-info { padding: 15px; }
+        .car-price { font-size: 20px; font-weight: 900; color: var(--primary); }
+        .car-name { font-weight: 700; font-size: 16px; margin: 5px 0; }
+        .car-meta { font-size: 12px; color: #64748b; display: flex; gap: 10px; }
 
-        /* شبكة المواصفات التقنية - مطابقة لصفحة البيع */
-        .tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
-        .tech-chip { padding: 12px 15px; border: 2px solid var(--border); border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; background: white; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
-        .tech-chip.active { background: var(--dark); color: white; border-color: var(--dark); }
-        .tech-chip i { color: var(--primary); width: 18px; text-align: center; }
-        .tech-chip.active i { color: white; }
-
-        .footer-action { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 25px 5%; border-top: 2px solid var(--border); display: flex; gap: 15px; z-index: 1000; }
-        .btn-apply { flex: 2; padding: 20px; background: var(--primary); color: white; border-radius: 50px; border: none; font-weight: 900; font-size: 18px; box-shadow: 0 10px 25px rgba(245, 130, 32, 0.3); cursor: pointer; }
-        .btn-reset { flex: 1; padding: 20px; border: 2px solid var(--border); border-radius: 50px; font-weight: 800; background: white; cursor: pointer; }
+        @media (max-width: 900px) {
+            .search-layout { grid-template-columns: 1fr; }
+            .filter-card { position: static; }
+        }
     </style>
 </head>
 <body>
 
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <nav style="display:flex; gap:20px; align-items:center;">
+        <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Hem</a>
+        <a href="dashboard.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Mitt konto</a>
+    </nav>
+</header>
+
 <div class="container">
-    <div class="header">
-        <h1>Djup Sökning</h1>
-        <p>Hitta fordonet baserat på alla tillgängliga specifikationer</p>
-    </div>
-    
-    <div class="section-label"><i class="fa-solid fa-car"></i> Karosserityp</div>
-    <div class="type-grid">
-        <div class="type-card active" onclick="setK('all', this)"><i class="fa-solid fa-border-all"></i><span>Alla</span></div>
-        <div class="type-card" onclick="setK('Sedan', this)"><i class="fa-solid fa-car"></i><span>Sedan</span></div>
-        <div class="type-card" onclick="setK('SUV', this)"><i class="fa-solid fa-truck-pickup"></i><span>SUV</span></div>
-        <div class="type-card" onclick="setK('Kombi', this)"><i class="fa-solid fa-car-rear"></i><span>Kombi</span></div>
-        <div class="type-card" onclick="setK('Van', this)"><i class="fa-solid fa-van-shuttle"></i><span>Van</span></div>
-        <div class="type-card" onclick="setK('Cab', this)"><i class="fa-solid fa-car-side"></i><span>Cab</span></div>
-    </div>
+    <div class="search-layout">
+        <aside class="filter-card">
+            <div class="filter-title"><i class="fa-solid fa-sliders"></i> Filtrera sökning</div>
+            
+            <div class="filter-group">
+                <label>Märke</label>
+                <select id="brandFilter"><option value="">Alla märken</option></select>
+            </div>
+            <div class="filter-group">
+                <label>Modell</label>
+                <select id="modelFilter"><option value="">Alla modeller</option></select>
+            </div>
+            <div class="filter-group">
+                <label>Max Pris (kr)</label>
+                <input type="number" id="priceFilter" placeholder="T.ex 200000">
+            </div>
+            <div class="filter-group">
+                <label>Drivmedel</label>
+                <select id="fuelFilter">
+                    <option value="">Alla</option>
+                    <option value="Bensin">Bensin</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="El">El</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Max Miltal</label>
+                <input type="number" id="milFilter" placeholder="T.ex 10000">
+            </div>
+            
+            <button class="btn-search" onclick="applyFilters()">Visa Resultat</button>
+        </aside>
 
-    <div class="section-label">Varumärke & Modell</div>
-    <select id="brand" onchange="updateModels()"><option value="all">Alla Varumärken</option></select>
-    <select id="model"><option value="all">Alla Modeller</option></select>
-
-    <div class="section-label">Budget & Ekonomi</div>
-    <div class="dual-row">
-        <input type="number" id="minP" placeholder="Pris från (kr)">
-        <input type="number" id="maxP" placeholder="Pris till (kr)">
+        <main>
+            <h2 id="resultStatus" style="margin-bottom: 20px; font-weight: 800;">Senaste bilar</h2>
+            <div id="resultsArea" class="results-grid">
+                </div>
+        </main>
     </div>
-    <div class="dual-row">
-        <input type="number" id="maxTax" placeholder="Max årsskatt (kr)">
-        <input type="number" id="maxOwners" placeholder="Max antal ägare">
-    </div>
-
-    <div class="section-label">Prestanda & Historik</div>
-    <div class="dual-row">
-        <input type="number" id="maxMil" placeholder="Max miltal (mil)">
-        <input type="number" id="minHp" placeholder="Min hästkrafter (hk)">
-    </div>
-    <div class="dual-row">
-        <select id="fuel"><option value="all">Alla Drivmedel</option><option value="Bensin">Bensin</option><option value="Diesel">Diesel</option><option value="El">Elbil</option><option value="Hybrid">Laddhybrid</option></select>
-        <div>
-            <label style="font-size: 10px; font-weight: 800; color: #94a3b8;">Besiktigad till senast:</label>
-            <input type="date" id="besiktning">
-        </div>
-    </div>
-
-    <div class="section-label">Drivlina & Växellåda</div>
-    <div class="dual-row">
-        <select id="gear"><option value="all">Växellåda (Alla)</option><option value="Automat">Automat</option><option value="Manuell">Manuell</option></select>
-        <select id="drive"><option value="all">Drivning (Alla)</option><option value="FWD">FWD</option><option value="RWD">RWD</option><option value="AWD">AWD/4WD</option></select>
-    </div>
-
-    <div class="section-label">Aktiv Säkerhet (ADAS)</div>
-    <div class="tech-grid">
-        <div class="tech-chip" onclick="tT('ABS', this)"><i class="fa-solid fa-shield-check"></i> ABS/EBD/ESP</div>
-        <div class="tech-chip" onclick="tT('ACC', this)"><i class="fa-solid fa-gauge-high"></i> Adaptiv farthållare</div>
-        <div class="tech-chip" onclick="tT('AEB', this)"><i class="fa-solid fa-stop-circle"></i> Autobroms</div>
-        <div class="tech-chip" onclick="tT('LKA', this)"><i class="fa-solid fa-arrows-left-right"></i> Filassistans</div>
-        <div class="tech-chip" onclick="tT('BSM', this)"><i class="fa-solid fa-eye"></i> Döda vinkel-varnare</div>
-        <div class="tech-chip" onclick="tT('TPMS', this)"><i class="fa-solid fa-circle-exclamation"></i> TPMS</div>
-        <div class="tech-chip" onclick="tT('Trötthet', this)"><i class="fa-solid fa-bed"></i> Trötthetsvarnare</div>
-        <div class="tech-chip" onclick="tT('HSA', this)"><i class="fa-solid fa-mountain"></i> Hill Start Assist</div>
-    </div>
-
-    <div class="section-label">Komfort & Premiumutrustning</div>
-    <div class="tech-grid">
-        <div class="tech-chip" onclick="tT('HUD', this)"><i class="fa-solid fa-window-maximize"></i> HUD</div>
-        <div class="tech-chip" onclick="tT('360Cam', this)"><i class="fa-solid fa-video"></i> 360° Kamera</div>
-        <div class="tech-chip" onclick="tT('Matrix', this)"><i class="fa-solid fa-bolt"></i> Matrix LED</div>
-        <div class="tech-chip" onclick="tT('CarPlay', this)"><i class="fa-solid fa-mobile-alt"></i> Apple/Android</div>
-        <div class="tech-chip" onclick="tT('Dragkrok', this)"><i class="fa-solid fa-link"></i> Dragkrok</div>
-        <div class="tech-chip" onclick="tT('Panoramic', this)"><i class="fa-solid fa-sun"></i> Panoramaglastak</div>
-        <div class="tech-chip" onclick="tT('Skinn', this)"><i class="fa-solid fa-chair"></i> Skinnklädsel</div>
-        <div class="tech-chip" onclick="tT('Vinterhjul', this)"><i class="fa-solid fa-snowflake"></i> Vinterhjul ingår</div>
-        <div class="tech-chip" onclick="tT('Service', this)"><i class="fa-solid fa-book"></i> Full servicehistorik</div>
-    </div>
-</div>
-
-<div class="footer-action">
-    <button class="btn-reset" onclick="location.reload()">Rensa filter</button>
-    <button class="btn-apply" onclick="applyFilters()">VISA RESULTAT</button>
 </div>
 
 <script type="module">
+    import { db } from './firebase-config.js';
+    import { collection, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { carData } from './cars-data.js';
-    const bS = document.getElementById('brand'), mS = document.getElementById('model');
-    
-    Object.keys(carData).sort().forEach(b => {
-        bS.innerHTML += `<option value="${b}">${b}</option>`;
+
+    const brandSelect = document.getElementById('brandFilter');
+    const modelSelect = document.getElementById('modelFilter');
+    const resultsArea = document.getElementById('resultsArea');
+
+    // Populate Brand Dropdown
+    Object.keys(carData).sort().forEach(brand => {
+        brandSelect.innerHTML += `<option value="${brand}">${brand}</option>`;
     });
 
-    window.updateModels = () => {
-        mS.innerHTML = '<option value="all">Alla Modeller</option>';
-        if(carData[bS.value]) {
-            carData[bS.value].sort().forEach(m => {
-                mS.innerHTML += `<option value="${m}">${m}</option>`;
+    brandSelect.onchange = () => {
+        modelSelect.innerHTML = '<option value="">Alla modeller</option>';
+        if(carData[brandSelect.value]) {
+            carData[brandSelect.value].sort().forEach(m => {
+                modelSelect.innerHTML += `<option value="${m}">${m}</option>`;
             });
         }
     };
 
-    let filter = { kar: 'all', techs: [] };
+    // Initial Load (Recent Cars)
+    async function initialLoad() {
+        resultsArea.innerHTML = "<p>Söker efter bilar...</p>";
+        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(20));
+        renderResults(q);
+    }
 
-    window.setK = (v, e) => {
-        document.querySelectorAll('.type-card').forEach(i => i.classList.remove('active'));
-        e.classList.add('active');
-        filter.kar = v;
-    };
+    window.applyFilters = async () => {
+        resultsArea.innerHTML = "<p>Filtrerar...</p>";
+        let q = collection(db, "cars");
+        
+        // Firebase filtering logic (Note: For multiple filters, composite indexes might be needed)
+        // For simplicity, we fetch recent and filter in JS if complex, or use multiple queries
+        const querySnapshot = await getDocs(query(q, orderBy("createdAt", "desc")));
+        
+        const b = document.getElementById('brandFilter').value;
+        const m = document.getElementById('modelFilter').value;
+        const p = document.getElementById('priceFilter').value;
+        const f = document.getElementById('fuelFilter').value;
+        const ml = document.getElementById('milFilter').value;
 
-    window.tT = (v, e) => {
-        e.classList.toggle('active');
-        const idx = filter.techs.indexOf(v);
-        if(idx > -1) filter.techs.splice(idx, 1);
-        else filter.techs.push(v);
-    };
+        resultsArea.innerHTML = "";
+        let count = 0;
 
-    window.applyFilters = () => {
-        const query = new URLSearchParams({
-            brand: bS.value,
-            model: mS.value,
-            kar: filter.kar,
-            techs: filter.techs.join(','),
-            minP: document.getElementById('minP').value,
-            maxP: document.getElementById('maxP').value,
-            maxMil: document.getElementById('maxMil').value,
-            tax: document.getElementById('maxTax').value,
-            owners: document.getElementById('maxOwners').value,
-            fuel: document.getElementById('fuel').value,
-            gear: document.getElementById('gear').value,
-            drive: document.getElementById('drive').value,
-            hp: document.getElementById('minHp').value,
-            bes: document.getElementById('besiktning').value
+        querySnapshot.forEach(doc => {
+            const car = doc.data();
+            const carId = doc.id;
+
+            // Logic matching
+            const matchBrand = !b || car.brand === b;
+            const matchModel = !m || car.model === m;
+            const matchPrice = !p || car.price <= Number(p);
+            const matchFuel = !f || car.fuel === f;
+            const matchMil = !ml || car.mil <= Number(ml);
+
+            if(matchBrand && matchModel && matchPrice && matchFuel && matchMil) {
+                count++;
+                resultsArea.innerHTML += `
+                    <div class="car-card" onclick="location.href='details.html?id=${carId}'">
+                        <img src="${car.images?.[0] || 'placeholder.jpg'}" class="car-img">
+                        <div class="car-info">
+                            <div class="car-price">${Number(car.price).toLocaleString()} kr</div>
+                            <div class="car-name">${car.brand} ${car.model}</div>
+                            <div class="car-meta">
+                                <span><i class="fa-solid fa-calendar"></i> ${car.year}</span>
+                                <span><i class="fa-solid fa-road"></i> ${car.mil} mil</span>
+                            </div>
+                        </div>
+                    </div>`;
+            }
         });
-        // 💡 التوجيه لصفحة النتائج
-        window.location.href = `results.html?${query.toString()}`;
+
+        document.getElementById('resultStatus').innerText = `${count} bilar hittades`;
+        if(count === 0) resultsArea.innerHTML = "<p>Inga bilar matchade din sökning.</p>";
     };
+
+    async function renderResults(q) {
+        const querySnapshot = await getDocs(q);
+        resultsArea.innerHTML = "";
+        querySnapshot.forEach(doc => {
+            const car = doc.data();
+            const carId = doc.id;
+            resultsArea.innerHTML += `
+                <div class="car-card" onclick="location.href='details.html?id=${carId}'">
+                    <img src="${car.images?.[0] || 'placeholder.jpg'}" class="car-img">
+                    <div class="car-info">
+                        <div class="car-price">${Number(car.price).toLocaleString()} kr</div>
+                        <div class="car-name">${car.brand} ${car.model}</div>
+                        <div class="car-meta">
+                            <span>${car.year}</span> | <span>${car.mil} mil</span>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    }
+
+    initialLoad();
 </script>
 </body>
 </html>
