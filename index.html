@@ -25,7 +25,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--light); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Banner */
         .dev-banner {
             background: var(--danger); color: white; padding: 12px; text-align: center;
             font-weight: 800; font-size: 14px; text-transform: uppercase;
@@ -35,7 +34,6 @@
             0% { background-color: #ef4444; } 50% { background-color: #b91c1c; } 100% { background-color: #ef4444; }
         }
 
-        /* Header */
         header {
             background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center;
@@ -43,11 +41,10 @@
         }
         .logo { font-size: 1.8rem; font-weight: 900; color: var(--dark); text-decoration: none; }
         .logo span { color: var(--primary); }
+        
         .nav-links { display: flex; align-items: center; gap: 20px; }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 14px; transition: 0.3s; }
-        .btn-sell { background: var(--primary); color: white !important; padding: 10px 25px; border-radius: 50px; border: none; cursor: pointer; font-weight: 800; }
+        .btn-sell { background: var(--primary); color: white !important; padding: 10px 25px; border-radius: 50px; border: none; cursor: pointer; font-weight: 800; transition: 0.3s; text-decoration: none; }
 
-        /* Notification */
         .notif-wrapper { position: relative; cursor: pointer; margin-right: 10px; }
         .notif-badge {
             position: absolute; top: -5px; right: -5px; background: var(--danger);
@@ -56,7 +53,6 @@
             border: 2px solid white; font-weight: 900;
         }
 
-        /* Hero */
         .hero {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             padding: 50px 6% 90px; text-align: center; color: white;
@@ -67,9 +63,8 @@
             color: white; padding: 12px 20px; border-radius: 50px; cursor: pointer;
             font-size: 13px; font-weight: 600; transition: 0.3s;
         }
-        .type-btn:hover, .type-btn.active { background: var(--primary); border-color: var(--primary); }
+        .type-btn.active { background: var(--primary); border-color: var(--primary); }
 
-        /* Filters */
         .filter-wrapper { max-width: 1200px; margin: -45px auto 40px; padding: 0 20px; width: 100%; }
         .filter-card { background: var(--white); padding: 35px; border-radius: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
         .filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
@@ -78,18 +73,17 @@
 
         .search-actions { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
         .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; }
-        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-align: center; }
+        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; line-height: 1.2; display: flex; align-items: center; justify-content: center; }
 
-        /* Gallery */
         .container { flex: 1; padding: 0 6% 80px; }
         .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
+        
         .gallery-grid {
             display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 300px); gap: 20px;
         }
-        .gallery-item { width: 100%; height: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; }
+        .gallery-item { width: 100%; height: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s ease; opacity: 0; }
         .gallery-item img.loaded { opacity: 1; }
-        .gallery-item:hover img { transform: scale(1.05); }
 
         footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; }
         .legal-box { margin-top: 50px; text-align: center; font-size: 12px; }
@@ -97,7 +91,7 @@
         @media (max-width: 900px) {
             .filter-grid { grid-template-columns: repeat(2, 1fr); }
             .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 220px); }
-            .search-actions { flex-direction: column-reverse; }
+            .search-actions { flex-direction: column; }
         }
     </style>
 </head>
@@ -108,7 +102,6 @@
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
     <nav class="nav-links">
-        <a href="index.html">Hem</a>
         <button onclick="checkAuthBeforeSell()" class="btn-sell">Sälj din bil</button>
         <div id="userMenu" style="display: flex; align-items: center; gap: 15px;">
             <div class="notif-wrapper" id="notifBell" style="display: none;" onclick="location.href='messages.html'">
@@ -146,7 +139,7 @@
             <div class="filter-group"><label>Äldsta Årsmodell</label><input type="number" id="minYear"></div>
         </div>
         <div class="search-actions">
-            <button class="btn-deep" onclick="location.href='filter.html'">Djup Sökning</button>
+            <a href="filter.html" class="btn-deep">Djup Sökning</a>
             <button class="btn-results" id="searchBtn">Visa Resultat</button>
         </div>
     </div>
@@ -165,7 +158,6 @@
     import { db, auth } from './firebase-config.js';
     import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    // استيراد بيانات السيارات لتغذية القوائم المنسدلة
     import { carData } from './cars-data.js';
 
     const authContainer = document.getElementById('authStatusContainer');
@@ -173,16 +165,16 @@
     const notifCount = document.getElementById('notifCount');
     const brandSelect = document.getElementById('brandSelect');
     const modelSelect = document.getElementById('modelSelect');
-
+    
     let selectedType = "";
 
-    // 1. إدارة تسجيل الدخول والإشعارات
+    // 1. تسجيل الدخول والإشعارات
     onAuthStateChanged(auth, (user) => {
         if (user) {
             notifBell.style.display = 'block';
             authContainer.innerHTML = `
-                <a href="my-account.html" style="color: var(--primary); font-weight: 800;"><i class="fa-solid fa-circle-user"></i> Mitt Konto</a>
-                <a href="#" id="logoutBtn" style="color: #ef4444; font-size: 12px; margin-left:10px;">Logga ut</a>
+                <a href="my-account.html" style="color: var(--primary); font-weight: 800; text-decoration:none;"><i class="fa-solid fa-circle-user"></i> Mitt Konto</a>
+                <a href="#" id="logoutBtn" style="color: #ef4444; font-size: 12px; margin-left:10px; text-decoration:none;">Logga ut</a>
             `;
             document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
 
@@ -194,12 +186,12 @@
                 else { notifCount.style.display = 'none'; }
             });
         } else {
-            authContainer.innerHTML = `<a href="login.html">Logga in</a>`;
+            authContainer.innerHTML = `<a href="login.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Logga in</a>`;
             notifBell.style.display = 'none';
         }
     });
 
-    // 2. تعبئة قوائم الماركات والموديلات
+    // 2. تعبئة قوائم الماركات
     const brands = Object.keys(carData).sort();
     brands.forEach(b => {
         const opt = document.createElement('option');
@@ -218,7 +210,7 @@
         }
     };
 
-    // 3. حماية زر البيع
+    // 3. زر البيع
     window.checkAuthBeforeSell = () => {
         if (auth.currentUser) { window.location.href = "sell.html"; }
         else {
@@ -232,7 +224,7 @@
         }
     };
 
-    // 4. معرض الصور المتزامن
+    // 4. معرض الصور
     const galleryImages = [
         'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800',
         'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800',
@@ -262,7 +254,7 @@
         });
     }
 
-    // 5. منطق البحث
+    // 5. منطق زر Visa Resultat (يفتح صفحة الفلتر بالبيانات المحددة)
     document.querySelectorAll('.type-btn').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
@@ -275,11 +267,15 @@
         const params = new URLSearchParams({
             brand: brandSelect.value,
             model: modelSelect.value,
-            maxP: document.getElementById('maxPrice').value,
-            minP: document.getElementById('minPrice').value,
-            kar: selectedType
+            maxPrice: document.getElementById('maxPrice').value,
+            minPrice: document.getElementById('minPrice').value,
+            maxMil: document.getElementById('maxMil').value,
+            minMil: document.getElementById('minMil').value,
+            maxYear: document.getElementById('maxYear').value,
+            minYear: document.getElementById('minYear').value,
+            type: selectedType
         });
-        // التوجه لصفحة الفلتر لعرض النتائج
+        // يتم توجيه المستخدم لصفحة النتائج filter.html مع المعايير
         window.location.href = `filter.html?${params.toString()}`;
     };
 
