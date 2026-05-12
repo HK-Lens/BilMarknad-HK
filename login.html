@@ -13,12 +13,11 @@
         body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         
         .auth-card { background: white; width: 100%; max-width: 440px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
-        .logo { text-align: center; margin-bottom: 30px; text-decoration: none; font-weight: 900; font-size: 32px; color: var(--dark); display: block; }
+        .logo { text-align: center; margin-bottom: 25px; text-decoration: none; font-weight: 900; font-size: 32px; color: var(--dark); display: block; }
         .logo span { color: var(--primary); }
 
-        /* Security Banner */
-        .security-banner { background: #fff7ed; border: 1px solid #ffedd5; padding: 15px; border-radius: 14px; font-size: 12px; color: #9a3412; margin-bottom: 20px; line-height: 1.5; text-align: left; }
-        .security-banner b { color: #c2410c; display: block; margin-bottom: 5px; }
+        .security-box { background: #fff7ed; border: 1px solid #ffedd5; padding: 15px; border-radius: 12px; font-size: 12px; color: #9a3412; margin-bottom: 20px; line-height: 1.5; text-align: left; }
+        .security-box b { color: #c2410c; display: block; margin-bottom: 5px; text-transform: uppercase; }
 
         .tabs { display: flex; background: #f1f5f9; padding: 5px; border-radius: 14px; margin-bottom: 25px; }
         .tab { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; background: none; color: #64748b; }
@@ -26,14 +25,14 @@
 
         .form-group { margin-bottom: 20px; }
         label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
-        input { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 14px; outline: none; font-size: 15px; background: #f9fafb; }
-        
-        .terms-check { font-size: 13px; color: #64748b; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+        input { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 14px; outline: none; font-size: 15px; background: #f9fafb; transition: 0.2s; }
+        input:focus { border-color: var(--primary); background: white; }
 
+        .terms-area { font-size: 13px; color: #64748b; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; cursor: pointer; line-height: 1.4; }
         .btn-auth { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
         .btn-auth:disabled { background: #cbd5e1; cursor: not-allowed; }
 
-        .google-btn { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 14px; background: white; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 700; cursor: pointer; margin-top: 20px; }
+        .google-btn { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 14px; background: white; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 700; cursor: pointer; margin-top: 20px; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
@@ -41,7 +40,7 @@
 <div class="auth-card">
     <a href="index.html" class="logo">BIL<span>HK</span></a>
 
-    <div class="security-banner">
+    <div class="security-box">
         <b>Säkerhet först:</b> Vi ansvarar inte för annonsernas innehåll. Betala aldrig i förskott och dela inte personlig information. All handel sker på egen risk.
     </div>
     
@@ -52,18 +51,18 @@
 
     <form id="loginForm">
         <div class="form-group"><label id="emailLabel">E-postadress</label><input type="email" id="email" required></div>
-        <div class="form-group"><label>Lösenord</label><input type="password" id="pass" required></div>
+        <div class="form-group"><label>Lösenord</label><input type="password" id="password" required></div>
 
-        <div class="terms-check">
+        <label class="terms-area">
             <input type="checkbox" id="termsCheck" style="width:20px; height:20px;">
             <span>Jag godkänner villkoren och bekräftar ansvarsfriskrivningen.</span>
-        </div>
+        </label>
 
         <button type="submit" class="btn-auth" id="loginBtn" disabled>Logga in</button>
     </form>
 
     <div id="googleSection">
-        <div style="text-align:center; margin:15px 0; font-size:12px; color:#cbd5e1; font-weight:800;">ELLER</div>
+        <div style="text-align:center; margin:15px 0; font-size:12px; color:#cbd5e1; font-weight: 800;">ELLER</div>
         <button class="google-btn" id="googleBtn">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Logga in med Google
         </button>
@@ -81,21 +80,23 @@
     const termsCheck = document.getElementById('termsCheck');
     const loginBtn = document.getElementById('loginBtn');
 
-    window.switchLogin = (mode) => {
-        document.getElementById('tabP').classList.toggle('active', mode === 'Privat');
-        document.getElementById('tabF').classList.toggle('active', mode === 'Foretag');
-        document.getElementById('emailLabel').innerText = mode === 'Privat' ? 'E-postadress' : 'Företags-e-post';
-        document.getElementById('googleSection').style.display = (mode === 'Privat') ? 'block' : 'none';
+    window.switchLogin = (type) => {
+        document.getElementById('tabP').classList.toggle('active', type === 'Privat');
+        document.getElementById('tabF').classList.toggle('active', type === 'Foretag');
+        document.getElementById('emailLabel').innerText = type === 'Privat' ? 'E-postadress' : 'Företags-e-post';
+        document.getElementById('googleSection').style.display = (type === 'Privat') ? 'block' : 'none';
     };
 
-    termsCheck.onchange = () => loginBtn.disabled = !termsCheck.checked;
+    termsCheck.onchange = (e) => loginBtn.disabled = !e.target.checked;
 
     document.getElementById('loginForm').onsubmit = async (e) => {
         e.preventDefault();
         try {
-            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value);
+            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
             window.location.href = "index.html";
-        } catch (error) { Swal.fire('Fel', 'Inloggning misslyckades.', 'error'); }
+        } catch (error) { 
+            Swal.fire('Fel', 'Inloggning misslyckades. Kontrollera dina uppgifter.', 'error'); 
+        }
     };
 
     document.getElementById('googleBtn').onclick = async () => {
