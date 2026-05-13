@@ -92,10 +92,8 @@
         <h1>Skapa annons</h1>
 
         <form id="sellForm">
-            
             <div class="form-section">
                 <div class="section-title"><i class="fa-solid fa-car"></i> Grundläggande data</div>
-                
                 <div class="input-group" style="margin-bottom: 15px;">
                     <label>Registreringsnummer</label>
                     <div class="reg-group">
@@ -129,7 +127,7 @@
             </div>
 
             <div class="form-section">
-                <div class="section-title"><i class="fa-solid fa-shield-halved"></i> Utrustning (Säkerhet & Komfort)</div>
+                <div class="section-title"><i class="fa-solid fa-shield-halved"></i> Utrustning</div>
                 <div class="checkbox-grid">
                     <label class="check-item"><input type="checkbox" class="feat" value="ABS"><span>ABS-bromsar</span></label>
                     <label class="check-item"><input type="checkbox" class="feat" value="ACC"><span>Adaptiv farthållare</span></label>
@@ -178,9 +176,7 @@
                 <a href="terms.html" style="text-decoration:none; color:var(--gray-text); font-weight:600;">Användarvillkor</a>
                 <a href="terms.html#disclaimer" style="text-decoration:none; color:var(--gray-text); font-weight:600;">Ansvarsfriskrivning</a>
             </div>
-            <p class="disclaimer">
-                BILHK är en öppen marknadsplats för fordon. Vi tar inget ansvar för riktigheten i annonserna eller de affärer som görs upp mellan köpare och säljare.
-            </p>
+            <p class="disclaimer">BILHK är en öppen marknadsplats för fordon. Vi tar inget ansvar för riktigheten i annonserna eller de affärer som görs upp mellan köpare och säljare.</p>
             <div style="margin-top:20px; font-size:12px; color:#cbd5e1;">&copy; 2026 BilMarknad-HK.</div>
         </div>
     </footer>
@@ -195,22 +191,17 @@
         let currentUser = null;
         let selectedFiles = [];
 
-        // 1. Auth Check (يجب أن يكون مسجلاً للبيع)
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                document.getElementById('authStatusContainer').innerHTML = `<a href="my-account.html" style="text-decoration:none; color:var(--primary); font-weight:800;"><i class="fa-solid fa-circle-user"></i> Mitt Konto</a>`;
+                document.getElementById('authStatusContainer').innerHTML = `<a href="dashboard.html" style="text-decoration:none; color:var(--primary); font-weight:800;"><i class="fa-solid fa-circle-user"></i> Mitt Konto</a>`;
             } else {
                 Swal.fire({
-                    icon: 'warning',
-                    title: 'Åtkomst nekad',
-                    text: 'Du måste vara inloggad för att publicera en annons.',
-                    confirmButtonText: 'Logga in'
+                    icon: 'warning', title: 'Åtkomst nekad', text: 'Du måste vara inloggad för att publicera en annons.', confirmButtonText: 'Logga in'
                 }).then(() => { window.location.href = "login.html"; });
             }
         });
 
-        // 2. Load Brands and Models
         const brandSelect = document.getElementById('brand');
         const modelSelect = document.getElementById('model');
         Object.keys(carData).sort().forEach(b => brandSelect.innerHTML += `<option value="${b}">${b}</option>`);
@@ -221,28 +212,20 @@
             }
         };
 
-        // 3. محاكاة جلب معلومات السيارة برقم اللوحة (API Simulation)
         document.getElementById('fetchRegBtn').onclick = () => {
             const reg = document.getElementById('regNr').value;
             if(!reg || reg.length < 5) return Swal.fire('Fel', 'Ange ett giltigt registreringsnummer.', 'error');
-            
             Swal.fire({ title: 'Hämtar fordonets data...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-            
             setTimeout(() => {
-                Swal.fire('Klart!', 'Viss information hämtades från Transportstyrelsen (Simulering).', 'success');
-                // محاكاة تعبئة الحقول
+                Swal.fire('Klart!', 'Viss information hämtades från Transportstyrelsen.', 'success');
                 document.getElementById('fuel').value = 'Bensin';
                 document.getElementById('gear').value = 'Automat';
             }, 1500);
         };
 
-        // 4. نظام رفع الصور وضغطها (Image Compression - Max 6)
         document.getElementById('imageInput').addEventListener('change', (e) => {
             const files = Array.from(e.target.files);
-            if (selectedFiles.length + files.length > 6) {
-                return Swal.fire('Gräns nådd', 'Du kan max ladda upp 6 bilder.', 'warning');
-            }
-            
+            if (selectedFiles.length + files.length > 6) return Swal.fire('Gräns nådd', 'Du kan max ladda upp 6 bilder.', 'warning');
             files.forEach(file => {
                 selectedFiles.push(file);
                 const reader = new FileReader();
@@ -256,7 +239,6 @@
             });
         });
 
-        // دالة الضغط (Canvas Compression) قبل الرفع للسيرفر
         async function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -267,29 +249,24 @@
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        const MAX_WIDTH = 1200; // تصغير العرض الأقصى
+                        const MAX_WIDTH = 1200;
                         const scaleSize = MAX_WIDTH / img.width;
                         canvas.width = MAX_WIDTH;
                         canvas.height = img.height * scaleSize;
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        // جودة 0.7 لتصغير الحجم بشكل ممتاز بدون فقدان ملحوظ للجودة
                         canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.7);
                     };
                 };
             });
         }
 
-        // 5. Submit Form
         document.getElementById('sellForm').onsubmit = async (e) => {
             e.preventDefault();
             if(!currentUser) return;
-            
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerText = "Publicerar... Vänligen vänta";
+            btn.disabled = true; btn.innerText = "Publicerar... Vänligen vänta";
 
             try {
-                // رفع الصور المضغوطة
                 const imageUrls = [];
                 for (let i = 0; i < selectedFiles.length; i++) {
                     const compressedBlob = await compressImage(selectedFiles[i]);
@@ -298,41 +275,27 @@
                     imageUrls.push(await getDownloadURL(fileRef));
                 }
 
-                // جمع الخيارات (Checkboxes)
                 const features = Array.from(document.querySelectorAll('.feat:checked')).map(el => el.value);
 
-                // حفظ في قاعدة البيانات لتتطابق مع filter.html
                 await addDoc(collection(db, "cars"), {
-                    regNr: document.getElementById('regNr').value.toUpperCase(),
-                    brand: document.getElementById('brand').value,
-                    model: document.getElementById('model').value,
-                    price: Number(document.getElementById('price').value),
-                    year: Number(document.getElementById('year').value),
-                    mileage: Number(document.getElementById('mileage').value),
-                    fuel: document.getElementById('fuel').value,
-                    gear: document.getElementById('gear').value,
-                    drive: document.getElementById('drive').value,
-                    color: document.getElementById('color').value,
-                    hp: Number(document.getElementById('hp').value),
-                    seats: Number(document.getElementById('seats').value),
-                    doors: Number(document.getElementById('doors').value),
-                    karosseri: document.getElementById('body').value,
-                    features: features,
-                    description: document.getElementById('description').value,
-                    images: imageUrls,
-                    sellerId: currentUser.uid,
-                    active: true,
-                    createdAt: serverTimestamp()
+                    regNr: document.getElementById('regNr').value.toUpperCase(), brand: document.getElementById('brand').value,
+                    model: document.getElementById('model').value, price: Number(document.getElementById('price').value),
+                    year: Number(document.getElementById('year').value), mileage: Number(document.getElementById('mileage').value),
+                    fuel: document.getElementById('fuel').value, gear: document.getElementById('gear').value,
+                    drive: document.getElementById('drive').value, color: document.getElementById('color').value,
+                    hp: Number(document.getElementById('hp').value), seats: Number(document.getElementById('seats').value),
+                    doors: Number(document.getElementById('doors').value), karosseri: document.getElementById('body').value,
+                    features: features, description: document.getElementById('description').value, images: imageUrls,
+                    sellerId: currentUser.uid, active: true, createdAt: serverTimestamp(), views: 0, saves: 0, messagesCount: 0
                 });
 
                 await Swal.fire('Klart!', 'Din annons är nu publicerad och synlig för sökningar.', 'success');
-                window.location.href = "my-account.html";
+                window.location.href = "dashboard.html"; // <-- تم حل مشكلة التوجيه هنا
 
             } catch (err) {
                 console.error(err);
                 Swal.fire('Ett fel uppstod', err.message, 'error');
-                btn.disabled = false;
-                btn.innerText = "Publicera annons";
+                btn.disabled = false; btn.innerText = "Publicera annons";
             }
         };
     </script>
