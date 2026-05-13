@@ -1,257 +1,432 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BilMarknad HK | Köp och sälj bilar</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <style>
-        :root {
-            --primary: #f58220;
-            --primary-hover: #e07210;
-            --dark: #0f172a;
-            --light: #f8fafc;
-            --border: #e2e8f0;
-            --white: #ffffff;
-            --danger: #ef4444;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--light); color: var(--dark); }
-        
-        /* تنييه الموقع تحت الإنشاء */
-        .construction-notice {
-            background: var(--danger);
-            color: white;
-            text-align: center;
-            padding: 10px 20px;
-            font-size: 13px;
-            font-weight: 700;
-            position: relative;
-            z-index: 1100;
-            border-bottom: 2px solid rgba(0,0,0,0.1);
-        }
-
-        header { background: var(--white); padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .logo { text-decoration: none; font-size: 26px; font-weight: 900; color: var(--dark); letter-spacing: -1px; }
-        .logo span { color: var(--primary); }
-
-        .hero { background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2000') center/cover; padding: 80px 20px; text-align: center; color: white; }
-        .hero h1 { font-size: 42px; font-weight: 900; margin-bottom: 15px; }
-
-        .search-container { background: white; max-width: 1100px; margin: -60px auto 0; padding: 30px; border-radius: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
-        .search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .search-group { display: flex; flex-direction: column; gap: 6px; }
-        .search-group label { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; }
-        .search-group select, .search-group input { padding: 12px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; outline: none; background: #f8fafc; font-weight: 600; }
-
-        .body-types { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-        .body-btn { background: white; border: 1px solid var(--border); padding: 10px 20px; border-radius: 12px; cursor: pointer; transition: 0.2s; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; }
-        .body-btn:hover, .body-btn.active { border-color: var(--primary); color: var(--primary); background: #fffaf5; }
-
-        .search-actions { display: flex; gap: 15px; justify-content: center; align-items: center; margin-top: 10px; }
-        .btn-search { background: var(--primary); color: white; border: none; padding: 16px 40px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 16px; flex: 2; max-width: 400px; }
-        .btn-search:hover { background: var(--primary-hover); transform: translateY(-2px); }
-        .btn-advanced { background: #f1f5f9; color: var(--dark); border: 1px solid var(--border); padding: 16px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; text-decoration: none; font-size: 14px; flex: 1; text-align: center; max-width: 200px; }
-
-        .main-content { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
-        .section-title { font-size: 28px; font-weight: 900; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
-
-        .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; cursor: pointer; position: relative; }
-        .car-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-        
-        /* تصميم شعار مباع */
-        .sold-badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: var(--danger);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-weight: 900;
-            font-size: 11px;
-            z-index: 10;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-    </style>
-</head>
-<body>
-
-<div class="construction-notice">
-    <i class="fa-solid fa-triangle-exclamation"></i> VIKTIG INFORMATION: Denna webbplats är under utveckling. Inga riktiga annonser publiceras eller hanteras för tillfället.
-</div>
-
-<header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div style="display:flex; gap:15px; align-items:center;">
-        <a href="sell.html" style="text-decoration:none; color:var(--primary); font-weight:800; border:2px solid var(--primary); padding:8px 18px; border-radius:50px; font-size:13px;">Sälj din bil</a>
-        <div id="authStatus"></div>
-    </div>
-</header>
-
-<div class="hero">
-    <h1>Hitta din nästa bil</h1>
-    <p>Sveriges enklaste marknadsplats för fordon</p>
-</div>
-
-<div class="search-container">
-    <div class="body-types" id="bodyTypeSelector">
-        <button class="body-btn" data-type="Sedan"><i class="fa-solid fa-car-side"></i> Sedan</button>
-        <button class="body-btn" data-type="Halvkombi"><i class="fa-solid fa-car"></i> Halvkombi</button>
-        <button class="body-btn" data-type="Kombi"><i class="fa-solid fa-shuttle-space"></i> Kombi</button>
-        <button class="body-btn" data-type="SUV"><i class="fa-solid fa-truck-pickup"></i> SUV</button>
-        <button class="body-btn" data-type="Coupé"><i class="fa-solid fa-car-rear"></i> Coupé</button>
-    </div>
-
-    <div class="search-grid">
-        <div class="search-group">
-            <label>Märke</label>
-            <select id="brandSelect">
-                <option value="all">Alla märken</option>
-                <option value="Volvo">Volvo</option>
-                <option value="Volkswagen">Volkswagen</option>
-                <option value="BMW">BMW</option>
-                <option value="Audi">Audi</option>
-                <option value="Mercedes-Benz">Mercedes-Benz</option>
-                <option value="Toyota">Toyota</option>
-            </select>
-        </div>
-        <div class="search-group">
-            <label>Modell</label>
-            <input type="text" id="modelInput" placeholder="t.ex. XC60">
-        </div>
-        <div class="search-group">
-            <label>Max pris (kr)</label>
-            <input type="number" id="maxPrice" placeholder="Obegränsat">
-        </div>
-        <div class="search-group">
-            <label>År (Från)</label>
-            <input type="number" id="yearFrom" placeholder="t.ex. 2018">
-        </div>
-        <div class="search-group">
-            <label>År (Till)</label>
-            <input type="number" id="yearTo" placeholder="t.ex. 2024">
-        </div>
-        <div class="search-group">
-            <label>Drivmedel</label>
-            <select id="fuelSelect">
-                <option value="all">Alla</option>
-                <option value="Bensin">Bensin</option>
-                <option value="Diesel">Diesel</option>
-                <option value="El">El</option>
-                <option value="Hybrid">Hybrid</option>
-            </select>
-        </div>
-        <div class="search-group">
-            <label>Växellåda</label>
-            <select id="gearSelect">
-                <option value="all">Alla</option>
-                <option value="Automat">Automat</option>
-                <option value="Manuell">Manuell</option>
-            </select>
-        </div>
-        <div class="search-group">
-            <label>Max mil</label>
-            <input type="number" id="maxMileage" placeholder="t.ex. 10000">
-        </div>
-    </div>
-
-    <div class="search-actions">
-        <button class="btn-search" id="searchBtn">Visa resultat</button>
-        <a href="filter.html" class="btn-advanced"><i class="fa-solid fa-sliders"></i> Detaljerad sök</a>
-    </div>
-</div>
-
-<div class="main-content">
-    <h2 class="section-title"><i class="fa-solid fa-bolt" style="color:var(--primary)"></i> Senast inkommet</h2>
-    <div class="cars-grid" id="carsGrid">
-        <p style="text-align:center; grid-column:1/-1;">Laddar bilar...</p>
-    </div>
-</div>
-
 <script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    let selectedBodyType = null;
+import { auth, db } from './firebase-config.js';
 
-    onAuthStateChanged(auth, (user) => {
-        const status = document.getElementById('authStatus');
-        if (user) {
-            status.innerHTML = `<a href="dashboard.html" style="text-decoration:none; color:var(--dark); font-weight:700;"><i class="fa-solid fa-user"></i> Mitt Konto</a>`;
-        } else {
-            status.innerHTML = `<a href="login.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Logga in</a>`;
-        }
-    });
+import {
+collection,
+getDocs,
+query,
+orderBy,
+limit
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    document.querySelectorAll('.body-btn').forEach(btn => {
-        btn.onclick = () => {
-            document.querySelectorAll('.body-btn').forEach(b => b.classList.remove('active'));
-            if (selectedBodyType === btn.dataset.type) {
-                selectedBodyType = null;
-            } else {
-                selectedBodyType = btn.dataset.type;
-                btn.classList.add('active');
-            }
-        };
-    });
+import {
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    async function fetchRecentCars() {
-        try {
-            const grid = document.getElementById('carsGrid');
-            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(8));
-            const snap = await getDocs(q);
-            grid.innerHTML = "";
-            snap.forEach(doc => {
-                const car = doc.data();
-                const isSold = car.status === 'sold';
-                grid.innerHTML += `
-                    <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
-                        ${isSold ? '<div class="sold-badge">SÅLD</div>' : ''}
-                        <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:190px; object-fit:cover; ${isSold ? 'opacity: 0.6;' : ''}">
-                        <div style="padding:20px; ${isSold ? 'opacity: 0.7;' : ''}">
-                            <h3 style="color:var(--primary); font-size:22px; font-weight:900;">${Number(car.price).toLocaleString()} kr</h3>
-                            <p style="font-weight:700;">${car.brand} ${car.model}</p>
-                            <p style="color:#64748b; font-size:13px;">${car.year} | ${car.mileage} mil | ${car.fuel}</p>
-                        </div>
-                    </div>`;
-            });
-        } catch(e) { console.error(e); }
-    }
+/* =====================================================
+   GLOBALS
+===================================================== */
 
-    document.getElementById('searchBtn').onclick = (e) => {
-        e.preventDefault();
-        const params = new URLSearchParams();
-        const brand = document.getElementById('brandSelect').value;
-        const model = document.getElementById('modelInput').value.trim();
-        const price = document.getElementById('maxPrice').value;
-        const yFrom = document.getElementById('yearFrom').value;
-        const yTo = document.getElementById('yearTo').value;
-        const fuel = document.getElementById('fuelSelect').value;
-        const gear = document.getElementById('gearSelect').value;
-        const mil = document.getElementById('maxMileage').value;
+let selectedBodyType = null;
 
-        if (brand !== 'all') params.append('brand', brand);
-        if (model) params.append('model', model);
-        if (price) params.append('maxP', price);
-        if (yFrom) params.append('yFrom', yFrom);
-        if (yTo) params.append('yTo', yTo);
-        if (fuel !== 'all') params.append('fuel', fuel);
-        if (gear !== 'all') params.append('gear', gear);
-        if (mil) params.append('mil', mil);
-        if (selectedBodyType) params.append('body', selectedBodyType);
+const carsGrid =
+document.getElementById('carsGrid');
 
-        window.location.href = `results.html?${params.toString()}`;
-    };
+const searchBtn =
+document.getElementById('searchBtn');
 
-    window.onload = fetchRecentCars;
+/* =====================================================
+   AUTH STATUS
+===================================================== */
+
+onAuthStateChanged(auth,(user)=>{
+
+const status =
+document.getElementById('authStatus');
+
+if(user){
+
+status.innerHTML = `
+<a href="dashboard.html"
+style="
+text-decoration:none;
+color:var(--dark);
+font-weight:700;
+">
+<i class="fa-solid fa-user"></i>
+Mitt Konto
+</a>
+`;
+
+}else{
+
+status.innerHTML = `
+<a href="login.html"
+style="
+text-decoration:none;
+color:var(--dark);
+font-weight:700;
+">
+Logga in
+</a>
+`;
+
+}
+
+});
+
+/* =====================================================
+   BODY TYPE SELECTOR
+===================================================== */
+
+document.querySelectorAll('.body-btn')
+.forEach(btn=>{
+
+btn.addEventListener('click',()=>{
+
+const type = btn.dataset.type;
+
+if(selectedBodyType === type){
+
+selectedBodyType = null;
+
+btn.classList.remove('active');
+
+return;
+
+}
+
+document.querySelectorAll('.body-btn')
+.forEach(b=>b.classList.remove('active'));
+
+selectedBodyType = type;
+
+btn.classList.add('active');
+
+});
+
+});
+
+/* =====================================================
+   IMAGE FALLBACK
+===================================================== */
+
+function getImage(url){
+
+if(!url || url.trim() === ''){
+
+return 'placeholder.jpg';
+
+}
+
+return url;
+
+}
+
+/* =====================================================
+   LOADING STATE
+===================================================== */
+
+function renderLoading(){
+
+carsGrid.innerHTML = `
+<div style="
+grid-column:1/-1;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:60px;
+font-weight:800;
+color:var(--gray-text);
+gap:10px;
+">
+<i class="fa-solid fa-spinner fa-spin"></i>
+Laddar bilar...
+</div>
+`;
+
+}
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+function renderEmpty(){
+
+carsGrid.innerHTML = `
+<div style="
+grid-column:1/-1;
+text-align:center;
+padding:70px 20px;
+">
+
+<i class="fa-solid fa-car-side"
+style="
+font-size:50px;
+color:#cbd5e1;
+margin-bottom:20px;
+">
+</i>
+
+<h3 style="
+font-size:22px;
+font-weight:900;
+margin-bottom:10px;
+">
+Inga annonser hittades
+</h3>
+
+<p style="
+color:var(--gray-text);
+font-weight:600;
+">
+Det finns inga fordon att visa just nu.
+</p>
+
+</div>
+`;
+
+}
+
+/* =====================================================
+   FETCH RECENT CARS
+===================================================== */
+
+async function fetchRecentCars(){
+
+renderLoading();
+
+try{
+
+const q = query(
+collection(db,"cars"),
+orderBy("createdAt","desc"),
+limit(8)
+);
+
+const snap = await getDocs(q);
+
+if(snap.empty){
+
+renderEmpty();
+
+return;
+
+}
+
+let html = '';
+
+snap.forEach(docSnap=>{
+
+const car = docSnap.data();
+
+const isSold =
+car.status === 'sold';
+
+html += `
+<div class="car-card"
+onclick="window.location.href='details.html?id=${docSnap.id}'">
+
+${isSold
+? '<div class="sold-badge">SÅLD</div>'
+: ''
+}
+
+<img
+src="${getImage(car.images?.[0])}"
+alt="${car.brand || ''}"
+loading="lazy"
+onerror="this.src='placeholder.jpg'"
+style="
+width:100%;
+height:190px;
+object-fit:cover;
+${isSold ? 'opacity:0.6;' : ''}
+">
+
+<div style="
+padding:20px;
+${isSold ? 'opacity:0.7;' : ''}
+">
+
+<h3 style="
+color:var(--primary);
+font-size:22px;
+font-weight:900;
+margin-bottom:6px;
+">
+${Number(car.price || 0).toLocaleString()} kr
+</h3>
+
+<p style="
+font-weight:800;
+margin-bottom:6px;
+">
+${car.brand || ''} ${car.model || ''}
+</p>
+
+<p style="
+color:#64748b;
+font-size:13px;
+font-weight:600;
+">
+${car.year || '-'} |
+${car.mileage || 0} mil |
+${car.fuel || '-'}
+</p>
+
+</div>
+</div>
+`;
+
+});
+
+carsGrid.innerHTML = html;
+
+}catch(error){
+
+console.error(error);
+
+carsGrid.innerHTML = `
+<div style="
+grid-column:1/-1;
+text-align:center;
+padding:60px;
+">
+
+<i class="fa-solid fa-triangle-exclamation"
+style="
+font-size:45px;
+color:#ef4444;
+margin-bottom:20px;
+">
+</i>
+
+<h3 style="
+font-size:22px;
+font-weight:900;
+margin-bottom:10px;
+">
+Kunde inte ladda annonser
+</h3>
+
+<p style="
+color:var(--gray-text);
+font-weight:600;
+">
+Kontrollera Firebase eller internetanslutningen.
+</p>
+
+</div>
+`;
+
+}
+
+}
+
+/* =====================================================
+   SEARCH VALIDATION
+===================================================== */
+
+function validateSearch(){
+
+const yearFrom =
+Number(document.getElementById('yearFrom').value);
+
+const yearTo =
+Number(document.getElementById('yearTo').value);
+
+if(yearFrom && yearTo && yearTo < yearFrom){
+
+alert('År Till måste vara större än År Från');
+
+return false;
+
+}
+
+return true;
+
+}
+
+/* =====================================================
+   SEARCH BUTTON
+===================================================== */
+
+searchBtn.addEventListener('click',(e)=>{
+
+e.preventDefault();
+
+if(!validateSearch()) return;
+
+searchBtn.disabled = true;
+
+searchBtn.innerHTML = `
+<i class="fa-solid fa-spinner fa-spin"></i>
+Söker...
+`;
+
+const params = new URLSearchParams();
+
+const brand =
+document.getElementById('brandSelect').value;
+
+const model =
+document.getElementById('modelInput')
+.value
+.trim();
+
+const price =
+document.getElementById('maxPrice').value;
+
+const yFrom =
+document.getElementById('yearFrom').value;
+
+const yTo =
+document.getElementById('yearTo').value;
+
+const fuel =
+document.getElementById('fuelSelect').value;
+
+const gear =
+document.getElementById('gearSelect').value;
+
+const mil =
+document.getElementById('maxMileage').value;
+
+if(brand !== 'all')
+params.append('brand',brand);
+
+if(model)
+params.append('model',model);
+
+if(price)
+params.append('maxP',price);
+
+if(yFrom)
+params.append('yFrom',yFrom);
+
+if(yTo)
+params.append('yTo',yTo);
+
+if(fuel !== 'all')
+params.append('fuel',fuel);
+
+if(gear !== 'all')
+params.append('gear',gear);
+
+if(mil)
+params.append('mil',mil);
+
+if(selectedBodyType)
+params.append('body',selectedBodyType);
+
+/* =========================================
+   REDIRECT
+========================================= */
+
+window.location.href =
+`results.html?${params.toString()}`;
+
+});
+
+/* =====================================================
+   START
+===================================================== */
+
+window.addEventListener(
+'DOMContentLoaded',
+fetchRecentCars
+);
+
 </script>
-</body>
-</html>
