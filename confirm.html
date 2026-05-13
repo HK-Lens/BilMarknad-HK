@@ -3,143 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifierar... | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Verifierar Inloggning - BILHK</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .confirm-card { background: white; width: 100%; max-width: 500px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); text-align: center; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .form-group { text-align: left; margin-bottom: 15px; display: none; } /* مخفي افتراضياً ويظهر للشركات الجديدة */
-        label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; background: #f9fafb; }
-        .btn-finish { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; display: none; }
-    </style>
 </head>
 <body>
+    <div class="auth-container">
+        <div class="auth-card" id="confirmCard">
+            <h2>Verifierar din länk...</h2>
+            <div id="loadingSpinner" class="spinner"></div>
 
-<div class="confirm-card" id="statusCard">
-    <h2 id="statusTitle">Verifierar din länk...</h2>
-    <div class="loader" id="loader"></div>
-    <p id="statusText">Vänligen vänta medan vi bekräftar din inloggning.</p>
-
-    <div id="companyFields">
-        <div class="form-group"><label>Företagsnamn</label><input type="text" id="compName"></div>
-        <div class="form-group"><label>Organisationsnummer</label><input type="text" id="taxId" placeholder="XXXXXX-XXXX"></div>
-        <div class="form-group"><label>Företagsadress</label><input type="text" id="address"></div>
-        <button class="btn-finish" id="finishBtn">Slutför registrering</button>
+            <div id="companyForm" style="display: none; text-align: left; margin-top: 20px;">
+                <h3 style="text-align: center; margin-bottom: 20px;">Företagsinformation</h3>
+                <div class="form-group">
+                    <label>Företagsnamn (اسم الشركة)</label>
+                    <input type="text" id="compName" placeholder="Ex: BILHK AB" required>
+                </div>
+                <div class="form-group">
+                    <label>Organisationsnummer (الرقم الضريبي)</label>
+                    <input type="text" id="compTax" placeholder="55XXXX-XXXX" required>
+                </div>
+                <div class="form-group">
+                    <label>Företagsadress (عنوان الشركة)</label>
+                    <input type="text" id="compAddress" placeholder="Gatunamn 1, Stad" required>
+                </div>
+                <div class="form-group">
+                    <label>Telefonnummer (رقم الهاتف)</label>
+                    <input type="tel" id="compPhone" placeholder="070-XXX XX XX" required>
+                </div>
+                <div class="form-group">
+                    <label>Officiell E-post (الإيميل الرسمي)</label>
+                    <input type="email" id="compEmail" placeholder="info@foretag.se" required>
+                </div>
+                <div class="form-group">
+                    <label>Webbplats (الموقع الإلكتروني الرسمي)</label>
+                    <input type="url" id="compWeb" placeholder="https://www.foretag.se">
+                </div>
+                <button class="btn-auth" onclick="saveCompanyAndFinish()">Spara och Fortsätt</button>
+            </div>
+        </div>
     </div>
-</div>
 
-<script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    async function handleConfirmation() {
-        if (isSignInWithEmailLink(auth, window.location.href)) {
-            let email = window.localStorage.getItem('emailForSignIn');
-            const userType = window.localStorage.getItem('userTypePreference') || 'Privat';
+        async function handleConfirmation() {
+            if (isSignInWithEmailLink(auth, window.location.href)) {
+                let email = window.localStorage.getItem('emailForSignIn');
+                const userType = window.localStorage.getItem('userTypePreference'); // جلب النوع المختار من صفحة اللوجن
 
-            if (!email) {
-                const { value: emailPrompt } = await Swal.fire({
-                    title: 'Bekräfta din e-post',
-                    input: 'email',
-                    inputLabel: 'Skriv in din e-postadress igen för att fortsätta',
-                    confirmButtonColor: '#f58220'
-                });
-                email = emailPrompt;
+                if (!email) {
+                    const result = await Swal.fire({
+                        title: 'Ange din e-post',
+                        input: 'email',
+                        inputPlaceholder: 'Bekräfta din e-postadress'
+                    });
+                    email = result.value;
+                }
+
+                try {
+                    const result = await signInWithEmailLink(auth, email, window.location.href);
+                    const user = result.user;
+                    window.localStorage.removeItem('emailForSignIn');
+
+                    // فحص إذا كان المستخدم مسجلاً مسبقاً
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    
+                    if (userType === 'Foretag' && !userDoc.exists()) {
+                        // إذا كان شركة ولأول مرة، نظهر النموذج
+                        document.querySelector('h2').innerText = "Komplettera profil";
+                        document.getElementById('loadingSpinner').style.display = 'none';
+                        document.getElementById('companyForm').style.display = 'block';
+                        // تعبئة الإيميل الرسمي تلقائياً كبداية
+                        document.getElementById('compEmail').value = email;
+                    } else {
+                        // إذا كان حساباً شخصياً أو شركة مسجلة مسبقاً، نوجهه للرئيسية
+                        if (!userDoc.exists()) {
+                            await setDoc(doc(db, "users", user.uid), {
+                                email: user.email,
+                                type: 'Privat',
+                                createdAt: new Date()
+                            });
+                        }
+                        window.location.href = 'index.html';
+                    }
+                } catch (error) {
+                    Swal.fire('Fel', 'Länken är ogiltig eller har gått ut.', 'error');
+                }
+            }
+        }
+
+        window.saveCompanyAndFinish = async () => {
+            const user = auth.currentUser;
+            const data = {
+                companyName: document.getElementById('compName').value,
+                taxId: document.getElementById('compTax').value,
+                address: document.getElementById('compAddress').value,
+                phone: document.getElementById('compPhone').value,
+                officialEmail: document.getElementById('compEmail').value,
+                website: document.getElementById('compWeb').value,
+                type: 'Foretag',
+                createdAt: new Date()
+            };
+
+            if (!data.companyName || !data.taxId || !data.phone) {
+                return Swal.fire('Obs!', 'Vänligen fyll i alla obligatoriska fält.', 'warning');
             }
 
             try {
-                const result = await signInWithEmailLink(auth, email, window.location.href);
-                const user = result.user;
-
-                // التحقق هل المستخدم موجود مسبقاً في Firestore
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-
-                if (!userDoc.exists()) {
-                    // إذا كان المستخدم جديداً واختار "شركة"
-                    if (userType === 'Foretag') {
-                        showCompanyForm(user, email);
-                    } else {
-                        // مستخدم شخصي جديد
-                        await saveUserToDB(user.uid, {
-                            uid: user.uid,
-                            email: email,
-                            userType: 'Privat',
-                            createdAt: serverTimestamp()
-                        });
-                    }
-                } else {
-                    // المستخدم موجود مسبقاً، توجه للرئيسية
-                    finalizeLogin();
-                }
-
-            } catch (error) {
-                console.error(error);
-                Swal.fire('Fel', 'Länken är ogiltig eller har gått ut.', 'error');
+                await setDoc(doc(db, "users", user.uid), data);
+                Swal.fire('Klart!', 'Ditt företagskonto är nu skapat.', 'success').then(() => {
+                    window.location.href = 'index.html';
+                });
+            } catch (e) {
+                Swal.fire('Fel', 'Kunde inte spara data.', 'error');
             }
-        }
-    }
-
-    function showCompanyForm(user, email) {
-        document.getElementById('statusTitle').innerText = "Slutför företagsprofil";
-        document.getElementById('statusText').innerText = "Vänligen fyll i dina företagsuppgifter.";
-        document.getElementById('loader').style.display = "none";
-        
-        // إظهار الخانات
-        const groups = document.querySelectorAll('.form-group');
-        groups.forEach(g => g.style.display = 'block');
-        const finishBtn = document.getElementById('finishBtn');
-        finishBtn.style.display = 'block';
-
-        finishBtn.onclick = async () => {
-            const companyData = {
-                uid: user.uid,
-                email: email,
-                userType: 'Foretag',
-                companyName: document.getElementById('compName').value,
-                taxId: document.getElementById('taxId').value,
-                address: document.getElementById('address').value,
-                createdAt: serverTimestamp()
-            };
-
-            if (!companyData.companyName || !companyData.taxId) {
-                return Swal.fire('Obs', 'Fyll i företagsnamn och organisationsnummer.', 'warning');
-            }
-
-            await saveUserToDB(user.uid, companyData);
         };
-    }
 
-    async function saveUserToDB(uid, data) {
-        try {
-            await setDoc(doc(db, "users", uid), data);
-            finalizeLogin();
-        } catch (e) {
-            Swal.fire('Fel', 'Kunde inte spara profil.', 'error');
-        }
-    }
-
-    function finalizeLogin() {
-        window.localStorage.removeItem('emailForSignIn');
-        window.localStorage.removeItem('userTypePreference');
-        Swal.fire({
-            title: 'Inloggad!',
-            icon: 'success',
-            timer: 1500,
-            showConfirmButton: false
-        }).then(() => {
-            window.location.href = "index.html";
-        });
-    }
-
-    handleConfirmation();
-</script>
+        handleConfirmation();
+    </script>
 </body>
 </html>
