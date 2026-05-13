@@ -2,10 +2,10 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BilMarknad HK | Köp och sälj bilar i Sverige</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BilMarknad HK | Sveriges smartaste bilmarknad</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
@@ -16,216 +16,275 @@
             --light: #f8fafc;
             --border: #e2e8f0;
             --white: #ffffff;
-            --danger: #ef4444;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --gray-text: #64748b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--light); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
+        body { background-color: var(--light); color: var(--dark); overflow-x: hidden; }
 
-        .dev-banner {
-            background: var(--danger); color: white; padding: 12px; text-align: center;
-            font-weight: 800; font-size: 14px; text-transform: uppercase;
-            animation: pulse-danger 2s infinite; position: relative; z-index: 2000;
+        /* --- Header --- */
+        header { 
+            background: var(--white); 
+            padding: 15px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
         }
-        @keyframes pulse-danger {
-            0% { background-color: #ef4444; } 50% { background-color: #b91c1c; } 100% { background-color: #ef4444; }
-        }
-
-        header {
-            background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 1000;
-        }
-        .logo { font-size: 1.8rem; font-weight: 900; color: var(--dark); text-decoration: none; }
+        .logo { font-size: 26px; font-weight: 900; color: var(--dark); text-decoration: none; letter-spacing: -0.5px; }
         .logo span { color: var(--primary); }
-        .nav-links { display: flex; align-items: center; gap: 20px; }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 14px; transition: 0.3s; }
-        .nav-links a:hover { color: var(--primary); }
-        .btn-sell { background: var(--primary); color: white !important; padding: 10px 25px; border-radius: 50px; transition: 0.3s; }
-
-        .hero {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            padding: 50px 6% 90px; text-align: center; color: white;
-        }
-
-        .car-types-container { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 25px; }
-        .type-btn {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            color: white; padding: 12px 20px; border-radius: 50px; cursor: pointer;
-            font-size: 13px; font-weight: 600; transition: 0.3s;
-        }
-        .type-btn:hover, .type-btn.active { background: var(--primary); border-color: var(--primary); transform: translateY(-2px); }
-
-        .filter-wrapper { max-width: 1200px; margin: -45px auto 40px; padding: 0 20px; width: 100%; }
-        .filter-card { background: var(--white); padding: 35px; border-radius: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
-        .filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .filter-group { display: flex; flex-direction: column; }
-        .filter-group label { font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
         
-        input, select { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f1f5f9; font-size: 14px; outline: none; width: 100%; }
+        .nav-links { display: flex; align-items: center; gap: 20px; }
+        .btn-sell { background: var(--primary); color: white !important; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: 0.3s; font-size: 14px;}
+        .btn-sell:hover { background: var(--primary-hover); }
+        .auth-link { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 14px; transition: 0.3s; }
+        .auth-link:hover { color: var(--primary); }
 
-        .search-actions { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
-        .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; }
-        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; }
+        /* --- Hero Section --- */
+        .hero { 
+            text-align: center; 
+            padding: 60px 5% 50px; 
+            background: var(--white); 
+        }
+        .hero h1 { font-size: 34px; font-weight: 900; margin-bottom: 15px; line-height: 1.2; color: var(--dark); }
+        .hero p { color: var(--gray-text); font-size: 17px; margin-bottom: 40px; }
 
-        .container { flex: 1; padding: 0 6% 80px; }
-        .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
-        .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        /* --- Search Box (6 Fields matching the image exactly) --- */
+        .search-box { 
+            background: var(--light); 
+            padding: 25px; 
+            border-radius: 24px; 
+            max-width: 950px; 
+            margin: 0 auto; 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 15px; 
+            border: 1px solid var(--border); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+        @media (min-width: 768px) { .search-box { grid-template-columns: 1fr 1fr; } }
+        @media (min-width: 1024px) { .search-box { grid-template-columns: 1fr 1fr 1fr; } }
 
-        footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; border-top: 1px solid #1e293b; }
-        .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
-        .legal-box { margin-top: 50px; padding-top: 30px; border-top: 1px solid #1e293b; text-align: center; font-size: 12px; }
+        .search-input { 
+            width: 100%; 
+            padding: 16px 18px; 
+            border-radius: 14px; 
+            border: 1px solid #cbd5e1; 
+            background: var(--white); 
+            font-size: 15px; 
+            outline: none; 
+            color: var(--dark);
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.1); }
+        select.search-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto; padding-right: 40px; }
+        
+        .btn-search { 
+            grid-column: 1 / -1; 
+            background: var(--primary); 
+            color: white; 
+            padding: 18px; 
+            border-radius: 14px; 
+            border: none; 
+            font-size: 18px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            margin-top: 5px;
+        }
+        .btn-search:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
+
+        /* --- Quick Actions --- */
+        .quick-actions { 
+            display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; padding: 30px 5%; max-width: 1000px; margin: 0 auto; 
+        }
+        .action-btn { 
+            display: flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 50px; font-weight: 700; text-decoration: none; color: var(--dark); background: var(--white); border: 1px solid var(--border); transition: 0.2s; font-size: 14px;
+        }
+        .action-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+        .action-btn:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+        /* --- Cars Grid --- */
+        .cars-section { padding: 20px 5% 80px; max-width: 1200px; margin: 0 auto; }
+        .section-title { font-size: 24px; font-weight: 900; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
+        .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        
+        .car-card { background: var(--white); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        .car-card:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); border-color: #cbd5e1; }
+        .car-img-box { position: relative; width: 100%; height: 200px; background: #f1f5f9; }
+        .car-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .car-info { padding: 20px; }
+        .car-price { color: var(--primary); font-size: 24px; font-weight: 900; margin-bottom: 5px; }
+        .car-title { font-weight: 800; font-size: 16px; margin-bottom: 8px; color: var(--dark); }
+        .car-meta { color: var(--gray-text); font-size: 13px; font-weight: 600; }
     </style>
 </head>
 <body>
 
-<div class="dev-banner">Sidan är under uppbyggnad - Funktioner och annonser är begränsade just nu</div>
-
-<header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <nav class="nav-links">
-        <a href="sell.html" class="btn-sell">Sälj din bil</a>
-        <div id="authStatusContainer" style="display: flex; align-items: center; gap: 15px;"></div>
-    </nav>
-</header>
-
-<section class="hero">
-    <h1>Hitta din nästa bil snabbt och enkelt</h1>
-    <div class="car-types-container">
-        <button class="type-btn active" onclick="setType('', this)">Alla bilar</button>
-        <button class="type-btn" onclick="setType('SUV', this)">SUV / 4x4</button>
-        <button class="type-btn" onclick="setType('Van', this)">Skåpbil</button>
-        <button class="type-btn" onclick="setType('Sedan', this)">Sedan</button>
-        <button class="type-btn" onclick="setType('Kombi', this)">Kombi</button>
-        <button class="type-btn" onclick="setType('Småbil', this)">Småbil</button>
-        <button class="type-btn" onclick="setType('Cab', this)">Cabriolet</button>
-    </div>
-</section>
-
-<div class="filter-wrapper">
-    <div class="filter-card">
-        <div class="filter-grid">
-            <div class="filter-group"><label>Märke</label><select id="brandSelect"><option value="">Alla märken</option></select></div>
-            <div class="filter-group"><label>Modell</label><select id="modelSelect"><option value="">Välj märke först</option></select></div>
-            <div class="filter-group"><label>Högsta Pris</label><input type="number" id="maxPrice"></div>
-            <div class="filter-group"><label>Lägsta Pris</label><input type="number" id="minPrice"></div>
-            <div class="filter-group"><label>Mest Mil</label><input type="number" id="maxMil"></div>
-            <div class="filter-group"><label>Minst Mil</label><input type="number" id="minMil"></div>
-            <div class="filter-group"><label>Nyaste Årsmodell</label><input type="number" id="maxYear"></div>
-            <div class="filter-group"><label>Äldsta Årsmodell</label><input type="number" id="minYear"></div>
+    <header>
+        <a href="index.html" class="logo">BIL<span>HK</span></a>
+        <div class="nav-links">
+            <a href="sell.html" class="btn-sell">Sälj din bil</a>
+            <div id="authStatusContainer" style="display: flex; align-items: center; gap: 15px;"></div>
         </div>
-        <div class="search-actions">
-            <button class="btn-deep" onclick="window.location.href='filter.html'">Djup Sökning</button>
-            <button class="btn-results" id="searchBtn">Visa Resultat</button>
-        </div>
-    </div>
-</div>
+    </header>
 
-<div class="container">
-    <h2 class="section-title">De senaste toppmodellerna</h2>
-    <div id="carsGrid" class="cars-grid"></div>
-</div>
-
-<footer>
-    <div class="footer-content">
-        <div class="footer-section">
-            <h4>Ansvarsfriskrivning</h4>
-            <p>BilMarknad-HK är en öppen marknadsplats. Vi tar inget ansvar för tvister mellan parter.</p>
-        </div>
-        <div class="footer-section">
-            <h4>Information</h4>
-            <ul class="footer-links">
-                <li><a href="terms.html">Användarvillkor</a></li>
-                <li><a href="index.html">Om oss</a></li>
-            </ul>
-        </div>
-        <div class="footer-section">
-            <h4>Juridisk Info</h4>
-            <ul class="footer-links">
-                <li><a href="#">Support</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="legal-box">&copy; 2026 BilMarknad-HK.</div>
-</footer>
-
-<script type="module">
-    import { db, auth } from './firebase-config.js';
-    import { collection, query, orderBy, limit, getDocs, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { carData } from './cars-data.js';
-
-    const brandSelect = document.getElementById('brandSelect');
-    const modelSelect = document.getElementById('modelSelect');
-    const grid = document.getElementById('carsGrid');
-    const authContainer = document.getElementById('authStatusContainer');
-    let selectedBodyType = "";
-
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            authContainer.innerHTML = `
-                <a href="my-account.html" style="color: var(--primary); font-weight: 800;"><i class="fa-solid fa-circle-user"></i> Mitt Konto</a>
-                <a href="#" id="logoutAction" style="color: #ef4444; font-size: 12px; margin-left:10px;">Logga ut</a>
-            `;
-            document.getElementById('logoutAction').onclick = async (e) => { e.preventDefault(); await signOut(auth); window.location.reload(); };
-        } else {
-            authContainer.innerHTML = `<a href="login.html">Logga in</a>`;
-        }
-    });
-
-    const brands = Object.keys(carData).sort();
-    brands.forEach(b => { brandSelect.innerHTML += `<option value="${b}">${b}</option>`; });
-    brandSelect.onchange = () => {
-        modelSelect.innerHTML = '<option value="">Alla modeller</option>';
-        if (carData[brandSelect.value]) carData[brandSelect.value].sort().forEach(m => { modelSelect.innerHTML += `<option value="${m}">${m}</option>`; });
-    };
-
-    async function fetchCars() {
-        grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Söker...</p>";
-        let q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(20));
+    <section class="hero">
+        <h1>Sveriges smartaste bilmarknad</h1>
+        <p>Hitta din drömbil bland tusentals annonser</p>
         
-        // تطبيق الفلاتر برمجياً للتوافق مع الفهرس
-        const snapshot = await getDocs(q);
-        grid.innerHTML = "";
-        
-        snapshot.forEach(doc => {
-            const car = doc.data();
-            const matchesBrand = !brandSelect.value || car.brand === brandSelect.value;
-            const matchesType = !selectedBodyType || car.karosseri === selectedBodyType;
+        <div class="search-box">
+            <select id="brandSelect" class="search-input">
+                <option value="">Alla bilmärken</option>
+            </select>
             
-            if (matchesBrand && matchesType) {
-                grid.innerHTML += `
-                    <div class="car-card" style="background:white; border-radius:20px; overflow:hidden; border:1px solid #e2e8f0; cursor:pointer;" onclick="window.location.href='details.html?id=${doc.id}'">
-                        <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:190px; object-fit:cover;">
-                        <div style="padding:20px;">
-                            <h3 style="color:var(--primary); font-size:22px; font-weight:900;">${Number(car.price).toLocaleString()} kr</h3>
-                            <p style="font-weight:700;">${car.brand} ${car.model}</p>
-                            <p style="color:#64748b; font-size:13px;">${car.year} | ${car.mileage} mil</p>
-                        </div>
-                    </div>`;
+            <select id="modelSelect" class="search-input">
+                <option value="">Alla modeller</option>
+            </select>
+            
+            <input type="number" id="maxPrice" class="search-input" placeholder="Max pris (kr)">
+            
+            <input type="number" id="maxMil" class="search-input" placeholder="Max miltal (mil)">
+            
+            <select id="gearSelect" class="search-input">
+                <option value="">Växellåda</option>
+                <option value="Automat">Automat</option>
+                <option value="Manuell">Manuell</option>
+            </select>
+            
+            <select id="fuelSelect" class="search-input">
+                <option value="">Drivmedel</option>
+                <option value="Bensin">Bensin</option>
+                <option value="Diesel">Diesel</option>
+                <option value="El">El</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="Laddhybrid">Laddhybrid</option>
+            </select>
+
+            <button id="searchBtn" class="btn-search">Sök fordon</button>
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <a href="filter.html" style="color: var(--gray-text); font-size: 14px; font-weight: 600; text-decoration: none;"><i class="fa-solid fa-sliders"></i> Avancerad sökning (Djup Sökning)</a>
+        </div>
+    </section>
+
+    <div class="quick-actions">
+        <a href="#" class="action-btn active" onclick="setType('', this)">Alla bilar</a>
+        <a href="#" class="action-btn" onclick="setType('SUV', this)">SUV</a>
+        <a href="#" class="action-btn" onclick="setType('Kombi', this)">Kombi</a>
+        <a href="#" class="action-btn" onclick="setType('Sedan', this)">Sedan</a>
+        <a href="#" class="action-btn" onclick="setType('Halvkombi', this)">Halvkombi</a>
+    </div>
+
+    <section class="cars-section">
+        <h2 class="section-title">Senaste annonserna</h2>
+        <div id="carsGrid" class="cars-grid">
+            </div>
+    </section>
+
+    <script type="module">
+        import { db, auth } from './firebase-config.js';
+        import { collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { carData } from './cars-data.js';
+
+        // 1. نظام تسجيل الدخول في الهيدر
+        const authContainer = document.getElementById('authStatusContainer');
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                authContainer.innerHTML = `
+                    <a href="my-account.html" class="auth-link" style="color: var(--primary);"><i class="fa-solid fa-circle-user"></i> Mitt Konto</a>
+                    <a href="#" id="logoutAction" class="auth-link" style="color: #ef4444; font-size: 12px;">Logga ut</a>
+                `;
+                document.getElementById('logoutAction').onclick = async (e) => { e.preventDefault(); await signOut(auth); window.location.reload(); };
+            } else {
+                authContainer.innerHTML = `<a href="login.html" class="auth-link">Logga in</a>`;
             }
         });
-    }
 
-    window.setType = (type, btn) => {
-        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedBodyType = type;
-        fetchCars();
-    };
+        // 2. تعبئة ماركات وموديلات السيارات من cars-data.js
+        const brandSelect = document.getElementById('brandSelect');
+        const modelSelect = document.getElementById('modelSelect');
+        
+        const brands = Object.keys(carData).sort();
+        brands.forEach(b => { brandSelect.innerHTML += `<option value="${b}">${b}</option>`; });
+        
+        brandSelect.onchange = () => {
+            modelSelect.innerHTML = '<option value="">Alla modeller</option>';
+            if (carData[brandSelect.value]) {
+                carData[brandSelect.value].sort().forEach(m => { 
+                    modelSelect.innerHTML += `<option value="${m}">${m}</option>`; 
+                });
+            }
+        };
 
-    window.onload = fetchCars;
-    document.getElementById('searchBtn').onclick = () => {
-        const params = new URLSearchParams({
-            brand: brandSelect.value,
-            model: modelSelect.value,
-            maxP: document.getElementById('maxPrice').value,
-            minP: document.getElementById('minPrice').value,
-            kar: selectedBodyType
-        });
-        window.location.href = `index.html?${params.toString()}`;
-    };
-</script>
+        // 3. جلب وعرض السيارات
+        let selectedBodyType = "";
+        const grid = document.getElementById('carsGrid');
+
+        async function fetchCars() {
+            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #64748b; font-weight: 600;'>Laddar annonser...</p>";
+            try {
+                const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(12));
+                const snap = await getDocs(q);
+                
+                grid.innerHTML = "";
+                let found = false;
+
+                snap.forEach(doc => {
+                    const car = doc.data();
+                    const matchesType = !selectedBodyType || car.karosseri === selectedBodyType;
+                    
+                    if(matchesType) {
+                        found = true;
+                        grid.innerHTML += `
+                            <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
+                                <div class="car-img-box">
+                                    <img src="${car.images?.[0] || 'placeholder.jpg'}" loading="lazy" alt="Bil">
+                                </div>
+                                <div class="car-info">
+                                    <div class="car-price">${Number(car.price).toLocaleString()} kr</div>
+                                    <div class="car-title">${car.brand} ${car.model}</div>
+                                    <div class="car-meta">${car.year} | ${car.mileage} mil ${car.fuel ? '| ' + car.fuel : ''}</div>
+                                </div>
+                            </div>`;
+                    }
+                });
+
+                if(!found) grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #64748b;'>Inga bilar hittades i denna kategori.</p>";
+
+            } catch (err) {
+                console.error("Fel:", err);
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #ef4444;'>Kunde inte ladda data.</p>";
+            }
+        }
+        
+        window.setType = (type, btn) => {
+            document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedBodyType = type;
+            fetchCars();
+        };
+
+        window.onload = fetchCars;
+
+        // 4. منطق زر البحث والتوجيه لصفحة النتائج
+        document.getElementById('searchBtn').onclick = () => {
+            const params = new URLSearchParams({
+                brand: brandSelect.value,
+                model: modelSelect.value,
+                maxP: document.getElementById('maxPrice').value,
+                maxMil: document.getElementById('maxMil').value,
+                gear: document.getElementById('gearSelect').value,
+                fuel: document.getElementById('fuelSelect').value
+            });
+            window.location.href = 'results.html?' + params.toString();
+        };
+    </script>
 </body>
 </html>
