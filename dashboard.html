@@ -82,6 +82,15 @@
         .btn-save { background: var(--primary); color: white; border: none; padding: 16px 35px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 15px; transition: 0.3s; width: 100%; }
         @media (min-width: 768px) { .btn-save { width: auto; } }
 
+        /* --- Sold Badge Styles --- */
+        .sold-overlay {
+            position: absolute; top: 10px; left: 10px;
+            background: #ef4444; color: white; padding: 5px 12px;
+            border-radius: 6px; font-weight: 900; font-size: 11px;
+            z-index: 5; box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3);
+        }
+        .ad-stat-card.is-sold { opacity: 0.8; }
+
         /* --- Chat System Styles --- */
         .chat-container { display: flex; flex-direction: column; height: 650px; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: white; }
         @media (min-width: 900px) { .chat-container { flex-direction: row; } }
@@ -162,7 +171,7 @@
             <div class="card">
                 <h2 class="card-title">Mina Sparade Bilar</h2>
                 <div id="savedCarsContainer">
-                    <p style="color:var(--gray-text); text-align:center; padding:40px;">Laddar sparade bilar...</p>
+                    <p style="color:var(--gray-text); text-align:center; padding:40px;">Laddار sparade bilar...</p>
                 </div>
             </div>
         </div>
@@ -225,7 +234,6 @@
 </footer>
 
 <script type="module">
-    // تعديل: إضافة arrayRemove و increment إلى قائمة الاستيراد
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { collection, query, where, orderBy, getDocs, getDoc, doc, deleteDoc, setDoc, addDoc, updateDoc, serverTimestamp, onSnapshot, writeBatch, arrayRemove, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -275,7 +283,6 @@
             loadDashboardData(user.uid);
             loadProfile(user.uid);
             loadChatList(user.uid);
-            // تعديل: استدعاء دالة تحميل السيارات المحفوظة
             loadSavedCars(user.uid);
         }
     });
@@ -300,10 +307,15 @@
                 const views = car.views || 0;
                 const saves = car.saves || 0;
                 globalViews += views; globalSaves += saves;
+                
+                const isSold = car.status === 'sold';
 
                 container.innerHTML += `
-                    <div class="ad-stat-card">
-                        <img src="${car.images?.[0] || 'placeholder.jpg'}" class="ad-stat-img">
+                    <div class="ad-stat-card ${isSold ? 'is-sold' : ''}">
+                        <div style="position: relative;">
+                            <img src="${car.images?.[0] || 'placeholder.jpg'}" class="ad-stat-img">
+                            ${isSold ? '<div class="sold-overlay">SÅLD</div>' : ''}
+                        </div>
                         <div class="ad-stat-info">
                             <a href="details.html?id=${d.id}" class="ad-stat-title">${car.brand} ${car.model}</a>
                             <div class="ad-stat-price">${Number(car.price).toLocaleString()} kr</div>
@@ -314,6 +326,14 @@
                             <div class="metric"><i class="fa-solid fa-heart" style="color: #ef4444;"></i><span>Sparade</span><strong>${saves}</strong></div>
                         </div>
                         <div style="flex: 0.8;">
+                            ${!isSold ? `
+                                <button onclick="markAsSold('${d.id}')" class="btn-sm" style="background: #10b981; color: white; margin-bottom: 5px;">
+                                    <i class="fa-solid fa-tag"></i> Markera som såld
+                                </button>` : 
+                                `<div style="color: #10b981; font-weight: 800; font-size: 13px; text-align: center; margin-bottom: 8px;">
+                                    <i class="fa-solid fa-circle-check"></i> Fordonet är sålt
+                                </div>`
+                            }
                             <a href="edit-car.html?id=${d.id}" class="btn-sm btn-edit"><i class="fa-solid fa-pen"></i> Redigera</a>
                             <button onclick="deleteAd('${d.id}')" class="btn-sm btn-del"><i class="fa-solid fa-trash"></i> Radera</button>
                         </div>
@@ -327,7 +347,29 @@
         } catch(e) { console.error(e); }
     }
 
-    // تعديل: دالة تحميل السيارات المحفوظة
+    // دالة تمييز الإعلان كمباع
+    window.markAsSold = async (id) => {
+        const res = await Swal.fire({
+            title: 'Är bilen såld?',
+            text: "Detta kommer att visa 'SÅLD' på din annons för alla besökare.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#10b981',
+            confirmButtonText: 'Ja, den är såld!',
+            cancelButtonText: 'Avbryt'
+        });
+
+        if (res.isConfirmed) {
+            try {
+                await updateDoc(doc(db, "cars", id), { status: "sold" });
+                Swal.fire('Grattis!', 'Bilen har markerats som såld.', 'success');
+                loadDashboardData(currentUser.uid); // تحديث العرض
+            } catch(e) {
+                Swal.fire('Fel', 'Kunde inte uppdatera status.', 'error');
+            }
+        }
+    };
+
     async function loadSavedCars(uid) {
         try {
             const userDoc = await getDoc(doc(db, "users", uid));
@@ -345,9 +387,13 @@
                 const carSnap = await getDoc(doc(db, "cars", carId));
                 if (carSnap.exists()) {
                     const car = carSnap.data();
+                    const isSold = car.status === 'sold';
                     container.innerHTML += `
-                        <div class="ad-stat-card">
-                            <img src="${car.images?.[0] || 'placeholder.jpg'}" class="ad-stat-img">
+                        <div class="ad-stat-card ${isSold ? 'is-sold' : ''}">
+                            <div style="position: relative;">
+                                <img src="${car.images?.[0] || 'placeholder.jpg'}" class="ad-stat-img">
+                                ${isSold ? '<div class="sold-overlay">SÅLD</div>' : ''}
+                            </div>
                             <div class="ad-stat-info">
                                 <a href="details.html?id=${carSnap.id}" class="ad-stat-title">${car.brand} ${car.model}</a>
                                 <div class="ad-stat-price">${Number(car.price).toLocaleString()} kr</div>
@@ -361,7 +407,6 @@
         } catch(e) { console.error(e); }
     }
 
-    // تعديل: دالة إلغاء الحفظ
     window.unsaveCar = async (carId) => {
         const res = await Swal.fire({ 
             title: 'Ta bort från sparade?', 
@@ -484,7 +529,7 @@
             msgBox.innerHTML = '';
             
             if (snapshot.empty) {
-                msgBox.innerHTML = '<div style="margin: auto; color: var(--gray-text); font-size: 13px; font-weight: 500;">Skicka det första meddelandet!</div>';
+                msgBox.innerHTML = '<div style="margin: auto; color: var(--gray-text); font-size: 13px; font-weight: 500;">Skicka det första medدلandet!</div>';
                 return;
             }
 
