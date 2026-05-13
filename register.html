@@ -1,147 +1,830 @@
 <!DOCTYPE html>
 <html lang="sv">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skapa Konto | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .auth-card { background: white; width: 100%; max-width: 550px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
-        .logo { text-align: center; margin-bottom: 25px; font-weight: 900; font-size: 32px; color: var(--dark); text-decoration: none; display: block; }
-        .logo span { color: var(--primary); }
-        .tabs { display: flex; background: #f1f5f9; padding: 5px; border-radius: 14px; margin-bottom: 25px; }
-        .tab { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; background: none; color: #64748b; }
-        .tab.active { background: white; color: var(--dark); }
-        .form-group { margin-bottom: 15px; position: relative; }
-        label { display: block; font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: #f9fafb; font-size: 14px; }
-        .send-code-btn { position: absolute; right: 8px; top: 24px; background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
-        .btn-reg { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 15px; transition: 0.3s; }
-        .btn-reg:disabled { background: #cbd5e1; cursor: not-allowed; }
-        .modal-overlay { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); }
-        .modal-content { background: white; margin: 3% auto; padding: 35px; border-radius: 28px; width: 95%; max-width: 650px; position: relative; }
-        .consent-box { background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: flex-start; gap: 15px; cursor: pointer; }
-        .modal-footer { margin-top: 25px; display: flex; gap: 15px; }
-        .btn-confirm { flex: 2; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; }
-        .btn-cancel { flex: 1; padding: 16px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Skapa Konto | BILHK</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+
+:root{
+--primary:#f58220;
+--dark:#0f172a;
+--bg:#f8fafc;
+--border:#e2e8f0;
+--danger:#ef4444;
+}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:'Inter',sans-serif;
+}
+
+body{
+background:var(--bg);
+display:flex;
+align-items:center;
+justify-content:center;
+min-height:100vh;
+padding:20px;
+}
+
+.auth-card{
+background:white;
+width:100%;
+max-width:550px;
+padding:40px;
+border-radius:32px;
+border:1px solid var(--border);
+box-shadow:0 20px 50px rgba(0,0,0,0.05);
+}
+
+.logo{
+text-align:center;
+margin-bottom:25px;
+font-weight:900;
+font-size:32px;
+color:var(--dark);
+text-decoration:none;
+display:block;
+}
+
+.logo span{
+color:var(--primary);
+}
+
+.tabs{
+display:flex;
+background:#f1f5f9;
+padding:5px;
+border-radius:14px;
+margin-bottom:25px;
+}
+
+.tab{
+flex:1;
+padding:12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:700;
+background:none;
+color:#64748b;
+transition:0.2s;
+}
+
+.tab.active{
+background:white;
+color:var(--dark);
+}
+
+.form-group{
+margin-bottom:16px;
+position:relative;
+}
+
+label{
+display:block;
+font-size:10px;
+font-weight:800;
+color:#64748b;
+margin-bottom:6px;
+text-transform:uppercase;
+}
+
+input{
+width:100%;
+padding:14px;
+border:1px solid var(--border);
+border-radius:12px;
+background:#f9fafb;
+font-size:14px;
+outline:none;
+transition:0.2s;
+}
+
+input:focus{
+border-color:var(--primary);
+background:white;
+}
+
+.send-code-btn{
+position:absolute;
+right:8px;
+top:24px;
+background:var(--primary);
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:10px;
+font-size:11px;
+font-weight:700;
+cursor:pointer;
+transition:0.2s;
+}
+
+.send-code-btn:disabled{
+background:#cbd5e1;
+cursor:not-allowed;
+}
+
+.btn-reg{
+width:100%;
+padding:18px;
+background:var(--primary);
+color:white;
+border:none;
+border-radius:14px;
+font-weight:800;
+font-size:16px;
+cursor:pointer;
+margin-top:15px;
+transition:0.3s;
+}
+
+.btn-reg:disabled{
+background:#cbd5e1;
+cursor:not-allowed;
+}
+
+.modal-overlay{
+display:none;
+position:fixed;
+z-index:5000;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(15,23,42,0.7);
+backdrop-filter:blur(8px);
+padding:20px;
+overflow-y:auto;
+}
+
+.modal-content{
+background:white;
+margin:40px auto;
+padding:35px;
+border-radius:28px;
+width:100%;
+max-width:650px;
+position:relative;
+}
+
+.consent-box{
+background:#f8fafc;
+padding:20px;
+border-radius:15px;
+border:1px solid var(--border);
+display:flex;
+align-items:flex-start;
+gap:15px;
+cursor:pointer;
+margin-top:20px;
+}
+
+.modal-footer{
+margin-top:25px;
+display:flex;
+gap:15px;
+}
+
+.btn-confirm{
+flex:2;
+padding:16px;
+background:var(--primary);
+color:white;
+border:none;
+border-radius:12px;
+font-weight:800;
+cursor:pointer;
+}
+
+.btn-confirm:disabled{
+background:#cbd5e1;
+cursor:not-allowed;
+}
+
+.btn-cancel{
+flex:1;
+padding:16px;
+background:#f1f5f9;
+color:#64748b;
+border:none;
+border-radius:12px;
+font-weight:700;
+cursor:pointer;
+}
+
+.helper{
+font-size:12px;
+margin-top:6px;
+color:#94a3b8;
+}
+
+@media(max-width:600px){
+
+.auth-card{
+padding:25px;
+}
+
+.modal-content{
+padding:25px;
+}
+
+.modal-footer{
+flex-direction:column;
+}
+
+}
+
+</style>
+
 </head>
+
 <body>
 
 <div class="auth-card">
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div class="tabs">
-        <button class="tab active" id="pTab" onclick="setMode('Privat')">Privatperson</button>
-        <button class="tab" id="fTab" onclick="setMode('Foretag')">Företag</button>
-    </div>
-    <form id="regForm">
-        <div id="bizFields" style="display: none;">
-            <div class="form-group"><label>Företagsnamn</label><input type="text" id="compName"></div>
-            <div class="form-group"><label>Organisationsnummer</label><input type="text" id="taxId" placeholder="XXXXXX-XXXX"></div>
-            <div class="form-group"><label>Företagsadress</label><input type="text" id="address"></div>
-        </div>
-        <div class="form-group">
-            <label>E-postadress</label>
-            <input type="email" id="email" required>
-            <button type="button" class="send-code-btn" id="sendBtn" onclick="handleSendOTP()">Skicka Kod</button>
-        </div>
-        <div class="form-group" id="otpGroup" style="display: none;">
-            <label>Verifieringskod</label>
-            <input type="text" id="otpInput" placeholder="6-siffrig kod" maxlength="6">
-        </div>
-        <div class="form-group"><label>Lösenord</label><input type="password" id="pass" placeholder="Minst 8 tecken" required></div>
-        <div class="form-group"><label>Bekräfta Lösenord</label><input type="password" id="confirmPass" required></div>
-        <button type="button" class="btn-reg" id="mainRegBtn" onclick="handlePreRegister()" disabled>Skapa konto</button>
-    </form>
+
+<a href="index.html" class="logo">
+BIL<span>HK</span>
+</a>
+
+<div class="tabs">
+
+<button class="tab active"
+id="pTab"
+onclick="setMode('Privat')">
+
+Privatperson
+
+</button>
+
+<button class="tab"
+id="fTab"
+onclick="setMode('Foretag')">
+
+Företag
+
+</button>
+
 </div>
 
-<div id="termsModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header"><h3>Användarvillkor</h3></div>
-        <div class="modal-body"><p>Här accepterar du våra villkor för BILHK...</p></div>
-        <label class="consent-box"><input type="checkbox" id="finalConsent"><span>Jag godkänner villkoren.</span></label>
-        <div class="modal-footer">
-            <button class="btn-cancel" onclick="closeModal()">Avbryt</button>
-            <button id="confirmRegBtn" class="btn-confirm" onclick="executeRegistration()" disabled>Godkänn och Slutför</button>
-        </div>
-    </div>
+<form id="regForm">
+
+<div id="bizFields" style="display:none;">
+
+<div class="form-group">
+<label>Företagsnamn</label>
+<input type="text" id="compName">
+</div>
+
+<div class="form-group">
+<label>Organisationsnummer</label>
+<input type="text" id="taxId" placeholder="XXXXXX-XXXX">
+</div>
+
+<div class="form-group">
+<label>Företagsadress</label>
+<input type="text" id="address">
+</div>
+
+</div>
+
+<div class="form-group">
+
+<label>E-postadress</label>
+
+<input type="email"
+id="email"
+required>
+
+<button type="button"
+class="send-code-btn"
+id="sendBtn">
+
+Skicka Kod
+
+</button>
+
+<div class="helper">
+Verifiera din e-post innan registrering
+</div>
+
+</div>
+
+<div class="form-group"
+id="otpGroup"
+style="display:none;">
+
+<label>Verifieringskod</label>
+
+<input type="text"
+id="otpInput"
+placeholder="6-siffrig kod"
+maxlength="6">
+
+</div>
+
+<div class="form-group">
+
+<label>Lösenord</label>
+
+<input type="password"
+id="pass"
+placeholder="Minst 8 tecken"
+required>
+
+</div>
+
+<div class="form-group">
+
+<label>Bekräfta lösenord</label>
+
+<input type="password"
+id="confirmPass"
+required>
+
+</div>
+
+<button type="button"
+class="btn-reg"
+id="mainRegBtn"
+disabled>
+
+Skapa konto
+
+</button>
+
+</form>
+
+</div>
+
+<div id="termsModal"
+class="modal-overlay">
+
+<div class="modal-content">
+
+<h2 style="margin-bottom:20px;">
+Användarvillkor
+</h2>
+
+<p style="line-height:1.8; color:#64748b;">
+
+Genom att skapa konto accepterar du BILHK:s regler,
+villkor och ansvarsfrihet.
+
+</p>
+
+<label class="consent-box">
+
+<input type="checkbox"
+id="finalConsent">
+
+<span>
+Jag godkänner villkoren och integritetspolicyn.
+</span>
+
+</label>
+
+<div class="modal-footer">
+
+<button class="btn-cancel"
+onclick="closeModal()">
+
+Avbryt
+
+</button>
+
+<button id="confirmRegBtn"
+class="btn-confirm"
+disabled>
+
+Godkänn och Slutför
+
+</button>
+
+</div>
+
+</div>
+
 </div>
 
 <script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
-    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const functions = getFunctions();
-    const sendOtpEmail = httpsCallable(functions, 'sendOtpEmail');
-    let correctOtpFromServer = "";
-    let currentMode = 'Privat';
+import {
+auth,
+db
+} from './firebase-config.js';
 
-    window.setMode = (m) => {
-        currentMode = m;
-        document.getElementById('pTab').classList.toggle('active', m === 'Privat');
-        document.getElementById('fTab').classList.toggle('active', m === 'Foretag');
-        document.getElementById('bizFields').style.display = (m === 'Foretag') ? 'block' : 'none';
-    };
+import {
+createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    window.handleSendOTP = async () => {
-        const email = document.getElementById('email').value.trim();
-        if(!email.includes('@')) return Swal.fire('Obs', 'Ange giltig e-post', 'warning');
-        
-        Swal.fire({ title: 'Skickar kod...', didOpen: () => Swal.showLoading() });
-        try {
-            const result = await sendOtpEmail({ email: email });
-            correctOtpFromServer = result.data.otp;
-            Swal.fire('Skickat!', 'Kontrollera din inkorg.', 'success');
-            document.getElementById('otpGroup').style.display = 'block';
-            document.getElementById('mainRegBtn').disabled = false;
-        } catch (e) {
-            Swal.fire('Fel', 'Kunde inte skicka kod.', 'error');
-        }
-    };
+import {
+getFunctions,
+httpsCallable
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
 
-    window.handlePreRegister = () => {
-        const userOtp = document.getElementById('otpInput').value.trim();
-        const p = document.getElementById('pass').value;
-        const c = document.getElementById('confirmPass').value;
+import {
+doc,
+setDoc,
+serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        if (userOtp !== correctOtpFromServer) return Swal.fire('Fel kod', 'Koden stämmer inte.', 'error');
-        if (p.length < 8 || p !== c) return Swal.fire('Obs', 'Kontrollera lösenordet.', 'warning');
-        
-        document.getElementById('termsModal').style.display = 'block';
-    };
+const functions = getFunctions();
 
-    window.closeModal = () => document.getElementById('termsModal').style.display = 'none';
-    document.getElementById('finalConsent').onchange = (e) => {
-        document.getElementById('confirmRegBtn').disabled = !e.target.checked;
-    };
+const sendOtpEmail =
+httpsCallable(functions,'sendOtpEmail');
 
-    window.executeRegistration = async () => {
-        const email = document.getElementById('email').value;
-        const pass = document.getElementById('pass').value;
-        const btn = document.getElementById('confirmRegBtn');
-        btn.disabled = true;
+let currentMode = 'Privat';
 
-        try {
-            const cred = await createUserWithEmailAndPassword(auth, email, pass);
-            const userData = { uid: cred.user.uid, email: email, userType: currentMode, createdAt: serverTimestamp() };
-            if (currentMode === 'Foretag') {
-                userData.companyName = document.getElementById('compName').value;
-                userData.taxId = document.getElementById('taxId').value;
-            }
-            await setDoc(doc(db, "users", cred.user.uid), userData);
-            window.location.href = "index.html";
-        } catch (error) {
-            Swal.fire('Fel', error.message, 'error');
-            btn.disabled = false;
-        }
-    };
+let correctOtp = '';
+
+let otpSent = false;
+
+const sendBtn =
+document.getElementById('sendBtn');
+
+const mainBtn =
+document.getElementById('mainRegBtn');
+
+const confirmBtn =
+document.getElementById('confirmRegBtn');
+
+window.setMode = (mode)=>{
+
+currentMode = mode;
+
+document.getElementById('pTab')
+.classList.toggle(
+'active',
+mode === 'Privat'
+);
+
+document.getElementById('fTab')
+.classList.toggle(
+'active',
+mode === 'Foretag'
+);
+
+document.getElementById('bizFields')
+.style.display =
+mode === 'Foretag'
+? 'block'
+: 'none';
+
+};
+
+sendBtn.onclick = async()=>{
+
+const email =
+document.getElementById('email')
+.value
+.trim()
+.toLowerCase();
+
+if(!validateEmail(email)){
+
+Swal.fire(
+'Fel',
+'Ange en giltig e-postadress.',
+'warning'
+);
+
+return;
+
+}
+
+sendBtn.disabled = true;
+sendBtn.innerText = 'Skickar...';
+
+try{
+
+const result =
+await sendOtpEmail({
+email:email
+});
+
+correctOtp =
+String(result.data.otp);
+
+otpSent = true;
+
+document.getElementById(
+'otpGroup'
+).style.display = 'block';
+
+mainBtn.disabled = false;
+
+Swal.fire({
+icon:'success',
+title:'Kod skickad',
+text:'Kontrollera din inkorg.'
+});
+
+startResendTimer();
+
+}catch(error){
+
+console.error(error);
+
+Swal.fire(
+'Fel',
+'Kunde inte skicka verifieringskod.',
+'error'
+);
+
+sendBtn.disabled = false;
+sendBtn.innerText = 'Skicka Kod';
+
+}
+
+};
+
+mainBtn.onclick = ()=>{
+
+if(!otpSent){
+
+Swal.fire(
+'Obs',
+'Verifiera din e-post först.',
+'warning'
+);
+
+return;
+
+}
+
+const otp =
+document.getElementById('otpInput')
+.value
+.trim();
+
+const pass =
+document.getElementById('pass')
+.value;
+
+const confirm =
+document.getElementById('confirmPass')
+.value;
+
+if(otp !== correctOtp){
+
+Swal.fire(
+'Fel',
+'Fel verifieringskod.',
+'error'
+);
+
+return;
+
+}
+
+if(pass.length < 8){
+
+Swal.fire(
+'Fel',
+'Lösenordet måste vara minst 8 tecken.',
+'warning'
+);
+
+return;
+
+}
+
+if(pass !== confirm){
+
+Swal.fire(
+'Fel',
+'Lösenorden matchar inte.',
+'warning'
+);
+
+return;
+
+}
+
+if(currentMode === 'Foretag'){
+
+const company =
+document.getElementById('compName')
+.value
+.trim();
+
+const tax =
+document.getElementById('taxId')
+.value
+.trim();
+
+if(!company || !tax){
+
+Swal.fire(
+'Fel',
+'Fyll i företagsinformation.',
+'warning'
+);
+
+return;
+
+}
+
+}
+
+document.getElementById(
+'termsModal'
+).style.display = 'block';
+
+};
+
+window.closeModal = ()=>{
+
+document.getElementById(
+'termsModal'
+).style.display = 'none';
+
+};
+
+document.getElementById(
+'finalConsent'
+).onchange = (e)=>{
+
+confirmBtn.disabled =
+!e.target.checked;
+
+};
+
+confirmBtn.onclick = async()=>{
+
+confirmBtn.disabled = true;
+
+confirmBtn.innerText = 'Skapar konto...';
+
+const email =
+document.getElementById('email')
+.value
+.trim()
+.toLowerCase();
+
+const password =
+document.getElementById('pass')
+.value;
+
+try{
+
+const cred =
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const userData = {
+
+uid:cred.user.uid,
+
+email:email,
+
+userType:currentMode,
+
+createdAt:
+serverTimestamp()
+
+};
+
+if(currentMode === 'Foretag'){
+
+userData.companyName =
+document.getElementById('compName')
+.value
+.trim();
+
+userData.taxId =
+document.getElementById('taxId')
+.value
+.trim();
+
+userData.address =
+document.getElementById('address')
+.value
+.trim();
+
+}
+
+await setDoc(
+
+doc(
+db,
+"users",
+cred.user.uid
+),
+
+userData
+
+);
+
+Swal.fire({
+
+icon:'success',
+
+title:'Klart!',
+
+text:'Ditt konto har skapats.'
+
+});
+
+window.location.href =
+'index.html';
+
+}catch(error){
+
+console.error(error);
+
+let msg =
+'Kunde inte skapa konto.';
+
+if(error.code === 'auth/email-already-in-use'){
+msg = 'E-postadressen används redan.';
+}
+
+if(error.code === 'auth/weak-password'){
+msg = 'För svagt lösenord.';
+}
+
+Swal.fire(
+'Fel',
+msg,
+'error'
+);
+
+confirmBtn.disabled = false;
+
+confirmBtn.innerText =
+'Godkänn och Slutför';
+
+}
+
+};
+
+function validateEmail(email){
+
+return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+.test(email);
+
+}
+
+function startResendTimer(){
+
+let time = 60;
+
+sendBtn.disabled = true;
+
+const interval = setInterval(()=>{
+
+sendBtn.innerText =
+`${time}s`;
+
+time--;
+
+if(time < 0){
+
+clearInterval(interval);
+
+sendBtn.disabled = false;
+
+sendBtn.innerText =
+'Skicka Kod';
+
+}
+
+},1000);
+
+}
+
+window.onclick = (e)=>{
+
+const modal =
+document.getElementById('termsModal');
+
+if(e.target === modal){
+
+closeModal();
+
+}
+
+};
+
 </script>
+
 </body>
 </html>
