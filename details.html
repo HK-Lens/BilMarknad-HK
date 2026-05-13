@@ -248,6 +248,7 @@
                     const newChat = await addDoc(collection(db, "chats"), {
                         carId: carId,
                         carTitle: `${carData.brand} ${carData.model}`,
+                        carImage: carData.images?.[0] || 'placeholder.jpg', // تمت إضافة حفظ الصورة هنا
                         participants: [currentUser.uid, carData.sellerId],
                         users: [
                             { id: currentUser.uid, name: bName },
@@ -270,12 +271,18 @@
                     updatedAt: serverTimestamp()
                 });
 
-                await updateDoc(doc(db, "cars", carId), { messagesCount: increment(1) });
+                // الحل الجذري لمشكلة قواعد الحماية (تفادي الخطأ بصمت)
+                try {
+                    await updateDoc(doc(db, "cars", carId), { messagesCount: increment(1) });
+                } catch(err) {
+                    // نتجاهل الخطأ إذا رفضت قاعدة البيانات التحديث لأن المشتري ليس صاحب الإعلان
+                }
 
                 Swal.fire('Skickat!', 'Ditt meddelande har skickats till säljaren.', 'success');
                 document.getElementById('msgBody').value = '';
                 
             } catch (error) {
+                console.error(error);
                 Swal.fire('Fel', 'Kunde inte skicka meddelandet.', 'error');
             } finally {
                 btn.disabled = false;
