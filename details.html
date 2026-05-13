@@ -44,8 +44,13 @@
         
         .info-card { background: var(--white); padding: 30px; border-radius: 20px; border: 1px solid var(--border); }
         .car-title { font-size: 28px; font-weight: 900; margin-bottom: 5px; }
-        .car-price { font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 20px; }
+        .car-price { font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 0; }
         
+        /* تنسيق زر الحفظ/الإعجاب */
+        .btn-save-ad { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 15px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; color: var(--dark); }
+        .btn-save-ad:hover { background: white; border-color: var(--primary); }
+        .btn-save-ad.saved { color: #ef4444; border-color: #fca5a5; background: #fee2e2; }
+
         .specs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
         @media (min-width: 600px) { .specs-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (min-width: 1024px) { .specs-grid { grid-template-columns: repeat(4, 1fr); } }
@@ -113,7 +118,7 @@
 <script type="module">
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, increment, serverTimestamp, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const urlParams = new URLSearchParams(window.location.search);
     const carId = urlParams.get('id');
@@ -151,6 +156,15 @@
 
         const sSnap = await getDoc(doc(db, "users", carData.sellerId));
         sellerData = sSnap.exists() ? sSnap.data() : { name: "Okänd Säljare" };
+
+        // --- التحقق مما إذا كان الإعلان محفوظاً لدى المشتري ---
+        let isSaved = false;
+        if (currentUser) {
+            const uDoc = await getDoc(doc(db, "users", currentUser.uid));
+            if (uDoc.exists() && uDoc.data().savedCars && uDoc.data().savedCars.includes(carId)) {
+                isSaved = true;
+            }
+        }
 
         let imagesHtml = '';
         let thumbsHtml = '';
@@ -217,13 +231,19 @@
                 </div>
                 
                 <div class="info-card">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 20px;">
                         <div>
                             <h1 class="car-title">${carData.brand} ${carData.model}</h1>
                             <div class="car-price">${Number(carData.price).toLocaleString()} kr</div>
                         </div>
-                        <div style="background:var(--bg); padding:8px 12px; border-radius:8px; border:1px solid var(--border); font-weight:800; font-size:14px; text-transform: uppercase;">
-                            <i class="fa-solid fa-hashtag" style="color:var(--gray-text);"></i> ${carData.regNr || 'Okänd'}
+                        
+                        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
+                            <div style="background:var(--bg); padding:6px 10px; border-radius:6px; border:1px solid var(--border); font-weight:800; font-size:12px; text-transform: uppercase;">
+                                <i class="fa-solid fa-hashtag" style="color:var(--gray-text);"></i> ${carData.regNr || 'Okänd'}
+                            </div>
+                            <button id="saveAdBtn" class="btn-save-ad ${isSaved ? 'saved' : ''}">
+                                <i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-heart"></i> ${isSaved ? 'Sparad' : 'Spara'}
+                            </button>
                         </div>
                     </div>
                     
@@ -258,6 +278,41 @@
             document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
         };
+
+        // --- برمجة وظيفة الحفظ/الإعجاب للإعلان ---
+        const saveAdBtn = document.getElementById('saveAdBtn');
+        if (saveAdBtn) {
+            saveAdBtn.onclick = async () => {
+                if(!currentUser) {
+                    Swal.fire({ title: 'Logga in krävs', text: 'Du måste vara inloggad för att spara annonser.', icon: 'info', confirmButtonText: 'Logga in' }).then((res) => {
+                        if(res.isConfirmed) window.location.href="login.html";
+                    });
+                    return;
+                }
+                
+                const userRef = doc(db, "users", currentUser.uid);
+                
+                try {
+                    if (isSaved) {
+                        // إلغاء الحفظ
+                        await updateDoc(userRef, { savedCars: arrayRemove(carId) });
+                        try { await updateDoc(carRef, { saves: increment(-1) }); } catch(e){} // تقليل العداد بصمت
+                        isSaved = false;
+                        saveAdBtn.classList.remove('saved');
+                        saveAdBtn.innerHTML = `<i class="fa-regular fa-heart"></i> Spara`;
+                    } else {
+                        // إضافة الحفظ
+                        await updateDoc(userRef, { savedCars: arrayUnion(carId) });
+                        try { await updateDoc(carRef, { saves: increment(1) }); } catch(e){} // زيادة العداد بصمت
+                        isSaved = true;
+                        saveAdBtn.classList.add('saved');
+                        saveAdBtn.innerHTML = `<i class="fa-solid fa-heart"></i> Sparad`;
+                    }
+                } catch(err) {
+                    console.error("Save error", err);
+                }
+            };
+        }
 
         const sendBtn = document.getElementById('sendBtn');
         if (sendBtn) {
