@@ -87,7 +87,7 @@
         @media (min-width: 900px) { .chat-container { flex-direction: row; } }
         
         .chat-sidebar { width: 100%; border-bottom: 1px solid var(--border); overflow-y: auto; background: var(--bg); display: flex; flex-direction: column; }
-        @media (min-width: 900px) { .chat-sidebar { width: 320px; border-bottom: none; border-right: 1px solid var(--border); } }
+        @media (min-width: 900px) { .chat-sidebar { width: 340px; border-bottom: none; border-right: 1px solid var(--border); } }
         
         .chat-list-item { padding: 15px 20px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; gap: 4px; }
         .chat-list-item:hover { background: white; }
@@ -288,7 +288,6 @@
 
     /* --- 2. Live Chat System --- */
     function loadChatList(uid) {
-        // نستخدم onSnapshot لمراقبة القائمة لحظياً
         const q = query(collection(db, "chats"), where("participants", "array-contains", uid), orderBy("updatedAt", "desc"));
         
         onSnapshot(q, (snapshot) => {
@@ -304,15 +303,20 @@
                 const chat = docSnap.data();
                 const chatId = docSnap.id;
                 
-                // تحديد بيانات الطرف الآخر
                 const otherUser = chat.users ? chat.users.find(u => u.id !== uid) : { name: "Användare" };
                 const isActive = currentChatId === chatId ? 'active' : '';
 
+                // إضافة صورة السيارة كزر لفتح الإعلان
                 listContent.innerHTML += `
                     <div class="chat-list-item ${isActive}" onclick="openChat('${chatId}', '${otherUser.name || 'Okänd'}', '${chat.carTitle || 'Annons'}')">
-                        <div class="chat-list-title">${chat.carTitle || 'Annons'}</div>
-                        <div class="chat-list-user"><i class="fa-solid fa-user"></i> ${otherUser.name || 'Köpare/Säljare'}</div>
-                        <div class="chat-list-msg">${chat.lastMessage || 'Starta konversationen...'}</div>
+                        <div style="display: flex; gap: 12px; align-items: center; width: 100%;">
+                            <img src="${chat.carImage || 'placeholder.jpg'}" alt="Bil" style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); cursor: pointer;" onclick="event.stopPropagation(); window.open('details.html?id=${chat.carId}', '_blank')" title="Visa annons">
+                            <div style="flex: 1; min-width: 0;">
+                                <div class="chat-list-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${chat.carTitle || 'Annons'}</div>
+                                <div class="chat-list-user"><i class="fa-solid fa-user"></i> ${otherUser.name || 'Köpare/Säljare'}</div>
+                                <div class="chat-list-msg">${chat.lastMessage || 'Starta konversationen...'}</div>
+                            </div>
+                        </div>
                     </div>
                 `;
             });
@@ -328,14 +332,12 @@
         input.disabled = false;
         sendBtn.disabled = false;
         
-        // إعادة تلوين العنصر النشط في القائمة
         document.querySelectorAll('.chat-list-item').forEach(el => el.classList.remove('active'));
         event.currentTarget.classList.add('active');
 
         const msgBox = document.getElementById('chatMessagesBox');
         msgBox.innerHTML = '<div style="margin: auto; color: var(--gray-text); font-size: 12px;"><i class="fa-solid fa-spinner fa-spin"></i> Laddar...</div>';
 
-        // إيقاف التنصت القديم إن وجد لعدم تداخل المحادثات
         if (unsubscribeMessages) { unsubscribeMessages(); }
 
         const qMsg = query(collection(db, `chats/${chatId}/messages`), orderBy("createdAt", "asc"));
@@ -360,7 +362,6 @@
                     </div>
                 `;
             });
-            // التمرير التلقائي لأسفل المحادثة
             msgBox.scrollTop = msgBox.scrollHeight;
         });
     };
@@ -370,7 +371,7 @@
         const text = input.value.trim();
         if (!text || !currentChatId || !currentUser) return;
 
-        input.value = ''; // تفريغ الحقل فوراً
+        input.value = '';
         
         try {
             await addDoc(collection(db, `chats/${currentChatId}/messages`), {
@@ -379,7 +380,6 @@
                 createdAt: serverTimestamp()
             });
 
-            // تحديث آخر رسالة في وثيقة المحادثة الرئيسية
             await updateDoc(doc(db, "chats", currentChatId), {
                 lastMessage: text,
                 updatedAt: serverTimestamp()
