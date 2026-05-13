@@ -22,7 +22,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--light); color: var(--dark); overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* --- Header --- */
         header { 
             background: var(--white); 
             padding: 15px 5%; 
@@ -43,7 +42,6 @@
         .auth-link { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 14px; transition: 0.3s; cursor: pointer; }
         .auth-link:hover { color: var(--primary); }
 
-        /* --- Hero & Categories Section --- */
         .hero { text-align: center; padding: 60px 5% 40px; background: var(--white); }
         .hero h1 { font-size: 34px; font-weight: 900; margin-bottom: 15px; color: var(--dark); }
         
@@ -56,7 +54,6 @@
         .action-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
         .action-btn:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
 
-        /* --- Advanced 8-Field Search Box --- */
         .search-box { 
             background: var(--white); 
             padding: 30px; 
@@ -92,7 +89,6 @@
         .btn-deep { flex: 1; background: var(--dark); color: white; padding: 16px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none;}
         .btn-deep:hover { background: #1e293b; transform: translateY(-2px); }
 
-        /* --- Cars Grid --- */
         .main-content { flex: 1; }
         .cars-section { padding: 0 5% 80px; max-width: 1200px; margin: 0 auto; }
         .section-title { font-size: 22px; font-weight: 900; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
@@ -107,7 +103,6 @@
         .car-title { font-weight: 800; font-size: 15px; margin-bottom: 8px; color: var(--dark); }
         .car-meta { color: var(--gray-text); font-size: 12px; font-weight: 600; }
 
-        /* --- Footer --- */
         footer { background: var(--white); border-top: 1px solid var(--border); padding: 40px 5% 20px; margin-top: auto; }
         .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
         .footer-logo { font-size: 24px; font-weight: 900; color: var(--dark); text-decoration: none; }
@@ -125,15 +120,13 @@
         <a href="index.html" class="logo">BIL<span>HK</span></a>
         <div class="nav-links">
             <a href="sell.html" class="btn-sell">Sälj din bil</a>
-            <div id="authStatusContainer" style="display: flex; align-items: center; gap: 15px;">
-                </div>
+            <div id="authStatusContainer" style="display: flex; align-items: center; gap: 15px;"></div>
         </div>
     </header>
 
     <div class="main-content">
         <section class="hero">
             <h1>Sveriges smartaste bilmarknad</h1>
-            
             <div class="quick-actions">
                 <button class="action-btn active" onclick="setType('', this)">Alla bilar</button>
                 <button class="action-btn" onclick="setType('SUV', this)">SUV / 4x4</button>
@@ -147,38 +140,38 @@
 
         <div class="search-box">
             <div class="search-group">
-                <label>Märke (الماركة)</label>
+                <label>Märke</label>
                 <select id="brandSelect" class="search-input"><option value="">Alla märken</option></select>
             </div>
             <div class="search-group">
-                <label>Modell (الموديل)</label>
+                <label>Modell</label>
                 <select id="modelSelect" class="search-input"><option value="">Alla modeller</option></select>
             </div>
             
             <div class="search-group">
-                <label>Min Pris (أقل سعر)</label>
+                <label>Min Pris</label>
                 <input type="number" id="minPrice" class="search-input" placeholder="0 kr">
             </div>
             <div class="search-group">
-                <label>Max Pris (أعلى سعر)</label>
+                <label>Max Pris</label>
                 <input type="number" id="maxPrice" class="search-input" placeholder="Obegränsat">
             </div>
 
             <div class="search-group">
-                <label>Min Miltal (أقل أميال)</label>
+                <label>Min Miltal</label>
                 <input type="number" id="minMil" class="search-input" placeholder="0 mil">
             </div>
             <div class="search-group">
-                <label>Max Miltal (أعلى أميال)</label>
+                <label>Max Miltal</label>
                 <input type="number" id="maxMil" class="search-input" placeholder="Obegränsat">
             </div>
 
             <div class="search-group">
-                <label>Äldsta År (أقدم سنة)</label>
+                <label>Äldsta År</label>
                 <input type="number" id="minYear" class="search-input" placeholder="T.ex. 2010">
             </div>
             <div class="search-group">
-                <label>Nyaste År (أحدث سنة)</label>
+                <label>Nyaste År</label>
                 <input type="number" id="maxYear" class="search-input" placeholder="T.ex. 2024">
             </div>
 
@@ -198,8 +191,8 @@
         <div class="footer-content">
             <a href="index.html" class="footer-logo">BIL<span>HK</span></a>
             <div class="footer-links">
-                <a href="terms.html">Användarvillkor (شروط الاستخدام)</a>
-                <a href="terms.html#disclaimer">Ansvarsfriskrivning (إخلاء المسؤولية)</a>
+                <a href="terms.html">Användarvillkor</a>
+                <a href="terms.html#disclaimer">Ansvarsfriskrivning</a>
                 <a href="#">Kundtjänst</a>
             </div>
             <p class="disclaimer">
@@ -215,7 +208,6 @@
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { carData } from './cars-data.js';
 
-        // 1. نظام الهيدر (تسجيل الدخول / حسابي)
         const authContainer = document.getElementById('authStatusContainer');
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -233,7 +225,6 @@
             }
         });
 
-        // 2. تعبئة القوائم
         const brandSelect = document.getElementById('brandSelect');
         const modelSelect = document.getElementById('modelSelect');
         
@@ -249,7 +240,6 @@
             }
         };
 
-        // 3. جلب السيارات مع فلتر الفئات السريعة
         let selectedBodyType = "";
         const grid = document.getElementById('carsGrid');
 
@@ -299,7 +289,6 @@
 
         window.onload = fetchCars;
 
-        // 4. إرسال بيانات البحث للنتائج
         document.getElementById('searchBtn').onclick = () => {
             const params = new URLSearchParams({
                 brand: brandSelect.value,
