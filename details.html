@@ -36,27 +36,30 @@
         
         .main-col { display: flex; flex-direction: column; gap: 25px; }
         .gallery { background: var(--white); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
-        .main-img { width: 100%; height: 400px; object-fit: cover; }
+        .main-img { width: 100%; height: 450px; object-fit: cover; }
         .thumb-list { display: flex; gap: 10px; padding: 15px; overflow-x: auto; background: var(--bg); }
-        .thumb { width: 80px; height: 60px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; }
+        .thumb { width: 80px; height: 60px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        .thumb:hover { opacity: 0.8; }
         .thumb.active { border-color: var(--primary); }
         
         .info-card { background: var(--white); padding: 30px; border-radius: 20px; border: 1px solid var(--border); }
         .car-title { font-size: 28px; font-weight: 900; margin-bottom: 5px; }
         .car-price { font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 20px; }
         
-        .specs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
-        @media (min-width: 600px) { .specs-grid { grid-template-columns: repeat(4, 1fr); } }
+        /* Specs Grid - Expanded */
+        .specs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
+        @media (min-width: 600px) { .specs-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1024px) { .specs-grid { grid-template-columns: repeat(4, 1fr); } }
         .spec-item { background: var(--bg); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
-        .spec-item i { color: var(--gray-text); font-size: 20px; margin-bottom: 5px; display: block; }
+        .spec-item i { color: var(--gray-text); font-size: 18px; margin-bottom: 8px; display: block; }
         .spec-item span { font-size: 11px; font-weight: 800; color: var(--gray-text); text-transform: uppercase; }
-        .spec-item strong { display: block; font-size: 14px; font-weight: 800; margin-top: 5px; }
+        .spec-item strong { display: block; font-size: 13px; font-weight: 800; margin-top: 4px; color: var(--dark); }
 
         .desc-title { font-size: 18px; font-weight: 900; margin-bottom: 15px; border-bottom: 2px solid var(--light); padding-bottom: 10px; }
         .description { font-size: 15px; line-height: 1.6; color: #334155; white-space: pre-wrap; }
         
         .features-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-        .feature-tag { background: var(--bg); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid var(--border); color: var(--dark); }
+        .feature-tag { background: var(--bg); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid var(--border); color: var(--dark); display: flex; align-items: center; gap: 6px;}
         
         .side-col { display: flex; flex-direction: column; gap: 20px; }
         .contact-card { background: var(--white); padding: 25px; border-radius: 20px; border: 1px solid var(--border); position: sticky; top: 90px; }
@@ -68,7 +71,7 @@
         
         .msg-input { width: 100%; min-height: 120px; padding: 15px; border: 1px solid var(--border); border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 14px; resize: vertical; margin-bottom: 15px; background: var(--bg); outline: none; transition: 0.2s;}
         .msg-input:focus { border-color: var(--primary); background: white; }
-        .btn-send { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-send { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-send:hover { background: var(--primary-hover); transform: translateY(-2px); }
 
         footer { background: var(--white); border-top: 1px solid var(--border); padding: 40px 5% 20px; margin-top: auto; }
@@ -119,7 +122,8 @@
     let carData = null;
     let sellerData = null;
 
-    onAuthStateChanged(auth, (user) => {
+    // تم وضع التنفيذ داخل onAuthStateChanged لضمان معرفة هوية الزائر قبل رسم الصفحة
+    onAuthStateChanged(auth, async (user) => {
         currentUser = user;
         const authContainer = document.getElementById('authStatusContainer');
         if(user) {
@@ -127,6 +131,8 @@
         } else {
             authContainer.innerHTML = `<a href="login.html" style="color:var(--dark); font-weight:700; text-decoration:none;">Logga in</a>`;
         }
+        
+        await loadAd();
     });
 
     async function loadAd() {
@@ -141,7 +147,10 @@
         
         carData = snap.data();
         
-        try { await updateDoc(carRef, { views: increment(1) }); } catch(e){}
+        // ذكاء النظام: زيادة عدد المشاهدات فقط إذا كان الزائر ليس هو صاحب الإعلان
+        if (!currentUser || currentUser.uid !== carData.sellerId) {
+            try { await updateDoc(carRef, { views: increment(1) }); } catch(e){}
+        }
 
         const sSnap = await getDoc(doc(db, "users", carData.sellerId));
         sellerData = sSnap.exists() ? sSnap.data() : { name: "Okänd Säljare" };
@@ -164,6 +173,48 @@
             });
         }
 
+        // بناء بطاقة التواصل (ذكاء التحويل بين البائع والمشتري)
+        let sideCardHtml = '';
+        if (currentUser && currentUser.uid === carData.sellerId) {
+            // واجهة المعلن (البائع يرى إحصائياته الخاصة ولا يرى صندوق الإرسال)
+            sideCardHtml = `
+                <div class="contact-card" style="border-top: 4px solid var(--primary); background: #fffaf5;">
+                    <h3 class="contact-title" style="color: var(--primary);"><i class="fa-solid fa-chart-line"></i> Din Annons</h3>
+                    <p style="font-size: 13px; margin-bottom: 20px; color: var(--gray-text); line-height: 1.5;">Detta är hur kunderna ser din annons. Här är din nuvarande statistik:</p>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                        <span style="font-weight: 700; font-size: 14px;"><i class="fa-regular fa-eye" style="color: var(--gray-text); width: 20px;"></i> Visningar</span>
+                        <strong style="color: var(--dark); font-size: 16px;">${carData.views || 0}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                        <span style="font-weight: 700; font-size: 14px;"><i class="fa-solid fa-heart" style="color: #ef4444; width: 20px;"></i> Sparade</span>
+                        <strong style="color: var(--dark); font-size: 16px;">${carData.saves || 0}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
+                        <span style="font-weight: 700; font-size: 14px;"><i class="fa-regular fa-message" style="color: #3b82f6; width: 20px;"></i> Meddelanden</span>
+                        <strong style="color: var(--dark); font-size: 16px;">${carData.messagesCount || 0}</strong>
+                    </div>
+
+                    <button onclick="window.location.href='dashboard.html'" class="btn-send" style="background: var(--dark);"><i class="fa-regular fa-comments"></i> Svara på meddelanden</button>
+                    <button onclick="window.location.href='edit-car.html?id=${carId}'" class="btn-send" style="background: white; color: var(--dark); border: 1px solid var(--border); margin-top: 10px;"><i class="fa-solid fa-pen"></i> Redigera annons</button>
+                </div>
+            `;
+        } else {
+            // واجهة المشتري (الطبيعية)
+            sideCardHtml = `
+                <div class="contact-card">
+                    <h3 class="contact-title"><i class="fa-regular fa-envelope"></i> Kontakta säljaren</h3>
+                    <div class="seller-info">
+                        <div class="seller-avatar">${sellerData.name ? sellerData.name.charAt(0).toUpperCase() : 'S'}</div>
+                        <div class="seller-name">${sellerData.name || 'Säljare'}</div>
+                    </div>
+                    
+                    <textarea id="msgBody" class="msg-input" placeholder="Hej! Finns bilen kvar? Jag är intresserad..."></textarea>
+                    <button id="sendBtn" class="btn-send"><i class="fa-solid fa-paper-plane"></i> Skicka meddelande</button>
+                </div>
+            `;
+        }
+
         document.getElementById('appContent').innerHTML = `
             <div class="main-col">
                 <div class="gallery">
@@ -177,7 +228,7 @@
                             <h1 class="car-title">${carData.brand} ${carData.model}</h1>
                             <div class="car-price">${Number(carData.price).toLocaleString()} kr</div>
                         </div>
-                        <div style="background:var(--bg); padding:8px 12px; border-radius:8px; border:1px solid var(--border); font-weight:800; font-size:14px;">
+                        <div style="background:var(--bg); padding:8px 12px; border-radius:8px; border:1px solid var(--border); font-weight:800; font-size:14px; text-transform: uppercase;">
                             <i class="fa-solid fa-hashtag" style="color:var(--gray-text);"></i> ${carData.regNr || 'Okänd'}
                         </div>
                     </div>
@@ -187,27 +238,24 @@
                         <div class="spec-item"><i class="fa-solid fa-gauge"></i><span>Miltal</span><strong>${carData.mileage} mil</strong></div>
                         <div class="spec-item"><i class="fa-solid fa-gas-pump"></i><span>Drivmedel</span><strong>${carData.fuel || '-'}</strong></div>
                         <div class="spec-item"><i class="fa-solid fa-gear"></i><span>Växellåda</span><strong>${carData.gear || carData.transmission || '-'}</strong></div>
+                        <div class="spec-item"><i class="fa-solid fa-car-side"></i><span>Karosseri</span><strong>${carData.karosseri || '-'}</strong></div>
+                        <div class="spec-item"><i class="fa-solid fa-truck-ramp-box"></i><span>Drivning</span><strong>${carData.drive || '-'}</strong></div>
+                        <div class="spec-item"><i class="fa-solid fa-palette"></i><span>Färg</span><strong>${carData.color || '-'}</strong></div>
+                        <div class="spec-item"><i class="fa-solid fa-horse-head"></i><span>Hästkrafter</span><strong>${carData.hp ? carData.hp + ' hk' : '-'}</strong></div>
+                        <div class="spec-item"><i class="fa-solid fa-wheelchair"></i><span>Säten</span><strong>${carData.seats || '-'}</strong></div>
+                        <div class="spec-item"><i class="fa-solid fa-door-open"></i><span>Dörrar</span><strong>${carData.doors || '-'}</strong></div>
                     </div>
 
                     <h3 class="desc-title">Beskrivning</h3>
                     <div class="description">${carData.description || 'Ingen beskrivning angiven.'}</div>
                     
-                    <h3 class="desc-title" style="margin-top:25px;">Utrustning</h3>
+                    <h3 class="desc-title" style="margin-top:25px;">Utrustning (Säkerhet & Komfort)</h3>
                     <div class="features-list">${featuresHtml || '<span style="color:var(--gray-text); font-size:14px;">Ingen specifik utrustning listad.</span>'}</div>
                 </div>
             </div>
             
             <div class="side-col">
-                <div class="contact-card">
-                    <h3 class="contact-title"><i class="fa-regular fa-envelope"></i> Kontakta säljaren</h3>
-                    <div class="seller-info">
-                        <div class="seller-avatar">${sellerData.name ? sellerData.name.charAt(0).toUpperCase() : 'S'}</div>
-                        <div class="seller-name">${sellerData.name || 'Säljare'}</div>
-                    </div>
-                    
-                    <textarea id="msgBody" class="msg-input" placeholder="Hej! Finns bilen kvar? Jag är intresserad..."></textarea>
-                    <button id="sendBtn" class="btn-send"><i class="fa-solid fa-paper-plane"></i> Skicka meddelande</button>
-                </div>
+                ${sideCardHtml}
             </div>
         `;
 
@@ -217,80 +265,77 @@
             el.classList.add('active');
         };
 
-        document.getElementById('sendBtn').onclick = async () => {
-            if(!currentUser) {
-                Swal.fire({ title: 'Logga in krävs', text: 'Du måste vara inloggad för att skicka meddelanden.', icon: 'warning', confirmButtonText: 'Logga in' }).then(() => window.location.href="login.html");
-                return;
-            }
-            if(currentUser.uid === carData.sellerId) {
-                Swal.fire('Ett ögonblick', 'Du kan inte skicka meddelande till dig själv.', 'info');
-                return;
-            }
+        // تفعيل زر الإرسال فقط إذا كان موجوداً (أي أن الزائر ليس البائع)
+        const sendBtn = document.getElementById('sendBtn');
+        if (sendBtn) {
+            sendBtn.onclick = async () => {
+                if(!currentUser) {
+                    Swal.fire({ title: 'Logga in krävs', text: 'Du måste vara inloggad för att skicka meddelanden.', icon: 'warning', confirmButtonText: 'Logga in' }).then(() => window.location.href="login.html");
+                    return;
+                }
 
-            const msg = document.getElementById('msgBody').value.trim();
-            if(!msg) { Swal.fire('Tomt', 'Skriv ett meddelande först.', 'warning'); return; }
+                const msg = document.getElementById('msgBody').value.trim();
+                if(!msg) { Swal.fire('Tomt', 'Skriv ett meddelande först.', 'warning'); return; }
 
-            const btn = document.getElementById('sendBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Skickar...';
+                sendBtn.disabled = true;
+                sendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Skickar...';
 
-            try {
-                const q = query(collection(db, "chats"), where("carId", "==", carId), where("participants", "array-contains", currentUser.uid));
-                const chatSnap = await getDocs(q);
-                
-                let chatId = null;
-                if(!chatSnap.empty) {
-                    chatId = chatSnap.docs[0].id;
-                } else {
-                    const bSnap = await getDoc(doc(db, "users", currentUser.uid));
-                    const bName = bSnap.exists() ? bSnap.data().name : "Köpare";
+                try {
+                    const q = query(collection(db, "chats"), where("carId", "==", carId), where("participants", "array-contains", currentUser.uid));
+                    const chatSnap = await getDocs(q);
                     
-                    const newChat = await addDoc(collection(db, "chats"), {
-                        carId: carId,
-                        carTitle: `${carData.brand} ${carData.model}`,
-                        carImage: carData.images?.[0] || 'placeholder.jpg', // تمت إضافة حفظ الصورة هنا
-                        participants: [currentUser.uid, carData.sellerId],
-                        users: [
-                            { id: currentUser.uid, name: bName },
-                            { id: carData.sellerId, name: sellerData.name || 'Säljare' }
-                        ],
-                        lastMessage: "",
+                    let chatId = null;
+                    if(!chatSnap.empty) {
+                        chatId = chatSnap.docs[0].id;
+                    } else {
+                        const bSnap = await getDoc(doc(db, "users", currentUser.uid));
+                        const bName = bSnap.exists() ? bSnap.data().name : "Köpare";
+                        
+                        const newChat = await addDoc(collection(db, "chats"), {
+                            carId: carId,
+                            carTitle: `${carData.brand} ${carData.model}`,
+                            carImage: carData.images?.[0] || 'placeholder.jpg',
+                            participants: [currentUser.uid, carData.sellerId],
+                            users: [
+                                { id: currentUser.uid, name: bName },
+                                { id: carData.sellerId, name: sellerData.name || 'Säljare' }
+                            ],
+                            lastMessage: "",
+                            updatedAt: serverTimestamp()
+                        });
+                        chatId = newChat.id;
+                    }
+
+                    await addDoc(collection(db, `chats/${chatId}/messages`), {
+                        text: msg,
+                        senderId: currentUser.uid,
+                        createdAt: serverTimestamp()
+                    });
+
+                    await updateDoc(doc(db, "chats", chatId), {
+                        lastMessage: msg,
                         updatedAt: serverTimestamp()
                     });
-                    chatId = newChat.id;
+
+                    try {
+                        await updateDoc(doc(db, "cars", carId), { messagesCount: increment(1) });
+                    } catch(err) {
+                        // الصمت وتجاهل خطأ قواعد الحماية هنا لضمان استمرار عمل الرسائل للمشتري
+                    }
+
+                    Swal.fire('Skickat!', 'Ditt meddelande har skickats till säljaren.', 'success');
+                    document.getElementById('msgBody').value = '';
+                    
+                } catch (error) {
+                    console.error(error);
+                    Swal.fire('Fel', 'Kunde inte skicka meddelandet.', 'error');
+                } finally {
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Skicka meddelande';
                 }
-
-                await addDoc(collection(db, `chats/${chatId}/messages`), {
-                    text: msg,
-                    senderId: currentUser.uid,
-                    createdAt: serverTimestamp()
-                });
-
-                await updateDoc(doc(db, "chats", chatId), {
-                    lastMessage: msg,
-                    updatedAt: serverTimestamp()
-                });
-
-                // الحل الجذري لمشكلة قواعد الحماية (تفادي الخطأ بصمت)
-                try {
-                    await updateDoc(doc(db, "cars", carId), { messagesCount: increment(1) });
-                } catch(err) {
-                    // نتجاهل الخطأ إذا رفضت قاعدة البيانات التحديث لأن المشتري ليس صاحب الإعلان
-                }
-
-                Swal.fire('Skickat!', 'Ditt meddelande har skickats till säljaren.', 'success');
-                document.getElementById('msgBody').value = '';
-                
-            } catch (error) {
-                console.error(error);
-                Swal.fire('Fel', 'Kunde inte skicka meddelandet.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Skicka meddelande';
-            }
-        };
+            };
+        }
     }
-    window.onload = loadAd;
 </script>
 </body>
 </html>
