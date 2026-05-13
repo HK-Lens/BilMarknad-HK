@@ -4,161 +4,469 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sökresultat | BILHK</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
-        :root { 
-            --primary: #f58220; 
-            --dark: #0f172a; 
-            --bg: #f8fafc; 
-            --border: #e2e8f0; 
-            --danger: #ef4444;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--dark); }
-
-        /* تنييه الموقع تحت الإنشاء */
-        .construction-notice {
-            background: var(--danger);
-            color: white;
-            text-align: center;
-            padding: 10px 20px;
-            font-size: 13px;
-            font-weight: 700;
-            position: relative;
-            z-index: 1100;
+        :root{
+            --primary:#f58220;
+            --dark:#0f172a;
+            --bg:#f8fafc;
+            --border:#e2e8f0;
+            --danger:#ef4444;
         }
 
-        header { background: #fff; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .logo { text-decoration: none; font-size: 26px; font-weight: 900; color: var(--dark); }
-        .logo span { color: var(--primary); }
-        
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        
-        .car-card { background: #fff; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; cursor: pointer; position: relative; }
-        .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .car-img { width: 100%; height: 200px; object-fit: cover; }
-        .car-info { padding: 20px; }
-        .car-price { font-size: 22px; font-weight: 900; color: var(--primary); margin-bottom: 5px; }
-        .car-name { font-size: 16px; font-weight: 800; margin-bottom: 10px; }
-        .car-meta { display: flex; gap: 10px; font-size: 12px; color: #64748b; font-weight: 600; }
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Inter',sans-serif;
+        }
 
-        /* علامة مباع */
-        .sold-badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: var(--danger);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-weight: 900;
-            font-size: 11px;
-            z-index: 10;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        body{
+            background:var(--bg);
+            color:var(--dark);
+        }
+
+        .construction-notice{
+            background:var(--danger);
+            color:white;
+            text-align:center;
+            padding:10px 20px;
+            font-size:13px;
+            font-weight:700;
+        }
+
+        header{
+            background:white;
+            padding:15px 6%;
+            border-bottom:1px solid var(--border);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            position:sticky;
+            top:0;
+            z-index:1000;
+        }
+
+        .logo{
+            text-decoration:none;
+            font-size:26px;
+            font-weight:900;
+            color:var(--dark);
+        }
+
+        .logo span{
+            color:var(--primary);
+        }
+
+        .container{
+            max-width:1200px;
+            margin:40px auto;
+            padding:0 20px;
+        }
+
+        .results-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+            gap:25px;
+        }
+
+        .car-card{
+            background:white;
+            border-radius:20px;
+            overflow:hidden;
+            border:1px solid var(--border);
+            transition:.3s;
+            cursor:pointer;
+            position:relative;
+        }
+
+        .car-card:hover{
+            transform:translateY(-5px);
+            box-shadow:0 10px 20px rgba(0,0,0,.06);
+        }
+
+        .car-img{
+            width:100%;
+            height:200px;
+            object-fit:cover;
+            background:#e2e8f0;
+        }
+
+        .car-info{
+            padding:20px;
+        }
+
+        .car-price{
+            font-size:22px;
+            font-weight:900;
+            color:var(--primary);
+            margin-bottom:5px;
+        }
+
+        .car-name{
+            font-size:16px;
+            font-weight:800;
+            margin-bottom:10px;
+        }
+
+        .car-meta{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            font-size:12px;
+            color:#64748b;
+            font-weight:600;
+        }
+
+        .sold-badge{
+            position:absolute;
+            top:15px;
+            left:15px;
+            background:var(--danger);
+            color:white;
+            padding:5px 12px;
+            border-radius:6px;
+            font-weight:900;
+            font-size:11px;
+            z-index:10;
+        }
+
+        .loading-box{
+            text-align:center;
+            padding:80px 20px;
+            color:#64748b;
+        }
+
+        .loading-box i{
+            font-size:35px;
+            color:var(--primary);
+            margin-bottom:15px;
+        }
+
+        .empty-box{
+            text-align:center;
+            padding:80px 20px;
+            color:#64748b;
         }
     </style>
 </head>
 <body>
 
 <div class="construction-notice">
-    <i class="fa-solid fa-triangle-exclamation"></i> VIKTIG INFORMATION: Denna webbplats är under utveckling. Inga riktiga annonser publiceras eller hanteras för tillfället.
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    VIKTIG INFORMATION: Denna webbplats är under utveckling.
 </div>
 
 <header>
     <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;"><i class="fa-solid fa-arrow-left"></i> Tillbaka till sök</a>
+
+    <a href="index.html"
+       style="text-decoration:none;color:var(--dark);font-weight:700;">
+        <i class="fa-solid fa-arrow-left"></i>
+        Tillbaka
+    </a>
 </header>
 
 <div class="container">
-    <h1 id="resultsCount" style="font-size: 24px; font-weight: 900; margin-bottom: 30px;">Söker bilar...</h1>
-    <div class="results-grid" id="resultsGrid"></div>
+
+    <h1 id="resultsCount"
+        style="font-size:26px;font-weight:900;margin-bottom:30px;">
+        Söker bilar...
+    </h1>
+
+    <div class="results-grid" id="resultsGrid">
+
+        <div class="loading-box" style="grid-column:1/-1;">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>Laddar resultat...</p>
+        </div>
+
+    </div>
+
 </div>
 
 <script type="module">
-    import { db } from './firebase-config.js';
-    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const params = new URLSearchParams(window.location.search);
-    const filters = {
-        brand: params.get('brand'),
-        model: params.get('model')?.toLowerCase(),
-        maxP: parseFloat(params.get('maxP')),
-        yFrom: parseInt(params.get('yFrom')),
-        yTo: parseInt(params.get('yTo')),
-        fuel: params.get('fuel'),
-        gear: params.get('gear'),
-        mil: parseInt(params.get('mil')),
-        body: params.get('body')
-    };
+import { db } from './firebase-config.js';
 
-    async function loadResults() {
-        const grid = document.getElementById('resultsGrid');
-        const countTxt = document.getElementById('resultsCount');
-        
-        try {
-            let q = collection(db, "cars");
-            
-            // فلترة الماركة في Firebase لتقليل كمية البيانات
-            if (filters.brand && filters.brand !== 'all') {
-                q = query(q, where("brand", "==", filters.brand));
-            }
-            if (filters.body) {
-                q = query(q, where("karosseri", "==", filters.body));
-            }
+import {
+    collection,
+    getDocs,
+    query,
+    where,
+    orderBy
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-            const snap = await getDocs(q);
-            let cars = [];
-            
-            snap.forEach(doc => {
-                const data = doc.data();
-                data.id = doc.id;
-                
-                // فلترة منطقية متقدمة في المتصفح لضمان دقة الـ 8 خانات
-                let match = true;
-                if (filters.model && !data.model.toLowerCase().includes(filters.model)) match = false;
-                if (filters.maxP && data.price > filters.maxP) match = false;
-                if (filters.yFrom && data.year < filters.yFrom) match = false;
-                if (filters.yTo && data.year > filters.yTo) match = false;
-                if (filters.fuel && filters.fuel !== 'all' && data.fuel !== filters.fuel) match = false;
-                if (filters.gear && filters.gear !== 'all' && (data.gear !== filters.gear && data.transmission !== filters.gear)) match = false;
-                if (filters.mil && data.mileage > filters.mil) match = false;
 
-                if (match) cars.push(data);
-            });
+const params = new URLSearchParams(window.location.search);
 
-            grid.innerHTML = "";
-            countTxt.innerText = `${cars.length} bilar hittades`;
+const filters = {
 
-            if (cars.length === 0) {
-                grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; padding:50px; color:#64748b;'>Inga bilar matchade din sökning.</p>";
-                return;
-            }
+    brand: params.get('brand'),
+    model: params.get('model'),
 
-            cars.forEach(car => {
-                const isSold = car.status === 'sold';
-                grid.innerHTML += `
-                    <div class="car-card" onclick="window.location.href='details.html?id=${car.id}'">
-                        ${isSold ? '<div class="sold-badge">SÅLD</div>' : ''}
-                        <img src="${car.images?.[0] || 'placeholder.jpg'}" class="car-img" style="${isSold ? 'opacity: 0.6;' : ''}">
-                        <div class="car-info" style="${isSold ? 'opacity: 0.7;' : ''}">
-                            <div class="car-price">${Number(car.price).toLocaleString()} kr</div>
-                            <div class="car-name">${car.brand} ${car.model}</div>
-                            <div class="car-meta">
-                                <span><i class="fa-regular fa-calendar"></i> ${car.year}</span>
-                                <span><i class="fa-solid fa-gauge"></i> ${car.mileage} mil</span>
-                                <span><i class="fa-solid fa-gas-pump"></i> ${car.fuel}</span>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-        } catch (e) { 
-            console.error(e); 
-            grid.innerHTML = "<p>Ett fel uppstod vid laddning av resultat.</p>";
+    minP: parseFloat(params.get('minP')) || null,
+    maxP: parseFloat(params.get('maxP')) || null,
+
+    yFrom: parseInt(params.get('yFrom')) || null,
+    yTo: parseInt(params.get('yTo')) || null,
+
+    milFrom: parseInt(params.get('milFrom')) || null,
+    milTo: parseInt(params.get('milTo')) || parseInt(params.get('mil')) || null,
+
+    fuel: params.get('fuel'),
+    gear: params.get('gear'),
+    body: params.get('body'),
+
+    drive: params.get('drive'),
+    color: params.get('color'),
+
+    minHp: parseInt(params.get('minHp')) || null,
+    seats: parseInt(params.get('seats')) || null,
+    doors: parseInt(params.get('doors')) || null,
+
+    feats: params.get('feats')
+        ? params.get('feats').split(',')
+        : []
+};
+
+
+async function loadResults(){
+
+    const grid = document.getElementById('resultsGrid');
+    const count = document.getElementById('resultsCount');
+
+    try{
+
+        let carsQuery = query(
+            collection(db,"cars"),
+            orderBy("createdAt","desc")
+        );
+
+        if(filters.brand){
+            carsQuery = query(
+                carsQuery,
+                where("brand","==",filters.brand)
+            );
         }
+
+        if(filters.body){
+            carsQuery = query(
+                carsQuery,
+                where("karosseri","==",filters.body)
+            );
+        }
+
+        const snap = await getDocs(carsQuery);
+
+        const cars = [];
+
+        snap.forEach(docSnap => {
+
+            const car = docSnap.data();
+
+            car.id = docSnap.id;
+
+            let match = true;
+
+            const model =
+                (car.model || "").toLowerCase();
+
+            const userModel =
+                (filters.model || "").toLowerCase();
+
+            if(userModel && !model.includes(userModel)){
+                match = false;
+            }
+
+            if(filters.minP && car.price < filters.minP){
+                match = false;
+            }
+
+            if(filters.maxP && car.price > filters.maxP){
+                match = false;
+            }
+
+            if(filters.yFrom && car.year < filters.yFrom){
+                match = false;
+            }
+
+            if(filters.yTo && car.year > filters.yTo){
+                match = false;
+            }
+
+            if(filters.fuel &&
+               car.fuel !== filters.fuel){
+                match = false;
+            }
+
+            const transmission =
+                car.gear || car.transmission || "";
+
+            if(filters.gear &&
+               transmission !== filters.gear){
+                match = false;
+            }
+
+            if(filters.milFrom &&
+               car.mileage < filters.milFrom){
+                match = false;
+            }
+
+            if(filters.milTo &&
+               car.mileage > filters.milTo){
+                match = false;
+            }
+
+            if(filters.drive &&
+               car.drive !== filters.drive){
+                match = false;
+            }
+
+            if(filters.color &&
+               !((car.color || "")
+               .toLowerCase()
+               .includes(filters.color.toLowerCase()))){
+                match = false;
+            }
+
+            if(filters.minHp &&
+               (car.hp || 0) < filters.minHp){
+                match = false;
+            }
+
+            if(filters.seats &&
+               car.seats != filters.seats){
+                match = false;
+            }
+
+            if(filters.doors &&
+               car.doors != filters.doors){
+                match = false;
+            }
+
+            if(filters.feats.length > 0){
+
+                const carFeatures = car.features || [];
+
+                const hasAllFeatures =
+                    filters.feats.every(f =>
+                        carFeatures.includes(f)
+                    );
+
+                if(!hasAllFeatures){
+                    match = false;
+                }
+            }
+
+            if(match){
+                cars.push(car);
+            }
+
+        });
+
+        count.innerText =
+            `${cars.length} bilar hittades`;
+
+        grid.innerHTML = "";
+
+        if(cars.length === 0){
+
+            grid.innerHTML = `
+                <div class="empty-box" style="grid-column:1/-1;">
+                    <i class="fa-solid fa-car"
+                       style="font-size:55px;opacity:.2;"></i>
+
+                    <p style="margin-top:15px;">
+                        Inga bilar matchade din sökning.
+                    </p>
+                </div>
+            `;
+
+            return;
+        }
+
+        cars.forEach(car => {
+
+            const isSold =
+                car.status === 'sold';
+
+            grid.innerHTML += `
+
+                <div class="car-card"
+                     onclick="window.location.href='details.html?id=${car.id}'">
+
+                    ${isSold
+                        ? '<div class="sold-badge">SÅLD</div>'
+                        : ''}
+
+                    <img
+                        src="${car.images?.[0] || 'placeholder.jpg'}"
+                        class="car-img"
+                        loading="lazy"
+                        onerror="this.src='placeholder.jpg'"
+                        style="${isSold ? 'opacity:.6;' : ''}"
+                    >
+
+                    <div class="car-info"
+                         style="${isSold ? 'opacity:.7;' : ''}">
+
+                        <div class="car-price">
+                            ${Number(car.price || 0).toLocaleString()} kr
+                        </div>
+
+                        <div class="car-name">
+                            ${car.brand || ''} ${car.model || ''}
+                        </div>
+
+                        <div class="car-meta">
+
+                            <span>
+                                <i class="fa-regular fa-calendar"></i>
+                                ${car.year || '-'}
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-gauge"></i>
+                                ${car.mileage || 0} mil
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-gas-pump"></i>
+                                ${car.fuel || '-'}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+        });
+
+    }catch(error){
+
+        console.error(error);
+
+        document.getElementById('resultsGrid').innerHTML = `
+            <div class="empty-box" style="grid-column:1/-1;">
+                <i class="fa-solid fa-circle-exclamation"
+                   style="font-size:55px;color:#ef4444;"></i>
+
+                <p style="margin-top:15px;">
+                    Ett fel uppstod vid laddning av resultat.
+                </p>
+            </div>
+        `;
     }
-    window.onload = loadResults;
+}
+
+window.onload = loadResults;
+
 </script>
+
 </body>
 </html>
