@@ -1,145 +1,401 @@
 import { db, auth } from './firebase-config.js';
-import { collection, getDocs, query, orderBy, onSnapshot, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// متغيرات عامة لتخزين البيانات
+import {
+    collection,
+    getDocs,
+    query,
+    orderBy,
+    onSnapshot,
+    where,
+    limit
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+
+// ========================================
+// Global Variables
+// ========================================
+
 let allCars = [];
 let currentUser = null;
 
-/**
- * 1. مراقبة حالة المستخدم وتحديث واجهة الهيدر
- */
+
+// ========================================
+// Auth State Observer
+// ========================================
+
 onAuthStateChanged(auth, (user) => {
+
     const authBtn = document.getElementById('authButton');
     const msgLink = document.getElementById('msgLink');
     const msgBadge = document.getElementById('msgBadge');
 
     if (user) {
+
         currentUser = user;
+
         if (authBtn) {
             authBtn.textContent = "Mitt Konto";
-            authBtn.href = "my-account.html";
+            authBtn.href = "dashboard.html";
         }
-        if (msgLink) msgLink.style.display = "flex";
 
-        // مراقبة الرسائل غير المقروءة لحظياً
-        const qMsg = query(
-            collection(db, "messages"), 
-            where("receiverId", "==", user.uid), 
+        if (msgLink) {
+            msgLink.style.display = "flex";
+        }
+
+        // Unread messages counter
+        const unreadQuery = query(
+            collection(db, "messages"),
+            where("receiverId", "==", user.uid),
             where("read", "==", false)
         );
-        
-        onSnapshot(qMsg, (snapshot) => {
-            if (msgBadge) {
-                if (snapshot.size > 0) {
-                    msgBadge.innerText = snapshot.size;
-                    msgBadge.style.display = "block";
-                } else {
-                    msgBadge.style.display = "none";
-                }
+
+        onSnapshot(unreadQuery, (snapshot) => {
+
+            if (!msgBadge) return;
+
+            if (snapshot.size > 0) {
+
+                msgBadge.innerText = snapshot.size;
+                msgBadge.style.display = "block";
+
+            } else {
+
+                msgBadge.style.display = "none";
+
             }
+
         });
+
+    } else {
+
+        currentUser = null;
+
+        if (authBtn) {
+            authBtn.textContent = "Logga in";
+            authBtn.href = "login.html";
+        }
+
+        if (msgLink) {
+            msgLink.style.display = "none";
+        }
+
+        if (msgBadge) {
+            msgBadge.style.display = "none";
+        }
+
     }
+
 });
 
-/**
- * 2. جلب البيانات من Firebase عند تحميل الصفحة
- */
+
+// ========================================
+// Initialize App
+// ========================================
+
 async function initApp() {
+
     const grid = document.getElementById('carsGrid');
-    if (grid) grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Laddar fordon...</p>";
+
+    if (grid) {
+
+        grid.innerHTML = `
+            <p style="grid-column: 1/-1; text-align: center;">
+                Laddar fordon...
+            </p>
+        `;
+
+    }
 
     try {
-        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // التحقق مما إذا كان هناك بحث قادم من الرابط (URL)
+        const carsQuery = query(
+            collection(db, "cars"),
+            orderBy("createdAt", "desc"),
+            limit(100)
+        );
+
+        const snapshot = await getDocs(carsQuery);
+
+        allCars = snapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            .filter(car =>
+                car &&
+                car.brand &&
+                car.model
+            );
+
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('brand') || urlParams.has('text') || urlParams.has('maxP')) {
+
+        const hasSearch =
+            urlParams.has('brand') ||
+            urlParams.has('model') ||
+            urlParams.has('kar') ||
+            urlParams.has('fuel') ||
+            urlParams.has('gear') ||
+            urlParams.has('text') ||
+            urlParams.has('minP') ||
+            urlParams.has('maxP') ||
+            urlParams.has('minY') ||
+            urlParams.has('maxY') ||
+            urlParams.has('minM') ||
+            urlParams.has('maxM');
+
+        if (hasSearch) {
+
             applyDeepSearch(urlParams);
+
         } else {
-            render(allCars); // عرض الكل في حال عدم وجود بحث
+
+            render(allCars);
+
         }
+
     } catch (error) {
+
         console.error("Error fetching cars:", error);
-        if (grid) grid.innerHTML = "<p>Kunde inte ladda bilar. Kontrollera anslutningen.</p>";
+
+        if (grid) {
+
+            grid.innerHTML = `
+                <p style="grid-column: 1/-1; text-align: center;">
+                    Kunde inte ladda fordon.
+                </p>
+            `;
+
+        }
+
     }
+
 }
 
-/**
- * 3. دالة تطبيق البحث العميق (التي قمت بتطويرها)
- */
-function applyDeepSearch(p) {
-    const filtered = allCars.filter(c => {
-        // 1. تصفية الماركة والموديل والهيكل
-        const brandMatch = !p.get('brand') || p.get('brand') === 'all' || c.brand === p.get('brand');
-        const modelMatch = !p.get('model') || p.get('model') === 'all' || c.model === p.get('model');
-        const karMatch = !p.get('kar') || p.get('kar') === 'all' || c.bodyType === p.get('kar');
 
-        // 2. تصفية السعر
-        const minP = Number(p.get('minP')) || 0;
-        const maxP = Number(p.get('maxP')) || Infinity;
-        const priceMatch = Number(c.price) >= minP && Number(c.price) <= maxP;
+// ========================================
+// Deep Search
+// ========================================
 
-        // 3. تصفية سنة الصنع
-        const minY = Number(p.get('minY')) || 0;
-        const maxY = Number(p.get('maxY')) || Infinity;
-        const yearMatch = Number(c.year) >= minY && Number(c.year) <= maxY;
+function applyDeepSearch(params) {
 
-        // 4. تصفية المسافة المقطوعة
-        const minM = Number(p.get('minM')) || 0;
-        const maxM = Number(p.get('maxM')) || Infinity;
-        const mileageMatch = Number(c.mileage) >= minM && Number(c.mileage) <= maxM;
+    const filtered = allCars.filter(car => {
 
-        // 5. تصفية الوقود وناقل الحركة
-        const fuelMatch = !p.get('fuel') || p.get('fuel') === 'all' || c.fuelType === p.get('fuel');
-        const gearMatch = !p.get('gear') || p.get('gear') === 'all' || c.transmission === p.get('gear');
+        // Brand
+        const brandMatch =
+            !params.get('brand') ||
+            params.get('brand') === 'all' ||
+            String(car.brand || "") === params.get('brand');
 
-        // 6. البحث النصي الحر
-        const searchText = p.get('text')?.toLowerCase() || "";
-        const textMatch = !searchText || 
-                         c.brand.toLowerCase().includes(searchText) || 
-                         c.model.toLowerCase().includes(searchText) || 
-                         (c.description && c.description.toLowerCase().includes(searchText));
+        // Model
+        const modelMatch =
+            !params.get('model') ||
+            params.get('model') === 'all' ||
+            String(car.model || "") === params.get('model');
 
-        return brandMatch && modelMatch && karMatch && priceMatch && 
-               yearMatch && mileageMatch && fuelMatch && gearMatch && textMatch;
+        // Body Type
+        const bodyMatch =
+            !params.get('kar') ||
+            params.get('kar') === 'all' ||
+            String(car.bodyType || "") === params.get('kar');
+
+        // Price
+        const minPrice =
+            Number(params.get('minP')) || 0;
+
+        const maxPrice =
+            Number(params.get('maxP')) || Infinity;
+
+        const currentPrice =
+            Number(car.price) || 0;
+
+        const priceMatch =
+            currentPrice >= minPrice &&
+            currentPrice <= maxPrice;
+
+        // Year
+        const minYear =
+            Number(params.get('minY')) || 0;
+
+        const maxYear =
+            Number(params.get('maxY')) || Infinity;
+
+        const currentYear =
+            Number(car.year) || 0;
+
+        const yearMatch =
+            currentYear >= minYear &&
+            currentYear <= maxYear;
+
+        // Mileage
+        const minMileage =
+            Number(params.get('minM')) || 0;
+
+        const maxMileage =
+            Number(params.get('maxM')) || Infinity;
+
+        const currentMileage =
+            Number(car.mileage) || 0;
+
+        const mileageMatch =
+            currentMileage >= minMileage &&
+            currentMileage <= maxMileage;
+
+        // Fuel Type
+        const fuelMatch =
+            !params.get('fuel') ||
+            params.get('fuel') === 'all' ||
+            String(car.fuelType || "") === params.get('fuel');
+
+        // Transmission
+        const transmissionMatch =
+            !params.get('gear') ||
+            params.get('gear') === 'all' ||
+            String(car.transmission || "") === params.get('gear');
+
+        // Free Text Search
+        const searchText =
+            String(params.get('text') || "")
+            .toLowerCase()
+            .trim();
+
+        const brandText =
+            String(car.brand || "")
+            .toLowerCase();
+
+        const modelText =
+            String(car.model || "")
+            .toLowerCase();
+
+        const descriptionText =
+            String(car.description || "")
+            .toLowerCase();
+
+        const textMatch =
+            !searchText ||
+            brandText.includes(searchText) ||
+            modelText.includes(searchText) ||
+            descriptionText.includes(searchText);
+
+        return (
+            brandMatch &&
+            modelMatch &&
+            bodyMatch &&
+            priceMatch &&
+            yearMatch &&
+            mileageMatch &&
+            fuelMatch &&
+            transmissionMatch &&
+            textMatch
+        );
+
     });
 
     render(filtered);
-    
+
     const resultTitle = document.getElementById('resultTitle');
+
     if (resultTitle) {
-        resultTitle.innerText = filtered.length > 0 
-            ? `Hittade ${filtered.length} bilar som matchar din sökning` 
-            : "Inga bilar matchade din sökning";
+
+        resultTitle.innerText =
+            filtered.length > 0
+                ? `Hittade ${filtered.length} bilar som matchar din sökning`
+                : "Inga bilar matchade din sökning";
+
     }
+
 }
 
-/**
- * 4. دالة عرض الكروت في الشبكة (Grid)
- */
+
+// ========================================
+// Render Cars
+// ========================================
+
 function render(data) {
+
     const grid = document.getElementById('carsGrid');
+
     if (!grid) return;
 
-    if (data.length === 0) {
-        grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga fordon hittades.</p>";
+    if (!Array.isArray(data) || data.length === 0) {
+
+        grid.innerHTML = `
+            <p style="grid-column: 1/-1; text-align: center;">
+                Inga fordon hittades.
+            </p>
+        `;
+
         return;
+
     }
 
-    grid.innerHTML = data.map(c => `
-        <div class="car-card" onclick="window.location.href='details.html?id=${c.id}'">
-            <img src="${c.images && c.images.length > 0 ? c.images[0] : 'placeholder.jpg'}" loading="lazy">
-            <div class="card-content">
-                <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
-                <div class="car-title">${c.brand} ${c.model}</div>
-                <div class="car-meta">${c.year} • ${c.mileage} mil • ${c.fuelType}</div>
+    grid.innerHTML = data.map(car => {
+
+        const image =
+            car.images?.[0] ||
+            car.image ||
+            "placeholder.jpg";
+
+        const price =
+            Number(car.price || 0).toLocaleString();
+
+        const brand =
+            String(car.brand || "");
+
+        const model =
+            String(car.model || "");
+
+        const year =
+            String(car.year || "");
+
+        const mileage =
+            String(car.mileage || "");
+
+        const fuelType =
+            String(car.fuelType || "");
+
+        return `
+
+            <div class="car-card"
+                 onclick="window.location.href='details.html?id=${car.id}'">
+
+                <img
+                    src="${image}"
+                    alt="${brand} ${model}"
+                    loading="lazy"
+                    onerror="this.src='placeholder.jpg'"
+                >
+
+                <div class="card-content">
+
+                    <div class="price-tag">
+                        ${price} kr
+                    </div>
+
+                    <div class="car-title">
+                        ${brand} ${model}
+                    </div>
+
+                    <div class="car-meta">
+                        ${year} • ${mileage} mil • ${fuelType}
+                    </div>
+
+                </div>
+
             </div>
-        </div>
-    `).join('');
+
+        `;
+
+    }).join('');
+
 }
 
-// تشغيل التطبيق عند التحميل
+
+// ========================================
+// Start App
+// ========================================
+
 initApp();
