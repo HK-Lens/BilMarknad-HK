@@ -46,7 +46,6 @@
         .car-title { font-size: 28px; font-weight: 900; margin-bottom: 5px; }
         .car-price { font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 20px; }
         
-        /* Specs Grid - Expanded */
         .specs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
         @media (min-width: 600px) { .specs-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (min-width: 1024px) { .specs-grid { grid-template-columns: repeat(4, 1fr); } }
@@ -122,7 +121,6 @@
     let carData = null;
     let sellerData = null;
 
-    // تم وضع التنفيذ داخل onAuthStateChanged لضمان معرفة هوية الزائر قبل رسم الصفحة
     onAuthStateChanged(auth, async (user) => {
         currentUser = user;
         const authContainer = document.getElementById('authStatusContainer');
@@ -147,7 +145,6 @@
         
         carData = snap.data();
         
-        // ذكاء النظام: زيادة عدد المشاهدات فقط إذا كان الزائر ليس هو صاحب الإعلان
         if (!currentUser || currentUser.uid !== carData.sellerId) {
             try { await updateDoc(carRef, { views: increment(1) }); } catch(e){}
         }
@@ -173,10 +170,8 @@
             });
         }
 
-        // بناء بطاقة التواصل (ذكاء التحويل بين البائع والمشتري)
         let sideCardHtml = '';
         if (currentUser && currentUser.uid === carData.sellerId) {
-            // واجهة المعلن (البائع يرى إحصائياته الخاصة ولا يرى صندوق الإرسال)
             sideCardHtml = `
                 <div class="contact-card" style="border-top: 4px solid var(--primary); background: #fffaf5;">
                     <h3 class="contact-title" style="color: var(--primary);"><i class="fa-solid fa-chart-line"></i> Din Annons</h3>
@@ -195,12 +190,11 @@
                         <strong style="color: var(--dark); font-size: 16px;">${carData.messagesCount || 0}</strong>
                     </div>
 
-                    <button onclick="window.location.href='dashboard.html'" class="btn-send" style="background: var(--dark);"><i class="fa-regular fa-comments"></i> Svara på meddelanden</button>
+                    <button onclick="window.location.href='dashboard.html?tab=messages&carId=${carId}'" class="btn-send" style="background: var(--dark);"><i class="fa-regular fa-comments"></i> Svara på meddelanden</button>
                     <button onclick="window.location.href='edit-car.html?id=${carId}'" class="btn-send" style="background: white; color: var(--dark); border: 1px solid var(--border); margin-top: 10px;"><i class="fa-solid fa-pen"></i> Redigera annons</button>
                 </div>
             `;
         } else {
-            // واجهة المشتري (الطبيعية)
             sideCardHtml = `
                 <div class="contact-card">
                     <h3 class="contact-title"><i class="fa-regular fa-envelope"></i> Kontakta säljaren</h3>
@@ -265,7 +259,6 @@
             el.classList.add('active');
         };
 
-        // تفعيل زر الإرسال فقط إذا كان موجوداً (أي أن الزائر ليس البائع)
         const sendBtn = document.getElementById('sendBtn');
         if (sendBtn) {
             sendBtn.onclick = async () => {
@@ -320,7 +313,6 @@
                     try {
                         await updateDoc(doc(db, "cars", carId), { messagesCount: increment(1) });
                     } catch(err) {
-                        // الصمت وتجاهل خطأ قواعد الحماية هنا لضمان استمرار عمل الرسائل للمشتري
                     }
 
                     Swal.fire('Skickat!', 'Ditt meddelande har skickats till säljaren.', 'success');
