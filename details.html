@@ -106,7 +106,7 @@
     <div class="footer-content">
         <a href="index.html" class="logo">BIL<span>HK</span></a>
         <div style="display:flex; gap:20px; margin: 15px 0;">
-            <a href="terms.html" style="text-decoration:none; color:var(--gray-text); font-weight:600; font-size: 14px;">Användارvillkor</a>
+            <a href="terms.html" style="text-decoration:none; color:var(--gray-text); font-weight:600; font-size: 14px;">Användarvillkor</a>
             <a href="terms.html#disclaimer" style="text-decoration:none; color:var(--gray-text); font-weight:600; font-size: 14px;">Ansvarsfriskrivning</a>
         </div>
         <p class="disclaimer">BILHK är en öppen marknadsplats för fordon. Vi tar inget ansvar för riktigheten i annonserna eller de affärer som görs upp.</p>
@@ -218,7 +218,7 @@
                         <div class="seller-name">${sellerData.name || 'Säljare'}</div>
                     </div>
                     
-                    <textarea id="msgBody" class="msg-input" placeholder="Hej! Finns bilen kvar? Jag är intresserاد..."></textarea>
+                    <textarea id="msgBody" class="msg-input" placeholder="Hej! Finns bilen kvar? Jag är intresserad..."></textarea>
                     <button id="sendBtn" class="btn-send"><i class="fa-solid fa-paper-plane"></i> Skicka meddelande</button>
                 </div>
             `;
@@ -291,25 +291,36 @@
                 }
                 
                 const userRef = doc(db, "users", currentUser.uid);
+                const carRef = doc(db, "cars", carId);
                 
                 try {
-                    // تعديل احترافي لضمان التبديل الصحيح (Toggle)
                     if (isSaved) {
+                        // محاولة إزالة الإعلان من قائمة المحفوظات
                         await setDoc(userRef, { savedCars: arrayRemove(carId) }, { merge: true });
-                        await updateDoc(carRef, { saves: increment(-1) });
+                        try { await updateDoc(carRef, { saves: increment(-1) }); } catch(e){}
+                        
                         isSaved = false;
                         saveAdBtn.classList.remove('saved');
                         saveAdBtn.innerHTML = `<i class="fa-regular fa-heart"></i> Spara`;
+                        Swal.fire({ title: "Borttagen", text: "Annonsen togs bort från dina sparade.", icon: "success", timer: 1500, showConfirmButton: false });
                     } else {
+                        // محاولة إضافة الإعلان لقائمة المحفوظات
                         await setDoc(userRef, { savedCars: arrayUnion(carId) }, { merge: true });
-                        await updateDoc(carRef, { saves: increment(1) });
+                        try { await updateDoc(carRef, { saves: increment(1) }); } catch(e){}
+                        
                         isSaved = true;
                         saveAdBtn.classList.add('saved');
                         saveAdBtn.innerHTML = `<i class="fa-solid fa-heart"></i> Sparad`;
+                        Swal.fire({ title: "Sparad!", text: "Annonsen har sparats i din profil.", icon: "success", timer: 1500, showConfirmButton: false });
                     }
                 } catch(err) {
-                    console.error("Save error", err);
-                    Swal.fire("Fel", "Kunde inte spara annonsen.", "error");
+                    console.error("Full Save Error:", err);
+                    // إذا كان الخطأ نقص في الصلاحيات، سننبهك هنا
+                    if(err.code === 'permission-denied') {
+                        Swal.fire("Fel", "Du har inte behörighet att spara. Kontrollera Firebase Rules.", "error");
+                    } else {
+                        Swal.fire("Fel", "Kunde inte spara annonsen. Kontrollera Console för mer info.", "error");
+                    }
                 }
             };
         }
