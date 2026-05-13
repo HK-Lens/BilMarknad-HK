@@ -135,6 +135,7 @@
 <div class="container">
     <aside class="sidebar">
         <button onclick="switchTab('overview')" id="tab-overview" class="nav-btn active"><i class="fa-solid fa-chart-pie"></i> Översikt</button>
+        <button onclick="switchTab('saved')" id="tab-saved" class="nav-btn"><i class="fa-solid fa-heart"></i> Sparade bilar</button>
         <button onclick="switchTab('messages', true)" id="tab-messages" class="nav-btn"><i class="fa-solid fa-message"></i> Meddelanden</button>
         <button onclick="switchTab('profile')" id="tab-profile" class="nav-btn"><i class="fa-solid fa-user-gear"></i> Inställningar</button>
         <button onclick="handleLogout()" class="nav-btn" style="color: #ef4444; margin-top: 30px; background: #fee2e2;"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
@@ -154,6 +155,15 @@
             <div class="card">
                 <h2 class="card-title">Mina Fordon</h2>
                 <div id="adsContainer"></div>
+            </div>
+        </div>
+
+        <div id="saved" class="content-section">
+            <div class="card">
+                <h2 class="card-title">Mina Sparade Bilar</h2>
+                <div id="savedCarsContainer">
+                    <p style="color:var(--gray-text); text-align:center; padding:40px;">Laddar sparade bilar...</p>
+                </div>
             </div>
         </div>
 
@@ -215,9 +225,10 @@
 </footer>
 
 <script type="module">
+    // تعديل: إضافة arrayRemove و increment إلى قائمة الاستيراد
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, orderBy, getDocs, getDoc, doc, deleteDoc, setDoc, addDoc, updateDoc, serverTimestamp, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, orderBy, getDocs, getDoc, doc, deleteDoc, setDoc, addDoc, updateDoc, serverTimestamp, onSnapshot, writeBatch, arrayRemove, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let currentUser = null;
     let currentChatId = null;
@@ -264,6 +275,8 @@
             loadDashboardData(user.uid);
             loadProfile(user.uid);
             loadChatList(user.uid);
+            // تعديل: استدعاء دالة تحميل السيارات المحفوظة
+            loadSavedCars(user.uid);
         }
     });
 
@@ -313,6 +326,71 @@
 
         } catch(e) { console.error(e); }
     }
+
+    // تعديل: دالة تحميل السيارات المحفوظة
+    async function loadSavedCars(uid) {
+        try {
+            const userDoc = await getDoc(doc(db, "users", uid));
+            const container = document.getElementById('savedCarsContainer');
+            
+            if (!userDoc.exists() || !userDoc.data().savedCars || userDoc.data().savedCars.length === 0) {
+                container.innerHTML = `<p style="color:var(--gray-text); text-align:center; padding:40px;">Du har inga sparade bilar än.</p>`;
+                return;
+            }
+
+            const savedIds = userDoc.data().savedCars;
+            container.innerHTML = "";
+            
+            for (const carId of savedIds) {
+                const carSnap = await getDoc(doc(db, "cars", carId));
+                if (carSnap.exists()) {
+                    const car = carSnap.data();
+                    container.innerHTML += `
+                        <div class="ad-stat-card">
+                            <img src="${car.images?.[0] || 'placeholder.jpg'}" class="ad-stat-img">
+                            <div class="ad-stat-info">
+                                <a href="details.html?id=${carSnap.id}" class="ad-stat-title">${car.brand} ${car.model}</a>
+                                <div class="ad-stat-price">${Number(car.price).toLocaleString()} kr</div>
+                            </div>
+                            <button onclick="unsaveCar('${carSnap.id}')" class="btn-sm btn-del" style="width: auto; padding: 10px 20px;">
+                                <i class="fa-solid fa-heart-crack"></i> Ta bort
+                            </button>
+                        </div>`;
+                }
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    // تعديل: دالة إلغاء الحفظ
+    window.unsaveCar = async (carId) => {
+        const res = await Swal.fire({ 
+            title: 'Ta bort från sparade?', 
+            text: 'Vill du ta bort denna bil från din lista?',
+            icon: 'question', 
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Ja, ta bort',
+            cancelButtonText: 'Avbryt'
+        });
+
+        if (res.isConfirmed) {
+            try {
+                const userRef = doc(db, "users", currentUser.uid);
+                await updateDoc(userRef, {
+                    savedCars: arrayRemove(carId)
+                });
+                
+                await updateDoc(doc(db, "cars", carId), {
+                    saves: increment(-1)
+                });
+
+                Swal.fire('Borttagen!', 'Bilen har tagits bort från dina sparade.', 'success');
+                loadSavedCars(currentUser.uid);
+            } catch(e) {
+                Swal.fire("Fel", "Kunde inte ta bort bilen.", "error");
+            }
+        }
+    };
 
     function loadChatList(uid) {
         const q = query(collection(db, "chats"), where("participants", "array-contains", uid), orderBy("updatedAt", "desc"));
@@ -515,11 +593,10 @@
         } catch(e) { Swal.fire("Fel", "Kunde inte spara profilen.", "error"); }
     };
 
-    // --- دالة الحذف العميق للإعلان (مع الرسائل الخاصة به) ---
     window.deleteAd = async (id) => {
         const res = await Swal.fire({ 
             title: 'Radera annons?', 
-            text: 'Går inte att ångra! All chatt kopplad till annonsen kommer också att raderas.', 
+            text: 'Går inte att ångra! All chatt kopplad till annonsen kommer också att رaderas.', 
             icon: 'warning', 
             showCancelButton: true, 
             confirmButtonColor: '#ef4444', 
@@ -532,20 +609,17 @@
             try {
                 const batch = writeBatch(db);
 
-                // 1. البحث عن المحادثات المتعلقة وحذفها مع رسائلها
                 const q = query(collection(db, "chats"), where("carId", "==", id));
                 const cSnap = await getDocs(q);
 
                 for (let c of cSnap.docs) {
                     const ms = await getDocs(collection(db, `chats/${c.id}/messages`));
-                    ms.forEach(m => batch.delete(m.ref)); // حذف الرسائل
-                    batch.delete(c.ref); // حذف غرفة الدردشة
+                    ms.forEach(m => batch.delete(m.ref)); 
+                    batch.delete(c.ref); 
                 }
 
-                // 2. حذف الإعلان نفسه
                 batch.delete(doc(db, "cars", id));
 
-                // التنفيذ الجماعي (Commit)
                 await batch.commit();
 
                 Swal.fire('Raderad!', 'Annonsen och all tillhörande data har raderats.', 'success');
