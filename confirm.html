@@ -1,128 +1,405 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>Verifierar Inloggning - BILHK</title>
+
     <link rel="stylesheet" href="style.css">
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
+
 <body>
+
     <div class="auth-container">
+
         <div class="auth-card" id="confirmCard">
-            <h2>Verifierar din länk...</h2>
+
+            <h2 id="pageTitle">
+                Verifierar din länk...
+            </h2>
+
             <div id="loadingSpinner" class="spinner"></div>
 
-            <div id="companyForm" style="display: none; text-align: left; margin-top: 20px;">
-                <h3 style="text-align: center; margin-bottom: 20px;">Företagsinformation</h3>
+            <!-- Company Form -->
+            <div id="companyForm"
+                 style="display:none; text-align:left; margin-top:20px;">
+
+                <h3 style="text-align:center; margin-bottom:20px;">
+                    Företagsinformation
+                </h3>
+
                 <div class="form-group">
-                    <label>Företagsnamn (اسم الشركة)</label>
-                    <input type="text" id="compName" placeholder="Ex: BILHK AB" required>
+                    <label>Företagsnamn</label>
+
+                    <input type="text"
+                           id="compName"
+                           placeholder="Ex: BILHK AB"
+                           maxlength="120"
+                           required>
                 </div>
+
                 <div class="form-group">
-                    <label>Organisationsnummer (الرقم الضريبي)</label>
-                    <input type="text" id="compTax" placeholder="55XXXX-XXXX" required>
+                    <label>Organisationsnummer</label>
+
+                    <input type="text"
+                           id="compTax"
+                           placeholder="55XXXX-XXXX"
+                           maxlength="20"
+                           required>
                 </div>
+
                 <div class="form-group">
-                    <label>Företagsadress (عنوان الشركة)</label>
-                    <input type="text" id="compAddress" placeholder="Gatunamn 1, Stad" required>
+                    <label>Företagsadress</label>
+
+                    <input type="text"
+                           id="compAddress"
+                           placeholder="Gatunamn 1, Stad"
+                           maxlength="200"
+                           required>
                 </div>
+
                 <div class="form-group">
-                    <label>Telefonnummer (رقم الهاتف)</label>
-                    <input type="tel" id="compPhone" placeholder="070-XXX XX XX" required>
+                    <label>Telefonnummer</label>
+
+                    <input type="tel"
+                           id="compPhone"
+                           placeholder="070-XXX XX XX"
+                           maxlength="30"
+                           required>
                 </div>
+
                 <div class="form-group">
-                    <label>Officiell E-post (الإيميل الرسمي)</label>
-                    <input type="email" id="compEmail" placeholder="info@foretag.se" required>
+                    <label>Officiell E-post</label>
+
+                    <input type="email"
+                           id="compEmail"
+                           placeholder="info@foretag.se"
+                           maxlength="120"
+                           required>
                 </div>
+
                 <div class="form-group">
-                    <label>Webbplats (الموقع الإلكتروني الرسمي)</label>
-                    <input type="url" id="compWeb" placeholder="https://www.foretag.se">
+                    <label>Webbplats</label>
+
+                    <input type="url"
+                           id="compWeb"
+                           placeholder="https://www.foretag.se"
+                           maxlength="200">
                 </div>
-                <button class="btn-auth" onclick="saveCompanyAndFinish()">Spara och Fortsätt</button>
+
+                <button class="btn-auth"
+                        id="saveCompanyBtn"
+                        onclick="saveCompanyAndFinish()">
+
+                    Spara och Fortsätt
+
+                </button>
+
             </div>
+
         </div>
+
     </div>
 
-    <script type="module">
-        import { auth, db } from './firebase-config.js';
-        import { isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        async function handleConfirmation() {
-            if (isSignInWithEmailLink(auth, window.location.href)) {
-                let email = window.localStorage.getItem('emailForSignIn');
-                const userType = window.localStorage.getItem('userTypePreference'); // جلب النوع المختار من صفحة اللوجن
+<script type="module">
 
-                if (!email) {
-                    const result = await Swal.fire({
-                        title: 'Ange din e-post',
-                        input: 'email',
-                        inputPlaceholder: 'Bekräfta din e-postadress'
-                    });
-                    email = result.value;
-                }
+    import { auth, db } from './firebase-config.js';
 
-                try {
-                    const result = await signInWithEmailLink(auth, email, window.location.href);
-                    const user = result.user;
-                    window.localStorage.removeItem('emailForSignIn');
+    import {
+        isSignInWithEmailLink,
+        signInWithEmailLink
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-                    // فحص إذا كان المستخدم مسجلاً مسبقاً
-                    const userDoc = await getDoc(doc(db, "users", user.uid));
-                    
-                    if (userType === 'Foretag' && !userDoc.exists()) {
-                        // إذا كان شركة ولأول مرة، نظهر النموذج
-                        document.querySelector('h2').innerText = "Komplettera profil";
-                        document.getElementById('loadingSpinner').style.display = 'none';
-                        document.getElementById('companyForm').style.display = 'block';
-                        // تعبئة الإيميل الرسمي تلقائياً كبداية
-                        document.getElementById('compEmail').value = email;
-                    } else {
-                        // إذا كان حساباً شخصياً أو شركة مسجلة مسبقاً، نوجهه للرئيسية
-                        if (!userDoc.exists()) {
-                            await setDoc(doc(db, "users", user.uid), {
-                                email: user.email,
-                                type: 'Privat',
-                                createdAt: new Date()
-                            });
-                        }
-                        window.location.href = 'index.html';
-                    }
-                } catch (error) {
-                    Swal.fire('Fel', 'Länken är ogiltig eller har gått ut.', 'error');
-                }
+    import {
+        doc,
+        setDoc,
+        getDoc,
+        serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+    // ========================================
+    // Main Confirmation Handler
+    // ========================================
+
+    async function handleConfirmation() {
+
+        try {
+
+            // Check if current link is valid
+            if (!isSignInWithEmailLink(auth, window.location.href)) {
+
+                Swal.fire(
+                    'Fel',
+                    'Ogiltig inloggningslänk.',
+                    'error'
+                );
+
+                return;
+
             }
+
+            let email =
+                window.localStorage.getItem('emailForSignIn');
+
+            const userType =
+                window.localStorage.getItem('userTypePreference');
+
+
+            // Ask user for email if missing
+            if (!email) {
+
+                const result = await Swal.fire({
+                    title: 'Ange din e-post',
+                    input: 'email',
+                    inputPlaceholder: 'Bekräfta din e-postadress',
+                    confirmButtonText: 'Fortsätt',
+                    allowOutsideClick: false
+                });
+
+                if (!result.value) return;
+
+                email = result.value;
+
+            }
+
+
+            // Sign in with email link
+            const result = await signInWithEmailLink(
+                auth,
+                email,
+                window.location.href
+            );
+
+            const user = result.user;
+
+
+            // Clear old localStorage data
+            window.localStorage.removeItem('emailForSignIn');
+
+
+            // Get existing user document
+            const userRef = doc(db, "users", user.uid);
+
+            const userDoc = await getDoc(userRef);
+
+
+            // ========================================
+            // Existing User
+            // ========================================
+
+            if (userDoc.exists()) {
+
+                window.location.href = 'index.html';
+                return;
+
+            }
+
+
+            // ========================================
+            // New Business Account
+            // ========================================
+
+            if (userType === 'Foretag') {
+
+                document.getElementById('pageTitle').innerText =
+                    "Komplettera företagsprofil";
+
+                document.getElementById('loadingSpinner').style.display =
+                    'none';
+
+                document.getElementById('companyForm').style.display =
+                    'block';
+
+                document.getElementById('compEmail').value =
+                    email;
+
+                return;
+
+            }
+
+
+            // ========================================
+            // New Private Account
+            // ========================================
+
+            await setDoc(userRef, {
+
+                uid: user.uid,
+
+                email: user.email || "",
+
+                type: "Privat",
+
+                createdAt: serverTimestamp()
+
+            });
+
+            window.location.href = 'index.html';
+
+        } catch (error) {
+
+            console.error(error);
+
+            Swal.fire(
+                'Fel',
+                'Länken är ogiltig eller har gått ut.',
+                'error'
+            );
+
         }
 
-        window.saveCompanyAndFinish = async () => {
+    }
+
+
+    // ========================================
+    // Save Company Account
+    // ========================================
+
+    window.saveCompanyAndFinish = async () => {
+
+        try {
+
             const user = auth.currentUser;
-            const data = {
-                companyName: document.getElementById('compName').value,
-                taxId: document.getElementById('compTax').value,
-                address: document.getElementById('compAddress').value,
-                phone: document.getElementById('compPhone').value,
-                officialEmail: document.getElementById('compEmail').value,
-                website: document.getElementById('compWeb').value,
-                type: 'Foretag',
-                createdAt: new Date()
-            };
 
-            if (!data.companyName || !data.taxId || !data.phone) {
-                return Swal.fire('Obs!', 'Vänligen fyll i alla obligatoriska fält.', 'warning');
+            if (!user) {
+
+                Swal.fire(
+                    'Fel',
+                    'Ingen användare hittades.',
+                    'error'
+                );
+
+                return;
+
             }
 
-            try {
-                await setDoc(doc(db, "users", user.uid), data);
-                Swal.fire('Klart!', 'Ditt företagskonto är nu skapat.', 'success').then(() => {
-                    window.location.href = 'index.html';
-                });
-            } catch (e) {
-                Swal.fire('Fel', 'Kunde inte spara data.', 'error');
-            }
-        };
 
-        handleConfirmation();
-    </script>
+            // Disable button while saving
+            const saveBtn =
+                document.getElementById('saveCompanyBtn');
+
+            saveBtn.disabled = true;
+            saveBtn.innerText = "Sparar...";
+
+
+            // Collect data
+            const companyName =
+                document.getElementById('compName').value.trim();
+
+            const taxId =
+                document.getElementById('compTax').value.trim();
+
+            const address =
+                document.getElementById('compAddress').value.trim();
+
+            const phone =
+                document.getElementById('compPhone').value.trim();
+
+            const officialEmail =
+                document.getElementById('compEmail').value.trim();
+
+            const website =
+                document.getElementById('compWeb').value.trim();
+
+
+            // Validation
+            if (
+                !companyName ||
+                !taxId ||
+                !address ||
+                !phone ||
+                !officialEmail
+            ) {
+
+                Swal.fire(
+                    'Obs!',
+                    'Fyll i alla obligatoriska fält.',
+                    'warning'
+                );
+
+                saveBtn.disabled = false;
+                saveBtn.innerText = "Spara och Fortsätt";
+
+                return;
+
+            }
+
+
+            // Save company account
+            await setDoc(doc(db, "users", user.uid), {
+
+                uid: user.uid,
+
+                email: user.email || "",
+
+                type: "Foretag",
+
+                companyName,
+
+                taxId,
+
+                address,
+
+                phone,
+
+                officialEmail,
+
+                website: website || "",
+
+                createdAt: serverTimestamp()
+
+            });
+
+
+            // Clear preference
+            window.localStorage.removeItem('userTypePreference');
+
+
+            await Swal.fire(
+                'Klart!',
+                'Ditt företagskonto har skapats.',
+                'success'
+            );
+
+            window.location.href = 'index.html';
+
+        } catch (error) {
+
+            console.error(error);
+
+            Swal.fire(
+                'Fel',
+                'Kunde inte spara företagsdata.',
+                'error'
+            );
+
+            const saveBtn =
+                document.getElementById('saveCompanyBtn');
+
+            saveBtn.disabled = false;
+            saveBtn.innerText = "Spara och Fortsätt";
+
+        }
+
+    };
+
+
+    // ========================================
+    // Start
+    // ========================================
+
+    handleConfirmation();
+
+</script>
+
 </body>
 </html>
