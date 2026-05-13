@@ -1,19 +1,115 @@
-<!-- حافظ على كل كود HTML و CSS كما هو بدون تغيير -->
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skapa Konto | BILHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* تم الإبقاء على التصميم كما هو تماماً */
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        
+        .auth-card { background: white; width: 100%; max-width: 550px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
+        .logo { text-align: center; margin-bottom: 25px; font-weight: 900; font-size: 32px; color: var(--dark); text-decoration: none; display: block; }
+        .logo span { color: var(--primary); }
+        
+        .tabs { display: flex; background: #f1f5f9; padding: 5px; border-radius: 14px; margin-bottom: 25px; }
+        .tab { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; background: none; color: #64748b; }
+        .tab.active { background: white; color: var(--dark); }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: #f9fafb; font-size: 14px; }
+
+        .btn-reg { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+
+        .modal-overlay { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); }
+        .modal-content { background: white; margin: 3% auto; padding: 35px; border-radius: 28px; width: 95%; max-width: 650px; position: relative; animation: slideIn 0.4s ease; }
+        @keyframes slideIn { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-header { font-size: 22px; font-weight: 900; color: var(--dark); margin-bottom: 20px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .modal-body { max-height: 400px; overflow-y: auto; font-size: 13px; color: #475569; line-height: 1.7; margin-bottom: 25px; padding-right: 15px; text-align: left; }
+        .modal-body h4 { color: var(--dark); margin: 15px 0 5px; font-size: 14px; text-transform: uppercase; border-left: 4px solid var(--primary); padding-left: 10px; }
+        
+        .consent-box { background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: flex-start; gap: 15px; cursor: pointer; }
+        .consent-box input { width: 22px; height: 22px; cursor: pointer; }
+        .consent-box span { font-size: 13px; font-weight: 700; color: var(--dark); line-height: 1.4; }
+
+        .modal-footer { margin-top: 25px; display: flex; gap: 15px; }
+        .btn-confirm { flex: 2; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        .btn-confirm:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .btn-cancel { flex: 1; padding: 16px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    
+    <div class="tabs">
+        <button class="tab active" id="pTab" onclick="setMode('Privat')">Privatperson</button>
+        <button class="tab" id="fTab" onclick="setMode('Foretag')">Företag</button>
+    </div>
+
+    <form id="regForm">
+        <div id="bizFields" style="display: none;">
+            <div class="form-group"><label>Företagsnamn</label><input type="text" id="compName"></div>
+            <div class="form-group"><label>Organisationsnummer</label><input type="text" id="taxId" placeholder="XXXXXX-XXXX"></div>
+            <div class="form-group"><label>Företagsadress</label><input type="text" id="address"></div>
+        </div>
+        <div class="form-group"><label>E-postadress</label><input type="email" id="email" required></div>
+        <div class="form-group"><label>Lösenord</label><input type="password" id="pass" placeholder="Minst 8 tecken" required></div>
+        <div class="form-group"><label>Bekräfta Löسنord</label><input type="password" id="confirmPass" required></div>
+
+        <button type="button" class="btn-reg" onclick="handlePreRegister()">Skapa konto</button>
+    </form>
+</div>
+
+<div id="termsModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">Användarvillkor & Ansvarsfriskrivning</div>
+        <div class="modal-body">
+            <h4>1. Allmänt</h4>
+            <p>BILHK är en teknisk plattform...</p> <!-- النص المختصر للاختصار هنا فقط -->
+            <h4>3. Uppförandekod</h4>
+            <p>BILHK förbehåller sig rätten att radera konton...</p>
+        </div>
+        
+        <label class="consent-box">
+            <input type="checkbox" id="finalConsent">
+            <span>Jag intygar att jag är över 18 år, har läst och godkänner samtliga användarvillkor.</span>
+        </label>
+
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal()">Avbryt</button>
+            <button id="confirmRegBtn" class="btn-confirm" onclick="executeRegistration()" disabled>Godkänn och Slutför</button>
+        </div>
+    </div>
+</div>
 
 <script type="module">
-    // 1. أضفنا sendEmailVerification هنا
     import { auth, db } from './firebase-config.js';
     import { createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let currentMode = 'Privat';
 
-    // قائمة بالنطاقات الوهمية الشائعة (يمكنك توسيعها لاحقاً)
-    const bannedDomains = [
-        'mailinator.com', '10minutemail.com', 'guerrilla-mail.com', 
-        'temp-mail.org', 'fakeinbox.com', 'getnada.com', 'throwawaymail.com',
-        'yopmail.com', 'sharklasers.com', 'dispostable.com'
-    ];
+    // دالة لجلب القائمة السوداء العالمية للإيميلات الوهمية
+    async function checkDisposableEmail(email) {
+        try {
+            const domain = email.split('@')[1].toLowerCase();
+            const response = await fetch('https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/master/disposable_email_blocklist.conf');
+            const data = await response.text();
+            const bannedList = data.split('\n');
+            return bannedList.includes(domain);
+        } catch (e) {
+            return false; // في حال فشل الاتصال، نسمح بالتسجيل مؤقتاً
+        }
+    }
 
     window.setMode = (m) => {
         currentMode = m;
@@ -22,19 +118,20 @@
         document.getElementById('bizFields').style.display = (m === 'Foretag') ? 'block' : 'none';
     };
 
-    window.handlePreRegister = () => {
-        const email = document.getElementById('email').value.toLowerCase().trim(); // تحويل للاحرف الصغيرة
+    window.handlePreRegister = async () => {
+        const email = document.getElementById('email').value.trim().toLowerCase();
         const p = document.getElementById('pass').value;
         const c = document.getElementById('confirmPass').value;
 
-        // التحقق من صحة الإيميل ومنع الوهمي
-        if (!email || !email.includes('@')) {
-            return Swal.fire('Obs', 'Vänligen ange en giltig e-postadress.', 'warning');
-        }
+        if (!email.includes('@')) return Swal.fire('Obs', 'Ange en giltig e-postadress.', 'warning');
+        
+        // منع الإيميلات الوهمية بالتحقق من القائمة العالمية
+        Swal.fire({ title: 'Kontrollerar...', didOpen: () => Swal.showLoading() });
+        const isFake = await checkDisposableEmail(email);
+        Swal.close();
 
-        const domain = email.split('@')[1];
-        if (bannedDomains.includes(domain)) {
-            return Swal.fire('Error', 'Vi tillåter inte tillfälliga e-postadresser. Använd en riktig e-post.', 'error');
+        if (isFake) {
+            return Swal.fire('Error', 'Vi accepterar inte tillfälliga e-postadresser. Använd en riktig e-post.', 'error');
         }
 
         if (!p || p.length < 8) return Swal.fire('Obs', 'Lösenordet måste vara minst 8 tecken.', 'warning');
@@ -53,15 +150,12 @@
         const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
         const btn = document.getElementById('confirmRegBtn');
-        
-        btn.disabled = true; 
-        btn.innerText = "Registrerar...";
+        btn.disabled = true; btn.innerText = "Registrerar...";
 
         try {
-            // إنشاء الحساب في Firebase
             const cred = await createUserWithEmailAndPassword(auth, email, pass);
             
-            // 2. إرسال رابط تفعيل للبريد الإلكتروني فوراً
+            // إرسال رابط التفعيل (هذا سيقتل أي إيميل وهمي لأنه لن يستطيع الضغط على الرابط)
             await sendEmailVerification(cred.user);
 
             const userData = {
@@ -69,37 +163,31 @@
                 email: email,
                 userType: currentMode,
                 termsAccepted: true,
-                emailVerified: false, // سنحدثها لاحقاً عند تسجيل الدخول
+                isVerified: false, // قيمة للتأكد لاحقاً
                 consentDate: serverTimestamp(),
                 createdAt: serverTimestamp()
             };
-
             if (currentMode === 'Foretag') {
                 userData.companyName = document.getElementById('compName').value;
                 userData.taxId = document.getElementById('taxId').value;
                 userData.address = document.getElementById('address').value;
             }
-
-            // حفظ البيانات في Firestore
             await setDoc(doc(db, "users", cred.user.uid), userData);
-
-            // إعلام المستخدم بضرورة التفعيل
+            
             Swal.fire({
-                title: 'Konto skapat!',
-                text: 'Ett verifieringsmail har skickats till ' + email + '. Vänligen aktivera ditt konto innan du loggar in.',
                 icon: 'success',
-                confirmButtonText: 'OK'
+                title: 'Konto skapat!',
+                text: 'Vi har skickat en aktiveringslänk till din e-post. Du måste aktivera kontot innan du kan logga in.',
+                confirmButtonText: 'Jag förstår'
             }).then(() => {
-                window.location.href = "login.html"; // وجهه لصفحة تسجيل الدخول
+                window.location.href = "login.html";
             });
 
         } catch (error) {
-            let msg = error.message;
-            if (error.code === 'auth/email-already-in-use') msg = "E-postadressen används redan.";
-            
-            Swal.fire('Fel', msg, 'error');
-            btn.disabled = false; 
-            btn.innerText = "Godkänn och Slutför";
+            Swal.fire('Fel', error.message, 'error');
+            btn.disabled = false; btn.innerText = "Godkänn och Slutför";
         }
     };
 </script>
+</body>
+</html>
