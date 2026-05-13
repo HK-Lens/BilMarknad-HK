@@ -219,6 +219,7 @@
     let currentUser = null;
     let currentChatId = null;
     let unsubscribeMessages = null;
+    let chatAutoOpened = false; 
 
     // التقاط الرابط لمعرفة إذا كان هناك فلتر خاص بسيارة معينة
     let targetCarId = new URLSearchParams(window.location.search).get('carId');
@@ -227,15 +228,19 @@
     window.switchTab = (id, clearFilter = false) => {
         document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.getElementById('tab-' + id).classList.add('active');
+        
+        const targetSection = document.getElementById(id);
+        const targetBtn = document.getElementById('tab-' + id);
+        
+        if (targetSection) targetSection.classList.add('active');
+        if (targetBtn) targetBtn.classList.add('active');
         
         if (clearFilter && currentUser) {
             targetCarId = null;
-            window.history.replaceState({}, document.title, window.location.pathname); // مسح الرابط
-            loadChatList(currentUser.uid); // إعادة تحميل القائمة بدون فلتر
+            chatAutoOpened = false;
+            window.history.replaceState({}, document.title, window.location.pathname);
+            loadChatList(currentUser.uid); 
             
-            // إغلاق المحادثة المفتوحة إن وجدت
             document.getElementById('chatHeader').innerHTML = `<span>Välj en konversation</span>`;
             document.getElementById('chatMessagesBox').innerHTML = `<div style="margin: auto; color: var(--gray-text); font-size: 14px; font-weight: 500;">Ingen chatt vald.</div>`;
             document.getElementById('chatInput').disabled = true;
@@ -243,6 +248,11 @@
             if (unsubscribeMessages) unsubscribeMessages();
         }
     };
+
+    // التبديل الفوري للأقسام بناءً على الرابط لمنع التوقف في "نظرة عامة"
+    if (currentTab !== 'overview') {
+        switchTab(currentTab, false);
+    }
 
     onAuthStateChanged(auth, async (user) => {
         if (!user) {
@@ -252,14 +262,9 @@
             loadDashboardData(user.uid);
             loadProfile(user.uid);
             loadChatList(user.uid);
-            
-            if (currentTab !== 'overview') {
-                switchTab(currentTab, false);
-            }
         }
     });
 
-    /* --- 1. Dashboard Data --- */
     async function loadDashboardData(uid) {
         try {
             const q = query(collection(db, "cars"), where("sellerId", "==", uid));
@@ -307,7 +312,6 @@
         } catch(e) { console.error(e); }
     }
 
-    /* --- 2. Live Chat System --- */
     function loadChatList(uid) {
         const q = query(collection(db, "chats"), where("participants", "array-contains", uid), orderBy("updatedAt", "desc"));
         
@@ -315,7 +319,6 @@
             const listContent = document.getElementById('chatListContent');
             listContent.innerHTML = '';
 
-            // إضافة زر العودة لجميع المحادثات إذا كان هناك فلتر
             if (targetCarId) {
                 listContent.innerHTML += `
                     <div style="padding: 15px; text-align: center; background: #fff7ed; border-bottom: 1px solid var(--border); cursor:pointer; transition: 0.2s;" onclick="switchTab('messages', true)" onmouseover="this.style.background='#ffedd5'" onmouseout="this.style.background='#fff7ed'">
@@ -330,6 +333,7 @@
             }
 
             let count = 0;
+            let firstChat = null;
 
             snapshot.forEach((docSnap) => {
                 const chat = docSnap.data();
@@ -340,10 +344,15 @@
                 const otherUser = chat.users ? chat.users.find(u => u.id !== uid) : { name: "Användare" };
                 const isActive = currentChatId === chatId ? 'active' : '';
 
+                if (targetCarId && !firstChat) {
+                    firstChat = { id: chatId, name: otherUser.name || 'Okänd', title: chat.carTitle || 'Annons' };
+                }
+
+                // تم إصلاح الرابط هنا ليفتح في نفس النافذة بدلاً من نافذة جديدة
                 listContent.innerHTML += `
                     <div class="chat-list-item ${isActive}" onclick="openChat('${chatId}', '${otherUser.name || 'Okänd'}', '${chat.carTitle || 'Annons'}')">
                         <div style="display: flex; gap: 12px; align-items: center; width: 100%;">
-                            <img src="${chat.carImage || 'placeholder.jpg'}" alt="Bil" style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); cursor: pointer;" onclick="event.stopPropagation(); window.open('details.html?id=${chat.carId}', '_blank')" title="Visa annons">
+                            <img src="${chat.carImage || 'placeholder.jpg'}" alt="Bil" style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); cursor: pointer;" onclick="event.stopPropagation(); window.location.href='details.html?id=${chat.carId}'" title="Visa annons">
                             <div style="flex: 1; min-width: 0;">
                                 <div class="chat-list-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${chat.carTitle || 'Annons'}</div>
                                 <div class="chat-list-user"><i class="fa-solid fa-user"></i> ${otherUser.name || 'Köpare/Säljare'}</div>
@@ -356,6 +365,12 @@
 
             if (count === 0 && targetCarId) {
                  listContent.innerHTML += '<div style="padding: 30px 20px; text-align: center; color: var(--gray-text); font-size: 13px; font-weight: 600;">Inga meddelanden för denna annons ännu.</div>';
+            }
+
+            // فتح الدردشة تلقائياً لتوفر عليك نقرة إضافية
+            if (targetCarId && firstChat && !chatAutoOpened) {
+                openChat(firstChat.id, firstChat.name, firstChat.title);
+                chatAutoOpened = true;
             }
         });
     }
@@ -370,7 +385,9 @@
         sendBtn.disabled = false;
         
         document.querySelectorAll('.chat-list-item').forEach(el => el.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+        if(event && event.currentTarget) {
+            event.currentTarget.classList.add('active');
+        }
 
         const msgBox = document.getElementById('chatMessagesBox');
         msgBox.innerHTML = '<div style="margin: auto; color: var(--gray-text); font-size: 12px;"><i class="fa-solid fa-spinner fa-spin"></i> Laddar...</div>';
@@ -431,7 +448,6 @@
         if (e.key === 'Enter') sendMessage();
     });
 
-    /* --- 3. Profile & System Logic --- */
     async function loadProfile(uid) {
         try {
             const userDoc = await getDoc(doc(db, "users", uid));
