@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        /* تم الإبقاء على التصميم كما هو تماماً */
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
@@ -63,7 +62,7 @@
         </div>
         <div class="form-group"><label>E-postadress</label><input type="email" id="email" required></div>
         <div class="form-group"><label>Lösenord</label><input type="password" id="pass" placeholder="Minst 8 tecken" required></div>
-        <div class="form-group"><label>Bekräfta Löسنord</label><input type="password" id="confirmPass" required></div>
+        <div class="form-group"><label>Bekräfta Lösenord</label><input type="password" id="confirmPass" required></div>
 
         <button type="button" class="btn-reg" onclick="handlePreRegister()">Skapa konto</button>
     </form>
@@ -74,14 +73,14 @@
         <div class="modal-header">Användarvillkor & Ansvarsfriskrivning</div>
         <div class="modal-body">
             <h4>1. Allmänt</h4>
-            <p>BILHK är en teknisk plattform...</p> <!-- النص المختصر للاختصار هنا فقط -->
-            <h4>3. Uppförandekod</h4>
-            <p>BILHK förbehåller sig rätten att radera konton...</p>
+            <p>BILHK är en teknisk plattform...</p>
+            <h4>2. Verifiering</h4>
+            <p><b>Viktigt:</b> Du måste verifiera din e-postadress via länken vi skickar för أن تتمكن من استخدام حسابك. الحسابات غير المفعلة سيتم حذفها تلقائياً.</p>
         </div>
         
         <label class="consent-box">
             <input type="checkbox" id="finalConsent">
-            <span>Jag intygar att jag är över 18 år, har läst och godkänner samtliga användarvillkor.</span>
+            <span>Jag intygar att jag är över 18 år ولقد قرأت الشروط وأوافق على تفعيل حسابي عبر البريد.</span>
         </label>
 
         <div class="modal-footer">
@@ -93,23 +92,10 @@
 
 <script type="module">
     import { auth, db } from './firebase-config.js';
-    import { createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let currentMode = 'Privat';
-
-    // دالة لجلب القائمة السوداء العالمية للإيميلات الوهمية
-    async function checkDisposableEmail(email) {
-        try {
-            const domain = email.split('@')[1].toLowerCase();
-            const response = await fetch('https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/master/disposable_email_blocklist.conf');
-            const data = await response.text();
-            const bannedList = data.split('\n');
-            return bannedList.includes(domain);
-        } catch (e) {
-            return false; // في حال فشل الاتصال، نسمح بالتسجيل مؤقتاً
-        }
-    }
 
     window.setMode = (m) => {
         currentMode = m;
@@ -118,24 +104,21 @@
         document.getElementById('bizFields').style.display = (m === 'Foretag') ? 'block' : 'none';
     };
 
-    window.handlePreRegister = async () => {
-        const email = document.getElementById('email').value.trim().toLowerCase();
+    // وظيفة للتحقق من صحة الإيميل تقنياً قبل إرساله لفايربيس
+    const isValidEmail = (email) => {
+        return String(email)
+            .toLowerCase()
+            .match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+    };
+
+    window.handlePreRegister = () => {
+        const email = document.getElementById('email').value.trim();
         const p = document.getElementById('pass').value;
         const c = document.getElementById('confirmPass').value;
 
-        if (!email.includes('@')) return Swal.fire('Obs', 'Ange en giltig e-postadress.', 'warning');
-        
-        // منع الإيميلات الوهمية بالتحقق من القائمة العالمية
-        Swal.fire({ title: 'Kontrollerar...', didOpen: () => Swal.showLoading() });
-        const isFake = await checkDisposableEmail(email);
-        Swal.close();
-
-        if (isFake) {
-            return Swal.fire('Error', 'Vi accepterar inte tillfälliga e-postadresser. Använd en riktig e-post.', 'error');
-        }
-
+        if (!isValidEmail(email)) return Swal.fire('Obs', 'Ange en giltig e-postadress.', 'warning');
         if (!p || p.length < 8) return Swal.fire('Obs', 'Lösenordet måste vara minst 8 tecken.', 'warning');
-        if (p !== c) return Swal.fire('Obs', 'Lösenorden matchar inte!', 'warning');
+        if (p !== c) return Swal.fire('Obs', 'Lösenorden matchار إنت في لا تتطابق!', 'warning');
         
         document.getElementById('termsModal').style.display = 'block';
     };
@@ -147,45 +130,57 @@
     };
 
     window.executeRegistration = async () => {
-        const email = document.getElementById('email').value;
+        const email = document.getElementById('email').value.trim();
         const pass = document.getElementById('pass').value;
         const btn = document.getElementById('confirmRegBtn');
-        btn.disabled = true; btn.innerText = "Registrerar...";
+        
+        btn.disabled = true; 
+        btn.innerText = "Behandlar...";
 
         try {
+            // 1. إنشاء الحساب في Firebase
             const cred = await createUserWithEmailAndPassword(auth, email, pass);
             
-            // إرسال رابط التفعيل (هذا سيقتل أي إيميل وهمي لأنه لن يستطيع الضغط على الرابط)
+            // 2. إرسال رابط التفعيل فوراً
             await sendEmailVerification(cred.user);
 
+            // 3. تخزين بيانات المستخدم مع وضع حالة "غير مفعل"
             const userData = {
                 uid: cred.user.uid,
                 email: email,
                 userType: currentMode,
-                termsAccepted: true,
-                isVerified: false, // قيمة للتأكد لاحقاً
-                consentDate: serverTimestamp(),
+                verified: false,
                 createdAt: serverTimestamp()
             };
+
             if (currentMode === 'Foretag') {
                 userData.companyName = document.getElementById('compName').value;
                 userData.taxId = document.getElementById('taxId').value;
                 userData.address = document.getElementById('address').value;
             }
+
             await setDoc(doc(db, "users", cred.user.uid), userData);
-            
+
+            // 4. تسجيل الخروج فوراً ومنع الدخول حتى يضغط الرابط
+            await signOut(auth);
+
             Swal.fire({
+                title: 'Verifiera din e-post!',
+                text: `Vi har skickat en länk till ${email}. Du måste klicka på den för att kunna logga in.`,
                 icon: 'success',
-                title: 'Konto skapat!',
-                text: 'Vi har skickat en aktiveringslänk till din e-post. Du måste aktivera kontot innan du kan logga in.',
-                confirmButtonText: 'Jag förstår'
+                confirmButtonText: 'OK'
             }).then(() => {
                 window.location.href = "login.html";
             });
 
         } catch (error) {
-            Swal.fire('Fel', error.message, 'error');
-            btn.disabled = false; btn.innerText = "Godkänn och Slutför";
+            let errorMsg = "Ett fel uppstod vid registrering.";
+            if (error.code === 'auth/email-already-in-use') errorMsg = "E-postadressen används redan.";
+            if (error.code === 'auth/invalid-email') errorMsg = "Ogiltig e-postadress.";
+            
+            Swal.fire('Fel', errorMsg, 'error');
+            btn.disabled = false; 
+            btn.innerText = "Godkänn och Slutför";
         }
     };
 </script>
