@@ -11,7 +11,10 @@ const firebaseConfig = {
     appId: "1:284008879407:web:66bee60b51ec277e8dbdda"
 };
 
+// تهيئة التطبيق
 const app = initializeApp(firebaseConfig);
+
+// تصدير الخدمات لاستخدامها في الملفات الأخرى
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
