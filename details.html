@@ -46,7 +46,6 @@
         .car-title { font-size: 28px; font-weight: 900; margin-bottom: 5px; }
         .car-price { font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 0; }
         
-        /* تنسيق زر الحفظ/الإعجاب */
         .btn-save-ad { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 15px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; color: var(--dark); }
         .btn-save-ad:hover { background: white; border-color: var(--primary); }
         .btn-save-ad.saved { color: #ef4444; border-color: #fca5a5; background: #fee2e2; }
@@ -135,6 +134,7 @@
             authContainer.innerHTML = `<a href="login.html" style="color:var(--dark); font-weight:700; text-decoration:none;">Logga in</a>`;
         }
         
+        // بمجرد التأكد من حالة المستخدم، نقوم بتحميل بيانات الإعلان
         await loadAd();
     });
 
@@ -150,14 +150,16 @@
         
         carData = snap.data();
         
-        if (!currentUser || currentUser.uid !== carData.sellerId) {
+        // التحقق القاطع: إذا كان الزائر هو البائع، لا نزيد عداد المشاهدات
+        const isOwner = currentUser && (currentUser.uid === carData.sellerId);
+        
+        if (!isOwner) {
             try { await updateDoc(carRef, { views: increment(1) }); } catch(e){}
         }
 
         const sSnap = await getDoc(doc(db, "users", carData.sellerId));
         sellerData = sSnap.exists() ? sSnap.data() : { name: "Okänd Säljare" };
 
-        // --- التحقق مما إذا كان الإعلان محفوظاً لدى المشتري ---
         let isSaved = false;
         if (currentUser) {
             const uDoc = await getDoc(doc(db, "users", currentUser.uid));
@@ -185,7 +187,10 @@
         }
 
         let sideCardHtml = '';
-        if (currentUser && currentUser.uid === carData.sellerId) {
+        
+        // هنا يتم بناء الواجهة الجانبية بناءً على هوية الزائر
+        if (isOwner) {
+            // واجهة المالك (لوحة التحكم السريعة للإعلان بدون إمكانية إرسال رسائل لنفسه)
             sideCardHtml = `
                 <div class="contact-card" style="border-top: 4px solid var(--primary); background: #fffaf5;">
                     <h3 class="contact-title" style="color: var(--primary);"><i class="fa-solid fa-chart-line"></i> Din Annons</h3>
@@ -209,6 +214,7 @@
                 </div>
             `;
         } else {
+            // واجهة المشتري (تظهر خانة المراسلة العادية)
             sideCardHtml = `
                 <div class="contact-card">
                     <h3 class="contact-title"><i class="fa-regular fa-envelope"></i> Kontakta säljaren</h3>
@@ -279,7 +285,6 @@
             el.classList.add('active');
         };
 
-        // --- برمجة وظيفة الحفظ/الإعجاب للإعلان ---
         const saveAdBtn = document.getElementById('saveAdBtn');
         if (saveAdBtn) {
             saveAdBtn.onclick = async () => {
@@ -294,16 +299,14 @@
                 
                 try {
                     if (isSaved) {
-                        // إلغاء الحفظ
                         await updateDoc(userRef, { savedCars: arrayRemove(carId) });
-                        try { await updateDoc(carRef, { saves: increment(-1) }); } catch(e){} // تقليل العداد بصمت
+                        try { await updateDoc(carRef, { saves: increment(-1) }); } catch(e){}
                         isSaved = false;
                         saveAdBtn.classList.remove('saved');
                         saveAdBtn.innerHTML = `<i class="fa-regular fa-heart"></i> Spara`;
                     } else {
-                        // إضافة الحفظ
                         await updateDoc(userRef, { savedCars: arrayUnion(carId) });
-                        try { await updateDoc(carRef, { saves: increment(1) }); } catch(e){} // زيادة العداد بصمت
+                        try { await updateDoc(carRef, { saves: increment(1) }); } catch(e){}
                         isSaved = true;
                         saveAdBtn.classList.add('saved');
                         saveAdBtn.innerHTML = `<i class="fa-solid fa-heart"></i> Sparad`;
@@ -365,10 +368,7 @@
                         updatedAt: serverTimestamp()
                     });
 
-                    try {
-                        await updateDoc(doc(db, "cars", carId), { messagesCount: increment(1) });
-                    } catch(err) {
-                    }
+                    try { await updateDoc(doc(db, "cars", carId), { messagesCount: increment(1) }); } catch(err) {}
 
                     Swal.fire('Skickat!', 'Ditt meddelande har skickats till säljaren.', 'success');
                     document.getElementById('msgBody').value = '';
