@@ -65,20 +65,9 @@
         .check-item span { font-size: 12px; font-weight: 700; color: var(--dark); }
 
         .action-bar { display: flex; gap: 15px; margin-top: 20px; }
-        .btn-apply { flex: 1; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; }
+        .btn-apply { flex: 1; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .btn-apply:hover { background: var(--primary-hover); transform: translateY(-2px); }
         .btn-reset { width: 120px; background: #e2e8f0; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
-
-        /* Results Area */
-        .results-section { margin-top: 50px; }
-        .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .car-card { background: var(--white); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; }
-        .car-img { width: 100%; height: 160px; object-fit: cover; }
-        .car-info { padding: 15px; }
-
-        /* Pagination */
-        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 40px; padding: 20px 0; }
-        .page-link { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: white; text-decoration: none; color: var(--dark); font-weight: 700; cursor: pointer; }
-        .page-link.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         footer { background: var(--white); border-top: 1px solid var(--border); padding: 40px 5% 20px; margin-top: 60px; }
         .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
@@ -114,7 +103,7 @@
                 <div class="input-group"><label>Max Miltal</label><input type="number" id="maxMil" placeholder="Till mil"></div>
             </div>
 
-            <div class="section-title" style="margin-top:30px;"><i class="fa-solid fa-gears"></i> Prestanda & Teknik</div>
+            <div class="section-title" style="margin-top:30px;"><i class="fa-solid fa-gears"></i> Prestandا & Teknik</div>
             <div class="filter-grid">
                 <div class="input-group"><label>Drivmedel</label><select id="fuel"><option value="">Alla</option><option>Bensin</option><option>Diesel</option><option>El</option><option>Hybrid</option></select></div>
                 <div class="input-group"><label>Växellåda</label><select id="gear"><option value="">Alla</option><option>Automat</option><option>Manuell</option></select></div>
@@ -151,11 +140,6 @@
                 <button class="btn-apply" id="applyFiltersBtn">Visa resultat</button>
             </div>
         </div>
-
-        <div class="results-section">
-            <div id="resultsGrid" class="cars-grid"></div>
-            <div id="pagination" class="pagination"></div>
-        </div>
     </div>
 
     <footer>
@@ -173,79 +157,75 @@
     </footer>
 
     <script type="module">
-        import { db, auth } from './firebase-config.js';
-        import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { auth } from './firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { carData } from './cars-data.js';
 
-        let allCars = [];
-        let currentPage = 1;
-        const pageSize = 12;
-
-        // Auth Logic
+        // Auth Status
         onAuthStateChanged(auth, (user) => {
             const container = document.getElementById('authStatusContainer');
             if (user) {
-                container.innerHTML = `<a href="my-account.html" style="text-decoration:none; color:var(--primary); font-weight:800;">Mitt Konto</a>`;
+                container.innerHTML = `<a href="dashboard.html" style="text-decoration:none; color:var(--primary); font-weight:800;">Mitt Konto</a>`;
             } else {
                 container.innerHTML = `<a href="login.html" style="text-decoration:none; color:var(--dark); font-weight:700;">Logga in</a>`;
             }
         });
 
-        // Load Brand/Models
+        // Load Brand/Models Selects
         const bSelect = document.getElementById('brandSelect');
         const mSelect = document.getElementById('modelSelect');
         Object.keys(carData).sort().forEach(b => bSelect.innerHTML += `<option value="${b}">${b}</option>`);
+        
         bSelect.onchange = () => {
             mSelect.innerHTML = '<option value="">Alla modeller</option>';
-            if(carData[bSelect.value]) carData[bSelect.value].sort().forEach(m => mSelect.innerHTML += `<option value="${m}">${m}</option>`);
+            if(carData[bSelect.value]) {
+                carData[bSelect.value].sort().forEach(m => mSelect.innerHTML += `<option value="${m}">${m}</option>`);
+            }
         };
 
-        // Fetch Data
-        async function loadAllCars() {
-            const snap = await getDocs(query(collection(db, "cars"), orderBy("createdAt", "desc")));
-            allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderResults();
-        }
-
-        function renderResults() {
-            const grid = document.getElementById('resultsGrid');
-            const pagBox = document.getElementById('pagination');
+        // --- إصلاح المسار لزر إظهار النتيجة ---
+        document.getElementById('applyFiltersBtn').onclick = () => {
+            const params = new URLSearchParams();
             
-            // Filter Logic (Simple example, can be expanded for all 40 fields)
-            let filtered = allCars.filter(car => {
-                const b = document.getElementById('brandSelect').value;
-                return !b || car.brand === b;
+            // جمع البيانات الأساسية
+            const brand = document.getElementById('brandSelect').value;
+            const model = document.getElementById('modelSelect').value;
+            const minP = document.getElementById('minPrice').value;
+            const maxP = document.getElementById('maxPrice').value;
+            const minY = document.getElementById('minYear').value;
+            const maxY = document.getElementById('maxYear').value;
+            const minM = document.getElementById('minMil').value;
+            const maxM = document.getElementById('maxMil').value;
+
+            if(brand) params.append('brand', brand);
+            if(model) params.append('model', model);
+            if(minP) params.append('minP', minP);
+            if(maxP) params.append('maxP', maxP);
+            if(minY) params.append('yFrom', minY);
+            if(maxY) params.append('yTo', maxY);
+            if(minM) params.append('milFrom', minM);
+            if(maxM) params.append('milTo', maxM);
+
+            // جمع البيانات الفنية
+            const fuel = document.getElementById('fuel').value;
+            const gear = document.getElementById('gear').value;
+            const body = document.getElementById('body').value;
+            if(fuel) params.append('fuel', fuel);
+            if(gear) params.append('gear', gear);
+            if(body) params.append('body', body);
+
+            // جمع الإضافات (Checkboxes)
+            const selectedFeatures = [];
+            document.querySelectorAll('.feat:checked').forEach(cb => {
+                selectedFeatures.push(cb.value);
             });
-
-            const totalPages = Math.ceil(filtered.length / pageSize);
-            const start = (currentPage - 1) * pageSize;
-            const paginatedItems = filtered.slice(start, start + pageSize);
-
-            grid.innerHTML = paginatedItems.map(car => `
-                <div class="car-card" onclick="window.location.href='details.html?id=${car.id}'">
-                    <img src="${car.images?.[0] || 'placeholder.jpg'}" class="car-img">
-                    <div class="car-info">
-                        <div style="color:var(--primary); font-weight:900;">${Number(car.price).toLocaleString()} kr</div>
-                        <div style="font-weight:700; font-size:14px;">${car.brand} ${car.model}</div>
-                        <div style="font-size:11px; color:var(--gray-text);">${car.year} | ${car.mileage} mil</div>
-                    </div>
-                </div>
-            `).join('');
-
-            // Pagination Logic
-            pagBox.innerHTML = '';
-            for(let i = 1; i <= totalPages; i++) {
-                const btn = document.createElement('button');
-                btn.className = `page-link ${i === currentPage ? 'active' : ''}`;
-                btn.innerText = i;
-                btn.onclick = () => { currentPage = i; renderResults(); window.scrollTo(0, 0); };
-                pagBox.appendChild(btn);
+            if(selectedFeatures.length > 0) {
+                params.append('feats', selectedFeatures.join(','));
             }
-        }
 
-        document.getElementById('applyFiltersBtn').onclick = () => { currentPage = 1; renderResults(); };
-        window.onload = loadAllCars;
+            // الانتقال إلى صفحة النتائج مع البيانات
+            window.location.href = `results.html?${params.toString()}`;
+        };
     </script>
 </body>
 </html>
