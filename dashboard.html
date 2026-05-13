@@ -51,13 +51,11 @@
         .card { background: var(--white); padding: 35px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 25px; }
         .card-title { font-size: 22px; font-weight: 900; margin-bottom: 25px; border-left: 4px solid var(--primary); padding-left: 12px; }
         
-        /* Global Stats */
         .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .stat-box { background: var(--bg); padding: 20px; border-radius: 16px; text-align: center; border: 1px solid var(--border); }
         .stat-box span { font-size: 12px; font-weight: 800; color: var(--gray-text); text-transform: uppercase; }
         .stat-box h2 { font-size: 28px; font-weight: 900; color: var(--primary); margin-top: 5px; }
 
-        /* Professional Ad Stats Card */
         .ad-stat-card { display: flex; flex-direction: column; gap: 20px; background: var(--white); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 15px; transition: 0.2s; }
         .ad-stat-card:hover { border-color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.04); }
         @media (min-width: 900px) { .ad-stat-card { flex-direction: row; align-items: center; } }
@@ -84,11 +82,14 @@
         .btn-del { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; }
         .btn-del:hover { background: #ef4444; color: white; transform: translateY(-2px); }
         
-        .form-group { margin-bottom: 20px; }
+        .profile-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 25px; }
+        @media (min-width: 768px) { .profile-grid { grid-template-columns: 1fr 1fr; } }
+        
         .form-group label { display: block; font-size: 12px; font-weight: 800; color: var(--gray-text); margin-bottom: 8px; text-transform: uppercase; }
         .form-input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); font-size: 14px; outline: none; font-weight: 600; transition: 0.2s; }
         .form-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.1); }
-        .btn-save { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 15px; transition: 0.3s; }
+        .btn-save { background: var(--primary); color: white; border: none; padding: 16px 35px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 15px; transition: 0.3s; width: 100%; }
+        @media (min-width: 768px) { .btn-save { width: auto; } }
         .btn-save:hover { background: var(--primary-hover); transform: translateY(-2px); }
 
         footer { background: var(--white); border-top: 1px solid var(--border); padding: 40px 5% 20px; margin-top: auto; }
@@ -117,9 +118,8 @@
     
     <main>
         <div id="overview" class="content-section active">
-            
             <div class="card" style="padding: 25px;">
-                <h2 class="card-title" style="margin-bottom: 15px; font-size: 18px;">Kontoöversikt (إجمالي الإحصائيات)</h2>
+                <h2 class="card-title" style="margin-bottom: 15px; font-size: 18px;">Kontoöversikt</h2>
                 <div class="stat-grid" style="margin-bottom: 0;">
                     <div class="stat-box"><span>Totalt Visningar</span><h2 id="global-views">0</h2></div>
                     <div class="stat-box"><span>Totalt Sparade</span><h2 id="global-saves">0</h2></div>
@@ -128,18 +128,31 @@
             </div>
 
             <div class="card">
-                <h2 class="card-title">Mina Fordon (مركباتي وإحصائياتها)</h2>
-                <div id="adsContainer">
-                    </div>
+                <h2 class="card-title">Mina Fordon</h2>
+                <div id="adsContainer"></div>
             </div>
         </div>
         
         <div id="profile" class="content-section card">
             <h2 class="card-title">Profilinställningar</h2>
             <form id="profileForm">
-                <div class="form-group">
-                    <label>Telefonnummer</label>
-                    <input type="text" id="p-phone" class="form-input" placeholder="T.ex. 070 123 45 67">
+                <div class="profile-grid">
+                    <div class="form-group">
+                        <label>Namn / Användarnamn</label>
+                        <input type="text" id="p-name" class="form-input" placeholder="Ditt namn">
+                    </div>
+                    <div class="form-group">
+                        <label>E-postadress</label>
+                        <input type="email" id="p-email" class="form-input" placeholder="exempel@doman.se">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefonnummer</label>
+                        <input type="text" id="p-phone" class="form-input" placeholder="T.ex. 070 123 45 67">
+                    </div>
+                    <div class="form-group">
+                        <label>Webbplats</label>
+                        <input type="url" id="p-website" class="form-input" placeholder="https://www.dinwebbsida.se">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Adress</label>
@@ -203,12 +216,10 @@
             snap.forEach(d => {
                 const car = d.data();
                 
-                // جلب الإحصائيات (في حال لم تكن موجودة في الداتا بيز، نضعها 0)
                 const views = car.views || 0;
                 const saves = car.saves || 0;
-                const messages = car.messagesCount || 0; // سيتم تحديثها لاحقاً برمجياً عند تفعيل نظام الرسائل بالكامل
+                const messages = car.messagesCount || 0;
 
-                // تجميع الإحصائيات العامة
                 globalViews += views;
                 globalSaves += saves;
                 globalMsgs += messages;
@@ -248,7 +259,6 @@
                     </div>`;
             });
 
-            // تحديث الأرقام العامة في أعلى الصفحة
             document.getElementById('global-views').innerText = globalViews;
             document.getElementById('global-saves').innerText = globalSaves;
             document.getElementById('global-msgs').innerText = globalMsgs;
@@ -261,8 +271,13 @@
             const userDoc = await getDoc(doc(db, "users", uid));
             if (userDoc.exists()) {
                 const u = userDoc.data();
+                document.getElementById('p-name').value = u.name || "";
+                document.getElementById('p-email').value = u.email || auth.currentUser.email || "";
                 document.getElementById('p-phone').value = u.phone || "";
                 document.getElementById('p-address').value = u.address || "";
+                document.getElementById('p-website').value = u.website || "";
+            } else {
+                document.getElementById('p-email').value = auth.currentUser.email || "";
             }
         } catch(e) { console.error(e); }
     }
@@ -274,8 +289,11 @@
         
         try {
             await setDoc(doc(db, "users", user.uid), {
+                name: document.getElementById('p-name').value,
+                email: document.getElementById('p-email').value,
                 phone: document.getElementById('p-phone').value,
                 address: document.getElementById('p-address').value,
+                website: document.getElementById('p-website').value,
             }, { merge: true });
             Swal.fire("Sparat!", "Din profil har uppdaterats.", "success");
         } catch(e) {
@@ -299,7 +317,7 @@
             try {
                 await deleteDoc(doc(db, "cars", id));
                 Swal.fire('Raderad!', 'Annonsen har raderats.', 'success');
-                loadDashboardData(auth.currentUser.uid); // إعادة تحميل القائمة بدون عمل Refresh للصفحة
+                loadDashboardData(auth.currentUser.uid);
             } catch(e) {
                 Swal.fire("Fel", "Kunde inte radera annonsen.", "error");
             }
