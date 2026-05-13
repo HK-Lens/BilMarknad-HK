@@ -1,227 +1,953 @@
 <!DOCTYPE html>
 <html lang="sv">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mina Meddelanden | BILHK</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
-    <style>
-        :root { 
-            --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; 
-            --danger: #ef4444; 
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+<meta charset="UTF-8">
 
-        header { background: white; padding: 18px 5%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
-        header .logo { text-decoration: none; font-weight: 900; color: var(--dark); font-size: 26px; }
-        header .logo span { color: var(--primary); }
-        #userBadge { font-size: 11px; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 6px 14px; border-radius: 50px; }
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        .app-container { display: flex; flex: 1; overflow: hidden; max-width: 1500px; margin: 0 auto; width: 100%; background: white; }
+<title>Mina Meddelanden | BILHK</title>
 
-        .sidebar { width: 380px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #fff; z-index: 200; }
-        .sidebar-header { padding: 25px; font-weight: 900; font-size: 1.4rem; border-bottom: 2px solid var(--bg); display: flex; align-items: center; gap: 12px; }
-        .chat-list { flex: 1; overflow-y: auto; }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap"
+rel="stylesheet">
 
-        .chat-item { position: relative; padding: 20px; border-bottom: 1px solid #f8fafc; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-        .chat-item:hover { background: #f9fafb; }
-        .chat-item.active { background: #fff5eb; border-left: 5px solid var(--primary); }
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        .chat-content { flex: 1; min-width: 0; }
-        .chat-content strong { display: block; font-size: 15px; font-weight: 800; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .chat-content small { color: #64748b; font-size: 12px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        .hide-btn { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 10px; color: #cbd5e1; transition: 0.2s; }
-        .hide-btn:hover { background: #fee2e2; color: var(--danger); }
+<style>
 
-        .chat-window { flex: 1; display: flex; flex-direction: column; background: #ffffff; }
-        .chat-window-header { padding: 20px 25px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; }
+:root{
+--primary:#f58220;
+--dark:#0f172a;
+--bg:#f8fafc;
+--border:#e2e8f0;
+--danger:#ef4444;
+}
 
-        .msg-display { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #fafafa; }
-        
-        .bubble { padding: 12px 18px; border-radius: 20px; max-width: 75%; font-size: 14.5px; position: relative; }
-        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
-        .received { align-self: flex-start; background: white; border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:'Inter',sans-serif;
+}
 
-        .input-box { padding: 20px 25px; border-top: 1px solid var(--border); display: flex; gap: 12px; background: white; align-items: center; }
-        #msgInput { flex: 1; padding: 14px 20px; border-radius: 30px; border: 1px solid var(--border); outline: none; background: #f8fafc; }
-        #msgInput:focus { border-color: var(--primary); background: white; }
-        
-        .send-btn { background: var(--primary); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: 0.2s; }
-        .send-btn:hover { transform: scale(1.05); }
-        .send-btn:disabled { background: #e2e8f0; cursor: not-allowed; }
+body{
+background:var(--bg);
+height:100vh;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
 
-        .timestamp { font-size: 9px; opacity: 0.7; margin-top: 5px; display: block; text-align: right; }
+header{
+background:white;
+padding:18px 5%;
+border-bottom:1px solid var(--border);
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:1000;
+}
 
-        @media (max-width: 800px) {
-            .sidebar { width: 100%; } .sidebar.hide-mobile { display: none; }
-            .chat-window { display: none; } .chat-window.show-mobile { display: flex; width: 100%; position: absolute; height: 100%; }
-        }
-    </style>
+.logo{
+text-decoration:none;
+font-weight:900;
+color:var(--dark);
+font-size:26px;
+}
+
+.logo span{
+color:var(--primary);
+}
+
+#userBadge{
+font-size:11px;
+font-weight:700;
+color:#64748b;
+background:#f1f5f9;
+padding:6px 14px;
+border-radius:50px;
+max-width:220px;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+
+.app-container{
+display:flex;
+flex:1;
+overflow:hidden;
+max-width:1500px;
+margin:0 auto;
+width:100%;
+background:white;
+}
+
+.sidebar{
+width:380px;
+border-right:1px solid var(--border);
+display:flex;
+flex-direction:column;
+background:#fff;
+z-index:200;
+}
+
+.sidebar-header{
+padding:25px;
+font-weight:900;
+font-size:1.4rem;
+border-bottom:2px solid var(--bg);
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.chat-list{
+flex:1;
+overflow-y:auto;
+}
+
+.chat-item{
+position:relative;
+padding:20px;
+border-bottom:1px solid #f8fafc;
+cursor:pointer;
+display:flex;
+justify-content:space-between;
+align-items:center;
+transition:0.2s;
+}
+
+.chat-item:hover{
+background:#f9fafb;
+}
+
+.chat-item.active{
+background:#fff5eb;
+border-left:5px solid var(--primary);
+}
+
+.chat-content{
+flex:1;
+min-width:0;
+}
+
+.chat-content strong{
+display:block;
+font-size:15px;
+font-weight:800;
+margin-bottom:4px;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+
+.chat-content small{
+color:#64748b;
+font-size:12px;
+display:block;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+
+.hide-btn{
+width:35px;
+height:35px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:10px;
+color:#cbd5e1;
+transition:0.2s;
+border:none;
+background:none;
+cursor:pointer;
+}
+
+.hide-btn:hover{
+background:#fee2e2;
+color:var(--danger);
+}
+
+.chat-window{
+flex:1;
+display:flex;
+flex-direction:column;
+background:#ffffff;
+}
+
+.chat-window-header{
+padding:20px 25px;
+border-bottom:1px solid var(--border);
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.msg-display{
+flex:1;
+padding:25px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:15px;
+background:#fafafa;
+scroll-behavior:smooth;
+}
+
+.bubble{
+padding:12px 18px;
+border-radius:20px;
+max-width:75%;
+font-size:14.5px;
+position:relative;
+word-wrap:break-word;
+line-height:1.5;
+}
+
+.sent{
+align-self:flex-end;
+background:var(--primary);
+color:white;
+border-bottom-right-radius:4px;
+}
+
+.received{
+align-self:flex-start;
+background:white;
+border:1px solid var(--border);
+border-bottom-left-radius:4px;
+}
+
+.input-box{
+padding:20px 25px;
+border-top:1px solid var(--border);
+display:flex;
+gap:12px;
+background:white;
+align-items:center;
+}
+
+#msgInput{
+flex:1;
+padding:14px 20px;
+border-radius:30px;
+border:1px solid var(--border);
+outline:none;
+background:#f8fafc;
+font-size:14px;
+}
+
+#msgInput:focus{
+border-color:var(--primary);
+background:white;
+}
+
+.send-btn{
+background:var(--primary);
+color:white;
+border:none;
+width:50px;
+height:50px;
+border-radius:50%;
+cursor:pointer;
+transition:0.2s;
+}
+
+.send-btn:hover{
+transform:scale(1.05);
+}
+
+.send-btn:disabled{
+background:#e2e8f0;
+cursor:not-allowed;
+}
+
+.timestamp{
+font-size:9px;
+opacity:0.7;
+margin-top:5px;
+display:block;
+text-align:right;
+}
+
+.empty-state{
+text-align:center;
+padding-top:100px;
+color:#94a3b8;
+}
+
+.empty-state i{
+font-size:60px;
+opacity:0.2;
+}
+
+.empty-state p{
+margin-top:15px;
+}
+
+@media(max-width:800px){
+
+.sidebar{
+width:100%;
+}
+
+.sidebar.hide-mobile{
+display:none;
+}
+
+.chat-window{
+display:none;
+}
+
+.chat-window.show-mobile{
+display:flex;
+width:100%;
+position:absolute;
+height:100%;
+background:white;
+z-index:500;
+}
+
+}
+
+</style>
+
 </head>
+
 <body>
 
 <header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div id="userBadge">...</div>
+
+<a href="index.html" class="logo">
+BIL<span>HK</span>
+</a>
+
+<div id="userBadge">
+...
+</div>
+
 </header>
 
 <div class="app-container">
-    <div class="sidebar" id="sidebarArea">
-        <div class="sidebar-header"><i class="fa-solid fa-envelope-open-text" style="color:var(--primary)"></i> Meddelanden</div>
-        <div class="chat-list" id="chatList"></div>
-    </div>
-    
-    <div class="chat-window" id="chatWindow">
-        <div class="chat-window-header">
-            <button onclick="closeChatMobile()" class="hide-btn" style="color:var(--dark)"><i class="fa-solid fa-arrow-left"></i></button>
-            <div id="activeTitle" style="font-weight:900;">Välj en chatt</div>
-        </div>
-        
-        <div class="msg-display" id="msgArea">
-            <div style="text-align:center; padding-top:100px; color:#94a3b8;">
-                <i class="fa-solid fa-comments" style="font-size:60px; opacity:0.2;"></i>
-                <p style="margin-top:15px;">Klicka på en konversation för att läsa</p>
-            </div>
-        </div>
-        
-        <div class="input-box">
-            <input type="text" id="msgInput" placeholder="Skriv ett meddelande..." disabled onkeypress="if(event.key==='Enter') sendMessage()">
-            <button id="sendBtn" class="send-btn" disabled onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
+
+<div class="sidebar"
+id="sidebarArea">
+
+<div class="sidebar-header">
+
+<i class="fa-solid fa-envelope-open-text"
+style="color:var(--primary)"></i>
+
+Meddelanden
+
+</div>
+
+<div class="chat-list"
+id="chatList">
+
+</div>
+
+</div>
+
+<div class="chat-window"
+id="chatWindow">
+
+<div class="chat-window-header">
+
+<button onclick="closeChatMobile()"
+class="hide-btn"
+style="color:var(--dark)">
+
+<i class="fa-solid fa-arrow-left"></i>
+
+</button>
+
+<div id="activeTitle"
+style="font-weight:900;">
+
+Välj en chatt
+
+</div>
+
+</div>
+
+<div class="msg-display"
+id="msgArea">
+
+<div class="empty-state">
+
+<i class="fa-solid fa-comments"></i>
+
+<p>
+Klicka på en konversation för att läsa
+</p>
+
+</div>
+
+</div>
+
+<div class="input-box">
+
+<input type="text"
+id="msgInput"
+placeholder="Skriv ett meddelande..."
+disabled>
+
+<button id="sendBtn"
+class="send-btn"
+disabled>
+
+<i class="fa-solid fa-paper-plane"></i>
+
+</button>
+
+</div>
+
+</div>
+
 </div>
 
 <script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, getDoc, updateDoc, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let user = null, activeRoom = null, chatUnsub = null;
+import {
+auth,
+db
+} from './firebase-config.js';
 
-    onAuthStateChanged(auth, (u) => { 
-        if(u) { 
-            user = u; 
-            document.getElementById('userBadge').innerText = u.email;
-            loadRooms(); 
-            initIncomingChat(); 
-        } else { window.location.href="login.html"; }
-    });
+import {
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // Handle new chat requests from details.html
-    async function initIncomingChat() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const sId = urlParams.get('sellerId');
-        const cId = urlParams.get('carId');
-        const title = urlParams.get('title');
-        
-        if (sId && cId && sId !== user.uid) {
-            const rId = [user.uid, sId].sort().join('_') + '_' + cId;
-            const roomRef = doc(db, "chats", rId);
-            const roomSnap = await getDoc(roomRef);
+import {
 
-            if (!roomSnap.exists()) {
-                await setDoc(roomRef, {
-                    carId: cId,
-                    carName: title || 'Intresserad',
-                    participants: [user.uid, sId],
-                    sellerId: sId,
-                    buyerId: user.uid,
-                    buyerName: user.email.split('@')[0],
-                    lastMessage: "Hejsan! Jag är intresserad av bilen.",
-                    updatedAt: serverTimestamp()
-                });
-            }
-            openRoom(rId, title || 'Chatt');
-        }
-    }
+collection,
+query,
+where,
+onSnapshot,
+addDoc,
+serverTimestamp,
+orderBy,
+doc,
+getDoc,
+updateDoc,
+arrayRemove,
+setDoc
 
-    function loadRooms() {
-        const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid), orderBy("updatedAt", "desc"));
-        onSnapshot(q, snap => {
-            const list = document.getElementById('chatList');
-            list.innerHTML = "";
-            snap.forEach(d => {
-                const r = d.data();
-                const displayTitle = r.sellerId === user.uid ? `${r.carName} (Köpare: ${r.buyerName})` : r.carName;
-                const div = document.createElement('div');
-                div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
-                div.onclick = () => openRoom(d.id, displayTitle);
-                div.innerHTML = `
-                    <div class="chat-content">
-                        <strong>${displayTitle}</strong>
-                        <small>${r.lastMessage || 'Inga meddelanden än'}</small>
-                    </div>
-                    <div class="hide-btn" onclick="hideChat(event, '${d.id}')">
-                        <i class="fa-solid fa-eye-slash"></i>
-                    </div>`;
-                list.appendChild(div);
-            });
-        });
-    }
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    window.openRoom = (id, name) => {
-        if(chatUnsub) chatUnsub();
-        activeRoom = id;
-        document.getElementById('activeTitle').innerText = name;
-        document.getElementById('msgInput').disabled = false;
-        document.getElementById('sendBtn').disabled = false;
-        document.getElementById('msgInput').focus();
+/* ========================================= */
 
-        // Mobile responsive UI toggle
-        document.getElementById('chatWindow').classList.add('show-mobile');
-        document.getElementById('sidebarArea').classList.add('hide-mobile');
+let user = null;
+let activeRoom = null;
+let chatUnsub = null;
 
-        const q = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
-        chatUnsub = onSnapshot(q, snap => {
-            const area = document.getElementById('msgArea'); area.innerHTML = "";
-            snap.forEach(d => {
-                const m = d.data();
-                const isMine = m.senderId === user.uid;
-                const div = document.createElement('div');
-                div.className = `bubble ${isMine ? 'sent' : 'received'}`;
-                const time = m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '...';
-                div.innerHTML = `${m.text} <span class="timestamp">${time}</span>`;
-                area.appendChild(div);
-            });
-            area.scrollTop = area.scrollHeight;
-        });
-    };
+/* ========================================= */
 
-    window.sendMessage = async () => {
-        const input = document.getElementById('msgInput'), text = input.value.trim();
-        if(!text || !activeRoom) return;
-        input.value = "";
-        try {
-            await addDoc(collection(db, `chats/${activeRoom}/messages`), { senderId: user.uid, text, createdAt: serverTimestamp() });
-            await updateDoc(doc(db, "chats", activeRoom), { 
-                lastMessage: text, 
-                updatedAt: serverTimestamp(),
-                participants: onSnapshot(doc(db, "chats", activeRoom), d => d.data().participants) // Ensure both are still in
-            });
-        } catch (e) { console.error("Send error:", e); }
-    };
+const msgInput =
+document.getElementById('msgInput');
 
-    window.hideChat = async (e, rId) => {
-        e.stopPropagation();
-        const res = await Swal.fire({ title: 'Dölj chatt?', text: 'Denna chatt försvinner från din lista.', icon: 'question', showCancelButton: true });
-        if(res.isConfirmed) {
-            await updateDoc(doc(db, "chats", rId), { participants: arrayRemove(user.uid) });
-            if(activeRoom === rId) location.reload();
-        }
-    };
+const sendBtn =
+document.getElementById('sendBtn');
 
-    window.closeChatMobile = () => {
-        document.getElementById('chatWindow').classList.remove('show-mobile');
-        document.getElementById('sidebarArea').classList.remove('hide-mobile');
-    };
+/* ========================================= */
+
+onAuthStateChanged(auth,(u)=>{
+
+if(!u){
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+user = u;
+
+document.getElementById(
+'userBadge'
+).innerText = u.email;
+
+loadRooms();
+
+initIncomingChat();
+
+});
+
+/* ========================================= */
+
+async function initIncomingChat(){
+
+const urlParams =
+new URLSearchParams(window.location.search);
+
+const sId =
+urlParams.get('sellerId');
+
+const cId =
+urlParams.get('carId');
+
+const title =
+urlParams.get('title');
+
+if(!sId || !cId || sId === user.uid)
+return;
+
+try{
+
+const roomId =
+[user.uid,sId].sort().join('_')
++ '_' + cId;
+
+const roomRef =
+doc(db,"chats",roomId);
+
+const roomSnap =
+await getDoc(roomRef);
+
+if(!roomSnap.exists()){
+
+await setDoc(roomRef,{
+
+carId:cId,
+
+carName:title || 'Bil',
+
+participants:[
+user.uid,
+sId
+],
+
+sellerId:sId,
+
+buyerId:user.uid,
+
+buyerName:
+user.email?.split('@')[0]
+|| 'Köpare',
+
+lastMessage:
+"Hejsan! Jag är intresserad av bilen.",
+
+updatedAt:
+serverTimestamp()
+
+});
+
+}
+
+openRoom(
+roomId,
+title || 'Chatt'
+);
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+
+/* ========================================= */
+
+function loadRooms(){
+
+const q = query(
+
+collection(db,"chats"),
+
+where(
+"participants",
+"array-contains",
+user.uid
+),
+
+orderBy(
+"updatedAt",
+"desc"
+)
+
+);
+
+onSnapshot(q,(snap)=>{
+
+const list =
+document.getElementById('chatList');
+
+list.innerHTML = "";
+
+if(snap.empty){
+
+list.innerHTML = `
+<div class="empty-state">
+<i class="fa-solid fa-inbox"></i>
+<p>Inga konversationer än</p>
+</div>
+`;
+
+return;
+
+}
+
+snap.forEach((chatDoc)=>{
+
+const room =
+chatDoc.data();
+
+const displayTitle =
+room.sellerId === user.uid
+? `${room.carName} (Köpare: ${room.buyerName || 'Okänd'})`
+: room.carName || 'Chatt';
+
+const div =
+document.createElement('div');
+
+div.className =
+`chat-item ${
+activeRoom === chatDoc.id
+? 'active'
+: ''
+}`;
+
+div.onclick = ()=>{
+
+openRoom(
+chatDoc.id,
+displayTitle
+);
+
+};
+
+div.innerHTML = `
+
+<div class="chat-content">
+
+<strong>
+${escapeHtml(displayTitle)}
+</strong>
+
+<small>
+${escapeHtml(room.lastMessage || 'Inga meddelanden')}
+</small>
+
+</div>
+
+<button class="hide-btn"
+onclick="hideChat(event,'${chatDoc.id}')">
+
+<i class="fa-solid fa-eye-slash"></i>
+
+</button>
+
+`;
+
+list.appendChild(div);
+
+});
+
+});
+
+}
+
+/* ========================================= */
+
+window.openRoom = (roomId,title)=>{
+
+activeRoom = roomId;
+
+document.getElementById(
+'activeTitle'
+).innerText = title;
+
+msgInput.disabled = false;
+sendBtn.disabled = false;
+
+msgInput.focus();
+
+document.getElementById(
+'chatWindow'
+).classList.add('show-mobile');
+
+document.getElementById(
+'sidebarArea'
+).classList.add('hide-mobile');
+
+if(chatUnsub){
+chatUnsub();
+}
+
+const q = query(
+
+collection(
+db,
+`chats/${roomId}/messages`
+),
+
+orderBy(
+"createdAt",
+"asc"
+)
+
+);
+
+chatUnsub = onSnapshot(q,(snap)=>{
+
+const area =
+document.getElementById('msgArea');
+
+area.innerHTML = "";
+
+snap.forEach((msgDoc)=>{
+
+const msg =
+msgDoc.data();
+
+const isMine =
+msg.senderId === user.uid;
+
+const bubble =
+document.createElement('div');
+
+bubble.className =
+`bubble ${
+isMine ? 'sent' : 'received'
+}`;
+
+const time =
+msg.createdAt?.toDate
+? msg.createdAt.toDate()
+.toLocaleTimeString([],{
+hour:'2-digit',
+minute:'2-digit'
+})
+: '...';
+
+bubble.innerHTML = `
+
+${escapeHtml(msg.text)}
+
+<span class="timestamp">
+${time}
+</span>
+
+`;
+
+area.appendChild(bubble);
+
+});
+
+area.scrollTop =
+area.scrollHeight;
+
+});
+
+};
+
+/* ========================================= */
+
+async function sendMessage(){
+
+const text =
+msgInput.value.trim();
+
+if(!text || !activeRoom)
+return;
+
+msgInput.value = '';
+
+sendBtn.disabled = true;
+
+try{
+
+await addDoc(
+
+collection(
+db,
+`chats/${activeRoom}/messages`
+),
+
+{
+
+senderId:user.uid,
+
+text:text,
+
+createdAt:
+serverTimestamp()
+
+}
+
+);
+
+await updateDoc(
+
+doc(db,"chats",activeRoom),
+
+{
+
+lastMessage:text,
+
+updatedAt:
+serverTimestamp()
+
+}
+
+);
+
+}catch(error){
+
+console.error(error);
+
+Swal.fire(
+'Fel',
+'Kunde inte skicka meddelandet.',
+'error'
+);
+
+}finally{
+
+sendBtn.disabled = false;
+
+msgInput.focus();
+
+}
+
+}
+
+window.sendMessage = sendMessage;
+
+/* ========================================= */
+
+msgInput.addEventListener(
+'keypress',
+(e)=>{
+
+if(e.key === 'Enter'){
+sendMessage();
+}
+
+}
+);
+
+/* ========================================= */
+
+window.hideChat = async(e,roomId)=>{
+
+e.stopPropagation();
+
+const res =
+await Swal.fire({
+
+title:'Dölj chatt?',
+
+text:
+'Denna chatt försvinner från din lista.',
+
+icon:'question',
+
+showCancelButton:true,
+
+confirmButtonColor:'#f58220'
+
+});
+
+if(!res.isConfirmed)
+return;
+
+try{
+
+await updateDoc(
+
+doc(db,"chats",roomId),
+
+{
+
+participants:
+arrayRemove(user.uid)
+
+}
+
+);
+
+if(activeRoom === roomId){
+
+activeRoom = null;
+
+document.getElementById(
+'msgArea'
+).innerHTML = `
+<div class="empty-state">
+<i class="fa-solid fa-comments"></i>
+<p>Välj en konversation</p>
+</div>
+`;
+
+}
+
+}catch(error){
+
+console.error(error);
+
+Swal.fire(
+'Fel',
+'Kunde inte dölja chatten.',
+'error'
+);
+
+}
+
+};
+
+/* ========================================= */
+
+window.closeChatMobile = ()=>{
+
+document.getElementById(
+'chatWindow'
+).classList.remove('show-mobile');
+
+document.getElementById(
+'sidebarArea'
+).classList.remove('hide-mobile');
+
+};
+
+/* ========================================= */
+
+function escapeHtml(text){
+
+if(!text) return '';
+
+return text
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+/* ========================================= */
+
+window.addEventListener(
+'beforeunload',
+()=>{
+
+if(chatUnsub){
+chatUnsub();
+}
+
+}
+);
+
 </script>
+
 </body>
 </html>
