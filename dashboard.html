@@ -112,6 +112,9 @@
         .btn-send:disabled { background: var(--gray-text); cursor: not-allowed; }
         .btn-send:not(:disabled):hover { background: var(--primary-hover); transform: translateY(-2px); }
 
+        .btn-delete-chat { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+        .btn-delete-chat:hover { background: #ef4444; color: white; }
+
         footer { background: var(--white); border-top: 1px solid var(--border); padding: 40px 5% 20px; margin-top: auto; }
         .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
         .disclaimer { font-size: 12px; color: #94a3b8; max-width: 600px; line-height: 1.5; }
@@ -221,7 +224,6 @@
     let unsubscribeMessages = null;
     let chatAutoOpened = false; 
 
-    // التقاط الرابط لمعرفة إذا كان هناك فلتر خاص بسيارة معينة
     let targetCarId = new URLSearchParams(window.location.search).get('carId');
     let currentTab = new URLSearchParams(window.location.search).get('tab') || 'overview';
 
@@ -245,11 +247,11 @@
             document.getElementById('chatMessagesBox').innerHTML = `<div style="margin: auto; color: var(--gray-text); font-size: 14px; font-weight: 500;">Ingen chatt vald.</div>`;
             document.getElementById('chatInput').disabled = true;
             document.getElementById('sendBtn').disabled = true;
-            if (unsubscribeMessages) unsubscribeMessages();
+            if (unsubscribeMessages) { unsubscribeMessages(); unsubscribeMessages = null; }
+            currentChatId = null;
         }
     };
 
-    // التبديل الفوري للأقسام بناءً على الرابط لمنع التوقف في "نظرة عامة"
     if (currentTab !== 'overview') {
         switchTab(currentTab, false);
     }
@@ -348,7 +350,6 @@
                     firstChat = { id: chatId, name: otherUser.name || 'Okänd', title: chat.carTitle || 'Annons' };
                 }
 
-                // تم إصلاح الرابط هنا ليفتح في نفس النافذة بدلاً من نافذة جديدة
                 listContent.innerHTML += `
                     <div class="chat-list-item ${isActive}" onclick="openChat('${chatId}', '${otherUser.name || 'Okänd'}', '${chat.carTitle || 'Annons'}')">
                         <div style="display: flex; gap: 12px; align-items: center; width: 100%;">
@@ -367,7 +368,6 @@
                  listContent.innerHTML += '<div style="padding: 30px 20px; text-align: center; color: var(--gray-text); font-size: 13px; font-weight: 600;">Inga meddelanden för denna annons ännu.</div>';
             }
 
-            // فتح الدردشة تلقائياً لتوفر عليك نقرة إضافية
             if (targetCarId && firstChat && !chatAutoOpened) {
                 openChat(firstChat.id, firstChat.name, firstChat.title);
                 chatAutoOpened = true;
@@ -377,7 +377,14 @@
 
     window.openChat = (chatId, otherName, carTitle) => {
         currentChatId = chatId;
-        document.getElementById('chatHeader').innerHTML = `<span>${carTitle} <small style="display:block; color:var(--primary); font-size:12px;">Chattar med: ${otherName}</small></span>`;
+        
+        // إضافة زر الحذف (Radera) في أعلى المحادثة المفتوحة
+        document.getElementById('chatHeader').innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                <span>${carTitle} <small style="display:block; color:var(--primary); font-size:12px;">Chattar med: ${otherName}</small></span>
+                <button onclick="deleteChat('${chatId}')" class="btn-delete-chat"><i class="fa-solid fa-trash"></i> Radera</button>
+            </div>
+        `;
         
         const input = document.getElementById('chatInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -418,6 +425,41 @@
             });
             msgBox.scrollTop = msgBox.scrollHeight;
         });
+    };
+
+    // وظيفة حذف الدردشة الجديدة بالكامل
+    window.deleteChat = async (chatId) => {
+        const res = await Swal.fire({ 
+            title: 'Radera konversation?', 
+            text: 'Detta går inte att ångra!', 
+            icon: 'warning', 
+            showCancelButton: true, 
+            confirmButtonColor: '#ef4444', 
+            cancelButtonColor: '#64748b', 
+            confirmButtonText: 'Ja, radera', 
+            cancelButtonText: 'Avbryt' 
+        });
+        
+        if (res.isConfirmed) {
+            try {
+                await deleteDoc(doc(db, "chats", chatId));
+                Swal.fire('Raderad!', 'Konversationen har raderats.', 'success');
+                
+                // إعادة تعيين واجهة الدردشة بعد الحذف
+                currentChatId = null;
+                document.getElementById('chatHeader').innerHTML = `<span>Välj en konversation</span>`;
+                document.getElementById('chatMessagesBox').innerHTML = `<div style="margin: auto; color: var(--gray-text); font-size: 14px; font-weight: 500;">Ingen chatt vald.</div>`;
+                document.getElementById('chatInput').disabled = true;
+                document.getElementById('sendBtn').disabled = true;
+                
+                if (unsubscribeMessages) { 
+                    unsubscribeMessages(); 
+                    unsubscribeMessages = null; 
+                }
+            } catch(e) { 
+                Swal.fire("Fel", "Kunde inte radera konversationen.", "error"); 
+            }
+        }
     };
 
     async function sendMessage() {
