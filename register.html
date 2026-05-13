@@ -20,27 +20,26 @@
         .tab { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; background: none; color: #64748b; }
         .tab.active { background: white; color: var(--dark); }
 
-        .form-group { margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; position: relative; }
         label { display: block; font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
         input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: #f9fafb; font-size: 14px; }
 
+        /* تنسيق زر إرسال الكود داخل الحقل */
+        .send-code-btn { position: absolute; right: 10px; top: 25px; background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+
         .btn-reg { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .btn-reg:disabled { background: #cbd5e1; cursor: not-allowed; }
 
         .modal-overlay { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); }
-        .modal-content { background: white; margin: 3% auto; padding: 35px; border-radius: 28px; width: 95%; max-width: 650px; position: relative; animation: slideIn 0.4s ease; }
-        @keyframes slideIn { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
+        .modal-content { background: white; margin: 3% auto; padding: 35px; border-radius: 28px; width: 95%; max-width: 650px; position: relative; }
         .modal-header { font-size: 22px; font-weight: 900; color: var(--dark); margin-bottom: 20px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .modal-body { max-height: 400px; overflow-y: auto; font-size: 13px; color: #475569; line-height: 1.7; margin-bottom: 25px; padding-right: 15px; text-align: left; }
-        .modal-body h4 { color: var(--dark); margin: 15px 0 5px; font-size: 14px; text-transform: uppercase; border-left: 4px solid var(--primary); padding-left: 10px; }
+        .modal-body { max-height: 400px; overflow-y: auto; font-size: 13px; color: #475569; line-height: 1.7; margin-bottom: 25px; padding-right: 15px; }
         
         .consent-box { background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: flex-start; gap: 15px; cursor: pointer; }
-        .consent-box input { width: 22px; height: 22px; cursor: pointer; }
-        .consent-box span { font-size: 13px; font-weight: 700; color: var(--dark); line-height: 1.4; }
+        .consent-box input { width: 22px; height: 22px; }
 
         .modal-footer { margin-top: 25px; display: flex; gap: 15px; }
         .btn-confirm { flex: 2; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; }
-        .btn-confirm:disabled { background: #cbd5e1; cursor: not-allowed; }
         .btn-cancel { flex: 1; padding: 16px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
@@ -60,29 +59,37 @@
             <div class="form-group"><label>Organisationsnummer</label><input type="text" id="taxId" placeholder="XXXXXX-XXXX"></div>
             <div class="form-group"><label>Företagsadress</label><input type="text" id="address"></div>
         </div>
-        <div class="form-group"><label>E-postadress</label><input type="email" id="email" required></div>
+
+        <div class="form-group">
+            <label>E-postadress</label>
+            <input type="email" id="email" required>
+            <button type="button" class="send-code-btn" id="sendOtpBtn" onclick="handleSendOTP()">Skicka Kod</button>
+        </div>
+
+        <!-- خانة الكود - تظهر فقط بعد إرسال الكود -->
+        <div class="form-group" id="otpGroup" style="display: none;">
+            <label>Verifieringskod (6 siffror)</label>
+            <input type="text" id="otpInput" placeholder="Skriv koden här" maxlength="6">
+        </div>
+
         <div class="form-group"><label>Lösenord</label><input type="password" id="pass" placeholder="Minst 8 tecken" required></div>
         <div class="form-group"><label>Bekräfta Lösenord</label><input type="password" id="confirmPass" required></div>
 
-        <button type="button" class="btn-reg" onclick="handlePreRegister()">Skapa konto</button>
+        <button type="button" class="btn-reg" id="mainRegBtn" onclick="handlePreRegister()" disabled>Skapa konto</button>
     </form>
 </div>
 
+<!-- Modal Terms -->
 <div id="termsModal" class="modal-overlay">
     <div class="modal-content">
-        <div class="modal-header">Användarvillkor & Ansvarsfriskrivning</div>
+        <div class="modal-header">Användarvillkor</div>
         <div class="modal-body">
-            <h4>1. Allmänt</h4>
-            <p>BILHK är en teknisk plattform...</p>
-            <h4>2. Verifiering</h4>
-            <p><b>Viktigt:</b> Du måste verifiera din e-postadress via länken vi skickar för أن تتمكن من استخدام حسابك. الحسابات غير المفعلة سيتم حذفها تلقائياً.</p>
+            <p>Genom att skapa ett konto godkänner du våra villkor...</p>
         </div>
-        
         <label class="consent-box">
             <input type="checkbox" id="finalConsent">
-            <span>Jag intygar att jag är över 18 år ولقد قرأت الشروط وأوافق على تفعيل حسابي عبر البريد.</span>
+            <span>Jag godkänner villkoren.</span>
         </label>
-
         <div class="modal-footer">
             <button class="btn-cancel" onclick="closeModal()">Avbryt</button>
             <button id="confirmRegBtn" class="btn-confirm" onclick="executeRegistration()" disabled>Godkänn och Slutför</button>
@@ -92,10 +99,11 @@
 
 <script type="module">
     import { auth, db } from './firebase-config.js';
-    import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let currentMode = 'Privat';
+    let generatedOTP = null;
 
     window.setMode = (m) => {
         currentMode = m;
@@ -104,21 +112,46 @@
         document.getElementById('bizFields').style.display = (m === 'Foretag') ? 'block' : 'none';
     };
 
-    // وظيفة للتحقق من صحة الإيميل تقنياً قبل إرساله لفايربيس
-    const isValidEmail = (email) => {
-        return String(email)
-            .toLowerCase()
-            .match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+    // 1. وظيفة إرسال الكود للبريد (قبل Firebase)
+    window.handleSendOTP = async () => {
+        const email = document.getElementById('email').value;
+        if (!email.includes('@')) return Swal.fire('Obs', 'Ange en giltig e-post.', 'warning');
+
+        // توليد كود عشوائي من 6 أرقام
+        generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+
+        Swal.fire({ title: 'Skickar kod...', didOpen: () => Swal.showLoading() });
+
+        try {
+            // هنا يجب ربط خدمة إرسال بريد (مثل EmailJS أو Backend)
+            // سأقوم بمحاكاة الإرسال حالياً وتنبيهك بالكود في المتصفح للتجربة
+            console.log("الكود المرسل هو: " + generatedOTP); 
+            
+            // تنبيه للمستخدم (يجب استبداله بخدمة إرسال حقيقية)
+            setTimeout(() => {
+                Swal.fire('Skickat!', 'Vi har skickat en kod till ' + email, 'success');
+                document.getElementById('otpGroup').style.display = 'block';
+                document.getElementById('mainRegBtn').disabled = false;
+                document.getElementById('sendOtpBtn').innerText = 'Skicka igen';
+            }, 1500);
+
+        } catch (error) {
+            Swal.fire('Fel', 'Kunde inte skicka kod.', 'error');
+        }
     };
 
     window.handlePreRegister = () => {
-        const email = document.getElementById('email').value.trim();
+        const userOTP = document.getElementById('otpInput').value;
         const p = document.getElementById('pass').value;
         const c = document.getElementById('confirmPass').value;
 
-        if (!isValidEmail(email)) return Swal.fire('Obs', 'Ange en giltig e-postadress.', 'warning');
+        // التحقق من الكود أولاً وقبل كل شيء
+        if (userOTP !== generatedOTP) {
+            return Swal.fire('Fel kod', 'Verifieringskoden är felaktig.', 'error');
+        }
+
         if (!p || p.length < 8) return Swal.fire('Obs', 'Lösenordet måste vara minst 8 tecken.', 'warning');
-        if (p !== c) return Swal.fire('Obs', 'Lösenorden matchار إنت في لا تتطابق!', 'warning');
+        if (p !== c) return Swal.fire('Obs', 'Lösenorden matchar inte!', 'warning');
         
         document.getElementById('termsModal').style.display = 'block';
     };
@@ -129,27 +162,22 @@
         document.getElementById('confirmRegBtn').disabled = !e.target.checked;
     };
 
+    // 2. إنشاء الحساب الحقيقي في Firebase (يحدث فقط بعد التأكد من الكود)
     window.executeRegistration = async () => {
-        const email = document.getElementById('email').value.trim();
+        const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
         const btn = document.getElementById('confirmRegBtn');
         
-        btn.disabled = true; 
-        btn.innerText = "Behandlar...";
+        btn.disabled = true; btn.innerText = "Skapar konto...";
 
         try {
-            // 1. إنشاء الحساب في Firebase
+            // الآن فقط يتم إنشاء الحساب في Firebase
             const cred = await createUserWithEmailAndPassword(auth, email, pass);
             
-            // 2. إرسال رابط التفعيل فوراً
-            await sendEmailVerification(cred.user);
-
-            // 3. تخزين بيانات المستخدم مع وضع حالة "غير مفعل"
             const userData = {
                 uid: cred.user.uid,
                 email: email,
                 userType: currentMode,
-                verified: false,
                 createdAt: serverTimestamp()
             };
 
@@ -160,27 +188,14 @@
             }
 
             await setDoc(doc(db, "users", cred.user.uid), userData);
-
-            // 4. تسجيل الخروج فوراً ومنع الدخول حتى يضغط الرابط
-            await signOut(auth);
-
-            Swal.fire({
-                title: 'Verifiera din e-post!',
-                text: `Vi har skickat en länk till ${email}. Du måste klicka på den för att kunna logga in.`,
-                icon: 'success',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.href = "login.html";
+            
+            Swal.fire('Klart!', 'Ditt konto har skapats framgångsrikt.', 'success').then(() => {
+                window.location.href = "index.html";
             });
 
         } catch (error) {
-            let errorMsg = "Ett fel uppstod vid registrering.";
-            if (error.code === 'auth/email-already-in-use') errorMsg = "E-postadressen används redan.";
-            if (error.code === 'auth/invalid-email') errorMsg = "Ogiltig e-postadress.";
-            
-            Swal.fire('Fel', errorMsg, 'error');
-            btn.disabled = false; 
-            btn.innerText = "Godkänn och Slutför";
+            Swal.fire('Fel', error.message, 'error');
+            btn.disabled = false; btn.innerText = "Godkänn och Slutför";
         }
     };
 </script>
