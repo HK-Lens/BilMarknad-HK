@@ -4,24 +4,11 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "functions/**"
     ],
     "cleanUrls": true,
     "trailingSlash": false,
-    "rewrites": [
-      { "source": "/", "destination": "/index.html" },
-      { "source": "/index", "destination": "/index.html" },
-      { "source": "/dashboard", "destination": "/dashboard.html" },
-      { "source": "/details", "destination": "/details.html" },
-      { "source": "/edit-car", "destination": "/edit-car.html" },
-      { "source": "/seller", "destination": "/seller.html" },
-      { "source": "/messages", "destination": "/messages.html" },
-      { "source": "/login", "destination": "/login.html" },
-      { "source": "/register", "destination": "/register.html" },
-      { "source": "/sell", "destination": "/sell.html" },
-      { "source": "/filter", "destination": "/filter.html" },
-      { "source": "/results", "destination": "/results.html" }
-    ],
     "headers": [
       {
         "source": "**/*.@(js|css)",
@@ -30,11 +17,22 @@
         ]
       },
       {
-        "source": "**/*.html",
+        "source": "**/*.@(jpg|jpeg|gif|png|webp|svg|ico)",
         "headers": [
-          { "key": "Cache-Control", "value": "no-cache" }
+          { "key": "Cache-Control", "value": "public, max-age=604800" }
+        ]
+      },
+      {
+        "source": "**",
+        "headers": [
+          { "key": "X-Content-Type-Options", "value": "nosniff" },
+          { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+          { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
         ]
       }
     ]
+  },
+  "functions": {
+    "source": "functions"
   }
 }

@@ -2,169 +2,104 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Avancerad sökning för bilar på BILHK.">
-    <title>Avancerad sökning | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sökfilter | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary:#f58220; --primary-hover:#e07210; --dark:#0f172a; --light:#f8fafc; --border:#e2e8f0; --white:#fff; --gray-text:#64748b; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
-        body { background:var(--light); color:var(--dark); overflow-x:hidden; display:flex; flex-direction:column; min-height:100vh; }
-        header { background:var(--white); padding:15px 5%; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:1000; }
-        .logo-box { display:flex; align-items:center; gap:20px; }
-        .logo { font-size:26px; font-weight:900; color:var(--dark); text-decoration:none; letter-spacing:-.5px; }
-        .logo span { color:var(--primary); }
-        .btn-home { text-decoration:none; color:var(--dark); font-weight:700; font-size:14px; display:flex; align-items:center; gap:5px; }
-        .nav-links { display:flex; align-items:center; gap:20px; }
-        .btn-sell { background:var(--primary); color:white!important; padding:8px 20px; border-radius:50px; text-decoration:none; font-weight:700; font-size:13px; }
-        .container { max-width:1100px; margin:40px auto; padding:0 20px; flex:1; width:100%; }
-        h1 { font-size:28px; font-weight:900; margin-bottom:30px; }
-        .filter-section { background:var(--white); border-radius:20px; padding:30px; border:1px solid var(--border); margin-bottom:30px; box-shadow:0 10px 30px rgba(0,0,0,.03); }
-        .section-title { font-size:14px; font-weight:900; text-transform:uppercase; color:var(--primary); margin-bottom:20px; border-bottom:2px solid var(--light); padding-bottom:10px; display:flex; align-items:center; gap:10px; }
-        .filter-grid { display:grid; grid-template-columns:repeat(1,1fr); gap:15px; }
-        @media(min-width:600px){ .filter-grid{grid-template-columns:repeat(2,1fr);} }
-        @media(min-width:900px){ .filter-grid{grid-template-columns:repeat(4,1fr);} }
-        .input-group { display:flex; flex-direction:column; }
-        .input-group label { font-size:11px; font-weight:800; color:var(--gray-text); margin-bottom:6px; text-transform:uppercase; }
-        input, select { padding:12px; border:1px solid var(--border); border-radius:10px; background:var(--light); font-size:13px; outline:none; font-weight:600; }
-        input:focus, select:focus { border-color:var(--primary); background:white; }
-        .checkbox-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
-        @media(min-width:768px){ .checkbox-grid{grid-template-columns:repeat(4,1fr);} }
-        .check-item { display:flex; align-items:center; gap:10px; background:var(--light); padding:10px; border-radius:8px; border:1px solid var(--border); cursor:pointer; transition:.2s; }
-        .check-item:hover { border-color:var(--primary); }
-        .check-item input { width:16px; height:16px; cursor:pointer; }
-        .check-item span { font-size:12px; font-weight:700; color:var(--dark); }
-        .action-bar { display:flex; gap:15px; margin-top:25px; }
-        .btn-apply { flex:1; background:var(--primary); color:white; border:none; padding:18px; border-radius:12px; font-weight:900; font-size:16px; cursor:pointer; transition:.2s; }
-        .btn-apply:hover { background:var(--primary-hover); transform:translateY(-2px); }
-        .btn-reset { width:130px; background:#e2e8f0; border:none; border-radius:12px; font-weight:800; cursor:pointer; color:var(--dark); }
-        footer { background:var(--white); border-top:1px solid var(--border); padding:35px 5% 20px; margin-top:60px; text-align:center; color:#94a3b8; font-size:12px; }
-        @media(max-width:600px){ .action-bar{flex-direction:column;} .btn-reset{width:100%; padding:16px;} }
+        :root { --primary: #f58220; --dark: #1a1a1a; --bg: #ffffff; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); }
+        .filter-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: white; z-index: 100; }
+        .close-btn { text-decoration: none; font-size: 24px; color: var(--dark); font-weight: 300; }
+        
+        .filter-content { padding: 20px; max-width: 600px; margin: auto; }
+        .section-title { font-size: 14px; font-weight: 800; text-transform: uppercase; color: #666; margin: 25px 0 15px; letter-spacing: 1px; }
+        
+        .select-box { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; background: #f9f9f9; margin-bottom: 15px; outline: none; }
+        
+        /* أيقونات الهيكل */
+        .karosseri-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .kar-item { border: 1px solid #ddd; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .kar-item img { width: 40px; margin-bottom: 8px; }
+        .kar-item span { font-size: 12px; font-weight: 600; display: block; }
+        .kar-item.active { border-color: var(--primary); background: #fff5eb; box-shadow: 0 0 0 1px var(--primary); }
+
+        .footer-action { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; }
+        .btn-apply { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: 800; font-size: 18px; cursor: pointer; }
     </style>
 </head>
 <body>
-<header>
-    <div class="logo-box">
-        <a href="index.html" class="logo">BIL<span>HK</span></a>
-        <a href="index.html" class="btn-home"><i class="fa-solid fa-house"></i> Hem</a>
-    </div>
-    <div class="nav-links">
-        <a href="sell.html" class="btn-sell">Sälj din bil</a>
-        <div id="authStatusContainer"></div>
-    </div>
-</header>
 
-<div class="container">
-    <h1>Djup sökning</h1>
-
-    <div class="filter-section">
-        <div class="section-title"><i class="fa-solid fa-car"></i> Grundläggande data</div>
-        <div class="filter-grid">
-            <div class="input-group"><label>Märke</label><select id="brandSelect"><option value="">Alla märken</option></select></div>
-            <div class="input-group"><label>Modell</label><select id="modelSelect"><option value="">Alla modeller</option></select></div>
-            <div class="input-group"><label>Min pris</label><input type="number" id="minPrice" placeholder="0 kr" min="0"></div>
-            <div class="input-group"><label>Max pris</label><input type="number" id="maxPrice" placeholder="Max kr" min="0"></div>
-            <div class="input-group"><label>Min årsmodell</label><input type="number" id="minYear" placeholder="Från år" min="1900"></div>
-            <div class="input-group"><label>Max årsmodell</label><input type="number" id="maxYear" placeholder="Till år" min="1900"></div>
-            <div class="input-group"><label>Min miltal</label><input type="number" id="minMil" placeholder="Från mil" min="0"></div>
-            <div class="input-group"><label>Max miltal</label><input type="number" id="maxMil" placeholder="Till mil" min="0"></div>
-        </div>
-
-        <div class="section-title" style="margin-top:30px;"><i class="fa-solid fa-gears"></i> Prestanda & teknik</div>
-        <div class="filter-grid">
-            <div class="input-group"><label>Drivmedel</label><select id="fuel"><option value="">Alla</option><option>Bensin</option><option>Diesel</option><option>El</option><option>Hybrid</option></select></div>
-            <div class="input-group"><label>Växellåda</label><select id="gear"><option value="">Alla</option><option>Automat</option><option>Manuell</option></select></div>
-            <div class="input-group"><label>Drivning</label><select id="drive"><option value="">Alla</option><option>Framhjulsdrift</option><option>Bakhjulsdrift</option><option>Fyrhjulsdrift</option></select></div>
-            <div class="input-group"><label>Färg</label><input type="text" id="color" placeholder="T.ex. Vit"></div>
-            <div class="input-group"><label>Min hästkrafter</label><input type="number" id="minHp" placeholder="Min hk" min="0"></div>
-            <div class="input-group"><label>Antal säten</label><input type="number" id="seats" placeholder="T.ex. 5" min="1"></div>
-            <div class="input-group"><label>Antal dörrar</label><input type="number" id="doors" placeholder="T.ex. 5" min="1"></div>
-            <div class="input-group"><label>Karosseri</label><select id="body"><option value="">Alla</option><option>SUV</option><option>Sedan</option><option>Kombi</option><option>Halvkombi</option><option>Cabriolet</option><option>Coupé</option></select></div>
-        </div>
-
-        <div class="section-title" style="margin-top:30px;"><i class="fa-solid fa-shield-halved"></i> Säkerhet & komfort</div>
-        <div class="checkbox-grid" id="featuresGrid"></div>
-
-        <div class="action-bar">
-            <button class="btn-reset" id="resetBtn">Rensa</button>
-            <button class="btn-apply" id="applyFiltersBtn">Visa resultat</button>
-        </div>
-    </div>
+<div class="filter-header">
+    <a href="index.html" class="close-btn">✕</a>
+    <h2 style="margin:0; font-size:18px;">Sökfilter</h2>
+    <span style="color:var(--primary); font-weight:700; cursor:pointer;" onclick="reset()">Rensa</span>
 </div>
 
-<footer>© 2026 BILHK. Alla rättigheter förbehållna.</footer>
+<div class="filter-content">
+    <div class="section-title">Fordon</div>
+    <select id="brandSel" class="select-box" onchange="updateModels()">
+        <option value="all">Alla märken</option>
+        <option value="Volvo">Volvo</option>
+        <option value="Mercedes-Benz">Mercedes-Benz</option>
+        <option value="BMW">BMW</option>
+        <option value="Audi">Audi</option>
+        <option value="Tesla">Tesla</option>
+        <option value="Volkswagen">Volkswagen</option>
+    </select>
 
-<script type="module">
-    import { auth } from './firebase-config.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { carData } from './cars-data.js';
+    <select id="modelSel" class="select-box">
+        <option value="all">Alla modeller</option>
+    </select>
 
-    const features = [
-        'ABS-bromsar', 'ACC', 'Autobroms', 'Filassistans', 'Döda vinkel-varnare', '360° Kamera',
-        'Navigation', 'Skinnklädsel', 'Dragkrok', 'Panoramaglastak', 'CarPlay', 'Parkeringssensorer',
-        'Backkamera', 'LED-strålkastare', 'Sätesvärme', 'Farthållare'
-    ];
+    <div class="section-title">Karosserityp</div>
+    <div class="karosseri-grid">
+        <div class="kar-item" onclick="setKar('Sedan', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202926.png"><span>Sedan</span></div>
+        <div class="kar-item" onclick="setKar('SUV', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202931.png"><span>SUV</span></div>
+        <div class="kar-item" onclick="setKar('Kombi', this)"><img src="https://cdn-icons-png.flaticon.com/512/3202/3202921.png"><span>Kombi</span></div>
+    </div>
 
-    onAuthStateChanged(auth, (user) => {
-        const container = document.getElementById('authStatusContainer');
-        container.innerHTML = user
-            ? `<a href="dashboard.html" style="text-decoration:none;color:var(--primary);font-weight:800;">Mitt Konto</a>`
-            : `<a href="login.html" style="text-decoration:none;color:var(--dark);font-weight:700;">Logga in</a>`;
-    });
+    <div class="section-title">Pris & Mil</div>
+    <input type="number" id="pTo" class="select-box" placeholder="Maxpris (kr)">
+    <input type="number" id="mTo" class="select-box" placeholder="Max miltal (mil)">
 
-    const brandSelect = document.getElementById('brandSelect');
-    const modelSelect = document.getElementById('modelSelect');
-    const featuresGrid = document.getElementById('featuresGrid');
+    <div style="height:100px;"></div> </div>
 
-    Object.keys(carData || {}).sort().forEach((brand) => {
-        brandSelect.insertAdjacentHTML('beforeend', `<option value="${brand}">${brand}</option>`);
-    });
+<div class="footer-action">
+    <button class="btn-apply" onclick="apply()">Visa fordon</button>
+</div>
 
-    features.forEach((feature) => {
-        featuresGrid.insertAdjacentHTML('beforeend', `
-            <label class="check-item"><input type="checkbox" class="feat" value="${feature}"><span>${feature}</span></label>
-        `);
-    });
-
-    brandSelect.onchange = () => {
-        modelSelect.innerHTML = '<option value="">Alla modeller</option>';
-        const selected = brandSelect.value;
-        if (selected && carData[selected]) {
-            carData[selected].slice().sort().forEach((model) => {
-                modelSelect.insertAdjacentHTML('beforeend', `<option value="${model}">${model}</option>`);
-            });
-        }
+<script>
+    const models = {
+        "Volvo": ["V60", "XC60", "XC90"],
+        "Mercedes-Benz": ["C-Klass", "E-Klass", "GLC"],
+        "BMW": ["3-serie", "5-serie", "X5"],
+        "Tesla": ["Model 3", "Model Y"]
     };
 
-    document.getElementById('resetBtn').onclick = () => {
-        document.querySelectorAll('input').forEach((el) => {
-            if (el.type === 'checkbox') el.checked = false;
-            else el.value = '';
-        });
-        document.querySelectorAll('select').forEach((el) => el.value = '');
-        modelSelect.innerHTML = '<option value="">Alla modeller</option>';
-    };
+    let selectedKar = 'all';
 
-    document.getElementById('applyFiltersBtn').onclick = () => {
-        const params = new URLSearchParams();
-        const fields = [
-            ['brand', 'brandSelect'], ['model', 'modelSelect'], ['minP', 'minPrice'], ['maxP', 'maxPrice'],
-            ['yFrom', 'minYear'], ['yTo', 'maxYear'], ['milFrom', 'minMil'], ['milTo', 'maxMil'],
-            ['fuel', 'fuel'], ['gear', 'gear'], ['drive', 'drive'], ['color', 'color'],
-            ['minHp', 'minHp'], ['seats', 'seats'], ['doors', 'doors'], ['body', 'body']
-        ];
+    function updateModels() {
+        const b = document.getElementById('brandSel').value;
+        const mSel = document.getElementById('modelSel');
+        mSel.innerHTML = '<option value="all">Alla modeller</option>';
+        if(models[b]) models[b].forEach(m => mSel.innerHTML += `<option value="${m}">${m}</option>`);
+    }
 
-        fields.forEach(([param, id]) => {
-            const value = document.getElementById(id).value.trim();
-            if (value) params.append(param, value);
-        });
+    function setKar(type, el) {
+        document.querySelectorAll('.kar-item').forEach(i => i.classList.remove('active'));
+        selectedKar = type;
+        el.classList.add('active');
+    }
 
-        const selectedFeatures = Array.from(document.querySelectorAll('.feat:checked')).map((cb) => cb.value);
-        if (selectedFeatures.length) params.append('feats', selectedFeatures.join(','));
+    function apply() {
+        const brand = document.getElementById('brandSel').value;
+        const model = document.getElementById('modelSel').value;
+        window.location.href = `index.html?brand=${brand}&model=${model}&kar=${selectedKar}`;
+    }
 
-        window.location.href = `results.html?${params.toString()}`;
-    };
+    function reset() {
+        location.reload();
+    }
 </script>
 </body>
 </html>
