@@ -1,401 +1,128 @@
 import { db, auth } from './firebase-config.js';
+import { collection, getDocs, query, limit, onSnapshot, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-import {
-    collection,
-    getDocs,
-    query,
-    orderBy,
-    onSnapshot,
-    where,
-    limit
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-import {
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-
-// ========================================
-// Global Variables
-// ========================================
-
+let selectedBodyType = null;
 let allCars = [];
-let currentUser = null;
 
+const escapeHtml = (value = '') => String(value)
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#039;');
 
-// ========================================
-// Auth State Observer
-// ========================================
+const money = (n) => Number(n || 0).toLocaleString('sv-SE');
 
-onAuthStateChanged(auth, (user) => {
+function ensureHeaderButtons(user) {
+  const authStatus = document.getElementById('authStatus') || document.getElementById('authStatusContainer') || document.getElementById('authButtonBox');
+  const authButton = document.getElementById('authButton');
 
-    const authBtn = document.getElementById('authButton');
-    const msgLink = document.getElementById('msgLink');
+  const html = user
+    ? `<a href="dashboard.html" class="top-link"><i class="fa-solid fa-user"></i> Min sida</a>`
+    : `<a href="login.html" class="top-link">Logga in</a>`;
+
+  if (authStatus) authStatus.innerHTML = html;
+  if (authButton) {
+    authButton.textContent = user ? 'Min sida' : 'Logga in';
+    authButton.href = user ? 'dashboard.html' : 'login.html';
+  }
+
+  const msgLink = document.getElementById('msgLink');
+  if (msgLink) msgLink.style.display = user ? 'flex' : 'none';
+
+  if (user) {
     const msgBadge = document.getElementById('msgBadge');
-
-    if (user) {
-
-        currentUser = user;
-
-        if (authBtn) {
-            authBtn.textContent = "Mitt Konto";
-            authBtn.href = "dashboard.html";
-        }
-
-        if (msgLink) {
-            msgLink.style.display = "flex";
-        }
-
-        // Unread messages counter
-        const unreadQuery = query(
-            collection(db, "messages"),
-            where("receiverId", "==", user.uid),
-            where("read", "==", false)
-        );
-
-        onSnapshot(unreadQuery, (snapshot) => {
-
-            if (!msgBadge) return;
-
-            if (snapshot.size > 0) {
-
-                msgBadge.innerText = snapshot.size;
-                msgBadge.style.display = "block";
-
-            } else {
-
-                msgBadge.style.display = "none";
-
-            }
-
-        });
-
-    } else {
-
-        currentUser = null;
-
-        if (authBtn) {
-            authBtn.textContent = "Logga in";
-            authBtn.href = "login.html";
-        }
-
-        if (msgLink) {
-            msgLink.style.display = "none";
-        }
-
-        if (msgBadge) {
-            msgBadge.style.display = "none";
-        }
-
+    if (msgBadge) {
+      const q = query(collection(db, 'chats'), where('participants', 'array-contains', user.uid));
+      onSnapshot(q, (snap) => {
+        msgBadge.innerText = snap.size || '';
+        msgBadge.style.display = snap.size ? 'block' : 'none';
+      });
     }
-
-});
-
-
-// ========================================
-// Initialize App
-// ========================================
-
-async function initApp() {
-
-    const grid = document.getElementById('carsGrid');
-
-    if (grid) {
-
-        grid.innerHTML = `
-            <p style="grid-column: 1/-1; text-align: center;">
-                Laddar fordon...
-            </p>
-        `;
-
-    }
-
-    try {
-
-        const carsQuery = query(
-            collection(db, "cars"),
-            orderBy("createdAt", "desc"),
-            limit(100)
-        );
-
-        const snapshot = await getDocs(carsQuery);
-
-        allCars = snapshot.docs
-            .map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }))
-            .filter(car =>
-                car &&
-                car.brand &&
-                car.model
-            );
-
-        const urlParams = new URLSearchParams(window.location.search);
-
-        const hasSearch =
-            urlParams.has('brand') ||
-            urlParams.has('model') ||
-            urlParams.has('kar') ||
-            urlParams.has('fuel') ||
-            urlParams.has('gear') ||
-            urlParams.has('text') ||
-            urlParams.has('minP') ||
-            urlParams.has('maxP') ||
-            urlParams.has('minY') ||
-            urlParams.has('maxY') ||
-            urlParams.has('minM') ||
-            urlParams.has('maxM');
-
-        if (hasSearch) {
-
-            applyDeepSearch(urlParams);
-
-        } else {
-
-            render(allCars);
-
-        }
-
-    } catch (error) {
-
-        console.error("Error fetching cars:", error);
-
-        if (grid) {
-
-            grid.innerHTML = `
-                <p style="grid-column: 1/-1; text-align: center;">
-                    Kunde inte ladda fordon.
-                </p>
-            `;
-
-        }
-
-    }
-
+  }
 }
 
+onAuthStateChanged(auth, (user) => ensureHeaderButtons(user));
 
-// ========================================
-// Deep Search
-// ========================================
+function buildSearchUrl() {
+  const params = new URLSearchParams();
+  const fields = [
+    ['brand', 'brandSelect'], ['model', 'modelInput'], ['maxP', 'maxPrice'], ['yFrom', 'yearFrom'],
+    ['yTo', 'yearTo'], ['fuel', 'fuelSelect'], ['gear', 'gearSelect'], ['milTo', 'maxMileage']
+  ];
+  fields.forEach(([param, id]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const value = (el.value || '').trim();
+    if (value && value !== 'all') params.set(param, value);
+  });
+  if (selectedBodyType) params.set('body', selectedBodyType);
+  window.location.href = `results.html?${params.toString()}`;
+}
 
-function applyDeepSearch(params) {
+function renderCars(cars) {
+  const grid = document.getElementById('carsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
 
-    const filtered = allCars.filter(car => {
+  if (!cars.length) {
+    grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:#64748b;padding:40px;">Inga annonser hittades.</p>`;
+    return;
+  }
 
-        // Brand
-        const brandMatch =
-            !params.get('brand') ||
-            params.get('brand') === 'all' ||
-            String(car.brand || "") === params.get('brand');
+  cars.forEach((car) => {
+    const sold = car.status === 'sold';
+    const title = `${escapeHtml(car.brand)} ${escapeHtml(car.model)}`;
+    grid.insertAdjacentHTML('beforeend', `
+      <article class="car-card" onclick="window.location.href='details.html?id=${encodeURIComponent(car.id)}'">
+        ${sold ? '<div class="sold-badge">SÅLD</div>' : ''}
+        <img loading="lazy" src="${escapeHtml(car.images?.[0] || 'placeholder.jpg')}" alt="${title}" style="width:100%;height:190px;object-fit:cover;${sold ? 'opacity:.6;' : ''}">
+        <div style="padding:20px;${sold ? 'opacity:.75;' : ''}">
+          <h3 style="color:var(--primary);font-size:22px;font-weight:900;">${money(car.price)} kr</h3>
+          <p style="font-weight:800;margin-top:4px;">${title}</p>
+          <p style="color:#64748b;font-size:13px;margin-top:6px;">${escapeHtml(car.year || '-')} | ${escapeHtml(car.mileage || car.mil || '-')} mil | ${escapeHtml(car.fuel || car.fuelType || '-')}</p>
+          <p style="color:#64748b;font-size:12px;margin-top:6px;">Säljare: ${escapeHtml(car.sellerDisplayName || car.sellerName || 'BILHK-användare')}</p>
+        </div>
+      </article>
+    `);
+  });
+}
 
-        // Model
-        const modelMatch =
-            !params.get('model') ||
-            params.get('model') === 'all' ||
-            String(car.model || "") === params.get('model');
+async function fetchRecentCars() {
+  const grid = document.getElementById('carsGrid');
+  if (!grid) return;
+  grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:30px;">Laddar bilar...</p>`;
+  try {
+    const snap = await getDocs(query(collection(db, 'cars'), limit(120)));
+    allCars = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+      .filter((c) => c.active !== false)
+      .sort((a, b) => {
+        const da = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+        const dbb = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+        return dbb - da;
+      })
+      .slice(0, 12);
+    renderCars(allCars);
+  } catch (e) {
+    console.error(e);
+    grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:#ef4444;padding:30px;">Kunde inte ladda annonser.</p>`;
+  }
+}
 
-        // Body Type
-        const bodyMatch =
-            !params.get('kar') ||
-            params.get('kar') === 'all' ||
-            String(car.bodyType || "") === params.get('kar');
-
-        // Price
-        const minPrice =
-            Number(params.get('minP')) || 0;
-
-        const maxPrice =
-            Number(params.get('maxP')) || Infinity;
-
-        const currentPrice =
-            Number(car.price) || 0;
-
-        const priceMatch =
-            currentPrice >= minPrice &&
-            currentPrice <= maxPrice;
-
-        // Year
-        const minYear =
-            Number(params.get('minY')) || 0;
-
-        const maxYear =
-            Number(params.get('maxY')) || Infinity;
-
-        const currentYear =
-            Number(car.year) || 0;
-
-        const yearMatch =
-            currentYear >= minYear &&
-            currentYear <= maxYear;
-
-        // Mileage
-        const minMileage =
-            Number(params.get('minM')) || 0;
-
-        const maxMileage =
-            Number(params.get('maxM')) || Infinity;
-
-        const currentMileage =
-            Number(car.mileage) || 0;
-
-        const mileageMatch =
-            currentMileage >= minMileage &&
-            currentMileage <= maxMileage;
-
-        // Fuel Type
-        const fuelMatch =
-            !params.get('fuel') ||
-            params.get('fuel') === 'all' ||
-            String(car.fuelType || "") === params.get('fuel');
-
-        // Transmission
-        const transmissionMatch =
-            !params.get('gear') ||
-            params.get('gear') === 'all' ||
-            String(car.transmission || "") === params.get('gear');
-
-        // Free Text Search
-        const searchText =
-            String(params.get('text') || "")
-            .toLowerCase()
-            .trim();
-
-        const brandText =
-            String(car.brand || "")
-            .toLowerCase();
-
-        const modelText =
-            String(car.model || "")
-            .toLowerCase();
-
-        const descriptionText =
-            String(car.description || "")
-            .toLowerCase();
-
-        const textMatch =
-            !searchText ||
-            brandText.includes(searchText) ||
-            modelText.includes(searchText) ||
-            descriptionText.includes(searchText);
-
-        return (
-            brandMatch &&
-            modelMatch &&
-            bodyMatch &&
-            priceMatch &&
-            yearMatch &&
-            mileageMatch &&
-            fuelMatch &&
-            transmissionMatch &&
-            textMatch
-        );
-
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.body-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.body-btn').forEach((b) => b.classList.remove('active'));
+      if (selectedBodyType === btn.dataset.type) selectedBodyType = null;
+      else {
+        selectedBodyType = btn.dataset.type;
+        btn.classList.add('active');
+      }
     });
+  });
 
-    render(filtered);
-
-    const resultTitle = document.getElementById('resultTitle');
-
-    if (resultTitle) {
-
-        resultTitle.innerText =
-            filtered.length > 0
-                ? `Hittade ${filtered.length} bilar som matchar din sökning`
-                : "Inga bilar matchade din sökning";
-
-    }
-
-}
-
-
-// ========================================
-// Render Cars
-// ========================================
-
-function render(data) {
-
-    const grid = document.getElementById('carsGrid');
-
-    if (!grid) return;
-
-    if (!Array.isArray(data) || data.length === 0) {
-
-        grid.innerHTML = `
-            <p style="grid-column: 1/-1; text-align: center;">
-                Inga fordon hittades.
-            </p>
-        `;
-
-        return;
-
-    }
-
-    grid.innerHTML = data.map(car => {
-
-        const image =
-            car.images?.[0] ||
-            car.image ||
-            "placeholder.jpg";
-
-        const price =
-            Number(car.price || 0).toLocaleString();
-
-        const brand =
-            String(car.brand || "");
-
-        const model =
-            String(car.model || "");
-
-        const year =
-            String(car.year || "");
-
-        const mileage =
-            String(car.mileage || "");
-
-        const fuelType =
-            String(car.fuelType || "");
-
-        return `
-
-            <div class="car-card"
-                 onclick="window.location.href='details.html?id=${car.id}'">
-
-                <img
-                    src="${image}"
-                    alt="${brand} ${model}"
-                    loading="lazy"
-                    onerror="this.src='placeholder.jpg'"
-                >
-
-                <div class="card-content">
-
-                    <div class="price-tag">
-                        ${price} kr
-                    </div>
-
-                    <div class="car-title">
-                        ${brand} ${model}
-                    </div>
-
-                    <div class="car-meta">
-                        ${year} • ${mileage} mil • ${fuelType}
-                    </div>
-
-                </div>
-
-            </div>
-
-        `;
-
-    }).join('');
-
-}
-
-
-// ========================================
-// Start App
-// ========================================
-
-initApp();
+  const searchBtn = document.getElementById('searchBtn');
+  if (searchBtn) searchBtn.addEventListener('click', buildSearchUrl);
+  fetchRecentCars();
+});
