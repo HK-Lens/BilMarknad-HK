@@ -1,136 +1,613 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logga in | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        
-        .auth-card { background: white; width: 100%; max-width: 440px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
-        .logo { text-align: center; margin-bottom: 25px; text-decoration: none; font-weight: 900; font-size: 32px; color: var(--dark); display: block; }
-        .logo span { color: var(--primary); }
 
-        .security-notice { background: #fff7ed; border: 1px solid #ffedd5; padding: 20px; border-radius: 16px; font-size: 13px; color: #9a3412; margin-bottom: 25px; line-height: 1.6; }
-        .security-notice b { color: #c2410c; display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+<meta charset="UTF-8">
 
-        .tabs { display: flex; background: #f1f5f9; padding: 5px; border-radius: 14px; margin-bottom: 25px; }
-        .tab { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; background: none; color: #64748b; }
-        .tab.active { background: white; color: var(--dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
-        input { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 14px; outline: none; font-size: 15px; background: #f9fafb; transition: 0.2s; }
-        input:focus { border-color: var(--primary); background: white; }
+<title>Logga in | BILHK</title>
 
-        .btn-auth { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        
-        .google-btn { 
-            width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 14px; 
-            background: white; display: flex; align-items: center; justify-content: center; 
-            gap: 12px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .google-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
-        .google-btn img { width: 20px; height: 20px; display: block; }
-    </style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"
+rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+
+:root{
+--primary:#f58220;
+--primary-hover:#e07210;
+--dark:#0f172a;
+--bg:#f8fafc;
+--border:#e2e8f0;
+--danger:#ef4444;
+}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:'Inter',sans-serif;
+}
+
+body{
+background:var(--bg);
+display:flex;
+align-items:center;
+justify-content:center;
+min-height:100vh;
+padding:20px;
+}
+
+.auth-card{
+background:white;
+width:100%;
+max-width:440px;
+padding:40px;
+border-radius:32px;
+border:1px solid var(--border);
+box-shadow:0 20px 50px rgba(0,0,0,0.05);
+}
+
+.logo{
+text-align:center;
+margin-bottom:25px;
+text-decoration:none;
+font-weight:900;
+font-size:32px;
+color:var(--dark);
+display:block;
+}
+
+.logo span{
+color:var(--primary);
+}
+
+.security-notice{
+background:#fff7ed;
+border:1px solid #ffedd5;
+padding:20px;
+border-radius:16px;
+font-size:13px;
+color:#9a3412;
+margin-bottom:25px;
+line-height:1.6;
+}
+
+.security-notice b{
+color:#c2410c;
+display:block;
+margin-bottom:8px;
+text-transform:uppercase;
+font-size:11px;
+letter-spacing:1px;
+}
+
+.tabs{
+display:flex;
+background:#f1f5f9;
+padding:5px;
+border-radius:14px;
+margin-bottom:25px;
+}
+
+.tab{
+flex:1;
+padding:12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:700;
+font-size:14px;
+background:none;
+color:#64748b;
+transition:0.2s;
+}
+
+.tab.active{
+background:white;
+color:var(--dark);
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
+}
+
+.form-group{
+margin-bottom:20px;
+}
+
+label{
+display:block;
+font-size:11px;
+font-weight:800;
+color:#64748b;
+margin-bottom:8px;
+text-transform:uppercase;
+}
+
+input{
+width:100%;
+padding:15px;
+border:1px solid var(--border);
+border-radius:14px;
+outline:none;
+font-size:15px;
+background:#f9fafb;
+transition:0.2s;
+}
+
+input:focus{
+border-color:var(--primary);
+background:white;
+}
+
+.btn-auth{
+width:100%;
+padding:18px;
+background:var(--primary);
+color:white;
+border:none;
+border-radius:14px;
+font-weight:800;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.btn-auth:hover{
+background:var(--primary-hover);
+transform:translateY(-2px);
+}
+
+.btn-auth:disabled{
+opacity:0.7;
+cursor:not-allowed;
+}
+
+.google-btn{
+width:100%;
+padding:14px;
+border:1px solid var(--border);
+border-radius:14px;
+background:white;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:12px;
+font-weight:700;
+cursor:pointer;
+margin-top:20px;
+transition:0.2s;
+box-shadow:0 2px 5px rgba(0,0,0,0.05);
+}
+
+.google-btn:hover{
+background:#f8fafc;
+border-color:#cbd5e1;
+}
+
+.google-btn img{
+width:20px;
+height:20px;
+display:block;
+}
+
+.google-btn:disabled{
+opacity:0.7;
+cursor:not-allowed;
+}
+
+</style>
+
 </head>
+
 <body>
 
 <div class="auth-card">
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
 
-    <div class="security-notice">
-        <b>Viktig säkerhetsinformation</b>
-        Genom att logga in bekräftar du att BILHK endast är en annonsplats. All handel sker på egen risk.
-    </div>
-    
-    <div class="tabs">
-        <button class="tab active" id="tabP" onclick="switchLogin('Privat')">Privatperson</button>
-        <button class="tab" id="tabF" onclick="switchLogin('Foretag')">Företag</button>
-    </div>
+<a href="index.html" class="logo">
+BIL<span>HK</span>
+</a>
 
-    <form id="loginForm">
-        <div class="form-group">
-            <label id="emailLabel">E-postadress</label>
-            <input type="email" id="email" placeholder="exempel@mail.com" required>
-        </div>
-        <button type="submit" class="btn-auth" id="submitBtn">Skicka inloggningslänk</button>
-    </form>
+<div class="security-notice">
 
-    <div id="googleSection">
-        <div style="text-align:center; margin:15px 0; font-size:12px; color:#cbd5e1; font-weight:800;">ELLER</div>
-        <button class="google-btn" id="googleBtn">
-            <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google Icon"> 
-            Logga in med Google
-        </button>
-    </div>
+<b>Viktig säkerhetsinformation</b>
+
+Genom att logga in bekräftar du att
+BILHK endast är en annonsplats.
+
+</div>
+
+<div class="tabs">
+
+<button class="tab active"
+id="tabP"
+onclick="switchLogin('Privat')">
+
+Privatperson
+
+</button>
+
+<button class="tab"
+id="tabF"
+onclick="switchLogin('Foretag')">
+
+Företag
+
+</button>
+
+</div>
+
+<form id="loginForm">
+
+<div class="form-group">
+
+<label id="emailLabel">
+E-postadress
+</label>
+
+<input type="email"
+id="email"
+placeholder="exempel@mail.com"
+required>
+
+</div>
+
+<button type="submit"
+class="btn-auth"
+id="submitBtn">
+
+Skicka inloggningslänk
+
+</button>
+
+</form>
+
+<div id="googleSection">
+
+<div style="
+text-align:center;
+margin:15px 0;
+font-size:12px;
+color:#cbd5e1;
+font-weight:800;
+">
+
+ELLER
+
+</div>
+
+<button class="google-btn"
+id="googleBtn">
+
+<img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png">
+
+Logga in med Google
+
+</button>
+
+</div>
+
 </div>
 
 <script type="module">
-    import { auth } from './firebase-config.js';
-    import { sendSignInLinkToEmail, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    let currentMode = 'Privat';
+import {
+auth,
+googleProvider
+} from './firebase-config.js';
 
-    window.switchLogin = (mode) => {
-        currentMode = mode;
-        document.getElementById('tabP').classList.toggle('active', mode === 'Privat');
-        document.getElementById('tabF').classList.toggle('active', mode === 'Foretag');
-        document.getElementById('emailLabel').innerText = mode === 'Privat' ? 'E-postadress' : 'Företags-e-post';
-        document.getElementById('googleSection').style.display = (mode === 'Privat') ? 'block' : 'none';
-    };
+import {
 
-    document.getElementById('loginForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const emailValue = document.getElementById('email').value;
-        const submitBtn = document.getElementById('submitBtn');
-        
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Skickar...";
+sendSignInLinkToEmail,
+signInWithPopup,
+onAuthStateChanged
 
-        const actionCodeSettings = {
-            // تأكد من أن هذا الرابط هو الرابط الصحيح لملف confirm.html على مستودعك
-            url: 'https://hk-lens.github.io/BilMarknad-HK/confirm.html',
-            handleCodeInApp: true,
-        };
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        try {
-            await sendSignInLinkToEmail(auth, emailValue, actionCodeSettings);
-            
-            // حفظ البيانات محلياً لاستخدامها عند العودة من الرابط
-            window.localStorage.setItem('emailForSignIn', emailValue);
-            window.localStorage.setItem('userTypePreference', currentMode);
+/* =========================================
+   GLOBALS
+========================================= */
 
-            Swal.fire({
-                title: 'Länk skickad!',
-                text: 'Kontrollera din e-post för att slutföra inloggningen.',
-                icon: 'success',
-                confirmButtonColor: '#f58220'
-            });
-        } catch (error) {
-            console.error(error);
-            Swal.fire('Fel', 'Kunde inte skicka länken. Försök igen senare.', 'error');
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Skicka inloggningslänk";
-        }
-    };
+let currentMode = 'Privat';
 
-    document.getElementById('googleBtn').onclick = async () => {
-        const provider = new GoogleAuthProvider();
-        try { 
-            await signInWithPopup(auth, provider); 
-            window.location.href = "index.html"; 
-        } catch (e) {
-            Swal.fire('Fel', 'Google-inloggning misslyckades.', 'error');
-        }
-    };
+const loginForm =
+document.getElementById('loginForm');
+
+const emailInput =
+document.getElementById('email');
+
+const submitBtn =
+document.getElementById('submitBtn');
+
+const googleBtn =
+document.getElementById('googleBtn');
+
+/* =========================================
+   AUTO REDIRECT IF LOGGED IN
+========================================= */
+
+onAuthStateChanged(auth,(user)=>{
+
+if(user){
+
+window.location.href = "dashboard.html";
+
+}
+
+});
+
+/* =========================================
+   SWITCH LOGIN MODE
+========================================= */
+
+window.switchLogin = (mode)=>{
+
+currentMode = mode;
+
+document
+.getElementById('tabP')
+.classList.toggle(
+'active',
+mode === 'Privat'
+);
+
+document
+.getElementById('tabF')
+.classList.toggle(
+'active',
+mode === 'Foretag'
+);
+
+document
+.getElementById('emailLabel')
+.innerText =
+mode === 'Privat'
+? 'E-postadress'
+: 'Företags-e-post';
+
+document
+.getElementById('googleSection')
+.style.display =
+(mode === 'Privat')
+? 'block'
+: 'none';
+
+};
+
+/* =========================================
+   EMAIL VALIDATION
+========================================= */
+
+function isValidEmail(email){
+
+return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+.test(email);
+
+}
+
+/* =========================================
+   EMAIL LINK LOGIN
+========================================= */
+
+loginForm.addEventListener('submit',async(e)=>{
+
+e.preventDefault();
+
+const email =
+emailInput.value.trim().toLowerCase();
+
+if(!email){
+
+Swal.fire(
+'Fel',
+'Ange din e-postadress.',
+'warning'
+);
+
+return;
+
+}
+
+if(!isValidEmail(email)){
+
+Swal.fire(
+'Fel',
+'Ogiltig e-postadress.',
+'error'
+);
+
+return;
+
+}
+
+/* =========================================
+   LOADING STATE
+========================================= */
+
+submitBtn.disabled = true;
+
+submitBtn.innerHTML = `
+<i class="fa-solid fa-spinner fa-spin"></i>
+Skickar...
+`;
+
+const actionCodeSettings = {
+
+url:
+'https://hk-lens.github.io/BilMarknad-HK/confirm.html',
+
+handleCodeInApp:true
+
+};
+
+try{
+
+await sendSignInLinkToEmail(
+auth,
+email,
+actionCodeSettings
+);
+
+/* =========================================
+   SAVE LOCAL DATA
+========================================= */
+
+localStorage.setItem(
+'emailForSignIn',
+email
+);
+
+localStorage.setItem(
+'userTypePreference',
+currentMode
+);
+
+await Swal.fire({
+
+title:'Länk skickad!',
+
+text:
+'Kontrollera din e-post för att logga in.',
+
+icon:'success',
+
+confirmButtonColor:'#f58220'
+
+});
+
+}catch(error){
+
+console.error(error);
+
+let errorMessage =
+'Kunde inte skicka länken.';
+
+switch(error.code){
+
+case 'auth/invalid-email':
+
+errorMessage =
+'Ogiltig e-postadress.';
+
+break;
+
+case 'auth/too-many-requests':
+
+errorMessage =
+'För många försök. Försök senare.';
+
+break;
+
+case 'auth/network-request-failed':
+
+errorMessage =
+'Nätverksfel. Kontrollera internet.';
+
+break;
+
+}
+
+Swal.fire({
+
+title:'Fel',
+
+text:errorMessage,
+
+icon:'error',
+
+confirmButtonColor:'#f58220'
+
+});
+
+}finally{
+
+submitBtn.disabled = false;
+
+submitBtn.innerHTML =
+'Skicka inloggningslänk';
+
+}
+
+});
+
+/* =========================================
+   GOOGLE LOGIN
+========================================= */
+
+googleBtn.addEventListener('click',async()=>{
+
+googleBtn.disabled = true;
+
+googleBtn.innerHTML = `
+<i class="fa-solid fa-spinner fa-spin"></i>
+Loggar in...
+`;
+
+try{
+
+await signInWithPopup(
+auth,
+googleProvider
+);
+
+window.location.href =
+"dashboard.html";
+
+}catch(error){
+
+console.error(error);
+
+let errorMessage =
+'Google-inloggning misslyckades.';
+
+switch(error.code){
+
+case 'auth/popup-closed-by-user':
+
+errorMessage =
+'Popup-fönstret stängdes.';
+
+break;
+
+case 'auth/network-request-failed':
+
+errorMessage =
+'Nätverksfel.';
+
+break;
+
+}
+
+Swal.fire({
+
+title:'Fel',
+
+text:errorMessage,
+
+icon:'error',
+
+confirmButtonColor:'#f58220'
+
+});
+
+}finally{
+
+googleBtn.disabled = false;
+
+googleBtn.innerHTML = `
+<img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png">
+Logga in med Google
+`;
+
+}
+
+});
+
 </script>
+
 </body>
 </html>
