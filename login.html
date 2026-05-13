@@ -16,7 +16,6 @@
         .logo { text-align: center; margin-bottom: 25px; text-decoration: none; font-weight: 900; font-size: 32px; color: var(--dark); display: block; }
         .logo span { color: var(--primary); }
 
-        /* Focused Security Box */
         .security-notice { background: #fff7ed; border: 1px solid #ffedd5; padding: 20px; border-radius: 16px; font-size: 13px; color: #9a3412; margin-bottom: 25px; line-height: 1.6; }
         .security-notice b { color: #c2410c; display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
 
@@ -48,7 +47,7 @@
 
     <div class="security-notice">
         <b>Viktig säkerhetsinformation</b>
-        Genom att logga in bekräftar du att BILHK endast är en annonsplats. Vi ansvarar INTE för fordonens skick, dolda fel eller lagligheten i dokumentationen. All handel och betalning sker helt på egen risk mellan användare.
+        Genom att logga in bekräftar du att BILHK endast är en annonsplats. All handel sker på egen risk.
     </div>
     
     <div class="tabs">
@@ -57,9 +56,11 @@
     </div>
 
     <form id="loginForm">
-        <div class="form-group"><label id="emailLabel">E-postadress</label><input type="email" id="email" required></div>
-        <div class="form-group"><label>Lösenord</label><input type="password" id="pass" required></div>
-        <button type="submit" class="btn-auth">Logga in</button>
+        <div class="form-group">
+            <label id="emailLabel">E-postadress</label>
+            <input type="email" id="email" placeholder="exempel@mail.com" required>
+        </div>
+        <button type="submit" class="btn-auth" id="submitBtn">Skicka inloggningslänk</button>
     </form>
 
     <div id="googleSection">
@@ -69,17 +70,16 @@
             Logga in med Google
         </button>
     </div>
-
-    <p style="text-align:center; margin-top:25px; font-size:14px; color:#64748b;">
-        Ny på BILHK? <a href="register.html" style="color:var(--primary); font-weight:800; text-decoration:none;">Skapa konto</a>
-    </p>
 </div>
 
 <script type="module">
     import { auth } from './firebase-config.js';
-    import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { sendSignInLinkToEmail, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    let currentMode = 'Privat';
 
     window.switchLogin = (mode) => {
+        currentMode = mode;
         document.getElementById('tabP').classList.toggle('active', mode === 'Privat');
         document.getElementById('tabF').classList.toggle('active', mode === 'Foretag');
         document.getElementById('emailLabel').innerText = mode === 'Privat' ? 'E-postadress' : 'Företags-e-post';
@@ -88,16 +88,48 @@
 
     document.getElementById('loginForm').onsubmit = async (e) => {
         e.preventDefault();
+        const emailValue = document.getElementById('email').value;
+        const submitBtn = document.getElementById('submitBtn');
+        
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Skickar...";
+
+        const actionCodeSettings = {
+            // تأكد من أن هذا الرابط هو الرابط الصحيح لملف confirm.html على مستودعك
+            url: 'https://hk-lens.github.io/BilMarknad-HK/confirm.html',
+            handleCodeInApp: true,
+        };
+
         try {
-            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value);
-            window.location.href = "index.html";
-        } catch (error) { 
-            Swal.fire('Fel', 'Inloggning misslyckades. Kontrollera dina uppgifter.', 'error'); 
+            await sendSignInLinkToEmail(auth, emailValue, actionCodeSettings);
+            
+            // حفظ البيانات محلياً لاستخدامها عند العودة من الرابط
+            window.localStorage.setItem('emailForSignIn', emailValue);
+            window.localStorage.setItem('userTypePreference', currentMode);
+
+            Swal.fire({
+                title: 'Länk skickad!',
+                text: 'Kontrollera din e-post för att slutföra inloggningen.',
+                icon: 'success',
+                confirmButtonColor: '#f58220'
+            });
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Fel', 'Kunde inte skicka länken. Försök igen senare.', 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Skicka inloggningslänk";
         }
     };
 
     document.getElementById('googleBtn').onclick = async () => {
-        try { await signInWithPopup(auth, new GoogleAuthProvider()); window.location.href = "index.html"; } catch (e) {}
+        const provider = new GoogleAuthProvider();
+        try { 
+            await signInWithPopup(auth, provider); 
+            window.location.href = "index.html"; 
+        } catch (e) {
+            Swal.fire('Fel', 'Google-inloggning misslyckades.', 'error');
+        }
     };
 </script>
 </body>
