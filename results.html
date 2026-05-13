@@ -2,66 +2,106 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sökresultat | BILHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; padding: 20px; }
-        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: auto; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; }
-        .no-results { text-align: center; padding: 100px; grid-column: 1/-1; }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--dark); }
+        header { background: #fff; padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .logo { text-decoration: none; font-size: 26px; font-weight: 900; color: var(--dark); }
+        .logo span { color: var(--primary); }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .car-card { background: #fff; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; cursor: pointer; }
+        .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .car-img { width: 100%; height: 200px; object-fit: cover; }
+        .car-info { padding: 20px; }
+        .car-price { font-size: 22px; font-weight: 900; color: var(--primary); margin-bottom: 5px; }
+        .car-name { font-size: 16px; font-weight: 800; margin-bottom: 10px; }
+        .car-meta { display: flex; gap: 10px; font-size: 12px; color: #64748b; font-weight: 600; }
     </style>
 </head>
 <body>
-    <h2 style="text-align:center; margin-bottom:30px;">Hittade fordon</h2>
-    <div id="resultsGrid" class="results-grid"></div>
+
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;"><i class="fa-solid fa-arrow-left"></i> Tillbaka</a>
+</header>
+
+<div class="container">
+    <h1 id="resultsCount" style="font-size: 24px; font-weight: 900; margin-bottom: 30px;">Söker bilar...</h1>
+    <div class="results-grid" id="resultsGrid"></div>
+</div>
 
 <script type="module">
     import { db } from './firebase-config.js';
     import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const grid = document.getElementById('resultsGrid');
+    const params = new URLSearchParams(window.location.search);
+    const filters = {
+        brand: params.get('brand'),
+        model: params.get('model')?.toLowerCase(),
+        maxP: parseFloat(params.get('maxP')),
+        fuel: params.get('fuel'),
+        body: params.get('body')
+    };
 
     async function loadResults() {
-        grid.innerHTML = "<p class='no-results'>Söker efter matchningar...</p>";
+        const grid = document.getElementById('resultsGrid');
+        const countTxt = document.getElementById('resultsCount');
         
         try {
-            const snapshot = await getDocs(collection(db, "cars"));
-            grid.innerHTML = "";
-            let foundCount = 0;
+            let q = collection(db, "cars");
+            if (filters.brand && filters.brand !== 'all') {
+                q = query(q, where("brand", "==", filters.brand));
+            }
+            // تطبيق فلتر الهيكل إن وجد
+            if (filters.body) {
+                q = query(q, where("karosseri", "==", filters.body));
+            }
 
-            snapshot.forEach(doc => {
-                const car = doc.data();
+            const snap = await getDocs(q);
+            let cars = [];
+            snap.forEach(doc => {
+                const data = doc.data();
+                data.id = doc.id;
                 
-                // 💡 منطق الفلترة المطابق لصفحة البيع
-                const matchesBrand = urlParams.get('brand') === 'all' || !urlParams.get('brand') || car.brand === urlParams.get('brand');
-                const matchesKar = urlParams.get('kar') === 'all' || car.karosseri === urlParams.get('kar');
-                const matchesFuel = urlParams.get('fuel') === 'all' || !urlParams.get('fuel') || car.fuel === urlParams.get('fuel');
-                
-                // فلترة السعر
-                const price = Number(car.price);
-                const minP = Number(urlParams.get('minP')) || 0;
-                const maxP = Number(urlParams.get('maxP')) || Infinity;
+                // فلترة إضافية في المتصفح للسعر والموديل
+                let match = true;
+                if (filters.model && !data.model.toLowerCase().includes(filters.model)) match = false;
+                if (filters.maxP && data.price > filters.maxP) match = false;
+                if (filters.fuel && filters.fuel !== 'all' && data.fuel !== filters.fuel) match = false;
 
-                if (matchesBrand && matchesKar && matchesFuel && price >= minP && price <= maxP) {
-                    foundCount++;
-                    grid.innerHTML += `
-                        <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
-                            <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:200px; object-fit:cover;">
-                            <div style="padding:15px;">
-                                <h3 style="color:#f58220;">${price.toLocaleString()} kr</h3>
-                                <p><strong>${car.brand} ${car.model}</strong></p>
-                                <p style="font-size:12px; color:#64748b;">${car.year} | ${car.mileage} mil | ${car.fuel}</p>
-                            </div>
-                        </div>`;
-                }
+                if (match) cars.push(data);
             });
 
-            if (foundCount === 0) grid.innerHTML = "<div class='no-results'>Inga fordon matchade din sökning. Prova bredare filter!</div>";
-        } catch (err) { console.error(err); }
-    }
+            grid.innerHTML = "";
+            countTxt.innerText = `${cars.length} bilar hittades`;
 
-    loadResults();
+            if (cars.length === 0) {
+                grid.innerHTML = "<p>Inga bilar matchade din sökning.</p>";
+                return;
+            }
+
+            cars.forEach(car => {
+                grid.innerHTML += `
+                    <div class="car-card" onclick="window.location.href='details.html?id=${car.id}'">
+                        <img src="${car.images?.[0] || 'placeholder.jpg'}" class="car-img">
+                        <div class="car-info">
+                            <div class="car-price">${Number(car.price).toLocaleString()} kr</div>
+                            <div class="car-name">${car.brand} ${car.model}</div>
+                            <div class="car-meta">
+                                <span>${car.year}</span> | <span>${car.mileage} mil</span> | <span>${car.fuel}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        } catch (e) { console.error(e); }
+    }
+    window.onload = loadResults;
 </script>
 </body>
 </html>
