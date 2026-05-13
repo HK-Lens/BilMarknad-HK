@@ -217,7 +217,7 @@
 <script type="module">
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, orderBy, getDocs, getDoc, doc, deleteDoc, setDoc, addDoc, updateDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, orderBy, getDocs, getDoc, doc, deleteDoc, setDoc, addDoc, updateDoc, serverTimestamp, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let currentUser = null;
     let currentChatId = null;
@@ -378,7 +378,6 @@
     window.openChat = (chatId, otherName, carTitle) => {
         currentChatId = chatId;
         
-        // إضافة زر الحذف (Radera) في أعلى المحادثة المفتوحة
         document.getElementById('chatHeader').innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
                 <span>${carTitle} <small style="display:block; color:var(--primary); font-size:12px;">Chattar med: ${otherName}</small></span>
@@ -427,7 +426,6 @@
         });
     };
 
-    // وظيفة حذف الدردشة الجديدة بالكامل
     window.deleteChat = async (chatId) => {
         const res = await Swal.fire({ 
             title: 'Radera konversation?', 
@@ -445,7 +443,6 @@
                 await deleteDoc(doc(db, "chats", chatId));
                 Swal.fire('Raderad!', 'Konversationen har raderats.', 'success');
                 
-                // إعادة تعيين واجهة الدردشة بعد الحذف
                 currentChatId = null;
                 document.getElementById('chatHeader').innerHTML = `<span>Välj en konversation</span>`;
                 document.getElementById('chatMessagesBox').innerHTML = `<div style="margin: auto; color: var(--gray-text); font-size: 14px; font-weight: 500;">Ingen chatt vald.</div>`;
@@ -518,14 +515,45 @@
         } catch(e) { Swal.fire("Fel", "Kunde inte spara profilen.", "error"); }
     };
 
+    // --- دالة الحذف العميق للإعلان (مع الرسائل الخاصة به) ---
     window.deleteAd = async (id) => {
-        const res = await Swal.fire({ title: 'Radera annons?', text: 'Går inte att ångra!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#64748b', confirmButtonText: 'Ja, radera', cancelButtonText: 'Avbryt' });
+        const res = await Swal.fire({ 
+            title: 'Radera annons?', 
+            text: 'Går inte att ångra! All chatt kopplad till annonsen kommer också att raderas.', 
+            icon: 'warning', 
+            showCancelButton: true, 
+            confirmButtonColor: '#ef4444', 
+            cancelButtonColor: '#64748b', 
+            confirmButtonText: 'Ja, radera', 
+            cancelButtonText: 'Avbryt' 
+        });
+        
         if (res.isConfirmed) {
             try {
-                await deleteDoc(doc(db, "cars", id));
-                Swal.fire('Raderad!', 'Annonsen har raderats.', 'success');
+                const batch = writeBatch(db);
+
+                // 1. البحث عن المحادثات المتعلقة وحذفها مع رسائلها
+                const q = query(collection(db, "chats"), where("carId", "==", id));
+                const cSnap = await getDocs(q);
+
+                for (let c of cSnap.docs) {
+                    const ms = await getDocs(collection(db, `chats/${c.id}/messages`));
+                    ms.forEach(m => batch.delete(m.ref)); // حذف الرسائل
+                    batch.delete(c.ref); // حذف غرفة الدردشة
+                }
+
+                // 2. حذف الإعلان نفسه
+                batch.delete(doc(db, "cars", id));
+
+                // التنفيذ الجماعي (Commit)
+                await batch.commit();
+
+                Swal.fire('Raderad!', 'Annonsen och all tillhörande data har raderats.', 'success');
                 loadDashboardData(currentUser.uid);
-            } catch(e) { Swal.fire("Fel", "Kunde inte radera.", "error"); }
+            } catch(e) { 
+                console.error(e);
+                Swal.fire("Fel", "Kunde inte radera annonsen.", "error"); 
+            }
         }
     };
 
