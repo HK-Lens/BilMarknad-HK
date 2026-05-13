@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Slutför e-postinloggning på BILHK.">
+    <title>Bekräftar inloggning | BILHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root { --primary:#f58220; --primary-hover:#e07210; --dark:#0f172a; --bg:#f8fafc; --border:#e2e8f0; --white:#fff; --gray:#64748b; --danger:#ef4444; --success:#10b981; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
+        body { background:var(--bg); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; color:var(--dark); }
+        .card { width:100%; max-width:480px; background:var(--white); border:1px solid var(--border); border-radius:30px; padding:42px 32px; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.06); }
+        .logo { text-decoration:none; font-size:32px; font-weight:900; color:var(--dark); display:block; margin-bottom:24px; }
+        .logo span { color:var(--primary); }
+        .icon { width:90px; height:90px; margin:0 auto 24px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#fff7ed; color:var(--primary); font-size:38px; }
+        h1 { font-size:24px; font-weight:900; margin-bottom:12px; }
+        p { color:var(--gray); font-size:14px; line-height:1.7; margin-bottom:25px; }
+        .loader { margin:22px auto; width:42px; height:42px; border-radius:50%; border:4px solid #fed7aa; border-top-color:var(--primary); animation:spin .9s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .btn { display:none; width:100%; text-decoration:none; border:none; background:var(--primary); color:white; padding:15px 18px; border-radius:14px; font-weight:900; cursor:pointer; font-size:15px; }
+        .btn:hover { background:var(--primary-hover); }
+        .small-link { display:block; margin-top:18px; color:var(--primary); text-decoration:none; font-weight:800; font-size:13px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <a href="index.html" class="logo">BIL<span>HK</span></a>
+        <div class="icon" id="statusIcon"><i class="fa-solid fa-envelope-circle-check"></i></div>
+        <h1 id="statusTitle">Bekräftar inloggning...</h1>
+        <p id="statusText">Vänta medan vi slutför din inloggning.</p>
+        <div class="loader" id="loader"></div>
+        <button id="mainBtn" class="btn">Fortsätt</button>
+        <a href="login.html" class="small-link">Tillbaka till inloggning</a>
+    </div>
+
+<script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const titleEl = document.getElementById('statusTitle');
+    const textEl = document.getElementById('statusText');
+    const loaderEl = document.getElementById('loader');
+    const iconEl = document.getElementById('statusIcon');
+    const btnEl = document.getElementById('mainBtn');
+
+    function showSuccess(message) {
+        loaderEl.style.display = 'none';
+        iconEl.style.background = '#ecfdf5';
+        iconEl.style.color = '#10b981';
+        iconEl.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+        titleEl.textContent = 'Inloggningen är klar!';
+        textEl.textContent = message;
+        btnEl.textContent = 'Gå till startsidan';
+        btnEl.style.display = 'block';
+        btnEl.onclick = () => window.location.href = 'index.html';
+    }
+
+    function showError(message) {
+        loaderEl.style.display = 'none';
+        iconEl.style.background = '#fee2e2';
+        iconEl.style.color = '#ef4444';
+        iconEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+        titleEl.textContent = 'Inloggningen misslyckades';
+        textEl.textContent = message;
+        btnEl.textContent = 'Försök igen';
+        btnEl.style.display = 'block';
+        btnEl.onclick = () => window.location.href = 'login.html';
+    }
+
+    async function completeEmailSignIn() {
+        try {
+            if (!isSignInWithEmailLink(auth, window.location.href)) {
+                showError('Länken är ogiltig eller har redan använts. Begär en ny inloggningslänk.');
+                return;
+            }
+
+            let email = window.localStorage.getItem('emailForSignIn') || '';
+            if (!email) {
+                const result = await Swal.fire({
+                    title: 'Ange din e-postadress',
+                    input: 'email',
+                    inputPlaceholder: 'exempel@mail.com',
+                    confirmButtonText: 'Fortsätt',
+                    confirmButtonColor: '#f58220',
+                    allowOutsideClick: false,
+                    inputValidator: (value) => !value ? 'E-postadress krävs.' : undefined
+                });
+                if (!result.value) {
+                    showError('Ingen e-postadress angavs.');
+                    return;
+                }
+                email = result.value.trim();
+            }
+
+            const credential = await signInWithEmailLink(auth, email, window.location.href);
+            const userType = window.localStorage.getItem('userTypePreference') || 'Privat';
+
+            await setDoc(doc(db, 'users', credential.user.uid), {
+                uid: credential.user.uid,
+                email: credential.user.email || email,
+                userType,
+                lastLoginAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            }, { merge: true });
+
+            window.localStorage.removeItem('emailForSignIn');
+            window.localStorage.removeItem('userTypePreference');
+
+            showSuccess('Du är nu inloggad på BILHK.');
+        } catch (error) {
+            console.error(error);
+            showError('Länken kunde inte bekräftas. Kontrollera att du använder samma enhet och e-postadress som när länken skickades.');
+        }
+    }
+
+    completeEmailSignIn();
+</script>
+</body>
+</html>
