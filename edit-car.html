@@ -1,245 +1,337 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Redigera Annons | BILHK</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <style>
-        :root { 
-            --primary: #f58220; 
-            --primary-hover: #e07210;
-            --dark: #0f172a; 
-            --bg: #f8fafc; 
-            --border: #e2e8f0; 
-            --white: #ffffff;
-            --danger: #ef4444;
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--dark); line-height: 1.6; padding-bottom: 50px; }
-
-        /* تنييه الموقع تحت الإنشاء */
-        .construction-notice {
-            background: var(--danger);
-            color: white;
-            text-align: center;
-            padding: 10px 20px;
-            font-size: 13px;
-            font-weight: 700;
-            position: relative;
-            z-index: 1100;
-        }
-
-        header { background: white; padding: 15px 5%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .logo { text-decoration: none; font-weight: 900; color: var(--dark); font-size: 24px; }
-        .logo span { color: var(--primary); }
-
-        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-        .form-card { background: white; padding: 40px; border-radius: 25px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        
-        .section-title { 
-            font-size: 14px; font-weight: 900; text-transform: uppercase; color: var(--primary); 
-            margin: 35px 0 15px; border-bottom: 2px solid var(--bg); padding-bottom: 8px; 
-            display: flex; align-items: center; gap: 10px; 
-        }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .full { grid-column: 1 / -1; }
-
-        label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 13px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; outline: none; font-size: 14px; font-weight: 600; transition: 0.3s; }
-        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.1); }
-
-        /* Checkbox Styles */
-        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
-        .check-item { display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
-        .check-item:hover { border-color: var(--primary); }
-        .check-item input { width: 18px; height: 18px; cursor: pointer; }
-        .check-item span { font-size: 12px; font-weight: 700; }
-
-        .btn-update { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; margin-top: 40px; transition: 0.3s; }
-        .btn-update:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245, 130, 32, 0.3); }
-        
-        .loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2000; font-weight:900; }
-    </style>
-</head>
-<body>
-
-<div id="loader" class="loading-overlay">
-    <i class="fa-solid fa-spinner fa-spin" style="font-size: 30px; color: var(--primary); margin-bottom: 15px;"></i>
-    Hämtar uppgifter...
-</div>
-
-<div class="construction-notice">
-    <i class="fa-solid fa-triangle-exclamation"></i> VIKTIG INFORMATION: Denna webbplats är under utveckling. Inga riktiga annonser publiceras eller hanteras för tillfället.
-</div>
-
-<header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <a href="dashboard.html" style="text-decoration:none; color:var(--dark); font-weight:700;"><i class="fa-solid fa-xmark"></i> Avbryt</a>
-</header>
-
-<div class="container">
-    <div class="form-card">
-        <h1 style="font-weight: 900; font-size: 28px; margin-bottom: 5px;">Redigera Annons</h1>
-        <p style="color: #64748b; font-weight: 600; margin-bottom: 30px;">Uppdatera alla detaljer för ditt fordon.</p>
-        
-        <form id="editForm">
-            <div class="section-title"><i class="fa-solid fa-car"></i> Grundläggande Information</div>
-            <div class="grid">
-                <div><label>Märke</label><input type="text" id="brand" disabled style="opacity: 0.6;"></div>
-                <div><label>Modell</label><input type="text" id="model" disabled style="opacity: 0.6;"></div>
-                <div><label>Pris (kr)</label><input type="number" id="price" required></div>
-                <div><label>Reg. nr</label><input type="text" id="regNr"></div>
-                <div><label>Årsmodell</label><input type="number" id="year" required></div>
-                <div><label>Miltal (mil)</label><input type="number" id="mil" required></div>
-            </div>
-
-            <div class="section-title"><i class="fa-solid fa-gears"></i> Specifikationer & Teknik</div>
-            <div class="grid">
-                <div><label>Drivmedel</label>
-                    <select id="fuel">
-                        <option value="Bensin">Bensin</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="El">El</option>
-                        <option value="Hybrid">Hybrid</option>
-                    </select>
-                </div>
-                <div><label>Växellåda</label>
-                    <select id="gear">
-                        <option value="Automat">Automat</option>
-                        <option value="Manuell">Manuell</option>
-                    </select>
-                </div>
-                <div><label>Karosseri</label>
-                    <select id="karosseri">
-                        <option value="SUV">SUV</option>
-                        <option value="Sedan">Sedan</option>
-                        <option value="Kombi">Kombi</option>
-                        <option value="Halvkombi">Halvkombi</option>
-                        <option value="Cabriolet">Cabriolet</option>
-                        <option value="Coupé">Coupé</option>
-                    </select>
-                </div>
-                <div><label>Drivning</label><input type="text" id="drive" placeholder="T.ex. Fyrhjulsdrift"></div>
-                <div><label>Hästkrafter</label><input type="number" id="hp"></div>
-                <div><label>Färg</label><input type="text" id="color"></div>
-                <div><label>Antal säten</label><input type="number" id="seats"></div>
-                <div><label>Antal dörrar</label><input type="number" id="doors"></div>
-            </div>
-
-            <div class="section-title"><i class="fa-solid fa-list-check"></i> Utrustning (Säkerhet & Komfort)</div>
-            <div class="checkbox-grid" id="featuresGrid">
-                </div>
-
-            <div class="section-title"><i class="fa-solid fa-align-left"></i> Beskrivning</div>
-            <div class="full">
-                <textarea id="description" rows="6" placeholder="Skriv en detaljerad beskrivning..."></textarea>
-            </div>
-
-            <button type="submit" class="btn-update" id="saveBtn">Spara ändringar</button>
-        </form>
-    </div>
-</div>
-
 <script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    const carId = new URLSearchParams(window.location.search).get('id');
-    const featuresList = ["ABS-bromsar", "ACC", "Autobroms", "Filassistans", "Döda vinkel-varnare", "360° Kamera", "Navigation", "Skinnklädsel", "Dragkrok", "Panoramaglastak", "CarPlay", "Parkeringssensorer", "Backkamera", "LED-strålkastare", "Sätesvärme", "Farthållare"];
+import { auth, db } from './firebase-config.js';
 
-    // 1. Fill Features Grid
-    const fGrid = document.getElementById('featuresGrid');
-    featuresList.forEach(f => {
-        fGrid.innerHTML += `<label class="check-item"><input type="checkbox" class="feat-check" value="${f}"> <span>${f}</span></label>`;
-    });
+import {
+doc,
+getDoc,
+updateDoc,
+serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    if (!carId) window.location.href = "dashboard.html";
+import {
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    onAuthStateChanged(auth, async (user) => {
-        if (!user) window.location.href = "login.html";
-        else loadCarData();
-    });
+const carId =
+new URLSearchParams(window.location.search).get('id');
 
-    async function loadCarData() {
-        try {
-            const snap = await getDoc(doc(db, "cars", carId));
-            if (snap.exists()) {
-                const car = snap.data();
-                if (car.sellerId !== auth.currentUser.uid) { window.location.href = "dashboard.html"; return; }
+const featuresList = [
+"ABS-bromsar",
+"ACC",
+"Autobroms",
+"Filassistans",
+"Döda vinkel-varnare",
+"360° Kamera",
+"Navigation",
+"Skinnklädsel",
+"Dragkrok",
+"Panoramaglastak",
+"CarPlay",
+"Parkeringssensorer",
+"Backkamera",
+"LED-strålkastare",
+"Sätesvärme",
+"Farthållare"
+];
 
-                // Fill Inputs
-                document.getElementById('brand').value = car.brand || "";
-                document.getElementById('model').value = car.model || "";
-                document.getElementById('price').value = car.price || "";
-                document.getElementById('regNr').value = car.regNr || "";
-                document.getElementById('year').value = car.year || "";
-                document.getElementById('mil').value = car.mileage || car.mil || "";
-                document.getElementById('fuel').value = car.fuel || "Bensin";
-                document.getElementById('gear').value = car.gear || car.transmission || "Automat";
-                document.getElementById('karosseri').value = car.karosseri || "SUV";
-                document.getElementById('drive').value = car.drive || "";
-                document.getElementById('hp').value = car.hp || "";
-                document.getElementById('color').value = car.color || "";
-                document.getElementById('seats').value = car.seats || "";
-                document.getElementById('doors').value = car.doors || "";
-                document.getElementById('description').value = car.description || "";
+const fGrid =
+document.getElementById('featuresGrid');
 
-                // Check saved features
-                if (car.features) {
-                    document.querySelectorAll('.feat-check').forEach(cb => {
-                        if (car.features.includes(cb.value)) cb.checked = true;
-                    });
-                }
-                
-                document.getElementById('loader').style.display = 'none';
-            }
-        } catch (error) { console.error(error); }
-    }
+featuresList.forEach(feature=>{
 
-    document.getElementById('editForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('saveBtn');
-        btn.disabled = true;
-        btn.innerText = "Sparar...";
+fGrid.innerHTML += `
+<label class="check-item">
 
-        const selectedFeatures = Array.from(document.querySelectorAll('.feat-check:checked')).map(cb => cb.value);
+<input
+type="checkbox"
+class="feat-check"
+value="${feature}"
+>
 
-        try {
-            await updateDoc(doc(db, "cars", carId), {
-                price: Number(document.getElementById('price').value),
-                regNr: document.getElementById('regNr').value,
-                year: Number(document.getElementById('year').value),
-                mileage: Number(document.getElementById('mil').value),
-                fuel: document.getElementById('fuel').value,
-                gear: document.getElementById('gear').value,
-                karosseri: document.getElementById('karosseri').value,
-                drive: document.getElementById('drive').value,
-                hp: Number(document.getElementById('hp').value),
-                color: document.getElementById('color').value,
-                seats: Number(document.getElementById('seats').value),
-                doors: Number(document.getElementById('doors').value),
-                description: document.getElementById('description').value,
-                features: selectedFeatures,
-                updatedAt: serverTimestamp ? serverTimestamp() : new Date()
-            });
+<span>${feature}</span>
 
-            await Swal.fire({ title: 'Klart!', text: 'Annonsen har uppdaterats framgångsrikt.', icon: 'success' });
-            window.location.href = "dashboard.html";
-        } catch (error) {
-            console.error(error);
-            Swal.fire('Fel', 'Kunde inte uppdatera annonsen.', 'error');
-            btn.disabled = false;
-            btn.innerText = "Spara ändringar";
-        }
-    };
+</label>
+`;
+
+});
+
+if(!carId){
+
+window.location.href = "dashboard.html";
+
+}
+
+onAuthStateChanged(auth, async(user)=>{
+
+if(!user){
+
+window.location.href = "login.html";
+return;
+
+}
+
+await loadCarData(user.uid);
+
+});
+
+async function loadCarData(uid){
+
+try{
+
+const carRef = doc(db,"cars",carId);
+
+const snap = await getDoc(carRef);
+
+if(!snap.exists()){
+
+Swal.fire(
+"Fel",
+"Annonsen hittades inte.",
+"error"
+);
+
+window.location.href = "dashboard.html";
+return;
+
+}
+
+const car = snap.data();
+
+if(car.sellerId !== uid){
+
+Swal.fire(
+"Åtkomst nekad",
+"Du får inte redigera denna annons.",
+"error"
+);
+
+window.location.href = "dashboard.html";
+return;
+
+}
+
+document.getElementById('brand').value =
+car.brand || '';
+
+document.getElementById('model').value =
+car.model || '';
+
+document.getElementById('price').value =
+car.price || '';
+
+document.getElementById('regNr').value =
+car.regNr || '';
+
+document.getElementById('year').value =
+car.year || '';
+
+document.getElementById('mil').value =
+car.mileage || '';
+
+document.getElementById('fuel').value =
+car.fuel || 'Bensin';
+
+document.getElementById('gear').value =
+car.gear || 'Automat';
+
+document.getElementById('karosseri').value =
+car.karosseri || 'SUV';
+
+document.getElementById('drive').value =
+car.drive || '';
+
+document.getElementById('hp').value =
+car.hp || '';
+
+document.getElementById('color').value =
+car.color || '';
+
+document.getElementById('seats').value =
+car.seats || '';
+
+document.getElementById('doors').value =
+car.doors || '';
+
+document.getElementById('description').value =
+car.description || '';
+
+if(Array.isArray(car.features)){
+
+document.querySelectorAll('.feat-check')
+.forEach(cb=>{
+
+if(car.features.includes(cb.value)){
+
+cb.checked = true;
+
+}
+
+});
+
+}
+
+document.getElementById('loader').style.display =
+'none';
+
+}catch(err){
+
+console.error(err);
+
+document.getElementById('loader').style.display =
+'none';
+
+Swal.fire(
+"Fel",
+"Kunde inte läsa annonsen.",
+"error"
+);
+
+}
+
+}
+
+document.getElementById('editForm')
+.addEventListener('submit',async(e)=>{
+
+e.preventDefault();
+
+const btn =
+document.getElementById('saveBtn');
+
+btn.disabled = true;
+
+btn.innerHTML =
+`
+<i class="fa-solid fa-spinner fa-spin"></i>
+Sparar...
+`;
+
+try{
+
+const selectedFeatures =
+Array.from(
+document.querySelectorAll('.feat-check:checked')
+).map(cb=>cb.value);
+
+const cleanNumber = (value)=>{
+
+const num = Number(value);
+
+return isNaN(num) ? 0 : num;
+
+};
+
+const updatedData = {
+
+price:
+cleanNumber(
+document.getElementById('price').value
+),
+
+regNr:
+document.getElementById('regNr')
+.value
+.trim(),
+
+year:
+cleanNumber(
+document.getElementById('year').value
+),
+
+mileage:
+cleanNumber(
+document.getElementById('mil').value
+),
+
+fuel:
+document.getElementById('fuel')
+.value
+.trim(),
+
+gear:
+document.getElementById('gear')
+.value
+.trim(),
+
+karosseri:
+document.getElementById('karosseri')
+.value
+.trim(),
+
+drive:
+document.getElementById('drive')
+.value
+.trim(),
+
+hp:
+cleanNumber(
+document.getElementById('hp').value
+),
+
+color:
+document.getElementById('color')
+.value
+.trim(),
+
+seats:
+cleanNumber(
+document.getElementById('seats').value
+),
+
+doors:
+cleanNumber(
+document.getElementById('doors').value
+),
+
+description:
+document.getElementById('description')
+.value
+.trim(),
+
+features:
+selectedFeatures,
+
+updatedAt:
+serverTimestamp()
+
+};
+
+await updateDoc(
+doc(db,"cars",carId),
+updatedData
+);
+
+await Swal.fire({
+title:'Klart!',
+text:'Annonsen har uppdaterats.',
+icon:'success',
+confirmButtonColor:'#f58220'
+});
+
+window.location.href =
+"dashboard.html";
+
+}catch(err){
+
+console.error(err);
+
+Swal.fire(
+"Fel",
+"Kunde inte uppdatera annonsen.",
+"error"
+);
+
+btn.disabled = false;
+
+btn.innerHTML =
+`
+<i class="fa-solid fa-floppy-disk"></i>
+Spara ändringar
+`;
+
+}
+
+});
+
 </script>
-</body>
-</html>
