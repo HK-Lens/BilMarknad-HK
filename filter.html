@@ -2,169 +2,1591 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Avancerad sökning | BILHK</title>
+
     <meta name="description" content="Avancerad bilsökning på BILHK. Filtrera annonser efter märke, modell, pris, miltal, drivmedel och växellåda.">
+
     <meta name="robots" content="index, follow">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
-        :root{--primary:#f58220;--primary-hover:#e67312;--primary-soft:rgba(245,130,32,.12);--dark:#0f172a;--dark-soft:#1e293b;--text:#0f172a;--muted:#64748b;--muted-light:#94a3b8;--bg:#f8fafc;--surface:#fff;--surface-soft:#f1f5f9;--border:#e2e8f0;--border-strong:#cbd5e1;--danger:#dc2626;--warning:#f59e0b;--warning-soft:rgba(245,158,11,.13);--shadow-md:0 16px 40px rgba(15,23,42,.10);--shadow-lg:0 28px 80px rgba(15,23,42,.16);--radius-lg:30px;--radius-full:999px;--max-width:1120px;--footer-height:104px}*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{min-height:100vh;font-family:Inter,sans-serif;background:radial-gradient(circle at 12% 12%,rgba(245,130,32,.14),transparent 28%),radial-gradient(circle at 88% 8%,rgba(15,23,42,.10),transparent 31%),linear-gradient(180deg,#f8fafc 0%,#eef2f7 100%);color:var(--text);padding-bottom:calc(var(--footer-height) + 34px)}a{text-decoration:none;color:inherit}button,input,select{font-family:inherit}button{cursor:pointer}.top-bar{width:100%;background:linear-gradient(90deg,var(--dark) 0%,var(--dark-soft) 65%,#2b1d12 100%);color:#fff;padding:10px 24px;display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;font-size:13px;font-weight:800}.top-bar i{color:var(--primary)}.site-header{position:sticky;top:0;z-index:50;width:100%;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}.header-inner{max-width:var(--max-width);margin:0 auto;padding:17px 24px;display:flex;align-items:center;justify-content:space-between;gap:22px}.logo{display:inline-flex;align-items:center;gap:10px;font-size:1.8rem;font-weight:900;color:var(--dark);letter-spacing:-.06em;white-space:nowrap}.logo-icon{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary) 0%,#ffb15c 100%);color:#fff;box-shadow:0 10px 25px rgba(245,130,32,.35)}.logo span{color:var(--primary)}.nav-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}.nav-link,.nav-button{min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:var(--radius-full);border:none;background:transparent;color:var(--dark);font-size:14px;font-weight:850;transition:.25s}.nav-link:hover,.nav-button:hover{background:var(--primary-soft);color:var(--primary-hover);transform:translateY(-1px)}.nav-link.primary{background:var(--primary);color:#fff;box-shadow:0 12px 25px rgba(245,130,32,.25)}.page-shell{max-width:var(--max-width);margin:0 auto;padding:38px 24px 60px}.page-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:end;margin-bottom:25px}.eyebrow{width:fit-content;display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:var(--radius-full);background:var(--primary-soft);color:var(--primary-hover);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin-bottom:13px}.page-heading h1{font-size:clamp(30px,4vw,48px);line-height:1.05;font-weight:900;letter-spacing:-.055em;color:var(--dark);margin-bottom:12px}.page-heading p{max-width:760px;color:var(--muted);font-size:16px;line-height:1.75;font-weight:550}.filter-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:24px;align-items:start}.filter-panel,.summary-panel{background:rgba(255,255,255,.92);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);backdrop-filter:blur(16px);overflow:hidden}.panel-header{padding:22px 24px;background:linear-gradient(135deg,rgba(15,23,42,.98),rgba(30,41,59,.94)),radial-gradient(circle at top right,rgba(245,130,32,.35),transparent 34%);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:18px}.panel-title{display:flex;align-items:center;gap:13px}.panel-icon{width:48px;height:48px;border-radius:17px;display:grid;place-items:center;background:rgba(245,130,32,.18);color:var(--primary);border:1px solid rgba(255,255,255,.12);font-size:19px}.panel-title h2{font-size:19px;font-weight:900;letter-spacing:-.03em;margin-bottom:4px}.panel-title span{font-size:12px;color:#cbd5e1;font-weight:700}.panel-body{padding:24px}.filter-section{border:1px solid var(--border);background:rgba(248,250,252,.72);border-radius:24px;padding:22px;margin-bottom:20px}.section-heading{display:flex;align-items:center;gap:12px;margin-bottom:18px}.section-icon{width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);font-size:15px}.section-heading h3{color:var(--dark);font-size:16px;font-weight:900;letter-spacing:-.02em;margin-bottom:3px}.section-heading span{color:var(--muted);font-size:12px;font-weight:700}.type-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:12px}.type-card{min-height:92px;border:2px solid var(--border);border-radius:20px;padding:14px 8px;text-align:center;background:#fff;transition:.25s;color:var(--muted);font-weight:900}.type-card i{display:block;font-size:25px;margin-bottom:9px}.type-card span{display:block;font-size:11px;line-height:1.25;text-transform:uppercase;letter-spacing:.03em}.type-card:hover{border-color:rgba(245,130,32,.45);transform:translateY(-1px)}.type-card.active{border-color:var(--primary);background:#fff5eb;color:var(--primary-hover);box-shadow:0 12px 24px rgba(245,130,32,.16)}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.form-group{margin-bottom:14px}.form-group.full{grid-column:1/-1}label{display:flex;justify-content:space-between;gap:8px;color:#475569;font-size:12px;font-weight:900;margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em}label .hint{color:var(--muted-light);font-size:10px;font-weight:800;text-transform:none;letter-spacing:0}.input-wrap{position:relative}.input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted-light);font-size:14px;pointer-events:none}input,select{width:100%;min-height:50px;padding:12px 14px 12px 40px;border:1px solid var(--border);border-radius:15px;background:#fff;color:var(--dark);font-size:14px;font-weight:750;outline:none;transition:.25s}input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(245,130,32,.12)}select:disabled{background:#e2e8f0;color:#64748b;cursor:not-allowed}.field-error{display:none;margin-top:7px;color:var(--danger);font-size:12px;font-weight:800;line-height:1.45}.form-group.invalid input,.form-group.invalid select{border-color:var(--danger);box-shadow:0 0 0 4px rgba(220,38,38,.10)}.form-group.invalid .field-error{display:block}.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}.tech-chip{min-height:48px;display:flex;align-items:center;gap:9px;padding:12px 14px;border:2px solid var(--border);border-radius:15px;background:#fff;color:var(--dark);font-size:13px;font-weight:850;text-align:left;transition:.22s}.tech-chip i{width:18px;text-align:center;color:var(--primary);font-size:14px}.tech-chip:hover{border-color:rgba(245,130,32,.45);transform:translateY(-1px)}.tech-chip.active{background:var(--dark);color:#fff;border-color:var(--dark);box-shadow:0 12px 22px rgba(15,23,42,.16)}.tech-chip.active i{color:#fff}.summary-panel{position:sticky;top:100px;padding:22px}.side-header{display:flex;align-items:center;gap:12px;margin-bottom:18px}.side-icon{width:46px;height:46px;border-radius:17px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);font-size:18px}.side-header h3{font-size:17px;font-weight:900;color:var(--dark);letter-spacing:-.025em;margin-bottom:4px}.side-header p{font-size:12px;font-weight:700;color:var(--muted)}.summary-list{display:grid;gap:10px;margin-bottom:18px}.summary-item{padding:12px;border-radius:16px;background:var(--surface-soft);border:1px solid var(--border)}.summary-item strong{display:block;color:var(--dark);font-size:12px;font-weight:900;margin-bottom:3px}.summary-item span{display:block;color:var(--muted);font-size:12px;font-weight:700;line-height:1.55;word-break:break-word}.warning-box{padding:15px;border-radius:18px;border:1px solid rgba(245,158,11,.25);background:var(--warning-soft);color:#92400e;font-size:12px;font-weight:750;line-height:1.65}.warning-box i{color:var(--warning);margin-right:6px}.footer-action{position:fixed;left:0;bottom:0;z-index:80;width:100%;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);border-top:1px solid var(--border);box-shadow:0 -16px 40px rgba(15,23,42,.10);padding:18px 24px}.footer-action-inner{max-width:var(--max-width);margin:0 auto;display:grid;grid-template-columns:1fr 1.8fr;gap:12px}.btn{min-height:58px;display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:var(--radius-full);border:none;padding:14px 18px;font-size:15px;font-weight:900;text-align:center;transition:.25s}.btn-primary{background:var(--primary);color:#fff;box-shadow:0 14px 28px rgba(245,130,32,.28)}.btn-primary:hover{background:var(--primary-hover);transform:translateY(-1px)}.btn-light{background:#fff;color:var(--muted);border:1px solid var(--border)}.btn-light:hover{color:var(--primary-hover);border-color:rgba(245,130,32,.45);transform:translateY(-1px)}.btn:disabled{background:#cbd5e1;color:#fff;border-color:#cbd5e1;cursor:not-allowed;transform:none;box-shadow:none}@media(max-width:980px){.filter-layout{grid-template-columns:1fr}.summary-panel{position:static}.page-heading{grid-template-columns:1fr}}@media(max-width:720px){body{padding-bottom:150px}.top-bar{padding:10px 16px;font-size:12px}.header-inner{padding:14px 18px;flex-direction:column;align-items:flex-start}.nav-actions{width:100%;overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start;padding-bottom:2px}.nav-link,.nav-button{white-space:nowrap;font-size:13px;padding:9px 13px}.page-shell{padding:30px 18px 60px}.form-grid,.footer-action-inner{grid-template-columns:1fr}.filter-section,.panel-body{padding:18px}.panel-header{flex-direction:column;align-items:flex-start}}@media(max-width:430px){.logo{font-size:1.55rem}.logo-icon{width:38px;height:38px}.page-heading h1{font-size:32px}.type-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tech-grid{grid-template-columns:1fr}}
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e67312;
+            --primary-soft: rgba(245, 130, 32, 0.12);
+
+            --dark: #0f172a;
+            --dark-soft: #1e293b;
+
+            --text: #0f172a;
+            --muted: #64748b;
+            --muted-light: #94a3b8;
+
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-soft: #f1f5f9;
+
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --success: #16a34a;
+            --success-soft: rgba(22, 163, 74, 0.10);
+
+            --danger: #dc2626;
+            --danger-soft: rgba(220, 38, 38, 0.10);
+
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.13);
+
+            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
+            --shadow-lg: 0 28px 80px rgba(15, 23, 42, 0.16);
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 30px;
+            --radius-full: 999px;
+
+            --max-width: 1120px;
+            --footer-height: 104px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at 12% 12%, rgba(245, 130, 32, 0.14), transparent 28%),
+                radial-gradient(circle at 88% 8%, rgba(15, 23, 42, 0.10), transparent 31%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+            color: var(--text);
+            padding-bottom: calc(var(--footer-height) + 34px);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button[hidden],
+        a[hidden] {
+            display: none !important;
+        }
+
+        .top-bar {
+            width: 100%;
+            background: linear-gradient(90deg, var(--dark) 0%, var(--dark-soft) 65%, #2b1d12 100%);
+            color: white;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .top-bar i {
+            color: var(--primary);
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 17px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 22px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--dark);
+            letter-spacing: -0.06em;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary) 0%, #ffb15c 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(245, 130, 32, 0.35);
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link,
+        .nav-button {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: var(--radius-full);
+            border: none;
+            background: transparent;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 850;
+            transition: 0.25s ease;
+        }
+
+        .nav-link:hover,
+        .nav-button:hover {
+            background: var(--primary-soft);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .nav-link.primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 12px 25px rgba(245, 130, 32, 0.25);
+        }
+
+        .nav-link.primary:hover {
+            background: var(--primary-hover);
+            color: white;
+        }
+
+        .nav-button.logout {
+            background: var(--dark);
+            color: white;
+        }
+
+        .nav-button.logout:hover {
+            background: var(--primary-hover);
+            color: white;
+        }
+
+        .page-shell {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 38px 24px 60px;
+        }
+
+        .page-heading {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 20px;
+            align-items: end;
+            margin-bottom: 25px;
+        }
+
+        .eyebrow {
+            width: fit-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 13px;
+            border-radius: var(--radius-full);
+            background: var(--primary-soft);
+            color: var(--primary-hover);
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 13px;
+        }
+
+        .page-heading h1 {
+            font-size: clamp(30px, 4vw, 48px);
+            line-height: 1.05;
+            font-weight: 900;
+            letter-spacing: -0.055em;
+            color: var(--dark);
+            margin-bottom: 12px;
+        }
+
+        .page-heading p {
+            max-width: 760px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.75;
+            font-weight: 550;
+        }
+
+        .filter-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 330px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .filter-panel,
+        .summary-panel {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(16px);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 22px 24px;
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.94)),
+                radial-gradient(circle at top right, rgba(245, 130, 32, 0.35), transparent 34%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .panel-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 17px;
+            display: grid;
+            place-items: center;
+            background: rgba(245, 130, 32, 0.18);
+            color: var(--primary);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            font-size: 19px;
+        }
+
+        .panel-title h2 {
+            font-size: 19px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 4px;
+        }
+
+        .panel-title span {
+            font-size: 12px;
+            color: #cbd5e1;
+            font-weight: 700;
+        }
+
+        .panel-body {
+            padding: 24px;
+        }
+
+        .filter-section {
+            border: 1px solid var(--border);
+            background: rgba(248, 250, 252, 0.72);
+            border-radius: 24px;
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .section-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 15px;
+        }
+
+        .section-heading h3 {
+            color: var(--dark);
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 3px;
+        }
+
+        .section-heading span {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+            gap: 12px;
+        }
+
+        .type-card {
+            min-height: 92px;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 14px 8px;
+            text-align: center;
+            background: white;
+            transition: 0.25s ease;
+            color: var(--muted);
+            font-weight: 900;
+        }
+
+        .type-card i {
+            display: block;
+            font-size: 25px;
+            margin-bottom: 9px;
+        }
+
+        .type-card span {
+            display: block;
+            font-size: 11px;
+            line-height: 1.25;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .type-card:hover {
+            border-color: rgba(245, 130, 32, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .type-card.active {
+            border-color: var(--primary);
+            background: #fff5eb;
+            color: var(--primary-hover);
+            box-shadow: 0 12px 24px rgba(245, 130, 32, 0.16);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 7px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        label .hint {
+            color: var(--muted-light);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-light);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        input,
+        select {
+            width: 100%;
+            min-height: 50px;
+            padding: 12px 14px 12px 40px;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            background: white;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 750;
+            outline: none;
+            transition: 0.25s ease;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.12);
+        }
+
+        select:disabled {
+            background: #e2e8f0;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        .field-error {
+            display: none;
+            margin-top: 7px;
+            color: var(--danger);
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1.45;
+        }
+
+        .form-group.invalid input,
+        .form-group.invalid select {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.10);
+        }
+
+        .form-group.invalid .field-error {
+            display: block;
+        }
+
+        .summary-panel {
+            position: sticky;
+            top: 100px;
+            padding: 22px;
+        }
+
+        .side-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .side-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 17px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .side-header h3 {
+            font-size: 17px;
+            font-weight: 900;
+            color: var(--dark);
+            letter-spacing: -0.025em;
+            margin-bottom: 4px;
+        }
+
+        .side-header p {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        .summary-list {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .summary-item {
+            padding: 12px;
+            border-radius: 16px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+        }
+
+        .summary-item strong {
+            display: block;
+            color: var(--dark);
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 3px;
+        }
+
+        .summary-item span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.55;
+            word-break: break-word;
+        }
+
+        .warning-box {
+            padding: 15px;
+            border-radius: 18px;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            background: var(--warning-soft);
+            color: #92400e;
+            font-size: 12px;
+            font-weight: 750;
+            line-height: 1.65;
+        }
+
+        .warning-box i {
+            color: var(--warning);
+            margin-right: 6px;
+        }
+
+        .footer-action {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            z-index: 80;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(18px);
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -16px 40px rgba(15, 23, 42, 0.10);
+            padding: 18px 24px;
+        }
+
+        .footer-action-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.8fr;
+            gap: 12px;
+        }
+
+        .btn {
+            min-height: 58px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-radius: var(--radius-full);
+            border: none;
+            padding: 14px 18px;
+            font-size: 15px;
+            font-weight: 900;
+            text-align: center;
+            transition: 0.25s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 14px 28px rgba(245, 130, 32, 0.28);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-light {
+            background: white;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-light:hover {
+            color: var(--primary-hover);
+            border-color: rgba(245, 130, 32, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: #cbd5e1;
+            color: white;
+            border-color: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        @media (max-width: 980px) {
+            .filter-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-panel {
+                position: static;
+            }
+
+            .page-heading {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding-bottom: 150px;
+            }
+
+            .top-bar {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+
+            .header-inner {
+                padding: 14px 18px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-actions {
+                width: 100%;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                padding-bottom: 2px;
+            }
+
+            .nav-link,
+            .nav-button {
+                white-space: nowrap;
+                font-size: 13px;
+                padding: 9px 13px;
+            }
+
+            .page-shell {
+                padding: 30px 18px 60px;
+            }
+
+            .form-grid,
+            .footer-action-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-section,
+            .panel-body {
+                padding: 18px;
+            }
+
+            .panel-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .logo {
+                font-size: 1.55rem;
+            }
+
+            .logo-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .page-heading h1 {
+                font-size: 32px;
+            }
+
+            .type-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
     </style>
 </head>
+
 <body>
-    <div class="top-bar"><i class="fa-solid fa-magnifying-glass-chart"></i><span>Filtrera annonser noggrant och visa endast relevanta resultat.</span></div>
+
+    <div class="top-bar">
+        <i class="fa-solid fa-magnifying-glass-chart"></i>
+        <span>Filtrera annonser noggrant och visa endast relevanta resultat.</span>
+    </div>
+
     <header class="site-header">
         <div class="header-inner">
-            <a href="index.html" class="logo" aria-label="Gå till startsidan"><span class="logo-icon"><i class="fa-solid fa-car-side"></i></span>BIL<span>HK</span></a>
+
+            <a href="index.html" class="logo" aria-label="Gå till startsidan">
+                <span class="logo-icon">
+                    <i class="fa-solid fa-car-side"></i>
+                </span>
+                BIL<span>HK</span>
+            </a>
+
             <nav class="nav-actions" aria-label="Huvudmeny">
-                <a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Hem</a>
-                <a href="my-account.html" class="nav-link"><i class="fa-solid fa-user"></i> Mitt konto</a>
-                <a href="sell.html" class="nav-link primary"><i class="fa-solid fa-plus"></i> Lägg till annons</a>
-                <a href="login.html" class="nav-link" id="loginLink"><i class="fa-solid fa-right-to-bracket"></i> Logga in</a>
-                <button type="button" class="nav-button" id="logoutBtn" hidden><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
+                <a href="index.html" class="nav-link">
+                    <i class="fa-solid fa-house"></i>
+                    Hem
+                </a>
+
+                <a href="my-account.html" class="nav-link">
+                    <i class="fa-solid fa-user"></i>
+                    Mitt konto
+                </a>
+
+                <a href="sell.html" class="nav-link primary">
+                    <i class="fa-solid fa-plus"></i>
+                    Lägg till annons
+                </a>
+
+                <a href="login.html" class="nav-link" id="loginLink">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    Logga in
+                </a>
+
+                <button type="button" class="nav-button logout" id="logoutBtn" hidden>
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logga ut
+                </button>
             </nav>
+
         </div>
     </header>
+
     <main class="page-shell">
+
         <section class="page-heading">
-            <div><div class="eyebrow"><i class="fa-solid fa-sliders"></i> Avancerad sökning</div><h1>Hitta rätt bil snabbare</h1><p>Välj märke, modell, pris, årsmodell och andra filter. När du trycker på knappen skickas alla val till results.html och annonserna filtreras där.</p></div>
+            <div>
+                <div class="eyebrow">
+                    <i class="fa-solid fa-sliders"></i>
+                    Avancerad sökning
+                </div>
+
+                <h1>Hitta rätt bil snabbare</h1>
+
+                <p>
+                    Välj märke, modell, pris, årsmodell och andra filter.
+                    När du trycker på knappen skickas alla val till results.html och annonserna filtreras där.
+                </p>
+            </div>
         </section>
+
         <section class="filter-layout">
+
             <form class="filter-panel" id="filterForm" novalidate>
-                <div class="panel-header"><div class="panel-title"><div class="panel-icon"><i class="fa-solid fa-filter"></i></div><div><h2>Filter</h2><span>Alla fält är frivilliga</span></div></div></div>
+
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <div class="panel-icon">
+                            <i class="fa-solid fa-filter"></i>
+                        </div>
+
+                        <div>
+                            <h2>Filter</h2>
+                            <span>Alla fält är frivilliga</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="panel-body">
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-car-side"></i></div><div><h3>Karosstyp</h3><span>Välj en typ eller lämna tomt</span></div></div><div class="type-grid" id="bodyTypeGrid">
-                        <button type="button" class="type-card" data-body-type="Sedan"><i class="fa-solid fa-car-side"></i><span>Sedan</span></button>
-                        <button type="button" class="type-card" data-body-type="Kombi"><i class="fa-solid fa-car-rear"></i><span>Kombi</span></button>
-                        <button type="button" class="type-card" data-body-type="Halvkombi"><i class="fa-solid fa-car"></i><span>Halvkombi</span></button>
-                        <button type="button" class="type-card" data-body-type="SUV"><i class="fa-solid fa-truck-monster"></i><span>SUV</span></button>
-                        <button type="button" class="type-card" data-body-type="Coupé"><i class="fa-solid fa-gauge-high"></i><span>Coupé</span></button>
-                        <button type="button" class="type-card" data-body-type="Transportbil"><i class="fa-solid fa-van-shuttle"></i><span>Transport</span></button>
-                    </div></div>
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-id-card"></i></div><div><h3>Märke och modell</h3><span>Data hämtas från cars-data.js</span></div></div><div class="form-grid">
-                        <div class="form-group"><label for="brand">Märke <span class="hint">Valfritt</span></label><div class="input-wrap"><i class="fa-solid fa-copyright"></i><select id="brand" name="brand"></select></div></div>
-                        <div class="form-group"><label for="model">Modell <span class="hint">Baserat på märke</span></label><div class="input-wrap"><i class="fa-solid fa-car"></i><select id="model" name="model"></select></div></div>
-                        <div class="form-group"><label for="minYear">Från år <span class="hint">Ex. 2018</span></label><div class="input-wrap"><i class="fa-solid fa-calendar"></i><input type="number" id="minYear" name="minYear" min="1900" max="2027" placeholder="Från år"></div></div>
-                        <div class="form-group"><label for="maxYear">Till år <span class="hint">Ex. 2026</span></label><div class="input-wrap"><i class="fa-solid fa-calendar-check"></i><input type="number" id="maxYear" name="maxYear" min="1900" max="2027" placeholder="Till år"></div></div>
-                    </div></div>
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-coins"></i></div><div><h3>Pris och miltal</h3><span>Begränsa resultaten ekonomiskt</span></div></div><div class="form-grid">
-                        <div class="form-group"><label for="minPrice">Minpris <span class="hint">SEK</span></label><div class="input-wrap"><i class="fa-solid fa-tag"></i><input type="number" id="minPrice" name="minPrice" min="0" placeholder="Minpris"></div></div>
-                        <div class="form-group"><label for="maxPrice">Maxpris <span class="hint">SEK</span></label><div class="input-wrap"><i class="fa-solid fa-tags"></i><input type="number" id="maxPrice" name="maxPrice" min="0" placeholder="Maxpris"></div></div>
-                        <div class="form-group full"><label for="maxMileage">Max miltal <span class="hint">km</span></label><div class="input-wrap"><i class="fa-solid fa-road"></i><input type="number" id="maxMileage" name="maxMileage" min="0" placeholder="Ex. 120000"></div></div>
-                    </div></div>
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-gears"></i></div><div><h3>Tekniska val</h3><span>Bränsle, växellåda och skick</span></div></div><div class="form-grid">
-                        <div class="form-group"><label for="fuelType">Bränsle</label><div class="input-wrap"><i class="fa-solid fa-gas-pump"></i><select id="fuelType" name="fuelType"><option value="">Alla</option><option>Bensin</option><option>Diesel</option><option>El</option><option>Hybrid</option><option>Laddhybrid</option><option>Gas</option><option>Etanol</option><option>Övrigt</option></select></div></div>
-                        <div class="form-group"><label for="transmission">Växellåda</label><div class="input-wrap"><i class="fa-solid fa-gears"></i><select id="transmission" name="transmission"><option value="">Alla</option><option>Automat</option><option>Manuell</option><option>Halvautomat</option></select></div></div>
-                        <div class="form-group"><label for="condition">Skick</label><div class="input-wrap"><i class="fa-solid fa-circle-check"></i><select id="condition" name="condition"><option value="">Alla</option><option>Mycket bra</option><option>Bra</option><option>Normalt bruksskick</option><option>Behöver service</option><option>Defekt</option></select></div></div>
-                        <div class="form-group"><label for="location">Plats</label><div class="input-wrap"><i class="fa-solid fa-location-dot"></i><input type="text" id="location" name="location" maxlength="80" placeholder="Ex. Stockholm"></div></div>
-                    </div></div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-car-side"></i>
+                            </div>
+
+                            <div>
+                                <h3>Karosstyp</h3>
+                                <span>Välj en typ eller lämna tomt</span>
+                            </div>
+                        </div>
+
+                        <div class="type-grid" id="bodyTypeGrid">
+                            <button type="button" class="type-card" data-body-type="Sedan">
+                                <i class="fa-solid fa-car-side"></i>
+                                <span>Sedan</span>
+                            </button>
+
+                            <button type="button" class="type-card" data-body-type="Kombi">
+                                <i class="fa-solid fa-car-rear"></i>
+                                <span>Kombi</span>
+                            </button>
+
+                            <button type="button" class="type-card" data-body-type="Halvkombi">
+                                <i class="fa-solid fa-car"></i>
+                                <span>Halvkombi</span>
+                            </button>
+
+                            <button type="button" class="type-card" data-body-type="SUV">
+                                <i class="fa-solid fa-truck-monster"></i>
+                                <span>SUV</span>
+                            </button>
+
+                            <button type="button" class="type-card" data-body-type="Coupé">
+                                <i class="fa-solid fa-gauge-high"></i>
+                                <span>Coupé</span>
+                            </button>
+
+                            <button type="button" class="type-card" data-body-type="Transportbil">
+                                <i class="fa-solid fa-van-shuttle"></i>
+                                <span>Transport</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-id-card"></i>
+                            </div>
+
+                            <div>
+                                <h3>Märke och modell</h3>
+                                <span>Data hämtas från cars-data.js</span>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group" data-field-group="brand">
+                                <label for="brand">
+                                    Märke
+                                    <span class="hint">Valfritt</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-copyright"></i>
+                                    <select id="brand" name="brand"></select>
+                                </div>
+
+                                <div class="field-error" id="brandError">Kontrollera bilmärket.</div>
+                            </div>
+
+                            <div class="form-group" data-field-group="model">
+                                <label for="model">
+                                    Modell
+                                    <span class="hint">Baserat på märke</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-car"></i>
+                                    <select id="model" name="model"></select>
+                                </div>
+
+                                <div class="field-error" id="modelError">Kontrollera modellen.</div>
+                            </div>
+
+                            <div class="form-group" data-field-group="minYear">
+                                <label for="minYear">
+                                    Från år
+                                    <span class="hint">Ex. 2018</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-calendar"></i>
+                                    <input type="number" id="minYear" name="minYear" min="1900" max="2027" placeholder="Från år">
+                                </div>
+
+                                <div class="field-error" id="minYearError">Ange ett giltigt startår.</div>
+                            </div>
+
+                            <div class="form-group" data-field-group="maxYear">
+                                <label for="maxYear">
+                                    Till år
+                                    <span class="hint">Ex. 2026</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-calendar-check"></i>
+                                    <input type="number" id="maxYear" name="maxYear" min="1900" max="2027" placeholder="Till år">
+                                </div>
+
+                                <div class="field-error" id="maxYearError">Ange ett giltigt slutår.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-coins"></i>
+                            </div>
+
+                            <div>
+                                <h3>Pris och miltal</h3>
+                                <span>Begränsa resultaten ekonomiskt</span>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group" data-field-group="minPrice">
+                                <label for="minPrice">
+                                    Minpris
+                                    <span class="hint">SEK</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-tag"></i>
+                                    <input type="number" id="minPrice" name="minPrice" min="0" placeholder="Minpris">
+                                </div>
+
+                                <div class="field-error" id="minPriceError">Ange ett giltigt minpris.</div>
+                            </div>
+
+                            <div class="form-group" data-field-group="maxPrice">
+                                <label for="maxPrice">
+                                    Maxpris
+                                    <span class="hint">SEK</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-tags"></i>
+                                    <input type="number" id="maxPrice" name="maxPrice" min="0" placeholder="Maxpris">
+                                </div>
+
+                                <div class="field-error" id="maxPriceError">Ange ett giltigt maxpris.</div>
+                            </div>
+
+                            <div class="form-group full" data-field-group="maxMileage">
+                                <label for="maxMileage">
+                                    Max miltal
+                                    <span class="hint">km</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-road"></i>
+                                    <input type="number" id="maxMileage" name="maxMileage" min="0" placeholder="Ex. 120000">
+                                </div>
+
+                                <div class="field-error" id="maxMileageError">Ange ett giltigt miltal.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-gears"></i>
+                            </div>
+
+                            <div>
+                                <h3>Tekniska val</h3>
+                                <span>Bränsle, växellåda och skick</span>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="fuelType">Bränsle</label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-gas-pump"></i>
+                                    <select id="fuelType" name="fuelType">
+                                        <option value="">Alla</option>
+                                        <option value="Bensin">Bensin</option>
+                                        <option value="Diesel">Diesel</option>
+                                        <option value="El">El</option>
+                                        <option value="Hybrid">Hybrid</option>
+                                        <option value="Laddhybrid">Laddhybrid</option>
+                                        <option value="Gas">Gas</option>
+                                        <option value="Etanol">Etanol</option>
+                                        <option value="Övrigt">Övrigt</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="transmission">Växellåda</label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-gears"></i>
+                                    <select id="transmission" name="transmission">
+                                        <option value="">Alla</option>
+                                        <option value="Automat">Automat</option>
+                                        <option value="Manuell">Manuell</option>
+                                        <option value="Halvautomat">Halvautomat</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="condition">Skick</label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <select id="condition" name="condition">
+                                        <option value="">Alla</option>
+                                        <option value="Mycket bra">Mycket bra</option>
+                                        <option value="Bra">Bra</option>
+                                        <option value="Normalt bruksskick">Normalt bruksskick</option>
+                                        <option value="Behöver service">Behöver service</option>
+                                        <option value="Defekt">Defekt</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="location">Plats</label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <input type="text" id="location" name="location" maxlength="80" placeholder="Ex. Stockholm">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </form>
-            <aside class="summary-panel"><div class="side-header"><div class="side-icon"><i class="fa-solid fa-clipboard-list"></i></div><div><h3>Valda filter</h3><p>Uppdateras automatiskt.</p></div></div><div class="summary-list" id="summaryList"></div><div class="warning-box"><i class="fa-solid fa-triangle-exclamation"></i> Kontrollera alltid bilens skick, dokumentation och säljare innan affär.</div></aside>
+
+            <aside class="summary-panel">
+                <div class="side-header">
+                    <div class="side-icon">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                    </div>
+
+                    <div>
+                        <h3>Valda filter</h3>
+                        <p>Uppdateras automatiskt.</p>
+                    </div>
+                </div>
+
+                <div class="summary-list" id="summaryList"></div>
+
+                <div class="warning-box">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Kontrollera alltid bilens skick, dokumentation och säljare innan affär.
+                </div>
+            </aside>
+
         </section>
     </main>
-    <div class="footer-action"><div class="footer-action-inner"><button type="button" class="btn btn-light" id="resetBtn"><i class="fa-solid fa-rotate-left"></i> Rensa filter</button><button type="button" class="btn btn-primary" id="showResultsBtn"><i class="fa-solid fa-magnifying-glass"></i> Visa resultat</button></div></div>
-    <script type="module">
-        import { auth } from './firebase-config.js';
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { attachBrandModelSelects } from './cars-data.js';
 
-        const state = { selectedBodyType: "" };
+    <div class="footer-action">
+        <div class="footer-action-inner">
+            <button type="button" class="btn btn-light" id="resetBtn">
+                <i class="fa-solid fa-rotate-left"></i>
+                Rensa filter
+            </button>
+
+            <button type="button" class="btn btn-primary" id="showResultsBtn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Visa resultat
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth } from "./firebase-config.js";
+
+        import {
+            onAuthStateChanged,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        import {
+            attachBrandModelSelects
+        } from "./cars-data.js";
+
+        const FILTER_CONFIG = {
+            ROUTES: {
+                HOME: "index.html",
+                LOGIN: "login.html",
+                ACCOUNT: "my-account.html",
+                SELL: "sell.html",
+                RESULTS: "results.html"
+            },
+
+            YEAR: {
+                MIN: 1900,
+                MAX: 2027
+            },
+
+            PRICE: {
+                MIN: 0,
+                MAX: 20000000
+            },
+
+            MILEAGE: {
+                MIN: 0,
+                MAX: 2000000
+            }
+        };
+
+        const state = {
+            selectedBodyType: "",
+            currentUser: null,
+            detachBrandModelSelects: null
+        };
+
         const elements = {
-            form: document.getElementById('filterForm'), brand: document.getElementById('brand'), model: document.getElementById('model'), minYear: document.getElementById('minYear'), maxYear: document.getElementById('maxYear'), minPrice: document.getElementById('minPrice'), maxPrice: document.getElementById('maxPrice'), maxMileage: document.getElementById('maxMileage'), fuelType: document.getElementById('fuelType'), transmission: document.getElementById('transmission'), condition: document.getElementById('condition'), location: document.getElementById('location'), bodyTypeGrid: document.getElementById('bodyTypeGrid'), summaryList: document.getElementById('summaryList'), resetBtn: document.getElementById('resetBtn'), showResultsBtn: document.getElementById('showResultsBtn'), loginLink: document.getElementById('loginLink'), logoutBtn: document.getElementById('logoutBtn')
+            form: document.getElementById("filterForm"),
+
+            brand: document.getElementById("brand"),
+            model: document.getElementById("model"),
+
+            minYear: document.getElementById("minYear"),
+            maxYear: document.getElementById("maxYear"),
+
+            minPrice: document.getElementById("minPrice"),
+            maxPrice: document.getElementById("maxPrice"),
+
+            maxMileage: document.getElementById("maxMileage"),
+
+            fuelType: document.getElementById("fuelType"),
+            transmission: document.getElementById("transmission"),
+            condition: document.getElementById("condition"),
+            location: document.getElementById("location"),
+
+            bodyTypeGrid: document.getElementById("bodyTypeGrid"),
+
+            summaryList: document.getElementById("summaryList"),
+
+            resetBtn: document.getElementById("resetBtn"),
+            showResultsBtn: document.getElementById("showResultsBtn"),
+
+            loginLink: document.getElementById("loginLink"),
+            logoutBtn: document.getElementById("logoutBtn")
         };
 
         initializePage();
 
-        function initializePage(){
+        function initializePage() {
             hydrateFromURL();
-            attachBrandModelSelects(elements.brand, elements.model, { selectedBrand: elements.brand.dataset.initialBrand || "", selectedModel: elements.model.dataset.initialModel || "" });
+            initializeBrandModelSelects();
             attachEvents();
             observeAuth();
             updateBodyTypeUI();
             updateSummary();
         }
 
-        function observeAuth(){
-            onAuthStateChanged(auth, (user) => { elements.loginLink.hidden = Boolean(user); elements.logoutBtn.hidden = !user; });
+        function initializeBrandModelSelects() {
+            if (typeof state.detachBrandModelSelects === "function") {
+                state.detachBrandModelSelects();
+            }
+
+            state.detachBrandModelSelects = attachBrandModelSelects(
+                elements.brand,
+                elements.model,
+                {
+                    selectedBrand: elements.brand.dataset.initialBrand || "",
+                    selectedModel: elements.model.dataset.initialModel || "",
+                    includeOther: true,
+                    includeOtherModel: true,
+                    onChange: () => {
+                        updateSummary();
+                    }
+                }
+            );
         }
 
-        function attachEvents(){
-            elements.logoutBtn.addEventListener('click', async () => { await signOut(auth); window.location.href = 'index.html'; });
-            elements.bodyTypeGrid.querySelectorAll('[data-body-type]').forEach((button) => { button.addEventListener('click', () => { state.selectedBodyType = state.selectedBodyType === button.dataset.bodyType ? "" : button.dataset.bodyType; updateBodyTypeUI(); updateSummary(); }); });
-            elements.form.querySelectorAll('input, select').forEach((field) => { field.addEventListener('input', updateSummary); field.addEventListener('change', updateSummary); });
-            elements.resetBtn.addEventListener('click', resetFilters);
-            elements.showResultsBtn.addEventListener('click', goToResults);
+        function observeAuth() {
+            onAuthStateChanged(auth, (user) => {
+                state.currentUser = user || null;
+                updateHeaderAuthUI();
+            });
         }
 
-        function hydrateFromURL(){
+        function updateHeaderAuthUI() {
+            const isLoggedIn = Boolean(state.currentUser);
+
+            elements.loginLink.hidden = isLoggedIn;
+            elements.logoutBtn.hidden = !isLoggedIn;
+        }
+
+        function attachEvents() {
+            elements.logoutBtn.addEventListener("click", handleLogout);
+
+            elements.bodyTypeGrid.querySelectorAll("[data-body-type]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const value = String(button.dataset.bodyType || "").trim();
+
+                    state.selectedBodyType = state.selectedBodyType === value ? "" : value;
+
+                    updateBodyTypeUI();
+                    updateSummary();
+                });
+            });
+
+            elements.form.querySelectorAll("input, select").forEach((field) => {
+                field.addEventListener("input", updateSummary);
+                field.addEventListener("change", updateSummary);
+            });
+
+            elements.resetBtn.addEventListener("click", resetFilters);
+            elements.showResultsBtn.addEventListener("click", goToResults);
+        }
+
+        async function handleLogout() {
+            try {
+                elements.logoutBtn.disabled = true;
+                elements.logoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loggar ut...';
+
+                await signOut(auth);
+
+                window.location.href = FILTER_CONFIG.ROUTES.HOME;
+            } catch (error) {
+                console.error("[BILHK] Logout failed:", error);
+
+                elements.logoutBtn.disabled = false;
+                elements.logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Logga ut';
+            }
+        }
+
+        function hydrateFromURL() {
             const params = new URLSearchParams(window.location.search);
-            elements.brand.dataset.initialBrand = params.get('brand') || "";
-            elements.model.dataset.initialModel = params.get('model') || "";
-            state.selectedBodyType = params.get('bodyType') || params.get('karosseri') || params.get('kar') || "";
-            ['minYear','maxYear','minPrice','maxPrice','maxMileage','fuelType','transmission','condition','location'].forEach((id) => { if (params.get(id)) elements[id].value = params.get(id); });
+
+            elements.brand.dataset.initialBrand = normalizeParam(params.get("brand"));
+            elements.model.dataset.initialModel = normalizeParam(params.get("model"));
+
+            state.selectedBodyType =
+                normalizeParam(params.get("bodyType")) ||
+                normalizeParam(params.get("karosseri")) ||
+                normalizeParam(params.get("kar"));
+
+            setFieldFromParam("minYear", params);
+            setFieldFromParam("maxYear", params);
+
+            setFieldFromParam("minPrice", params);
+            setFieldFromParam("maxPrice", params);
+            setFieldFromParam("maxMileage", params);
+
+            setFieldFromParam("fuelType", params);
+            setFieldFromParam("transmission", params);
+            setFieldFromParam("condition", params);
+            setFieldFromParam("location", params);
         }
 
-        function updateBodyTypeUI(){
-            elements.bodyTypeGrid.querySelectorAll('[data-body-type]').forEach((button) => { button.classList.toggle('active', button.dataset.bodyType === state.selectedBodyType); });
+        function setFieldFromParam(fieldId, params) {
+            const element = elements[fieldId];
+
+            if (!element) {
+                return;
+            }
+
+            const value = normalizeParam(params.get(fieldId));
+
+            if (value) {
+                element.value = value;
+            }
         }
 
-        function updateSummary(){
+        function updateBodyTypeUI() {
+            elements.bodyTypeGrid.querySelectorAll("[data-body-type]").forEach((button) => {
+                button.classList.toggle(
+                    "active",
+                    String(button.dataset.bodyType || "") === state.selectedBodyType
+                );
+            });
+        }
+
+        function updateSummary() {
             elements.summaryList.textContent = "";
+
             const items = buildSelectedFilterItems();
-            if (!items.length) { appendSummaryItem('Filter', 'Inga filter valda ännu.'); return; }
-            items.forEach((item) => appendSummaryItem(item.label, item.value));
+
+            if (!items.length) {
+                appendSummaryItem("Filter", "Inga filter valda ännu.");
+                return;
+            }
+
+            items.forEach((item) => {
+                appendSummaryItem(item.label, item.value);
+            });
         }
 
-        function buildSelectedFilterItems(){
+        function buildSelectedFilterItems() {
             const items = [];
-            addItem(items, 'Karosstyp', state.selectedBodyType);
-            addItem(items, 'Märke', elements.brand.value);
-            addItem(items, 'Modell', elements.model.value);
-            addItem(items, 'År', rangeText(elements.minYear.value, elements.maxYear.value));
-            addItem(items, 'Pris', priceRangeText(elements.minPrice.value, elements.maxPrice.value));
-            addItem(items, 'Max miltal', elements.maxMileage.value ? `${formatNumber(elements.maxMileage.value)} km` : "");
-            addItem(items, 'Bränsle', elements.fuelType.value);
-            addItem(items, 'Växellåda', elements.transmission.value);
-            addItem(items, 'Skick', elements.condition.value);
-            addItem(items, 'Plats', elements.location.value);
+
+            addItem(items, "Karosstyp", state.selectedBodyType);
+            addItem(items, "Märke", elements.brand.value);
+            addItem(items, "Modell", elements.model.value);
+            addItem(items, "År", rangeText(elements.minYear.value, elements.maxYear.value));
+            addItem(items, "Pris", priceRangeText(elements.minPrice.value, elements.maxPrice.value));
+            addItem(items, "Max miltal", elements.maxMileage.value ? `${formatNumber(elements.maxMileage.value)} km` : "");
+            addItem(items, "Bränsle", elements.fuelType.value);
+            addItem(items, "Växellåda", elements.transmission.value);
+            addItem(items, "Skick", elements.condition.value);
+            addItem(items, "Plats", elements.location.value);
+
             return items;
         }
 
-        function addItem(items,label,value){ if(String(value || '').trim()) items.push({label,value:String(value).trim()}); }
-        function appendSummaryItem(label,value){ const item=document.createElement('div'); item.className='summary-item'; const strong=document.createElement('strong'); strong.textContent=label; const span=document.createElement('span'); span.textContent=value; item.append(strong,span); elements.summaryList.appendChild(item); }
-        function rangeText(min,max){ if(min && max) return `${min} - ${max}`; if(min) return `Från ${min}`; if(max) return `Till ${max}`; return ""; }
-        function priceRangeText(min,max){ if(min && max) return `${formatNumber(min)} - ${formatNumber(max)} kr`; if(min) return `Från ${formatNumber(min)} kr`; if(max) return `Till ${formatNumber(max)} kr`; return ""; }
-        function formatNumber(value){ return new Intl.NumberFormat('sv-SE').format(Number(value)||0); }
+        function addItem(items, label, value) {
+            const clean = String(value || "").trim();
 
-        function resetFilters(){
+            if (!clean) {
+                return;
+            }
+
+            items.push({
+                label,
+                value: clean
+            });
+        }
+
+        function appendSummaryItem(label, value) {
+            const item = document.createElement("div");
+            item.className = "summary-item";
+
+            const strong = document.createElement("strong");
+            strong.textContent = label;
+
+            const span = document.createElement("span");
+            span.textContent = value;
+
+            item.appendChild(strong);
+            item.appendChild(span);
+
+            elements.summaryList.appendChild(item);
+        }
+
+        function rangeText(min, max) {
+            const cleanMin = String(min || "").trim();
+            const cleanMax = String(max || "").trim();
+
+            if (cleanMin && cleanMax) {
+                return `${cleanMin} - ${cleanMax}`;
+            }
+
+            if (cleanMin) {
+                return `Från ${cleanMin}`;
+            }
+
+            if (cleanMax) {
+                return `Till ${cleanMax}`;
+            }
+
+            return "";
+        }
+
+        function priceRangeText(min, max) {
+            const cleanMin = String(min || "").trim();
+            const cleanMax = String(max || "").trim();
+
+            if (cleanMin && cleanMax) {
+                return `${formatNumber(cleanMin)} - ${formatNumber(cleanMax)} kr`;
+            }
+
+            if (cleanMin) {
+                return `Från ${formatNumber(cleanMin)} kr`;
+            }
+
+            if (cleanMax) {
+                return `Till ${formatNumber(cleanMax)} kr`;
+            }
+
+            return "";
+        }
+
+        function formatNumber(value) {
+            return new Intl.NumberFormat("sv-SE").format(Number(value) || 0);
+        }
+
+        function resetFilters() {
             elements.form.reset();
+
             state.selectedBodyType = "";
-            elements.brand.dispatchEvent(new Event('change'));
+
+            elements.brand.dataset.initialBrand = "";
+            elements.model.dataset.initialModel = "";
+
+            initializeBrandModelSelects();
+
             updateBodyTypeUI();
             updateSummary();
         }
 
-        function goToResults(){
+        function goToResults() {
+            if (!validateFilterValues()) {
+                return;
+            }
+
             const params = new URLSearchParams();
-            setParam(params,'bodyType',state.selectedBodyType);
-            setParam(params,'brand',elements.brand.value);
-            setParam(params,'model',elements.model.value);
-            setParam(params,'minYear',elements.minYear.value);
-            setParam(params,'maxYear',elements.maxYear.value);
-            setParam(params,'minPrice',elements.minPrice.value);
-            setParam(params,'maxPrice',elements.maxPrice.value);
-            setParam(params,'maxMileage',elements.maxMileage.value);
-            setParam(params,'fuelType',elements.fuelType.value);
-            setParam(params,'transmission',elements.transmission.value);
-            setParam(params,'condition',elements.condition.value);
-            setParam(params,'location',elements.location.value);
+
+            setParam(params, "bodyType", state.selectedBodyType);
+            setParam(params, "brand", elements.brand.value);
+            setParam(params, "model", elements.model.value);
+
+            setParam(params, "minYear", elements.minYear.value);
+            setParam(params, "maxYear", elements.maxYear.value);
+
+            setParam(params, "minPrice", elements.minPrice.value);
+            setParam(params, "maxPrice", elements.maxPrice.value);
+
+            setParam(params, "maxMileage", elements.maxMileage.value);
+
+            setParam(params, "fuelType", elements.fuelType.value);
+            setParam(params, "transmission", elements.transmission.value);
+            setParam(params, "condition", elements.condition.value);
+            setParam(params, "location", elements.location.value);
+
             const queryString = params.toString();
-            window.location.href = queryString ? `results.html?${queryString}` : 'results.html';
+
+            window.location.href = queryString
+                ? `${FILTER_CONFIG.ROUTES.RESULTS}?${queryString}`
+                : FILTER_CONFIG.ROUTES.RESULTS;
         }
 
-        function setParam(params,key,value){ const clean=String(value||'').trim(); if(clean) params.set(key,clean); }
+        function validateFilterValues() {
+            clearAllFieldErrors();
+
+            let valid = true;
+
+            const minYear = numberOrNull(elements.minYear.value);
+            const maxYear = numberOrNull(elements.maxYear.value);
+
+            const minPrice = numberOrNull(elements.minPrice.value);
+            const maxPrice = numberOrNull(elements.maxPrice.value);
+
+            const maxMileage = numberOrNull(elements.maxMileage.value);
+
+            if (minYear !== null && !isBetween(minYear, FILTER_CONFIG.YEAR.MIN, FILTER_CONFIG.YEAR.MAX)) {
+                setFieldError("minYear", `Ange ett år mellan ${FILTER_CONFIG.YEAR.MIN} och ${FILTER_CONFIG.YEAR.MAX}.`);
+                valid = false;
+            }
+
+            if (maxYear !== null && !isBetween(maxYear, FILTER_CONFIG.YEAR.MIN, FILTER_CONFIG.YEAR.MAX)) {
+                setFieldError("maxYear", `Ange ett år mellan ${FILTER_CONFIG.YEAR.MIN} och ${FILTER_CONFIG.YEAR.MAX}.`);
+                valid = false;
+            }
+
+            if (minYear !== null && maxYear !== null && minYear > maxYear) {
+                setFieldError("minYear", "Från år får inte vara större än till år.");
+                setFieldError("maxYear", "Till år måste vara större än från år.");
+                valid = false;
+            }
+
+            if (minPrice !== null && !isBetween(minPrice, FILTER_CONFIG.PRICE.MIN, FILTER_CONFIG.PRICE.MAX)) {
+                setFieldError("minPrice", "Ange ett giltigt minpris.");
+                valid = false;
+            }
+
+            if (maxPrice !== null && !isBetween(maxPrice, FILTER_CONFIG.PRICE.MIN, FILTER_CONFIG.PRICE.MAX)) {
+                setFieldError("maxPrice", "Ange ett giltigt maxpris.");
+                valid = false;
+            }
+
+            if (minPrice !== null && maxPrice !== null && minPrice > maxPrice) {
+                setFieldError("minPrice", "Minpris får inte vara större än maxpris.");
+                setFieldError("maxPrice", "Maxpris måste vara större än minpris.");
+                valid = false;
+            }
+
+            if (maxMileage !== null && !isBetween(maxMileage, FILTER_CONFIG.MILEAGE.MIN, FILTER_CONFIG.MILEAGE.MAX)) {
+                setFieldError("maxMileage", "Ange ett giltigt miltal.");
+                valid = false;
+            }
+
+            if (!valid) {
+                scrollToFirstInvalid();
+            }
+
+            return valid;
+        }
+
+        function setParam(params, key, value) {
+            const clean = String(value || "").trim();
+
+            if (clean) {
+                params.set(key, clean);
+            }
+        }
+
+        function normalizeParam(value) {
+            return String(value || "").trim();
+        }
+
+        function numberOrNull(value) {
+            const clean = String(value || "").trim();
+
+            if (!clean) {
+                return null;
+            }
+
+            const number = Number(clean);
+
+            if (!Number.isFinite(number)) {
+                return null;
+            }
+
+            return number;
+        }
+
+        function isBetween(value, min, max) {
+            return Number.isFinite(value) && value >= min && value <= max;
+        }
+
+        function setFieldError(fieldId, message) {
+            const group = document.querySelector(`[data-field-group="${fieldId}"]`);
+            const error = document.getElementById(`${fieldId}Error`);
+
+            if (group) {
+                group.classList.add("invalid");
+            }
+
+            if (error) {
+                error.textContent = message;
+            }
+        }
+
+        function clearAllFieldErrors() {
+            document.querySelectorAll(".form-group.invalid").forEach((group) => {
+                group.classList.remove("invalid");
+            });
+        }
+
+        function scrollToFirstInvalid() {
+            const firstInvalid = document.querySelector(".form-group.invalid");
+
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+        }
     </script>
+
 </body>
 </html>
