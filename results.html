@@ -4,1352 +4,281 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sökresultat | BILHK</title>
-
     <meta name="description" content="Sökresultat för bilannonser på BILHK.">
-    <meta name="robots" content="noindex, nofollow">
-
+    <meta name="robots" content="index, follow">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <style>
-        :root {
-            --primary: #f58220;
-            --primary-hover: #e67312;
-            --primary-soft: rgba(245, 130, 32, 0.12);
-
-            --dark: #0f172a;
-            --dark-soft: #1e293b;
-
-            --text: #0f172a;
-            --muted: #64748b;
-            --muted-light: #94a3b8;
-
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --surface-soft: #f1f5f9;
-
-            --border: #e2e8f0;
-            --border-strong: #cbd5e1;
-
-            --success: #16a34a;
-            --danger: #dc2626;
-
-            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
-            --shadow-md: 0 14px 35px rgba(15, 23, 42, 0.10);
-
-            --radius-sm: 12px;
-            --radius-md: 18px;
-            --radius-lg: 26px;
-            --radius-full: 999px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            min-height: 100vh;
-            font-family: 'Inter', sans-serif;
-            background:
-                radial-gradient(circle at 8% 5%, rgba(245, 130, 32, 0.12), transparent 24%),
-                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
-            color: var(--text);
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        button {
-            font-family: inherit;
-            cursor: pointer;
-        }
-
-        img {
-            max-width: 100%;
-            display: block;
-        }
-
-        .site-header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.94);
-            backdrop-filter: blur(18px);
-            border-bottom: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .header-inner {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 16px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-        }
-
-        .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--dark);
-            font-size: 1.65rem;
-            font-weight: 900;
-            letter-spacing: -0.06em;
-            white-space: nowrap;
-        }
-
-        .logo-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 15px;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, var(--primary), #ffb15c);
-            color: white;
-            box-shadow: 0 12px 26px rgba(245, 130, 32, 0.28);
-        }
-
-        .logo span {
-            color: var(--primary);
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .nav-btn {
-            min-height: 42px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 16px;
-            border-radius: var(--radius-full);
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--dark);
-            font-size: 13px;
-            font-weight: 900;
-            transition: 0.25s ease;
-        }
-
-        .nav-btn:hover {
-            border-color: rgba(245, 130, 32, 0.45);
-            color: var(--primary);
-            transform: translateY(-1px);
-        }
-
-        .nav-btn.primary {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 12px 24px rgba(245, 130, 32, 0.22);
-        }
-
-        .nav-btn.primary:hover {
-            background: var(--primary-hover);
-            color: white;
-        }
-
-        .nav-btn.danger {
-            color: var(--danger);
-            border-color: rgba(220, 38, 38, 0.18);
-        }
-
-        .nav-btn.danger:hover {
-            background: rgba(220, 38, 38, 0.08);
-            color: var(--danger);
-        }
-
-        .page-shell {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 34px 24px 70px;
-        }
-
-        .results-hero {
-            background:
-                linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.96)),
-                radial-gradient(circle at 20% 10%, rgba(245, 130, 32, 0.34), transparent 34%);
-            color: white;
-            border-radius: 32px;
-            padding: 34px;
-            margin-bottom: 26px;
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .results-hero::after {
-            content: "";
-            position: absolute;
-            right: -120px;
-            bottom: -150px;
-            width: 340px;
-            height: 340px;
-            border-radius: 999px;
-            background: rgba(245, 130, 32, 0.15);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-badge {
-            width: fit-content;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 13px;
-            border-radius: var(--radius-full);
-            background: rgba(255, 255, 255, 0.10);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            color: #e2e8f0;
-            font-size: 12px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 16px;
-        }
-
-        .hero-badge i {
-            color: var(--primary);
-        }
-
-        .results-hero h1 {
-            font-size: clamp(30px, 4vw, 48px);
-            line-height: 1.05;
-            font-weight: 900;
-            letter-spacing: -0.055em;
-            margin-bottom: 12px;
-        }
-
-        .results-hero p {
-            max-width: 720px;
-            color: #cbd5e1;
-            font-size: 15px;
-            font-weight: 650;
-            line-height: 1.75;
-        }
-
-        .toolbar {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            box-shadow: var(--shadow-sm);
-            padding: 18px;
-            margin-bottom: 26px;
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            gap: 14px;
-            align-items: center;
-        }
-
-        .summary-box {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 0;
-        }
-
-        .summary-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 15px;
-            display: grid;
-            place-items: center;
-            background: var(--primary-soft);
-            color: var(--primary);
-            flex: 0 0 auto;
-        }
-
-        .summary-text strong {
-            display: block;
-            color: var(--dark);
-            font-size: 15px;
-            font-weight: 900;
-            margin-bottom: 3px;
-        }
-
-        .summary-text span {
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 700;
-            line-height: 1.45;
-        }
-
-        .toolbar-actions {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .small-btn {
-            min-height: 42px;
-            padding: 10px 14px;
-            border-radius: var(--radius-full);
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--dark);
-            font-size: 12px;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.25s ease;
-        }
-
-        .small-btn:hover {
-            border-color: rgba(245, 130, 32, 0.45);
-            color: var(--primary);
-        }
-
-        .small-btn.primary {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .small-btn.primary:hover {
-            background: var(--primary-hover);
-            color: white;
-        }
-
-        .active-filters {
-            display: none;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-
-        .active-filters.show {
-            display: flex;
-        }
-
-        .filter-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 9px 13px;
-            border-radius: var(--radius-full);
-            background: white;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 850;
-        }
-
-        .filter-chip i {
-            color: var(--primary);
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 22px;
-        }
-
-        .car-card {
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-            cursor: pointer;
-            transition: 0.25s ease;
-        }
-
-        .car-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-            border-color: rgba(245, 130, 32, 0.35);
-        }
-
-        .card-image-wrap {
-            position: relative;
-            height: 205px;
-            background: #e2e8f0;
-            overflow: hidden;
-        }
-
-        .card-image-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: 0.35s ease;
-        }
-
-        .car-card:hover .card-image-wrap img {
-            transform: scale(1.04);
-        }
-
-        .status-pill {
-            position: absolute;
-            top: 14px;
-            left: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 11px;
-            border-radius: var(--radius-full);
-            background: rgba(255, 255, 255, 0.92);
-            color: var(--dark);
-            font-size: 11px;
-            font-weight: 900;
-            box-shadow: var(--shadow-sm);
-            backdrop-filter: blur(10px);
-        }
-
-        .status-pill i {
-            color: var(--success);
-        }
-
-        .card-content {
-            padding: 18px;
-        }
-
-        .price {
-            color: var(--primary);
-            font-size: 24px;
-            font-weight: 950;
-            letter-spacing: -0.035em;
-            margin-bottom: 8px;
-        }
-
-        .title {
-            color: var(--dark);
-            font-size: 16px;
-            font-weight: 900;
-            line-height: 1.35;
-            margin-bottom: 10px;
-        }
-
-        .meta-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 14px;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            padding: 9px 10px;
-            border-radius: 13px;
-            background: var(--surface-soft);
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 800;
-            min-width: 0;
-        }
-
-        .meta-item i {
-            color: var(--primary);
-            width: 14px;
-            text-align: center;
-            flex: 0 0 auto;
-        }
-
-        .description {
-            margin-top: 13px;
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 650;
-            line-height: 1.6;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .no-results,
-        .loading-box,
-        .error-box {
-            grid-column: 1 / -1;
-            min-height: 320px;
-            border-radius: 28px;
-            background: white;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 36px;
-        }
-
-        .state-content {
-            max-width: 520px;
-        }
-
-        .state-icon {
-            width: 76px;
-            height: 76px;
-            border-radius: 26px;
-            margin: 0 auto 18px;
-            display: grid;
-            place-items: center;
-            background: var(--primary-soft);
-            color: var(--primary);
-            font-size: 30px;
-        }
-
-        .state-content h2 {
-            font-size: 24px;
-            font-weight: 900;
-            color: var(--dark);
-            margin-bottom: 10px;
-            letter-spacing: -0.035em;
-        }
-
-        .state-content p {
-            color: var(--muted);
-            font-size: 14px;
-            font-weight: 650;
-            line-height: 1.7;
-            margin-bottom: 18px;
-        }
-
-        .spinner {
-            width: 44px;
-            height: 44px;
-            border-radius: 999px;
-            border: 4px solid #e2e8f0;
-            border-top-color: var(--primary);
-            animation: spin 0.85s linear infinite;
-            margin: 0 auto 18px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @media (max-width: 760px) {
-            .header-inner {
-                padding: 14px 16px;
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .header-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
-
-            .nav-btn {
-                flex: 1;
-                min-width: calc(50% - 6px);
-            }
-
-            .page-shell {
-                padding: 22px 16px 54px;
-            }
-
-            .results-hero {
-                padding: 26px 22px;
-                border-radius: 26px;
-            }
-
-            .toolbar {
-                grid-template-columns: 1fr;
-                border-radius: 22px;
-            }
-
-            .toolbar-actions {
-                justify-content: stretch;
-            }
-
-            .small-btn {
-                flex: 1;
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .meta-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .logo {
-                font-size: 1.45rem;
-            }
-
-            .logo-icon {
-                width: 38px;
-                height: 38px;
-            }
-        }
+        :root{--primary:#f58220;--primary-hover:#e67312;--primary-soft:rgba(245,130,32,.12);--dark:#0f172a;--muted:#64748b;--bg:#f8fafc;--surface:#fff;--border:#e2e8f0;--danger:#dc2626;--success:#16a34a;--shadow:0 18px 50px rgba(15,23,42,.10);--radius:24px;--max-width:1200px}*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,sans-serif;background:linear-gradient(180deg,#f8fafc,#eef2f7);color:var(--dark);min-height:100vh}a{text-decoration:none;color:inherit}button,input,select{font-family:inherit}.top-bar{background:linear-gradient(90deg,#0f172a,#1e293b,#2b1d12);color:#fff;padding:10px 24px;text-align:center;font-size:13px;font-weight:800}.top-bar i{color:var(--primary);margin-right:8px}.site-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);border-bottom:1px solid var(--border);backdrop-filter:blur(18px)}.header-inner{max-width:var(--max-width);margin:auto;padding:17px 24px;display:flex;align-items:center;justify-content:space-between;gap:22px}.logo{display:inline-flex;align-items:center;gap:10px;font-size:1.8rem;font-weight:900;letter-spacing:-.06em}.logo-icon{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),#ffb15c);color:#fff;box-shadow:0 10px 25px rgba(245,130,32,.35)}.logo span{color:var(--primary)}.nav-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.nav-link,.nav-button{min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:999px;border:none;background:transparent;color:var(--dark);font-size:14px;font-weight:850;cursor:pointer;transition:.25s}.nav-link:hover,.nav-button:hover,.nav-link.active{background:var(--primary-soft);color:var(--primary-hover);transform:translateY(-1px)}.nav-link.primary{background:var(--primary);color:#fff;box-shadow:0 12px 25px rgba(245,130,32,.25)}.page-shell{max-width:var(--max-width);margin:auto;padding:38px 24px 70px}.page-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:24px}.eyebrow{width:max-content;display:inline-flex;gap:8px;align-items:center;padding:8px 13px;border-radius:999px;background:var(--primary-soft);color:var(--primary-hover);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin-bottom:13px}.page-heading h1{font-size:clamp(30px,4vw,48px);line-height:1.05;font-weight:900;letter-spacing:-.055em;margin-bottom:10px}.page-heading p{max-width:720px;color:var(--muted);line-height:1.75;font-weight:550}.toolbar{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;margin-bottom:24px}.search-box{position:relative}.search-box i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#94a3b8}.search-box input,.toolbar select{width:100%;min-height:50px;border:1px solid var(--border);border-radius:16px;padding:12px 15px;background:#fff;font-weight:750;outline:none}.search-box input{padding-left:42px}.toolbar select:focus,.search-box input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(245,130,32,.12)}.status-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;color:var(--muted);font-size:13px;font-weight:800}.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}.car-card{background:#fff;border:1px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 12px 32px rgba(15,23,42,.07);cursor:pointer;transition:.25s}.car-card:hover{transform:translateY(-4px);box-shadow:0 18px 46px rgba(15,23,42,.13)}.card-image{height:205px;background:#e2e8f0;position:relative;overflow:hidden}.card-image img{width:100%;height:100%;object-fit:cover;display:block}.badge{position:absolute;left:12px;top:12px;background:rgba(15,23,42,.82);color:#fff;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:900}.card-body{padding:16px}.price{color:var(--primary);font-size:22px;font-weight:900;margin-bottom:8px}.title{font-size:17px;font-weight:900;margin-bottom:8px}.meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}.meta span{background:#f1f5f9;color:#475569;border-radius:999px;padding:6px 8px;font-size:11px;font-weight:850}.location{color:var(--muted);font-size:13px;font-weight:750;display:flex;gap:7px;align-items:center}.empty,.loading,.error{grid-column:1/-1;background:#fff;border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow);padding:60px 22px;text-align:center}.empty i,.loading i,.error i{font-size:34px;color:var(--primary);margin-bottom:15px}.empty h3,.loading h3,.error h3{font-size:22px;font-weight:900;margin-bottom:8px}.empty p,.loading p,.error p{color:var(--muted);font-weight:650;line-height:1.7}.error i{color:var(--danger)}@media(max-width:760px){.header-inner{flex-direction:column;align-items:flex-start;padding:14px 18px}.nav-actions{width:100%;overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start}.nav-link,.nav-button{white-space:nowrap}.page-shell{padding:30px 18px 60px}.page-heading{display:block}.toolbar{grid-template-columns:1fr}.logo{font-size:1.55rem}.logo-icon{width:38px;height:38px}}
     </style>
 </head>
-
 <body>
-
-<header class="site-header">
-    <div class="header-inner">
-        <a href="index.html" class="logo" aria-label="BILHK startsida">
-            <span class="logo-icon">
-                <i class="fa-solid fa-car-side"></i>
-            </span>
-            BIL<span>HK</span>
-        </a>
-
-        <nav class="header-actions" aria-label="Huvudmeny">
-            <a href="index.html" class="nav-btn">
-                <i class="fa-solid fa-house"></i>
-                Hem
-            </a>
-
-            <a href="my-account.html" class="nav-btn">
-                <i class="fa-solid fa-circle-user"></i>
-                Mitt Konto
-            </a>
-
-            <a href="login.html" class="nav-btn primary" id="authAction">
-                <i class="fa-solid fa-right-to-bracket"></i>
-                Logga in
-            </a>
-        </nav>
-    </div>
-</header>
-
-<main class="page-shell">
-
-    <section class="results-hero">
-        <div class="hero-content">
-            <div class="hero-badge">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                Sökresultat
-            </div>
-
-            <h1 id="pageTitle">Hittade fordon</h1>
-
-            <p id="pageSubtitle">
-                Här visas annonser som matchar dina valda sökfilter.
-            </p>
+    <div class="top-bar"><i class="fa-solid fa-shield-halved"></i> Kontrollera alltid bilen och säljaren innan du genomför en affär.</div>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo" aria-label="Gå till startsidan"><span class="logo-icon"><i class="fa-solid fa-car-side"></i></span>BIL<span>HK</span></a>
+            <nav class="nav-actions" aria-label="Huvudmeny">
+                <a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Hem</a>
+                <a href="my-account.html" class="nav-link"><i class="fa-solid fa-user"></i> Mitt konto</a>
+                <a href="sell.html" class="nav-link primary"><i class="fa-solid fa-plus"></i> Lägg till annons</a>
+                <a href="login.html" class="nav-link" id="loginLink"><i class="fa-solid fa-right-to-bracket"></i> Logga in</a>
+                <button type="button" class="nav-button" id="logoutBtn" hidden><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
+            </nav>
         </div>
-    </section>
+    </header>
+    <main class="page-shell">
+        <section class="page-heading">
+            <div><div class="eyebrow"><i class="fa-solid fa-list"></i> Sökresultat</div><h1>Hittade fordon</h1><p id="resultSubtitle">Annonser som matchar dina valda filter visas här.</p></div>
+        </section>
+        <section class="toolbar" aria-label="Resultatverktyg">
+            <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i><input type="search" id="freeTextSearch" placeholder="Sök i resultaten... märke, modell, plats"></div>
+            <select id="sortSelect" aria-label="Sortering"><option value="newest">Nyast först</option><option value="priceAsc">Pris: lägst först</option><option value="priceDesc">Pris: högst först</option><option value="yearDesc">År: nyast först</option><option value="mileageAsc">Miltal: lägst först</option></select>
+            <a href="filter.html" class="nav-link active"><i class="fa-solid fa-sliders"></i> Ändra filter</a>
+        </section>
+        <div class="status-row"><span id="resultCountText">Laddar resultat...</span><span id="activeFiltersText"></span></div>
+        <section id="resultsGrid" class="results-grid" aria-live="polite"></section>
+    </main>
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    <section class="toolbar" aria-label="Resultatverktyg">
-        <div class="summary-box">
-            <div class="summary-icon">
-                <i class="fa-solid fa-list-check"></i>
-            </div>
+        const urlParams = new URLSearchParams(window.location.search);
+        const elements = {
+            grid: document.getElementById('resultsGrid'),
+            resultCountText: document.getElementById('resultCountText'),
+            activeFiltersText: document.getElementById('activeFiltersText'),
+            resultSubtitle: document.getElementById('resultSubtitle'),
+            freeTextSearch: document.getElementById('freeTextSearch'),
+            sortSelect: document.getElementById('sortSelect'),
+            loginLink: document.getElementById('loginLink'),
+            logoutBtn: document.getElementById('logoutBtn')
+        };
 
-            <div class="summary-text">
-                <strong id="resultSummary">Söker efter matchningar...</strong>
-                <span id="resultDescription">Vänta medan annonserna hämtas från databasen.</span>
-            </div>
-        </div>
+        const state = { allCars: [], visibleCars: [], currentUser: null };
 
-        <div class="toolbar-actions">
-            <button type="button" class="small-btn" id="resetFiltersBtn">
-                <i class="fa-solid fa-rotate-left"></i>
-                Rensa filter
-            </button>
+        initializePage();
 
-            <a href="filter.html" class="small-btn primary">
-                <i class="fa-solid fa-sliders"></i>
-                Ändra sökning
-            </a>
-        </div>
-    </section>
-
-    <section class="active-filters" id="activeFilters" aria-label="Aktiva filter"></section>
-
-    <section class="results-grid" id="resultsGrid" aria-live="polite">
-        <div class="loading-box">
-            <div class="state-content">
-                <div class="spinner"></div>
-                <h2>Söker efter matchningar...</h2>
-                <p>Annonserna laddas. Detta kan ta några sekunder.</p>
-            </div>
-        </div>
-    </section>
-
-</main>
-
-<script type="module">
-    import { db, auth } from "./firebase-config.js";
-
-    import {
-        collection,
-        getDocs,
-        query,
-        orderBy
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    import {
-        onAuthStateChanged,
-        signOut
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-    const CONFIG = {
-        COLLECTIONS: {
-            CARS: "cars"
-        },
-
-        ROUTES: {
-            HOME: "index.html",
-            LOGIN: "login.html",
-            ACCOUNT: "my-account.html",
-            FILTER: "filter.html"
-        },
-
-        PLACEHOLDER_IMAGE:
-            "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='600' viewBox='0 0 900 600'%3E%3Crect width='900' height='600' fill='%23e2e8f0'/%3E%3Cg fill='%2394a3b8' font-family='Arial, sans-serif' text-anchor='middle'%3E%3Ctext x='450' y='285' font-size='36' font-weight='700'%3EBILHK%3C/text%3E%3Ctext x='450' y='330' font-size='18'%3EIngen bild tillgänglig%3C/text%3E%3C/g%3E%3C/svg%3E",
-
-        DEFAULTS: {
-            MIN_PRICE: 0,
-            MAX_PRICE: Number.POSITIVE_INFINITY,
-            MIN_YEAR: 0,
-            MAX_YEAR: Number.POSITIVE_INFINITY,
-            MIN_MILEAGE: 0,
-            MAX_MILEAGE: Number.POSITIVE_INFINITY,
-            MIN_HP: 0,
-            MAX_TAX: Number.POSITIVE_INFINITY,
-            MAX_OWNERS: Number.POSITIVE_INFINITY
+        function initializePage() {
+            observeAuth();
+            attachEvents();
+            loadResults();
         }
-    };
 
-    const elements = {
-        authAction: document.getElementById("authAction"),
-        pageTitle: document.getElementById("pageTitle"),
-        pageSubtitle: document.getElementById("pageSubtitle"),
-        resultSummary: document.getElementById("resultSummary"),
-        resultDescription: document.getElementById("resultDescription"),
-        activeFilters: document.getElementById("activeFilters"),
-        resultsGrid: document.getElementById("resultsGrid"),
-        resetFiltersBtn: document.getElementById("resetFiltersBtn")
-    };
-
-    const state = {
-        currentUser: null,
-        allCars: [],
-        filteredCars: [],
-        params: new URLSearchParams(window.location.search)
-    };
-
-    initializePage();
-
-    function initializePage() {
-        setupAuthNavigation();
-        setupActions();
-        loadResults();
-    }
-
-    function setupAuthNavigation() {
-        onAuthStateChanged(auth, (user) => {
-            state.currentUser = user || null;
-
-            if (user) {
-                elements.authAction.href = "#";
-                elements.authAction.classList.remove("primary");
-                elements.authAction.classList.add("danger");
-                elements.authAction.textContent = "";
-
-                const icon = document.createElement("i");
-                icon.className = "fa-solid fa-right-from-bracket";
-
-                elements.authAction.appendChild(icon);
-                elements.authAction.appendChild(document.createTextNode(" Logga ut"));
-
-                elements.authAction.onclick = async (event) => {
-                    event.preventDefault();
-
-                    try {
-                        await signOut(auth);
-                        window.location.href = CONFIG.ROUTES.HOME;
-                    } catch (error) {
-                        console.error("[BILHK] Sign out failed:", error);
-                    }
-                };
-
-                return;
-            }
-
-            elements.authAction.href = CONFIG.ROUTES.LOGIN;
-            elements.authAction.classList.add("primary");
-            elements.authAction.classList.remove("danger");
-            elements.authAction.onclick = null;
-            elements.authAction.textContent = "";
-
-            const icon = document.createElement("i");
-            icon.className = "fa-solid fa-right-to-bracket";
-
-            elements.authAction.appendChild(icon);
-            elements.authAction.appendChild(document.createTextNode(" Logga in"));
-        });
-    }
-
-    function setupActions() {
-        elements.resetFiltersBtn.addEventListener("click", () => {
-            window.location.href = CONFIG.ROUTES.HOME;
-        });
-    }
-
-    async function loadResults() {
-        renderLoading();
-
-        try {
-            const carsQuery = query(
-                collection(db, CONFIG.COLLECTIONS.CARS),
-                orderBy("createdAt", "desc")
-            );
-
-            const snapshot = await getDocs(carsQuery);
-
-            state.allCars = snapshot.docs.map((documentSnapshot) => {
-                return {
-                    id: documentSnapshot.id,
-                    ...documentSnapshot.data()
-                };
+        function observeAuth() {
+            onAuthStateChanged(auth, (user) => {
+                state.currentUser = user;
+                elements.loginLink.hidden = Boolean(user);
+                elements.logoutBtn.hidden = !user;
             });
-
-            state.filteredCars = filterCars(state.allCars, state.params);
-
-            renderActiveFilters(state.params);
-            renderResults(state.filteredCars);
-        } catch (error) {
-            console.error("[BILHK] Could not load search results:", error);
-            renderError();
         }
-    }
 
-    function filterCars(cars, params) {
-        const filters = readFilters(params);
+        function attachEvents() {
+            elements.logoutBtn.addEventListener('click', async () => {
+                await signOut(auth);
+                window.location.href = 'index.html';
+            });
+            elements.freeTextSearch.addEventListener('input', applyFiltersAndRender);
+            elements.sortSelect.addEventListener('change', applyFiltersAndRender);
+        }
 
-        return cars.filter((car) => {
-            if (!isCarActive(car)) {
-                return false;
+        async function loadResults() {
+            renderLoading();
+            try {
+                const carsQuery = query(collection(db, "cars"), where("active", "==", true), limit(300));
+                const snapshot = await getDocs(carsQuery);
+                state.allCars = snapshot.docs.map((documentSnapshot) => normalizeCarDocument(documentSnapshot));
+                applyFiltersAndRender();
+            } catch (firstError) {
+                console.warn("Primary active query failed, trying fallback:", firstError);
+                try {
+                    const snapshot = await getDocs(collection(db, "cars"));
+                    state.allCars = snapshot.docs.map((documentSnapshot) => normalizeCarDocument(documentSnapshot)).filter((car) => car.active !== false && car.status !== "deleted" && car.isDeleted !== true);
+                    applyFiltersAndRender();
+                } catch (error) {
+                    console.error("Could not load results:", error);
+                    renderError();
+                }
             }
+        }
 
-            const brand = normalizeComparable(car.brand);
-            const model = normalizeComparable(car.model);
-
-            const bodyType = normalizeComparable(
-                car.karosseri ||
-                car.bodyType ||
-                car.kar ||
-                ""
-            );
-
-            const fuel = normalizeComparable(
-                car.fuel ||
-                car.fuelType ||
-                ""
-            );
-
-            const transmission = normalizeComparable(
-                car.transmission ||
-                car.gearbox ||
-                car.gear ||
-                ""
-            );
-
-            const drive = normalizeComparable(car.drive || "");
-
-            const price = toNumber(car.price, 0);
-            const year = toNumber(car.year, 0);
-            const mileage = toNumber(car.mileage, 0);
-            const hp = toNumber(car.hp, 0);
-            const tax = toNumber(car.tax, 0);
-            const owners = toNumber(car.owners, 0);
-
-            const carFeatures = Array.isArray(car.features)
-                ? car.features.map(normalizeComparable)
-                : [];
-
-            const description = normalizeComparable(car.description || "");
-
-            const freeText = [
+        function normalizeCarDocument(documentSnapshot) {
+            const data = documentSnapshot.data() || {};
+            const brand = normalizeText(data.brand);
+            const model = normalizeText(data.model);
+            return {
+                id: documentSnapshot.id,
                 brand,
                 model,
-                bodyType,
-                fuel,
-                transmission,
-                drive,
-                description
-            ].join(" ");
-
-            const matchesBrand =
-                !filters.brand ||
-                filters.brand === "all" ||
-                brand === filters.brand;
-
-            const matchesModel =
-                !filters.model ||
-                filters.model === "all" ||
-                model === filters.model;
-
-            const matchesBody =
-                !filters.kar ||
-                filters.kar === "all" ||
-                bodyType === filters.kar;
-
-            const matchesFuel =
-                !filters.fuel ||
-                filters.fuel === "all" ||
-                fuel === filters.fuel;
-
-            const matchesGear =
-                !filters.gear ||
-                filters.gear === "all" ||
-                transmission === filters.gear;
-
-            const matchesDrive =
-                !filters.drive ||
-                filters.drive === "all" ||
-                drive === filters.drive;
-
-            const matchesPrice =
-                price >= filters.minP &&
-                price <= filters.maxP;
-
-            const matchesYear =
-                year >= filters.minY &&
-                year <= filters.maxY;
-
-            const matchesMileage =
-                mileage >= filters.minM &&
-                mileage <= filters.maxM;
-
-            const matchesHp =
-                hp >= filters.minHp;
-
-            const matchesTax =
-                tax <= filters.maxTax;
-
-            const matchesOwners =
-                owners <= filters.maxOwners;
-
-            const matchesText =
-                !filters.text ||
-                freeText.includes(filters.text);
-
-            const matchesFeatures =
-                filters.techs.length === 0 ||
-                filters.techs.every((feature) => carFeatures.includes(feature));
-
-            return (
-                matchesBrand &&
-                matchesModel &&
-                matchesBody &&
-                matchesFuel &&
-                matchesGear &&
-                matchesDrive &&
-                matchesPrice &&
-                matchesYear &&
-                matchesMileage &&
-                matchesHp &&
-                matchesTax &&
-                matchesOwners &&
-                matchesText &&
-                matchesFeatures
-            );
-        });
-    }
-
-    function readFilters(params) {
-        return {
-            brand: normalizeComparable(params.get("brand")),
-            model: normalizeComparable(params.get("model")),
-            kar: normalizeComparable(params.get("kar")),
-            fuel: normalizeComparable(params.get("fuel")),
-            gear: normalizeComparable(params.get("gear")),
-            drive: normalizeComparable(params.get("drive")),
-            text: normalizeComparable(params.get("text")),
-
-            minP: readNumberParam(params, "minP", CONFIG.DEFAULTS.MIN_PRICE),
-            maxP: readNumberParam(params, "maxP", CONFIG.DEFAULTS.MAX_PRICE),
-
-            minY: readNumberParam(params, "minY", CONFIG.DEFAULTS.MIN_YEAR),
-            maxY: readNumberParam(params, "maxY", CONFIG.DEFAULTS.MAX_YEAR),
-
-            minM: readNumberParam(params, "minM", CONFIG.DEFAULTS.MIN_MILEAGE),
-            maxM: readNumberParam(
-                params,
-                "maxM",
-                readNumberParam(params, "maxMil", CONFIG.DEFAULTS.MAX_MILEAGE)
-            ),
-
-            minHp: readNumberParam(
-                params,
-                "hp",
-                readNumberParam(params, "minHp", CONFIG.DEFAULTS.MIN_HP)
-            ),
-
-            maxTax: readNumberParam(
-                params,
-                "tax",
-                readNumberParam(params, "maxTax", CONFIG.DEFAULTS.MAX_TAX)
-            ),
-
-            maxOwners: readNumberParam(
-                params,
-                "owners",
-                readNumberParam(params, "maxOwners", CONFIG.DEFAULTS.MAX_OWNERS)
-            ),
-
-            techs: readTechFilters(params)
-        };
-    }
-
-    function readTechFilters(params) {
-        const raw = params.get("techs") || "";
-
-        return raw
-            .split(",")
-            .map(normalizeComparable)
-            .filter(Boolean);
-    }
-
-    function readNumberParam(params, key, fallback) {
-        const raw = params.get(key);
-
-        if (raw === null || raw === undefined || raw === "") {
-            return fallback;
+                title: normalizeText(data.title) || `${brand} ${model}`.trim(),
+                year: normalizeNumber(data.year),
+                price: normalizeNumber(data.price),
+                mileage: normalizeNumber(data.mileage),
+                fuelType: normalizeText(data.fuelType || data.fuel),
+                transmission: normalizeText(data.transmission),
+                bodyType: normalizeText(data.bodyType || data.karosseri || data.kar),
+                condition: normalizeText(data.condition),
+                location: normalizeText(data.location),
+                description: normalizeText(data.description, 5000),
+                images: Array.isArray(data.images) ? data.images.filter(Boolean) : [],
+                mainImage: normalizeText(data.mainImage || (Array.isArray(data.images) ? data.images[0] : ""), 1000),
+                sellerId: normalizeText(data.sellerId),
+                active: data.active,
+                status: normalizeText(data.status),
+                isDeleted: data.isDeleted === true,
+                createdAtMs: getTimestampMs(data.createdAt)
+            };
         }
 
-        const value = Number(raw);
-
-        if (!Number.isFinite(value)) {
-            return fallback;
+        function applyFiltersAndRender() {
+            const filters = getFiltersFromURL();
+            const localSearch = normalizeForSearch(elements.freeTextSearch.value);
+            let cars = state.allCars.filter((car) => matchesURLFilters(car, filters));
+            if (localSearch) cars = cars.filter((car) => normalizeForSearch(`${car.brand} ${car.model} ${car.title} ${car.location} ${car.description}`).includes(localSearch));
+            cars = sortCars(cars, elements.sortSelect.value);
+            state.visibleCars = cars;
+            updateStatus(filters, cars.length);
+            renderCars(cars);
         }
 
-        return value;
-    }
-
-    function isCarActive(car) {
-        if (car.active === false) {
-            return false;
+        function getFiltersFromURL() {
+            return {
+                brand: getParam("brand"),
+                model: getParam("model"),
+                bodyType: getParam("bodyType") || getParam("kar") || getParam("karosseri"),
+                fuelType: getParam("fuelType") || getParam("fuel"),
+                transmission: getParam("transmission"),
+                condition: getParam("condition"),
+                location: getParam("location"),
+                minPrice: getNumberParam("minPrice") || getNumberParam("minP"),
+                maxPrice: getNumberParam("maxPrice") || getNumberParam("maxP"),
+                minYear: getNumberParam("minYear"),
+                maxYear: getNumberParam("maxYear"),
+                maxMileage: getNumberParam("maxMileage")
+            };
         }
 
-        if (car.status && normalizeComparable(car.status) === "deleted") {
-            return false;
+        function matchesURLFilters(car, filters) {
+            if (!matchesTextFilter(car.brand, filters.brand)) return false;
+            if (!matchesTextFilter(car.model, filters.model)) return false;
+            if (!matchesTextFilter(car.bodyType, filters.bodyType)) return false;
+            if (!matchesTextFilter(car.fuelType, filters.fuelType)) return false;
+            if (!matchesTextFilter(car.transmission, filters.transmission)) return false;
+            if (!matchesTextFilter(car.condition, filters.condition)) return false;
+            if (filters.location && !normalizeForSearch(car.location).includes(normalizeForSearch(filters.location))) return false;
+            if (filters.minPrice && car.price < filters.minPrice) return false;
+            if (filters.maxPrice && car.price > filters.maxPrice) return false;
+            if (filters.minYear && car.year < filters.minYear) return false;
+            if (filters.maxYear && car.year > filters.maxYear) return false;
+            if (filters.maxMileage && car.mileage > filters.maxMileage) return false;
+            return true;
         }
 
-        return true;
-    }
-
-    function renderResults(cars) {
-        const count = cars.length;
-
-        elements.pageTitle.textContent = count === 1
-            ? "1 fordon hittades"
-            : `${count} fordon hittades`;
-
-        elements.pageSubtitle.textContent = count > 0
-            ? "Resultaten nedan matchar dina valda filter."
-            : "Inga annonser matchade sökningen just nu.";
-
-        elements.resultSummary.textContent = count === 1
-            ? "1 matchande annons"
-            : `${count} matchande annonser`;
-
-        elements.resultDescription.textContent = count > 0
-            ? "Klicka på en annons för att se fler detaljer och kontakta säljaren."
-            : "Prova att rensa filter eller göra en bredare sökning.";
-
-        if (count === 0) {
-            renderNoResults();
-            return;
+        function matchesTextFilter(value, filterValue) {
+            if (!filterValue || filterValue === "all") return true;
+            return normalizeForSearch(value) === normalizeForSearch(filterValue);
         }
 
-        elements.resultsGrid.textContent = "";
+        function sortCars(cars, sortValue) {
+            const sorted = [...cars];
+            const comparators = {
+                newest: (a, b) => b.createdAtMs - a.createdAtMs,
+                priceAsc: (a, b) => a.price - b.price,
+                priceDesc: (a, b) => b.price - a.price,
+                yearDesc: (a, b) => b.year - a.year,
+                mileageAsc: (a, b) => a.mileage - b.mileage
+            };
+            sorted.sort(comparators[sortValue] || comparators.newest);
+            return sorted;
+        }
 
-        cars.forEach((car) => {
-            elements.resultsGrid.appendChild(createCarCard(car));
-        });
-    }
-
-    function createCarCard(car) {
-        const card = document.createElement("article");
-        card.className = "car-card";
-        card.tabIndex = 0;
-        card.setAttribute("role", "button");
-        card.setAttribute("aria-label", `Visa ${safeText(car.brand)} ${safeText(car.model)}`);
-
-        const imageWrap = document.createElement("div");
-        imageWrap.className = "card-image-wrap";
-
-        const image = document.createElement("img");
-        image.src = getMainImage(car);
-        image.alt = `${safeText(car.brand)} ${safeText(car.model)}`;
-        image.loading = "lazy";
-        image.referrerPolicy = "no-referrer";
-
-        image.onerror = () => {
-            image.src = CONFIG.PLACEHOLDER_IMAGE;
-        };
-
-        const statusPill = document.createElement("div");
-        statusPill.className = "status-pill";
-
-        const statusIcon = document.createElement("i");
-        statusIcon.className = "fa-solid fa-circle-check";
-
-        statusPill.appendChild(statusIcon);
-        statusPill.appendChild(document.createTextNode(" Aktiv annons"));
-
-        imageWrap.appendChild(image);
-        imageWrap.appendChild(statusPill);
-
-        const content = document.createElement("div");
-        content.className = "card-content";
-
-        const price = document.createElement("div");
-        price.className = "price";
-        price.textContent = formatPrice(car.price);
-
-        const title = document.createElement("div");
-        title.className = "title";
-        title.textContent = `${safeText(car.brand)} ${safeText(car.model)}`.trim() || "Okänt fordon";
-
-        const metaGrid = document.createElement("div");
-        metaGrid.className = "meta-grid";
-
-        metaGrid.appendChild(createMetaItem("fa-calendar", safeText(car.year) || "-"));
-        metaGrid.appendChild(createMetaItem("fa-road", `${formatNumber(car.mileage)} mil`));
-        metaGrid.appendChild(createMetaItem("fa-gas-pump", safeText(car.fuel || car.fuelType) || "-"));
-        metaGrid.appendChild(createMetaItem("fa-gears", safeText(car.transmission || car.gearbox) || "-"));
-
-        const description = document.createElement("p");
-        description.className = "description";
-        description.textContent = safeText(car.description) || "Ingen beskrivning tillgänglig.";
-
-        content.appendChild(price);
-        content.appendChild(title);
-        content.appendChild(metaGrid);
-        content.appendChild(description);
-
-        card.appendChild(imageWrap);
-        card.appendChild(content);
-
-        card.addEventListener("click", () => {
-            window.location.href = `details.html?id=${encodeURIComponent(car.id)}`;
-        });
-
-        card.addEventListener("keydown", (event) => {
-            if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                window.location.href = `details.html?id=${encodeURIComponent(car.id)}`;
+        function renderCars(cars) {
+            elements.grid.textContent = "";
+            if (!cars.length) {
+                const empty = document.createElement("div");
+                empty.className = "empty";
+                empty.innerHTML = `<i class="fa-solid fa-car-side"></i><h3>Inga fordon matchade din sökning</h3><p>Prova bredare filter eller kontrollera att annonser finns publicerade i databasen.</p>`;
+                elements.grid.appendChild(empty);
+                return;
             }
-        });
-
-        return card;
-    }
-
-    function createMetaItem(iconName, text) {
-        const item = document.createElement("div");
-        item.className = "meta-item";
-
-        const icon = document.createElement("i");
-        icon.className = `fa-solid ${iconName}`;
-
-        const span = document.createElement("span");
-        span.textContent = String(text || "-");
-
-        item.appendChild(icon);
-        item.appendChild(span);
-
-        return item;
-    }
-
-    function renderActiveFilters(params) {
-        elements.activeFilters.textContent = "";
-
-        const chips = [];
-
-        addChip(chips, "Märke", params.get("brand"));
-        addChip(chips, "Modell", params.get("model"));
-        addChip(chips, "Kaross", params.get("kar"));
-        addChip(chips, "Drivmedel", params.get("fuel"));
-        addChip(chips, "Växellåda", params.get("gear"));
-        addChip(chips, "Drivning", params.get("drive"));
-        addChip(chips, "Söktext", params.get("text"));
-        addChip(chips, "Min pris", params.get("minP"));
-        addChip(chips, "Max pris", params.get("maxP"));
-        addChip(chips, "Min år", params.get("minY"));
-        addChip(chips, "Max år", params.get("maxY"));
-        addChip(chips, "Max mil", params.get("maxM") || params.get("maxMil"));
-        addChip(chips, "Min hk", params.get("hp") || params.get("minHp"));
-        addChip(chips, "Max skatt", params.get("tax") || params.get("maxTax"));
-        addChip(chips, "Max ägare", params.get("owners") || params.get("maxOwners"));
-
-        const techs = params.get("techs");
-
-        if (techs) {
-            addChip(chips, "Utrustning", techs);
+            const fragment = document.createDocumentFragment();
+            cars.forEach((car) => fragment.appendChild(createCarCard(car)));
+            elements.grid.appendChild(fragment);
         }
 
-        if (chips.length === 0) {
-            elements.activeFilters.classList.remove("show");
-            return;
+        function createCarCard(car) {
+            const card = document.createElement("article");
+            card.className = "car-card";
+            card.tabIndex = 0;
+            card.addEventListener("click", () => { window.location.href = `details.html?id=${encodeURIComponent(car.id)}`; });
+            card.addEventListener("keydown", (event) => { if (event.key === "Enter") window.location.href = `details.html?id=${encodeURIComponent(car.id)}`; });
+
+            const imageWrapper = document.createElement("div");
+            imageWrapper.className = "card-image";
+            const img = document.createElement("img");
+            img.src = car.mainImage || car.images[0] || "placeholder.jpg";
+            img.alt = car.title || "Bilannons";
+            img.loading = "lazy";
+            imageWrapper.appendChild(img);
+            const badge = document.createElement("span");
+            badge.className = "badge";
+            badge.textContent = car.condition || "Annons";
+            imageWrapper.appendChild(badge);
+
+            const body = document.createElement("div");
+            body.className = "card-body";
+            const price = document.createElement("div");
+            price.className = "price";
+            price.textContent = car.price > 0 ? `${formatNumber(car.price)} kr` : "Pris saknas";
+            const title = document.createElement("div");
+            title.className = "title";
+            title.textContent = car.title || `${car.brand} ${car.model}`;
+            const meta = document.createElement("div");
+            meta.className = "meta";
+            [car.year || "År saknas", car.mileage ? `${formatNumber(car.mileage)} km` : "Miltal saknas", car.fuelType || "Bränsle saknas", car.transmission || "Växellåda saknas"].forEach((text) => {
+                const span = document.createElement("span");
+                span.textContent = text;
+                meta.appendChild(span);
+            });
+            const location = document.createElement("div");
+            location.className = "location";
+            location.innerHTML = `<i class="fa-solid fa-location-dot"></i>`;
+            const locationText = document.createElement("span");
+            locationText.textContent = car.location || "Plats saknas";
+            location.appendChild(locationText);
+            body.append(price, title, meta, location);
+            card.append(imageWrapper, body);
+            return card;
         }
 
-        chips.forEach((chip) => {
-            elements.activeFilters.appendChild(chip);
-        });
-
-        elements.activeFilters.classList.add("show");
-    }
-
-    function addChip(chips, label, value) {
-        if (!value || value === "all") {
-            return;
+        function updateStatus(filters, count) {
+            elements.resultCountText.textContent = `${count} annons${count === 1 ? "" : "er"} hittades`;
+            const active = Object.entries(filters).filter(([, value]) => value !== "" && value !== 0 && value !== null && value !== undefined && value !== "all");
+            elements.activeFiltersText.textContent = active.length ? `${active.length} aktiva filter` : "Inga filter valda";
+            elements.resultSubtitle.textContent = active.length ? "Resultaten är filtrerade enligt dina val." : "Alla aktiva annonser visas här.";
         }
 
-        const chip = document.createElement("div");
-        chip.className = "filter-chip";
-
-        const icon = document.createElement("i");
-        icon.className = "fa-solid fa-filter";
-
-        const span = document.createElement("span");
-        span.textContent = `${label}: ${value}`;
-
-        chip.appendChild(icon);
-        chip.appendChild(span);
-
-        chips.push(chip);
-    }
-
-    function renderLoading() {
-        elements.resultsGrid.innerHTML = `
-            <div class="loading-box">
-                <div class="state-content">
-                    <div class="spinner"></div>
-                    <h2>Söker efter matchningar...</h2>
-                    <p>Annonserna laddas. Detta kan ta några sekunder.</p>
-                </div>
-            </div>
-        `;
-    }
-
-    function renderNoResults() {
-        elements.resultsGrid.innerHTML = `
-            <div class="no-results">
-                <div class="state-content">
-                    <div class="state-icon">
-                        <i class="fa-regular fa-face-frown-open"></i>
-                    </div>
-                    <h2>Inga fordon hittades</h2>
-                    <p>Det finns inga annonser som matchar dessa filter. Rensa filter eller välj bredare sökning.</p>
-                    <a href="filter.html" class="small-btn primary">
-                        <i class="fa-solid fa-sliders"></i>
-                        Sök igen
-                    </a>
-                </div>
-            </div>
-        `;
-    }
-
-    function renderError() {
-        elements.pageTitle.textContent = "Kunde inte ladda resultat";
-        elements.pageSubtitle.textContent = "Ett fel uppstod när annonserna skulle hämtas.";
-
-        elements.resultSummary.textContent = "Fel vid hämtning";
-        elements.resultDescription.textContent = "Kontrollera anslutningen och försök igen.";
-
-        elements.resultsGrid.innerHTML = `
-            <div class="error-box">
-                <div class="state-content">
-                    <div class="state-icon">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </div>
-                    <h2>Något gick fel</h2>
-                    <p>Resultaten kunde inte laddas just nu. Försök att uppdatera sidan.</p>
-                    <button type="button" class="small-btn primary" onclick="window.location.reload()">
-                        <i class="fa-solid fa-rotate-right"></i>
-                        Uppdatera
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-
-    function getMainImage(car) {
-        if (Array.isArray(car.images) && car.images.length > 0 && car.images[0]) {
-            return String(car.images[0]);
+        function renderLoading() {
+            elements.grid.innerHTML = `<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i><h3>Laddar annonser...</h3><p>Vänta medan annonser hämtas från databasen.</p></div>`;
         }
 
-        if (car.image) {
-            return String(car.image);
+        function renderError() {
+            elements.resultCountText.textContent = "Kunde inte ladda resultat";
+            elements.grid.innerHTML = `<div class="error"><i class="fa-solid fa-triangle-exclamation"></i><h3>Ett fel uppstod</h3><p>Kontrollera Firebase-regler, internetanslutning och att cars-samlingen finns.</p></div>`;
         }
 
-        if (car.photoURL) {
-            return String(car.photoURL);
+        function getParam(name) { return String(urlParams.get(name) || "").trim(); }
+        function getNumberParam(name) { const value = Number(urlParams.get(name)); return Number.isFinite(value) && value > 0 ? value : 0; }
+        function normalizeText(value, maxLength = 300) { return String(value ?? "").replace(/\s+/g, " ").trim().slice(0, maxLength); }
+        function normalizeForSearch(value) { return normalizeText(value, 1000).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+        function normalizeNumber(value) { const number = Number(value); return Number.isFinite(number) ? Math.floor(number) : 0; }
+        function formatNumber(value) { return new Intl.NumberFormat("sv-SE").format(Number(value) || 0); }
+        function getTimestampMs(value) {
+            if (!value) return 0;
+            if (typeof value.toMillis === "function") return value.toMillis();
+            if (value instanceof Date) return value.getTime();
+            return Number(value) || 0;
         }
-
-        return CONFIG.PLACEHOLDER_IMAGE;
-    }
-
-    function formatPrice(value) {
-        const number = toNumber(value, 0);
-
-        if (!number) {
-            return "Pris saknas";
-        }
-
-        return `${number.toLocaleString("sv-SE")} kr`;
-    }
-
-    function formatNumber(value) {
-        const number = toNumber(value, 0);
-
-        if (!number) {
-            return "-";
-        }
-
-        return number.toLocaleString("sv-SE");
-    }
-
-    function toNumber(value, fallback) {
-        const number = Number(value);
-
-        if (!Number.isFinite(number)) {
-            return fallback;
-        }
-
-        return number;
-    }
-
-    function normalizeComparable(value) {
-        return String(value ?? "")
-            .trim()
-            .toLowerCase();
-    }
-
-    function safeText(value) {
-        return String(value ?? "")
-            .replace(/\s+/g, " ")
-            .trim();
-    }
-</script>
-
+    </script>
 </body>
 </html>
