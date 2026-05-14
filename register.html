@@ -1,1 +1,339 @@
-<!DOCTYPE html><html lang="sv"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Skapa konto | BILHK</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script><style>:root{--primary:#f58220;--dark:#0f172a;--bg:#f8fafc;--border:#e2e8f0}*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,sans-serif}body{background:var(--bg);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.card{background:white;border:1px solid var(--border);border-radius:30px;padding:36px;max-width:560px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.06)}.logo{text-align:center;display:block;text-decoration:none;font-size:32px;font-weight:900;color:var(--dark);margin-bottom:18px}.logo span{color:var(--primary)}.tabs{display:flex;background:#f1f5f9;padding:5px;border-radius:14px;margin-bottom:18px}.tab{flex:1;padding:12px;border:0;border-radius:10px;font-weight:900;color:#64748b}.tab.active{background:white;color:var(--dark)}label{display:block;font-size:11px;text-transform:uppercase;font-weight:900;color:#64748b;margin-bottom:7px}input{width:100%;padding:13px;border:1px solid var(--border);border-radius:12px;background:#f8fafc;margin-bottom:12px;font-weight:700}.btn{width:100%;padding:15px;border:0;border-radius:13px;background:var(--primary);color:white;font-weight:900;cursor:pointer;margin-top:8px}.check{font-size:13px;font-weight:700;color:#334155;display:flex;gap:8px;align-items:flex-start}.notice{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:13px;border-radius:13px;font-size:13px;font-weight:700;margin-bottom:14px;line-height:1.5}</style></head><body><div class="card"><a href="index.html" class="logo">BIL<span>HK</span></a><div class="notice">Konto kan användas först efter godkännande av användarvillkor och ansvarsfriskrivning.</div><div class="tabs"><button id="pTab" class="tab active" type="button">Privatperson</button><button id="fTab" class="tab" type="button">Företag</button></div><form id="form"><div id="biz" style="display:none"><label>Företagsnamn</label><input id="companyName"><label>Organisationsnummer</label><input id="taxId"><label>Webbplats</label><input id="website"></div><label>Namn</label><input id="name" required><label>E-post</label><input type="email" id="email" required><label>Telefon</label><input id="phone"><label>Adress</label><input id="address"><label>Lösenord</label><input type="password" id="pass" minlength="8" required><label>Bekräfta lösenord</label><input type="password" id="confirm" minlength="8" required><label class="check"><input type="checkbox" id="terms" required> Jag godkänner <a href="terms.html" target="_blank">användarvillkor och ansvarsfriskrivning</a>.</label><button class="btn" id="btn">Skapa konto</button></form></div><script type="module">import{auth,db}from'./firebase-config.js';import{createUserWithEmailAndPassword}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";import{doc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";let mode='Privat';pTab.onclick=()=>{mode='Privat';pTab.classList.add('active');fTab.classList.remove('active');biz.style.display='none'};fTab.onclick=()=>{mode='Foretag';fTab.classList.add('active');pTab.classList.remove('active');biz.style.display='block'};form.onsubmit=async e=>{e.preventDefault();if(pass.value!==confirm.value)return Swal.fire('Fel','Lösenorden matchar inte.','warning');btn.disabled=true;btn.textContent='Skapar...';try{const c=await createUserWithEmailAndPassword(auth,email.value.trim(),pass.value);await setDoc(doc(db,'users',c.user.uid),{uid:c.user.uid,userType:mode,name:name.value.trim(),companyName:companyName.value.trim(),taxId:taxId.value.trim(),email:email.value.trim(),phone:phone.value.trim(),address:address.value.trim(),website:website.value.trim(),profilePublic:true,showPhone:false,showEmail:false,showAddress:false,showWebsite:false,savedCars:[],createdAt:serverTimestamp(),lastActiveAt:serverTimestamp(),termsAcceptedAt:serverTimestamp()},{merge:true});location.href='dashboard.html';}catch(err){Swal.fire('Fel',err.message,'error');btn.disabled=false;btn.textContent='Skapa konto';}};</script></body></html>
+<!DOCTYPE html>
+<html lang="sv" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Skapa konto | BILHK Professional Registration</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e07210;
+            --primary-soft: #fff5eb;
+            --dark: #0f172a;
+            --dark-2: #1e293b;
+            --muted: #64748b;
+            --bg: #f8fafc;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .reg-card {
+            background: var(--white);
+            padding: 45px;
+            border-radius: 35px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 650px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .logo {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 900;
+            text-decoration: none;
+            color: var(--dark);
+            margin-bottom: 30px;
+            display: block;
+        }
+        .logo span { color: var(--primary); }
+
+        /* --- Account Type Tabs --- */
+        .tabs {
+            display: flex;
+            background: var(--bg);
+            padding: 6px;
+            border-radius: 18px;
+            margin-bottom: 35px;
+            border: 1px solid var(--border);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            color: var(--muted);
+            background: transparent;
+        }
+        .tab-btn.active {
+            background: var(--white);
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        /* --- Form Architecture --- */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-row { grid-column: 1 / -1; }
+
+        .form-group { margin-bottom: 22px; }
+        .form-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--dark-2); }
+        
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--muted); transition: 0.3s; }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 18px 15px 50px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            font-size: 15px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        .form-control:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 4px var(--primary-soft); }
+        .form-control:focus + i { color: var(--primary); }
+
+        /* --- Buttons & Utilities --- */
+        .btn-register {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .btn-register:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
+        .btn-register:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
+
+        .footer-text { margin-top: 25px; text-align: center; font-size: 14px; color: var(--muted); }
+        .footer-text a { color: var(--primary); text-decoration: none; font-weight: 700; }
+
+        /* --- Business Fields Animation --- */
+        #businessFields { display: none; animation: slideDown 0.4s ease-out; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 500px; } }
+
+        /* Responsive */
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div class="reg-card">
+        <a href="index.html" class="logo">BIL<span>HK</span></a>
+        
+        <div class="tabs">
+            <button type="button" class="tab-btn active" id="tabPrivat">👤 Privatperson</button>
+            <button type="button" class="tab-btn" id="tabForetag">🏢 Företag</button>
+        </div>
+
+        <form id="registerForm">
+            <div class="form-grid">
+                <div class="form-group full-row">
+                    <label id="labelName">Fullständigt namn</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="regName" class="form-control" placeholder="Ange namn" required>
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>E-postadress</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="regEmail" class="form-control" placeholder="din@epost.se" required>
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefonnummer</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="regPhone" class="form-control" placeholder="070 123 45 67" required>
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                </div>
+
+                <div id="businessFields" class="full-row">
+                    <div class="form-grid" style="margin-top: 0;">
+                        <div class="form-group">
+                            <label>Organisationsnummer</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="regTaxId" class="form-control" placeholder="55XXXX-XXXX">
+                                <i class="fa-solid fa-building-shield"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Webbplats (Valfritt)</label>
+                            <div class="input-wrapper">
+                                <input type="url" id="regWeb" class="form-control" placeholder="https://">
+                                <i class="fa-solid fa-globe"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Lösenord</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="regPass" class="form-control" placeholder="••••••••" required minlength="8">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Bekräfta lösenord</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="regConfirm" class="form-control" placeholder="••••••••" required>
+                        <i class="fa-solid fa-shield-check"></i>
+                    </div>
+                </div>
+
+                <div class="form-group full-row">
+                    <label>Stad / Plats</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="regAddress" class="form-control" placeholder="Ex: Stockholm" required>
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-register" id="submitBtn">
+                <span>Skapa mitt konto</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <div class="footer-text">
+            Har du redan ett konto? <a href="login.html">Logga in här</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const form = document.getElementById('registerForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const bizFields = document.getElementById('businessFields');
+        const tabPrivat = document.getElementById('tabPrivat');
+        const tabForetag = document.getElementById('tabForetag');
+        
+        let accountType = 'Privat';
+
+        // --- 1. إدارة تبديل الحسابات (Tabs Logic) ---
+        tabPrivat.onclick = () => {
+            accountType = 'Privat';
+            tabPrivat.classList.add('active');
+            tabForetag.classList.remove('active');
+            bizFields.style.display = 'none';
+            document.getElementById('labelName').innerText = 'Fullständigt namn';
+            document.getElementById('regTaxId').required = false;
+        };
+
+        tabForetag.onclick = () => {
+            accountType = 'Foretag';
+            tabForetag.classList.add('active');
+            tabPrivat.classList.remove('active');
+            bizFields.style.display = 'block';
+            document.getElementById('labelName').innerText = 'Företagsnamn';
+            document.getElementById('regTaxId').required = true;
+        };
+
+        // --- 2. معالجة التسجيل (Smart Submission) ---
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('regEmail').value.trim();
+            const pass = document.getElementById('regPass').value;
+            const confirm = document.getElementById('regConfirm').value;
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const address = document.getElementById('regAddress').value.trim();
+
+            // التحقق من تطابق كلمة المرور
+            if (pass !== confirm) {
+                return Swal.fire('Fel', 'Lösenorden matchar inte.', 'error');
+            }
+
+            // تفعيل حالة التحميل
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Skapar konto...';
+
+            try {
+                // إنشاء المستخدم في Firebase Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+
+                // إعداد وثيقة البيانات لـ Firestore
+                const userData = {
+                    uid: user.uid,
+                    email: email,
+                    name: name,
+                    phone: phone,
+                    address: address,
+                    userType: accountType,
+                    createdAt: serverTimestamp(),
+                    lastLogin: serverTimestamp(),
+                    isVerified: false
+                };
+
+                // إضافة بيانات الشركة إذا لزم الأمر
+                if (accountType === 'Foretag') {
+                    userData.taxId = document.getElementById('regTaxId').value.trim();
+                    userData.website = document.getElementById('regWeb').value.trim();
+                }
+
+                // حفظ البيانات في Firestore
+                await setDoc(doc(db, "users", user.uid), userData);
+
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Välkommen till BILHK!',
+                    text: 'Ditt konto har skapats framgångsrikt.',
+                    confirmButtonColor: '#f58220'
+                });
+
+                window.location.href = "dashboard-fixed.html";
+
+            } catch (error) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>Skapa mitt konto</span> <i class="fa-solid fa-arrow-right"></i>';
+                
+                console.error("Registration Error:", error.code);
+
+                // معالجة الأخطاء الذكية
+                let SwedishMessage = "Ett oväntat fel uppstod.";
+                if (error.code === 'auth/email-already-in-use') SwedishMessage = "E-postadressen används redan.";
+                if (error.code === 'auth/weak-password') SwedishMessage = "Lösenordet är för svagt (minst 6 tecken).";
+                
+                Swal.fire('Registrering misslyckades', SwedishMessage, 'error');
+            }
+        };
+    </script>
+</body>
+</html>
