@@ -1,1 +1,387 @@
-<!DOCTYPE html><html lang="sv"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Säljarsida | BILHK</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><style>:root{--primary:#f58220;--dark:#0f172a;--bg:#f8fafc;--border:#e2e8f0}*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,sans-serif}body{background:var(--bg);color:var(--dark)}header{background:white;padding:15px 6%;border-bottom:1px solid var(--border);display:flex;justify-content:space-between}.logo{text-decoration:none;font-weight:900;font-size:26px;color:var(--dark)}.logo span{color:var(--primary)}.container{max-width:1100px;margin:35px auto;padding:0 20px}.card{background:white;border:1px solid var(--border);border-radius:22px;padding:25px;margin-bottom:22px}.avatar{width:90px;height:90px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}.car{background:white;border:1px solid var(--border);border-radius:18px;overflow:hidden;cursor:pointer}footer{background:white;border-top:1px solid var(--border);padding:34px 20px;text-align:center;color:#94a3b8;font-size:13px;margin-top:40px}.footer-links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}.footer-links a{font-weight:900;color:#64748b;text-decoration:none}</style></head><body><header><a href="index.html" class="logo">BIL<span>HK</span></a><a href="dashboard.html" style="font-weight:900;color:var(--primary);text-decoration:none">Min sida</a></header><main class="container" id="app">Laddar...</main><footer><div class="footer-links"><a href="terms.html">Användarvillkor</a><a href="terms.html#disclaimer">Ansvarsfriskrivning</a></div><div>BILHK är endast en annonsplattform. Vi ansvarar inte för annonser, betalningar, affärer eller tvister.</div></footer><script type="module">import{db}from'./firebase-config.js';import{doc,getDoc,collection,query,where,getDocs}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";const id=new URLSearchParams(location.search).get('id');const esc=s=>String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');const allowed=(u,k)=>u['show'+k[0].toUpperCase()+k.slice(1)];async function load(){const u=await getDoc(doc(db,'users',id));if(!u.exists()||u.data().profilePublic===false){app.innerHTML='<div class="card">Säljarprofilen är inte offentlig.</div>';return;}const x=u.data(),name=x.companyName||x.name||'BILHK-användare';let info='';if(allowed(x,'phone')&&x.phone)info+=`<p><i class="fa-solid fa-phone"></i> ${esc(x.phone)}</p>`;if(allowed(x,'email')&&x.email)info+=`<p><i class="fa-solid fa-envelope"></i> ${esc(x.email)}</p>`;if(allowed(x,'address')&&x.address)info+=`<p><i class="fa-solid fa-location-dot"></i> ${esc(x.address)}</p>`;if(allowed(x,'website')&&x.website)info+=`<p><i class="fa-solid fa-globe"></i> <a href="${esc(x.website)}" target="_blank">Webbplats</a></p>`;app.innerHTML=`<div class="card" style="display:flex;gap:20px;align-items:center"><div class="avatar">${x.logoUrl?`<img src="${esc(x.logoUrl)}">`:esc(name.charAt(0))}</div><div><h1>${esc(name)}</h1><p style="color:#64748b">${x.userType==='Foretag'?'Företag':'Privatperson'}</p>${info}</div></div><h2 style="margin:20px 0">Aktiva annonser</h2><div class="grid" id="cars"></div>`;const s=await getDocs(query(collection(db,'cars'),where('sellerId','==',id)));s.forEach(d=>{const c=d.data();if(c.active===false)return;cars.insertAdjacentHTML('beforeend',`<div class="car" onclick="location.href='details.html?id=${d.id}'"><img src="${esc(c.images?.[0]||'placeholder.jpg')}" style="width:100%;height:170px;object-fit:cover"><div style="padding:16px"><h3>${esc(c.brand)} ${esc(c.model)}</h3><b style="color:var(--primary)">${Number(c.price||0).toLocaleString('sv-SE')} kr</b></div></div>`);});}load();</script></body></html>
+<!DOCTYPE html>
+<html lang="sv" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Säljarprofil | BILHK Professional Marketplace</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e07210;
+            --primary-soft: #fff5eb;
+            --dark: #0f172a;
+            --dark-2: #1e293b;
+            --muted: #64748b;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --shadow-pro: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--dark); line-height: 1.6; }
+
+        /* --- Navigation --- */
+        nav {
+            background: var(--white);
+            padding: 15px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: var(--dark); letter-spacing: -1.2px; }
+        .logo span { color: var(--primary); }
+
+        /* --- Profile Header Area --- */
+        .profile-header-wrap {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-2) 100%);
+            padding: 100px 6% 60px;
+            color: var(--white);
+            position: relative;
+        }
+        .profile-card {
+            max-width: 1200px;
+            margin: -60px auto 0;
+            background: var(--white);
+            border-radius: 30px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            gap: 35px;
+            box-shadow: var(--shadow-pro);
+            border: 1px solid var(--border);
+            position: relative;
+            z-index: 5;
+            color: var(--dark);
+        }
+        .seller-avatar {
+            width: 120px;
+            height: 120px;
+            background: var(--primary-soft);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--primary);
+            border: 5px solid var(--white);
+            box-shadow: var(--shadow-pro);
+        }
+
+        .seller-main-info { flex: 1; }
+        .seller-main-info h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
+        .seller-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg);
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        .seller-stats-row { display: flex; gap: 30px; margin-top: 20px; }
+        .stat-item { text-align: left; }
+        .stat-val { display: block; font-size: 22px; font-weight: 900; color: var(--dark); }
+        .stat-lbl { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+
+        /* --- Actions --- */
+        .profile-actions { display: flex; flex-direction: column; gap: 12px; }
+        .btn {
+            padding: 14px 28px;
+            border-radius: 14px;
+            border: none;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
+        .btn-outline { background: var(--white); border: 2px solid var(--border); color: var(--dark); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* --- Content Layout --- */
+        .seller-content { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
+        .inventory-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; border-bottom: 2px solid var(--border); padding-bottom: 15px; }
+        .inventory-header h2 { font-size: 22px; font-weight: 800; }
+
+        /* --- Listings Grid --- */
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .car-card-pro {
+            background: var(--white);
+            border-radius: 25px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+        }
+        .car-card-pro:hover { transform: translateY(-10px); box-shadow: var(--shadow-pro); border-color: var(--primary); }
+
+        .img-wrap { width: 100%; height: 210px; background: #f1f5f9; position: relative; }
+        .img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .price-badge {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 17px;
+        }
+
+        .card-details { padding: 22px; }
+        .card-details h3 { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
+        .meta-specs { display: flex; gap: 15px; color: var(--muted); font-size: 13px; font-weight: 600; }
+        .meta-specs span { display: flex; align-items: center; gap: 5px; }
+
+        /* --- Loading & Empty States --- */
+        #profileLoader { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .spinner { width: 50px; height: 50px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 60px; background: var(--white); border-radius: 20px; border: 2px dashed var(--border); }
+
+        @media (max-width: 900px) {
+            .profile-card { flex-direction: column; text-align: center; margin-top: -100px; padding: 30px; }
+            .seller-stats-row { justify-content: center; }
+            .profile-actions { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="profileLoader">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px; font-weight: 700; color: var(--muted);">Hämtar profil...</p>
+    </div>
+
+    <nav>
+        <a href="index.html" class="logo">BIL<span>HK</span></a>
+        <div id="authNav"></div>
+    </nav>
+
+    <header class="profile-header-wrap">
+        </header>
+
+    <section class="seller-container">
+        <div class="profile-card">
+            <div class="seller-avatar" id="avatarBox">?</div>
+            
+            <div class="seller-main-info">
+                <div id="sellerTag" class="seller-tag"><i class="fa-solid fa-circle-check"></i> <span>Privatperson</span></div>
+                <h1 id="sellerDisplayName">Laddar...</h1>
+                <div style="display:flex; align-items:center; gap:10px; color:var(--muted); font-size:14px; font-weight:500;">
+                    <i class="fa-solid fa-location-dot"></i> <span id="sellerLocation">-</span>
+                </div>
+
+                <div class="seller-stats-row">
+                    <div class="stat-item">
+                        <span class="stat-val" id="totalAdsStat">0</span>
+                        <label class="stat-lbl">Annonser</label>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-val" id="memberSince">-</span>
+                        <label class="stat-lbl">Medlem sedan</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <button class="btn btn-primary" id="msgSellerBtn">
+                    <i class="fa-solid fa-comments"></i> Kontakta Säljaren
+                </button>
+                <button class="btn btn-outline" id="callSellerBtn">
+                    <i class="fa-solid fa-phone"></i> Visa Telefon
+                </button>
+                <button class="btn btn-outline" id="shareProfile">
+                    <i class="fa-solid fa-share-nodes"></i> Dela Profil
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <main class="seller-content">
+        <div class="inventory-header">
+            <h2>Aktiva Annonser</h2>
+            <div style="font-size:14px; color:var(--muted); font-weight:600;"><span id="activeCount">0</span> fordon tillgängliga</div>
+        </div>
+
+        <div class="car-grid" id="sellerInventory">
+            </div>
+    </main>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { doc, getDoc, getDocs, collection, query, where, orderBy, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const sellerId = urlParams.get('id');
+        let currentSellerData = null;
+        let currentUser = null;
+
+        if (!sellerId) window.location.href = 'index.html';
+
+        // --- 1. التحقق من الدخول وإدارة الهيدر ---
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            const nav = document.getElementById('authNav');
+            if (user) {
+                nav.innerHTML = `<a href="dashboard-fixed.html" class="btn btn-outline" style="padding:8px 15px; font-size:12px;">Mitt konto</a>`;
+            } else {
+                nav.innerHTML = `<a href="login.html" class="btn btn-primary" style="padding:8px 15px; font-size:12px;">Logga in</a>`;
+            }
+        });
+
+        // --- 2. جلب بيانات البائع (Profile Data) ---
+        async function fetchSellerProfile() {
+            try {
+                const sellerRef = doc(db, "users", sellerId);
+                const snap = await getDoc(sellerRef);
+
+                if (snap.exists()) {
+                    currentSellerData = snap.data();
+                    renderProfile(currentSellerData);
+                    fetchSellerAds();
+                } else {
+                    Swal.fire('Fel', 'Användaren kunde inte hittas.', 'error').then(() => window.location.href='index.html');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderProfile(data) {
+            document.getElementById('sellerDisplayName').innerText = data.name;
+            document.getElementById('avatarBox').innerText = data.name.charAt(0).toUpperCase();
+            document.getElementById('sellerLocation').innerText = data.address || 'Sverige';
+            document.getElementById('sellerTag').querySelector('span').innerText = data.userType === 'Foretag' ? 'Professionell säljare' : 'Privatperson';
+            
+            if (data.createdAt) {
+                const date = data.createdAt.toDate();
+                document.getElementById('memberSince').innerText = date.toLocaleDateString('sv-SE', { month: 'long', year: 'numeric' });
+            }
+
+            document.getElementById('profileLoader').style.display = 'none';
+        }
+
+        // --- 3. جلب سيارات البائع (Inventory) ---
+        async function fetchSellerAds() {
+            const q = query(
+                collection(db, "cars"), 
+                where("ownerId", "==", sellerId),
+                where("status", "==", "active"),
+                orderBy("createdAt", "desc")
+            );
+
+            const snap = await getDocs(q);
+            const grid = document.getElementById('sellerInventory');
+            grid.innerHTML = "";
+            
+            document.getElementById('totalAdsStat').innerText = snap.size;
+            document.getElementById('activeCount').innerText = snap.size;
+
+            if (snap.empty) {
+                grid.innerHTML = `<div class="empty-state"><h3>Inga aktiva annonser just nu.</h3></div>`;
+                return;
+            }
+
+            snap.forEach(doc => {
+                const car = doc.data();
+                const price = Number(car.price).toLocaleString('sv-SE');
+                const img = (car.images && car.images.length > 0) ? car.images[0] : 'placeholder.jpg';
+
+                grid.innerHTML += `
+                    <a href="details.html?id=${doc.id}" class="car-card-pro">
+                        <div class="img-wrap">
+                            <img src="${img}" alt="${car.brand}" loading="lazy">
+                            <div class="price-badge">${price} kr</div>
+                        </div>
+                        <div class="card-details">
+                            <h3>${car.brand} ${car.model}</h3>
+                            <div class="meta-specs">
+                                <span><i class="fa-regular fa-calendar"></i> ${car.year}</span>
+                                <span><i class="fa-solid fa-gauge"></i> ${car.mileage} mil</span>
+                                <span><i class="fa-solid fa-gas-pump"></i> ${car.fuel}</span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            });
+        }
+
+        // --- 4. العمليات التفاعلية (Actions) ---
+        
+        // إظهار الهاتف
+        document.getElementById('callSellerBtn').onclick = () => {
+            if (!currentSellerData) return;
+            const phone = currentSellerData.phone || 'Ej angivet';
+            Swal.fire({
+                title: 'Ring Säljaren',
+                text: phone,
+                icon: 'info',
+                confirmButtonText: 'Ring nu',
+                confirmButtonColor: '#f58220'
+            }).then(r => {
+                if (r.isConfirmed && phone !== 'Ej angivet') window.location.href = `tel:${phone}`;
+            });
+        };
+
+        // المراسلة (Chat)
+        document.getElementById('msgSellerBtn').onclick = async () => {
+            if (!currentUser) {
+                Swal.fire('Inloggning krävs', 'Du måste logga in för att skicka meddelanden.', 'warning');
+                return;
+            }
+            if (currentUser.uid === sellerId) {
+                Swal.fire('Info', 'Detta är din egen profil.', 'info');
+                return;
+            }
+            
+            // التوجه للمراسلة عبر رابط فريد (أو فتح أول محادثة متاحة)
+            window.location.href = `messages.html?partner=${sellerId}`;
+        };
+
+        // مشاركة البروفايل
+        document.getElementById('shareProfile').onclick = () => {
+            navigator.share({
+                title: `BILHK | ${currentSellerData.name}`,
+                url: window.location.href
+            }).catch(() => {
+                Swal.fire('Kopierat!', 'Länken har kopierats till urklipp.', 'success');
+                navigator.clipboard.writeText(window.location.href);
+            });
+        };
+
+        fetchSellerProfile();
+    </script>
+</body>
+</html>
