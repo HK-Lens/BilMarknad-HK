@@ -1,403 +1,161 @@
-import { db, auth } from './firebase-config.js';
-
-import {
-    collection,
-    getDocs,
-    query,
-    orderBy,
-    onSnapshot,
-    where,
-    limit
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-import {
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-
-// ========================================
-// Global Variables
-// ========================================
-
-let allCars = [];
-let currentUser = null;
-
-
-// ========================================
-// Auth State Observer
-// ========================================
-
-onAuthStateChanged(auth, (user) => {
-
-    const authBtn = document.getElementById('authButton');
-    const msgLink = document.getElementById('msgLink');
-    const msgBadge = document.getElementById('msgBadge');
-
-    if (user) {
-
-        currentUser = user;
-
-        if (authBtn) {
-            authBtn.textContent = "Mitt Konto";
-            authBtn.href = "dashboard.html";
-        }
-
-        if (msgLink) {
-            msgLink.style.display = "flex";
-        }
-
-        // Real-time unread messages counter
-        const unreadMessagesQuery = query(
-            collection(db, "messages"),
-            where("receiverId", "==", user.uid),
-            where("read", "==", false)
-        );
-
-        onSnapshot(unreadMessagesQuery, (snapshot) => {
-
-            if (!msgBadge) return;
-
-            if (snapshot.size > 0) {
-
-                msgBadge.innerText = snapshot.size;
-                msgBadge.style.display = "block";
-
-            } else {
-
-                msgBadge.style.display = "none";
-
-            }
-
-        });
-
-    } else {
-
-        currentUser = null;
-
-        if (authBtn) {
-            authBtn.textContent = "Logga in";
-            authBtn.href = "login.html";
-        }
-
-        if (msgLink) {
-            msgLink.style.display = "none";
-        }
-
-        if (msgBadge) {
-            msgBadge.style.display = "none";
-        }
-
-    }
-
-});
-
-
-// ========================================
-// Initialize App
-// ========================================
-
-async function initApp() {
-
-    const grid = document.getElementById('carsGrid');
-
-    if (grid) {
-
-        grid.innerHTML = `
-            <p style="grid-column: 1/-1; text-align: center;">
-                Laddar fordon...
-            </p>
-        `;
-
-    }
-
-    try {
-
-        // جلب آخر 100 سيارة فقط لتحسين الأداء
-        const carsQuery = query(
-            collection(db, "cars"),
-            orderBy("createdAt", "desc"),
-            limit(100)
-        );
-
-        const snapshot = await getDocs(carsQuery);
-
-        allCars = snapshot.docs
-            .map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }))
-            // حماية من البيانات التالفة أو الناقصة
-            .filter(car =>
-                car &&
-                car.brand &&
-                car.model
-            );
-
-        const urlParams = new URLSearchParams(window.location.search);
-
-        const hasSearch =
-            urlParams.has('brand') ||
-            urlParams.has('model') ||
-            urlParams.has('kar') ||
-            urlParams.has('fuel') ||
-            urlParams.has('gear') ||
-            urlParams.has('text') ||
-            urlParams.has('minP') ||
-            urlParams.has('maxP') ||
-            urlParams.has('minY') ||
-            urlParams.has('maxY') ||
-            urlParams.has('minM') ||
-            urlParams.has('maxM');
-
-        if (hasSearch) {
-
-            applyDeepSearch(urlParams);
-
-        } else {
-
-            render(allCars);
-
-        }
-
-    } catch (error) {
-
-        console.error("Error fetching cars:", error);
-
-        if (grid) {
-
-            grid.innerHTML = `
-                <p style="grid-column: 1/-1; text-align: center;">
-                    Kunde inte ladda fordon.
-                </p>
-            `;
-
-        }
-
-    }
-
-}
-
-
-// ========================================
-// Deep Search
-// ========================================
-
-function applyDeepSearch(params) {
-
-    const filtered = allCars.filter(car => {
-
-        // Brand
-        const brandMatch =
-            !params.get('brand') ||
-            params.get('brand') === 'all' ||
-            String(car.brand || "") === params.get('brand');
-
-        // Model
-        const modelMatch =
-            !params.get('model') ||
-            params.get('model') === 'all' ||
-            String(car.model || "") === params.get('model');
-
-        // Body Type
-        const bodyMatch =
-            !params.get('kar') ||
-            params.get('kar') === 'all' ||
-            String(car.bodyType || "") === params.get('kar');
-
-        // Price
-        const minPrice =
-            Number(params.get('minP')) || 0;
-
-        const maxPrice =
-            Number(params.get('maxP')) || Infinity;
-
-        const currentPrice =
-            Number(car.price) || 0;
-
-        const priceMatch =
-            currentPrice >= minPrice &&
-            currentPrice <= maxPrice;
-
-        // Year
-        const minYear =
-            Number(params.get('minY')) || 0;
-
-        const maxYear =
-            Number(params.get('maxY')) || Infinity;
-
-        const currentYear =
-            Number(car.year) || 0;
-
-        const yearMatch =
-            currentYear >= minYear &&
-            currentYear <= maxYear;
-
-        // Mileage
-        const minMileage =
-            Number(params.get('minM')) || 0;
-
-        const maxMileage =
-            Number(params.get('maxM')) || Infinity;
-
-        const currentMileage =
-            Number(car.mileage) || 0;
-
-        const mileageMatch =
-            currentMileage >= minMileage &&
-            currentMileage <= maxMileage;
-
-        // Fuel Type
-        const fuelMatch =
-            !params.get('fuel') ||
-            params.get('fuel') === 'all' ||
-            String(car.fuelType || "") === params.get('fuel');
-
-        // Transmission
-        const transmissionMatch =
-            !params.get('gear') ||
-            params.get('gear') === 'all' ||
-            String(car.transmission || "") === params.get('gear');
-
-        // Free Text Search
-        const searchText =
-            String(params.get('text') || "")
-            .toLowerCase()
-            .trim();
-
-        const brandText =
-            String(car.brand || "")
-            .toLowerCase();
-
-        const modelText =
-            String(car.model || "")
-            .toLowerCase();
-
-        const descriptionText =
-            String(car.description || "")
-            .toLowerCase();
-
-        const textMatch =
-            !searchText ||
-            brandText.includes(searchText) ||
-            modelText.includes(searchText) ||
-            descriptionText.includes(searchText);
-
-        return (
-            brandMatch &&
-            modelMatch &&
-            bodyMatch &&
-            priceMatch &&
-            yearMatch &&
-            mileageMatch &&
-            fuelMatch &&
-            transmissionMatch &&
-            textMatch
-        );
-
-    });
-
-    render(filtered);
-
-    const resultTitle = document.getElementById('resultTitle');
-
-    if (resultTitle) {
-
-        resultTitle.innerText =
-            filtered.length > 0
-                ? `Hittade ${filtered.length} bilar som matchar din sökning`
-                : "Inga bilar matchade din sökning";
-
-    }
-
-}
-
-
-// ========================================
-// Render Cars
-// ========================================
-
-function render(data) {
-
-    const grid = document.getElementById('carsGrid');
-
-    if (!grid) return;
-
-    if (!Array.isArray(data) || data.length === 0) {
-
-        grid.innerHTML = `
-            <p style="grid-column: 1/-1; text-align: center;">
-                Inga fordon hittades.
-            </p>
-        `;
-
-        return;
-
-    }
-
-    grid.innerHTML = data.map(car => {
-
-        const image =
-            car.images?.[0] ||
-            car.image ||
-            "placeholder.jpg";
-
-        const price =
-            Number(car.price || 0).toLocaleString();
-
-        const brand =
-            String(car.brand || "");
-
-        const model =
-            String(car.model || "");
-
-        const year =
-            String(car.year || "");
-
-        const mileage =
-            String(car.mileage || "");
-
-        const fuelType =
-            String(car.fuelType || "");
-
-        return `
-
-            <div class="car-card"
-                 onclick="window.location.href='details.html?id=${car.id}'">
-
-                <img
-                    src="${image}"
-                    alt="${brand} ${model}"
-                    loading="lazy"
-                    onerror="this.src='placeholder.jpg'"
-                >
-
-                <div class="card-content">
-
-                    <div class="price-tag">
-                        ${price} kr
-                    </div>
-
-                    <div class="car-title">
-                        ${brand} ${model}
-                    </div>
-
-                    <div class="car-meta">
-                        ${year} • ${mileage} mil • ${fuelType}
-                    </div>
-
-                </div>
-
+<!DOCTYPE html>
+<html lang="sv" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Sälj din bil | BilMarknad-HK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f4f7f9; color: #333; padding: 20px; }
+        
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #002d5a; margin-bottom: 20px; text-align: center; }
+        p { text-align: center; color: #666; margin-bottom: 30px; }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+        textarea { height: 100px; resize: vertical; }
+
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        .btn-submit { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 4px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background: #218838; }
+        
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Sälj din bil</h1>
+        <p>Fyll i informationen nedan för att publicera din annons.</p>
+
+        <form id="sell-car-form">
+            <div class="form-group">
+                <label>Bilismärke (Märke)</label>
+                <select id="brand" required>
+                    <option value="">Välj märke</option>
+                    <option value="Volvo">Volvo</option>
+                    <option value="Volkswagen">Volkswagen</option>
+                    <option value="BMW">BMW</option>
+                    <option value="Audi">Audi</option>
+                    <option value="Mercedes-Benz">Mercedes-Benz</option>
+                    <option value="Tesla">Tesla</option>
+                    <option value="Toyota">Toyota</option>
+                    <option value="Kia">Kia</option>
+                </select>
             </div>
 
-        `;
+            <div class="form-group">
+                <label>Modell</label>
+                <input type="text" id="model" placeholder="t.ex. XC60, Model 3..." required>
+            </div>
 
-    }).join('');
+            <div class="row">
+                <div class="form-group">
+                    <label>Årsmodell</label>
+                    <input type="number" id="year" placeholder="2023" min="1900" max="2027" required>
+                </div>
+                <div class="form-group">
+                    <label>Miltal (mil)</label>
+                    <input type="number" id="mileage" placeholder="t.ex. 5000" required>
+                </div>
+            </div>
 
-}
+            <div class="row">
+                <div class="form-group">
+                    <label>Drivmedel</label>
+                    <select id="fuel">
+                        <option value="Bensin">Bensin</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="El">El</option>
+                        <option value="Laddhybrid">Laddhybrid</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Växellåda</label>
+                    <select id="gearbox">
+                        <option value="Automat">Automat</option>
+                        <option value="Manuell">Manuell</option>
+                    </select>
+                </div>
+            </div>
 
+            <div class="form-group">
+                <label>Pris (kr)</label>
+                <input type="number" id="price" placeholder="t.ex. 250000" required>
+            </div>
 
-// ========================================
-// Start App
-// ========================================
+            <div class="form-group">
+                <label>Beskrivning</label>
+                <textarea id="description" placeholder="Berätta mer om bilen..."></textarea>
+            </div>
 
-initApp();
+            <button type="submit" class="btn-submit">Publicera annons</button>
+        </form>
+
+        <a href="index.html" class="back-link">← Tillbaka till startsidan</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDCsMbG5pT3y6MC6b05LEdFoByWM1nT7NY",
+            authDomain: "bilmarknad-hk.firebaseapp.com",
+            projectId: "bilmarknad-hk",
+            appId: "1:284008879407:web:66bee60b51ec277e8dbdda"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let userEmail = "";
+
+        // التأكد من أن المستخدم مسجل دخول
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                alert("Du måste vara inloggad för att sälja en bil.");
+                window.location.href = 'login.html';
+            } else {
+                userEmail = user.email;
+            }
+        });
+
+        // حفظ البيانات عند إرسال النموذج
+        const sellForm = document.getElementById('sell-car-form');
+        sellForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const carData = {
+                brand: document.getElementById('brand').value,
+                model: document.getElementById('model').value,
+                year: document.getElementById('year').value,
+                mileage: document.getElementById('mileage').value,
+                fuel: document.getElementById('fuel').value,
+                gearbox: document.getElementById('gearbox').value,
+                price: document.getElementById('price').value,
+                description: document.getElementById('description').value,
+                sellerEmail: userEmail,
+                createdAt: new Date()
+            };
+
+            try {
+                // حفظ في مجموعة تسمى "cars"
+                await addDoc(collection(db, "cars"), carData);
+                alert("Annonsen har publicerats framgångsrikt!");
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert("Ett fel uppstod: " + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
