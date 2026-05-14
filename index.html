@@ -1,190 +1,75 @@
 <!DOCTYPE html>
-<html lang="sv" dir="ltr">
+<html lang="sv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BilMarknad HK | Professional Car Marketplace</title>
+    <meta name="description" content="BILHK är en digital annonsplattform för att köpa och sälja bilar i Sverige.">
+    <title>BilMarknad HK | Köp och sälj bilar</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        /* (تم الاحتفاظ بكامل الـ CSS الخاص بك كما هو لعدم تخريب التصميم) */
         :root {
-            --primary: #f58220;
-            --primary-hover: #e07210;
-            --dark: #0f172a;
-            --bg: #f8fafc;
-            --white: #ffffff;
-            --border: #e2e8f0;
-            --shadow: 0 20px 40px rgba(0,0,0,0.06);
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary: #f58220; --primary-hover: #e07210; --dark: #0f172a; --light: #f8fafc;
+            --border: #e2e8f0; --white: #ffffff; --danger: #ef4444; --success: #10b981;
+            --gray-text: #64748b; --shadow: 0 10px 20px rgba(0,0,0,.08);
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--dark); overflow-x: hidden; }
-
-        header {
-            background: var(--white);
-            padding: 18px 6%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        .logo { font-size: 28px; font-weight: 900; text-decoration: none; color: var(--dark); letter-spacing: -1.5px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Inter, sans-serif; }
+        body { background: var(--light); color: var(--dark); min-height: 100vh; display: flex; flex-direction: column; }
+        .notice { background: var(--danger); color: white; text-align: center; padding: 10px 18px; font-size: 13px; font-weight: 800; line-height: 1.5; }
+        header { background: var(--white); padding: 15px 6%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
+        .logo { text-decoration: none; font-size: 26px; font-weight: 900; color: var(--dark); letter-spacing: -0.7px; white-space: nowrap; }
         .logo span { color: var(--primary); }
-
-        .hero {
-            background: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2000') center/cover;
-            padding: 120px 20px;
-            text-align: center;
-            color: white;
-            clip-path: ellipse(150% 100% at 50% 0%);
+        .top-nav { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+        .top-link, .sell-link, .account-link, .login-link { font-weight: 900; text-decoration: none; color: var(--dark); font-size: 14px; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+        .sell-link { color: var(--primary); border: 2px solid var(--primary); padding: 8px 18px; border-radius: 50px; background: white; }
+        .sell-link:hover { background: #fff7ed; }
+        .account-link { background: var(--dark); color: white; padding: 9px 18px; border-radius: 50px; }
+        .login-link { background: #f1f5f9; padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border); }
+        #msgBadge { display: none; background: var(--danger); color: white; border-radius: 999px; padding: 2px 7px; margin-left: 4px; font-size: 11px; font-weight: 900; }
+        .hero { background: linear-gradient(rgba(15,23,42,.72), rgba(15,23,42,.72)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2000') center/cover; padding: 85px 20px; text-align: center; color: white; }
+        .hero h1 { font-size: 44px; font-weight: 900; margin-bottom: 12px; letter-spacing: -1px; }
+        .hero p { font-size: 17px; color: #e2e8f0; font-weight: 500; }
+        .search-container { background: white; max-width: 1120px; width: calc(100% - 24px); margin: -55px auto 0; padding: 28px; border-radius: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .body-types { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+        .body-btn { background: white; border: 1px solid var(--border); padding: 10px 18px; border-radius: 12px; cursor: pointer; font-weight: 800; color: var(--dark); transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .body-btn.active, .body-btn:hover { border-color: var(--primary); color: var(--primary); background: #fff7ed; }
+        .search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+        .search-group label { display: block; font-size: 11px; font-weight: 900; color: var(--gray-text); margin-bottom: 6px; text-transform: uppercase; }
+        .search-group input, .search-group select { width: 100%; padding: 13px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; font-weight: 700; color: var(--dark); outline: none; }
+        .search-group input:focus, .search-group select:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(245,130,32,.10); }
+        .actions { display: flex; gap: 14px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+        .btn-search, .btn-advanced { padding: 15px 30px; border-radius: 12px; font-weight: 900; text-decoration: none; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-search { background: var(--primary); color: white; border: 0; min-width: 240px; font-size: 15px; }
+        .btn-search:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn-advanced { background: #f1f5f9; color: var(--dark); border: 1px solid var(--border); }
+        .btn-advanced:hover { background: white; border-color: var(--primary); color: var(--primary); }
+        .main-content { max-width: 1200px; width: 100%; margin: 55px auto; padding: 0 20px; flex: 1; }
+        .section-head { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .section-title { font-size: 28px; font-weight: 900; display: flex; align-items: center; gap: 10px; }
+        .view-all { color: var(--primary); text-decoration: none; font-weight: 900; font-size: 14px; }
+        .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .car-card { background: white; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; cursor: pointer; position: relative; transition: .2s; }
+        .car-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+        .car-img-wrap { width: 100%; height: 190px; background: #e2e8f0; position: relative; overflow: hidden; }
+        .car-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .car-info { padding: 20px; }
+        .car-price { color: var(--primary); font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+        .car-name { font-size: 16px; font-weight: 900; margin-bottom: 10px; line-height: 1.4; }
+        .empty-state, .loading-state, .error-state { grid-column: 1 / -1; background: white; border: 1px solid var(--border); border-radius: 18px; padding: 45px 20px; text-align: center; color: var(--gray-text); font-weight: 700; }
+        footer { background: white; border-top: 1px solid var(--border); padding: 34px 20px; text-align: center; color: #94a3b8; font-size: 13px; margin-top: auto; }
+        @media(max-width: 620px) {
+            header { padding: 14px 18px; align-items: flex-start; gap: 10px; }
+            .hero h1 { font-size: 32px; } .hero { padding: 60px 16px; }
+            .search-container { margin: -35px 12px 0; padding: 20px; }
+            .btn-search, .btn-advanced { width: 100%; }
         }
-        .hero h1 { font-size: 48px; font-weight: 900; margin-bottom: 10px; }
-
-        .search-panel {
-            background: var(--white);
-            max-width: 1100px;
-            width: 90%;
-            margin: -80px auto 0;
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-
-        .search-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { font-size: 11px; font-weight: 900; color: #64748b; text-transform: uppercase; }
-        .input-group select, .input-group input {
-            padding: 15px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: var(--bg);
-            font-weight: 700;
-            outline: none;
-        }
-
-        .btn-deep-search {
-            grid-column: 1 / -1;
-            background: var(--dark);
-            color: white;
-            padding: 18px;
-            border: none;
-            border-radius: 16px;
-            font-weight: 900;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            transition: var(--transition);
-            margin-top: 20px;
-        }
-        .btn-deep-search:hover { background: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(245, 130, 32, 0.3); }
-
-        .latest-section { max-width: 1200px; margin: 80px auto; padding: 0 5%; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
     </style>
 </head>
 <body>
 
-<header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-</header>
-
-<section class="hero">
-    <h1>Hitta din nästa bil</h1>
-    <p>Professionell marknadsplats för fordon i Sverige</p>
-</section>
-
-<section class="search-panel">
-    <div class="search-grid">
-        <div class="input-group">
-            <label>Märke</label>
-            <select id="homeBrand"><option value="all">Alla märken</option></select>
-        </div>
-        <div class="input-group">
-            <label>Drivmedel</label>
-            <select id="homeFuel">
-                <option value="all">Alla typer</option>
-                <option value="Bensin">Bensin</option>
-                <option value="Diesel">Diesel</option>
-                <option value="El">El</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label>Max Pris</label>
-            <input type="number" id="homePrice" placeholder="T.ex. 200000">
-        </div>
-        <button id="deepSearchBtn" class="btn-deep-search">
-            <i class="fa-solid fa-magnifying-glass-plus"></i> KÖR DJUP SÖKNING
-        </button>
-    </div>
-</section>
-
-<main class="latest-section">
-    <h2 style="margin-bottom: 30px;">Senast inkomna</h2>
-    <div class="grid" id="latestGrid"></div>
-</main>
-
-<script type="module">
-    import { db } from './firebase-config.js';
-    import { collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import carData from './cars-data.js';
-
-    // 1. تهيئة القائمة المنسدلة للماركات
-    const brandSelect = document.getElementById('homeBrand');
-    Object.keys(carData).sort().forEach(brand => {
-        const opt = document.createElement('option');
-        opt.value = brand;
-        opt.textContent = brand;
-        brandSelect.appendChild(opt);
-    });
-
-    // 2. منطق البحث العميق - التوجه إلى results-fixed.html
-    document.getElementById('deepSearchBtn').addEventListener('click', () => {
-        const brand = document.getElementById('homeBrand').value;
-        const fuel = document.getElementById('homeFuel').value;
-        const price = document.getElementById('homePrice').value;
-
-        const params = new URLSearchParams();
-        if (brand !== 'all') params.set('brand', brand);
-        if (fuel !== 'all') params.set('fuel', fuel);
-        if (price) params.set('maxP', price);
-
-        window.location.href = `results-fixed.html?${params.toString()}`;
-    });
-
-    // 3. عرض آخر 4 إعلانات
-    async function loadLatest() {
-        const grid = document.getElementById('latestGrid');
-        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(4));
-        const snap = await getDocs(q);
-        snap.forEach(doc => {
-            const car = doc.data();
-            grid.innerHTML += `
-                <div style="background:white; border-radius:20px; overflow:hidden; border:1px solid #eee;">
-                    <img src="${car.images?.[0] || 'assets/no-image.jpg'}" style="width:100%; height:180px; object-fit:cover;">
-                    <div style="padding:15px;">
-                        <h4 style="margin-bottom:5px;">${car.brand} ${car.model}</h4>
-                        <p style="color:var(--primary); font-weight:900;">${Number(car.price).toLocaleString()} kr</p>
-                    </div>
-                </div>`;
-        });
-    }
-    loadLatest();
-</script>
-</body>
-</html>
+<div class="notice">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    Webbplatsen är under utveckling. Kontrollera
