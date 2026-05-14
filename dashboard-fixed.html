@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard | BilMarknad-HK</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --primary: #f58220;
+            --primary-dark: #d66d0d;
+            --dark: #0f172a;
+            --dark-2: #1e293b;
+            --muted: #64748b;
+            --soft: #f8fafc;
+            --soft-2: #f1f5f9;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --danger: #ef4444;
+            --danger-soft: #fee2e2;
+            --success: #16a34a;
+            --success-soft: #dcfce7;
+            --warning: #f59e0b;
+            --warning-soft: #fef3c7;
+            --blue: #2563eb;
+            --blue-soft: #dbeafe;
+            --shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+            --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.05);
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%); color: var(--dark); min-height: 100vh; }
+        a { color: inherit; text-decoration: none; }
+        button { font-family: inherit; }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+        .topbar-inner {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            font-size: 27px;
+            color: var(--dark);
+        }
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary), #ffb454);
+            display: grid;
+            place-items: center;
+            color: white;
+            box-shadow: 0 12px 25px rgba(245, 130, 32, 0.28);
+        }
+        .brand span { color: var(--primary); }
+        .nav-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+        .nav-pill {
+            border: 1px solid var(--border);
+            background: white;
+            padding: 10px 14px;
+            border-radius: 999px;
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-pill:hover { transform: translateY(-1px); border-color: var(--primary); color: var(--primary); }
+        .nav-pill.primary { background: var(--primary); color: white; border-color: var(--primary); }
+        .nav-pill.primary:hover { background: var(--primary-dark); color: white; }
+        .nav-pill.danger { color: var(--danger); }
+
+        .layout {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 30px 24px 70px;
+            display: grid;
+            grid-template-columns: 290px minmax(0, 1fr);
+            gap: 24px;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 92px;
+            align-self: start;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 18px;
+            box-shadow: var(--shadow-soft);
+        }
+        .profile-mini {
+            padding: 18px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            margin-bottom: 14px;
+            overflow: hidden;
+            position: relative;
+        }
+        .profile-mini::after {
+            content: "";
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: rgba(245,130,32,0.18);
+            position: absolute;
+            right: -60px;
+            bottom: -70px;
+        }
+        .avatar {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: rgba(255,255,255,0.12);
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 24px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        .profile-mini h2 { font-size: 18px; line-height: 1.2; position: relative; z-index: 1; }
+        .profile-mini p { margin-top: 6px; color: #cbd5e1; font-size: 12px; word-break: break-word; position: relative; z-index: 1; }
+        .side-link {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 13px;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+        }
+        .side-link:hover, .side-link.active { background: #fff7ed; color: var(--primary); }
+        .side-link i { width: 20px; text-align: center; }
+
+        .hero-card {
+            background: radial-gradient(circle at top right, rgba(245,130,32,0.24), transparent 32%), linear-gradient(135deg, #0f172a 0%, #1e293b 58%, #0f172a 100%);
+            border-radius: 34px;
+            padding: 30px;
+            color: white;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .hero-card::before {
+            content: "";
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            left: -140px;
+            bottom: -200px;
+            background: rgba(255,255,255,0.055);
+        }
+        .hero-content { position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 24px; align-items: flex-end; }
+        .eyebrow { color: #fdba74; font-weight: 900; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
+        .hero-card h1 { font-size: clamp(30px, 4vw, 48px); letter-spacing: -0.06em; line-height: 0.98; max-width: 720px; }
+        .hero-card p { color: #cbd5e1; margin-top: 14px; max-width: 720px; line-height: 1.7; }
+        .hero-stamps { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+        .stamp { background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.14); padding: 10px 12px; border-radius: 999px; color: white; font-size: 12px; font-weight: 800; white-space: nowrap; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            right: -30px;
+            top: -35px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #fff7ed;
+        }
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: #fff7ed;
+            color: var(--primary);
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        .stat-card h3 { font-size: 30px; font-weight: 900; letter-spacing: -0.05em; position: relative; z-index: 1; }
+        .stat-card p { color: var(--muted); font-size: 13px; font-weight: 800; margin-top: 5px; position: relative; z-index: 1; }
+        .stat-sub { color: #94a3b8; font-size: 11px; margin-top: 8px; display: block; position: relative; z-index: 1; }
+
+        .content-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.65fr); gap: 24px; align-items: start; }
+        .panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .panel-header {
+            padding: 22px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .panel-title { display: flex; align-items: center; gap: 12px; }
+        .panel-title i { color: var(--primary); }
+        .panel-title h2 { font-size: 18px; font-weight: 900; letter-spacing: -0.03em; }
+        .panel-title p { color: var(--muted); font-size: 12px; font-weight: 600; margin-top: 3px; }
+        .panel-body { padding: 24px; }
+
+        .health-list { display: grid; gap: 12px; }
+        .health-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: var(--soft);
+        }
+        .health-icon { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; }
+        .health-icon.good { background: var(--success-soft); color: var(--success); }
+        .health-icon.warn { background: var(--warning-soft); color: #b45309; }
+        .health-icon.bad { background: var(--danger-soft); color: var(--danger); }
+        .health-item strong { font-size: 14px; }
+        .health-item p { color: var(--muted); font-size: 12px; margin-top: 3px; line-height: 1.5; }
+
+        .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+        .field-box { border: 1px solid var(--border); background: var(--soft); border-radius: 18px; padding: 14px; }
+        .field-box label { display: block; font-size: 10px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px; }
+        .field-box p { font-size: 14px; font-weight: 800; color: var(--dark); word-break: break-word; }
+        .profile-form { display: grid; gap: 12px; margin-top: 18px; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .form-group label { display: block; color: var(--muted); font-size: 12px; font-weight: 800; margin-bottom: 7px; }
+        .form-control {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            outline: none;
+            background: var(--soft);
+            color: var(--dark);
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        .form-control:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(245,130,32,0.12); }
+
+        .toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn {
+            border: 0;
+            border-radius: 14px;
+            padding: 12px 15px;
+            font-weight: 900;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.25s;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-dark { background: var(--dark); color: white; }
+        .btn-soft { background: var(--soft-2); color: var(--dark); }
+        .btn-danger { background: var(--danger-soft); color: var(--danger); }
+        .btn-success { background: var(--success-soft); color: var(--success); }
+        .btn.full { width: 100%; }
+
+        .ads-list { display: grid; gap: 14px; }
+        .ad-card {
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 14px;
+            display: grid;
+            grid-template-columns: 112px minmax(0, 1fr) auto;
+            gap: 16px;
+            align-items: center;
+            background: white;
+            transition: 0.22s;
+        }
+        .ad-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); border-color: #fed7aa; }
+        .ad-card img { width: 112px; height: 84px; object-fit: cover; border-radius: 16px; background: var(--soft-2); }
+        .ad-card h3 { font-size: 16px; font-weight: 900; line-height: 1.25; }
+        .ad-card .meta { color: var(--muted); font-size: 12px; font-weight: 700; margin-top: 5px; display: flex; gap: 8px; flex-wrap: wrap; }
+        .ad-card .price { color: var(--primary); font-weight: 900; font-size: 19px; margin-top: 8px; }
+        .ad-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .badge { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 999px; font-size: 11px; font-weight: 900; }
+        .badge.active { background: var(--success-soft); color: var(--success); }
+        .badge.paused { background: var(--warning-soft); color: #b45309; }
+        .badge.neutral { background: var(--soft-2); color: var(--muted); }
+        .badge.danger { background: var(--danger-soft); color: var(--danger); }
+
+        .chart-list { display: grid; gap: 13px; }
+        .chart-row { display: grid; grid-template-columns: 115px minmax(0, 1fr) 48px; align-items: center; gap: 12px; font-size: 12px; font-weight: 800; }
+        .chart-track { height: 12px; border-radius: 999px; background: var(--soft-2); overflow: hidden; }
+        .chart-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--primary), #fdba74); min-width: 6px; }
+        .empty-state { text-align: center; padding: 34px 16px; color: var(--muted); }
+        .empty-state i { font-size: 42px; color: #cbd5e1; margin-bottom: 12px; }
+        .empty-state strong { display: block; color: var(--dark); font-size: 16px; margin-bottom: 6px; }
+
+        .chat-list { display: grid; gap: 12px; }
+        .chat-card { border: 1px solid var(--border); border-radius: 18px; padding: 14px; display: flex; justify-content: space-between; gap: 12px; align-items: center; background: var(--soft); }
+        .chat-card strong { display: block; font-size: 13px; }
+        .chat-card small { color: var(--muted); font-size: 11px; display: block; margin-top: 4px; }
+
+        .system-box {
+            background: #0f172a;
+            color: white;
+            border-radius: var(--radius-xl);
+            padding: 22px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 24px;
+        }
+        .system-box h2 { font-size: 18px; font-weight: 900; margin-bottom: 12px; }
+        .system-box p { color: #cbd5e1; font-size: 13px; line-height: 1.7; }
+        .system-actions { display: grid; gap: 10px; margin-top: 16px; }
+
+        .skeleton { animation: pulse 1.5s infinite; background: linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9); background-size: 200% 100%; border-radius: 14px; min-height: 22px; }
+        @keyframes pulse { 0% { background-position: 0% 50%; } 100% { background-position: -200% 50%; } }
+
+        .toast-zone { position: fixed; right: 20px; bottom: 20px; z-index: 2000; display: grid; gap: 10px; }
+        .toast { background: white; border: 1px solid var(--border); border-left: 5px solid var(--primary); border-radius: 18px; padding: 14px 16px; box-shadow: var(--shadow); max-width: 360px; font-size: 13px; font-weight: 700; }
+
+        @media (max-width: 1100px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { position: relative; top: auto; }
+            .content-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 720px) {
+            .topbar-inner { align-items: flex-start; flex-direction: column; }
+            .nav-actions { justify-content: flex-start; }
+            .layout { padding: 18px 14px 50px; }
+            .hero-card { padding: 24px; border-radius: 26px; }
+            .hero-content { flex-direction: column; align-items: flex-start; }
+            .hero-stamps { justify-content: flex-start; }
+            .stats-grid, .profile-grid, .input-row { grid-template-columns: 1fr; }
+            .ad-card { grid-template-columns: 92px minmax(0, 1fr); }
+            .ad-card img { width: 92px; height: 76px; }
+            .ad-actions { grid-column: 1 / -1; justify-content: stretch; }
+            .ad-actions .btn { flex: 1; }
+            .panel-header { flex-direction: column; align-items: flex-start; }
+            .chart-row { grid-template-columns: 90px minmax(0, 1fr) 36px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="index.html" class="brand" aria-label="BilMarknad-HK startsida">
+                <span class="brand-mark"><i class="fa-solid fa-car-side"></i></span>
+                BIL<span>HK</span>
+            </a>
+            <nav class="nav-actions" aria-label="Dashboard navigation">
+                <a class="nav-pill" href="index.html"><i class="fa-solid fa-house"></i> Hem</a>
+                <a class="nav-pill primary" href="sell.html"><i class="fa-solid fa-circle-plus"></i> Ny annons</a>
+                <a class="nav-pill" href="my-account.html"><i class="fa-solid fa-user"></i> Mitt konto</a>
+                <a class="nav-pill" href="messages.html"><i class="fa-solid fa-comments"></i> Meddelanden</a>
+                <button class="nav-pill danger" id="logoutTopBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logga ut</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="layout">
+        <aside class="sidebar">
+            <div class="profile-mini">
+                <div class="avatar" id="miniAvatar">B</div>
+                <h2 id="miniName">Laddar...</h2>
+                <p id="miniEmail">Kontrollerar session</p>
+            </div>
+            <button class="side-link active" type="button" data-scroll="overview"><i class="fa-solid fa-chart-line"></i> Översikt</button>
+            <button class="side-link" type="button" data-scroll="ads"><i class="fa-solid fa-rectangle-list"></i> Mina annonser</button>
+            <button class="side-link" type="button" data-scroll="profile"><i class="fa-solid fa-id-card"></i> Profilinformation</button>
+            <button class="side-link" type="button" data-scroll="quality"><i class="fa-solid fa-shield-halved"></i> Annonskvalitet</button>
+            <button class="side-link" type="button" data-scroll="messages"><i class="fa-solid fa-message"></i> Chattar</button>
+            <button class="side-link" type="button" id="refreshBtn"><i class="fa-solid fa-rotate"></i> Uppdatera data</button>
+        </aside>
+
+        <section class="main-content">
+            <section class="hero-card" id="overview">
+                <div class="hero-content">
+                    <div>
+                        <div class="eyebrow">Professional seller command center</div>
+                        <h1 id="welcomeUser">Hej, välkommen tillbaka.</h1>
+                        <p id="heroSubtitle">Här ser du kontostatus, annonskvalitet, chattar, värde på dina annonser och snabba förbättringar innan publicering.</p>
+                    </div>
+                    <div class="hero-stamps">
+                        <span class="stamp" id="accountTypeStamp"><i class="fa-solid fa-user-check"></i> Konto</span>
+                        <span class="stamp" id="verifiedStamp"><i class="fa-solid fa-envelope-circle-check"></i> E-post</span>
+                        <span class="stamp" id="lastLoginStamp"><i class="fa-solid fa-clock"></i> Senast aktiv</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid" aria-label="Dashboard statistics">
+                <article class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-car"></i></div>
+                    <h3 id="activeAdsCount">0</h3>
+                    <p>Aktiva annonser</p>
+                    <span class="stat-sub" id="totalAdsSub">0 totalt</span>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+                    <h3 id="inventoryValue">0 kr</h3>
+                    <p>Totalt annonsvärde</p>
+                    <span class="stat-sub" id="avgPriceSub">Snitt: 0 kr</span>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-comments"></i></div>
+                    <h3 id="chatCount">0</h3>
+                    <p>Aktiva chattar</p>
+                    <span class="stat-sub" id="latestChatSub">Inga chattar ännu</span>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <h3 id="qualityIssuesCount">0</h3>
+                    <p>Kvalitetsanmärkningar</p>
+                    <span class="stat-sub" id="qualitySub">Alla annonser kontrolleras</span>
+                </article>
+            </section>
+
+            <div class="content-grid">
+                <div>
+                    <section class="panel" id="ads">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-rectangle-list"></i>
+                                <div>
+                                    <h2>Mina annonser</h2>
+                                    <p>Senaste annonser med snabbvägar till detaljer och redigering.</p>
+                                </div>
+                            </div>
+                            <div class="toolbar">
+                                <a class="btn btn-primary" href="sell.html"><i class="fa-solid fa-plus"></i> Lägg till</a>
+                                <a class="btn btn-soft" href="my-account.html"><i class="fa-solid fa-list-check"></i> Hantera</a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div id="adsList" class="ads-list">
+                                <div class="skeleton"></div>
+                                <div class="skeleton"></div>
+                                <div class="skeleton"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel" id="quality">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <div>
+                                    <h2>Annonskvalitet</h2>
+                                    <p>Kontroll av bilder, pris, beskrivning, bränsle och synlighet.</p>
+                                </div>
+                            </div>
+                            <span class="badge neutral" id="qualityBadge">Analys</span>
+                        </div>
+                        <div class="panel-body">
+                            <div class="health-list" id="healthList"></div>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-chart-simple"></i>
+                                <div>
+                                    <h2>Fördelning av dina annonser</h2>
+                                    <p>Visuell översikt per bränsletyp och karosseri.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <h3 style="font-size:13px; font-weight:900; margin-bottom:14px; color:#64748b; text-transform:uppercase; letter-spacing:0.08em;">Drivmedel</h3>
+                            <div id="fuelChart" class="chart-list"></div>
+                            <h3 style="font-size:13px; font-weight:900; margin:24px 0 14px; color:#64748b; text-transform:uppercase; letter-spacing:0.08em;">Karosseri</h3>
+                            <div id="bodyChart" class="chart-list"></div>
+                        </div>
+                    </section>
+                </div>
+
+                <aside>
+                    <section class="system-box">
+                        <h2><i class="fa-solid fa-bolt"></i> Snabba åtgärder</h2>
+                        <p>De här knapparna arbetar med samma Firebase-konfiguration som resten av projektet och kräver inloggad användare.</p>
+                        <div class="system-actions">
+                            <button class="btn btn-primary full" id="sendVerificationBtn" type="button"><i class="fa-solid fa-envelope-circle-check"></i> Skicka verifieringsmail</button>
+                            <button class="btn btn-soft full" id="resetPasswordBtn" type="button"><i class="fa-solid fa-key"></i> Skicka lösenordsåterställning</button>
+                            <button class="btn btn-danger full" id="logoutBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logga ut</button>
+                        </div>
+                    </section>
+
+                    <section class="panel" id="profile">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-id-card"></i>
+                                <div>
+                                    <h2>Profilinformation</h2>
+                                    <p>Visas från Firebase Auth och dokumentet users/{uid}.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="profile-grid">
+                                <div class="field-box"><label>Namn</label><p id="displayName">...</p></div>
+                                <div class="field-box"><label>Kontotyp</label><p id="displayUserType">...</p></div>
+                                <div class="field-box"><label>E-post</label><p id="displayEmail">...</p></div>
+                                <div class="field-box"><label>Status</label><p id="displayEmailStatus">...</p></div>
+                                <div class="field-box"><label>Telefon</label><p id="displayPhone">...</p></div>
+                                <div class="field-box"><label>Organisationsnr</label><p id="displayTaxId">...</p></div>
+                                <div class="field-box" style="grid-column: 1 / -1;"><label>Adress</label><p id="displayAddress">...</p></div>
+                            </div>
+
+                            <form class="profile-form" id="profileForm">
+                                <div class="input-row">
+                                    <div class="form-group">
+                                        <label for="editName">Namn / Företagsnamn</label>
+                                        <input class="form-control" type="text" id="editName" placeholder="Namn">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="editPhone">Telefon</label>
+                                        <input class="form-control" type="tel" id="editPhone" placeholder="Telefonnummer">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editAddress">Adress</label>
+                                    <input class="form-control" type="text" id="editAddress" placeholder="Gata, postnummer, ort">
+                                </div>
+                                <button class="btn btn-dark full" type="submit" id="saveProfileBtn"><i class="fa-solid fa-floppy-disk"></i> Spara profil</button>
+                            </form>
+                        </div>
+                    </section>
+
+                    <section class="panel" id="messages">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-message"></i>
+                                <div>
+                                    <h2>Senaste chattar</h2>
+                                    <p>Snabb översikt över konversationer kopplade till bilar.</p>
+                                </div>
+                            </div>
+                            <a class="btn btn-soft" href="messages.html"><i class="fa-solid fa-up-right-from-square"></i></a>
+                        </div>
+                        <div class="panel-body">
+                            <div id="chatList" class="chat-list"></div>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast-zone" id="toastZone"></div>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import {
+            onAuthStateChanged,
+            sendPasswordResetEmail,
+            sendEmailVerification,
+            signOut,
+            updateProfile
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import {
+            doc,
+            getDoc,
+            setDoc,
+            updateDoc,
+            collection,
+            query,
+            where,
+            getDocs,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const state = {
+            user: null,
+            userDoc: {},
+            cars: [],
+            chats: [],
+            loadedAt: null
+        };
+
+        const $ = (id) => document.getElementById(id);
+
+        const formatNumber = (value) => {
+            const n = Number(value) || 0;
+            return n.toLocaleString('sv-SE');
+        };
+
+        const formatCurrency = (value) => `${formatNumber(value)} kr`;
+
+        const safeDate = (value) => {
+            try {
+                if (!value) return null;
+                if (typeof value.toDate === 'function') return value.toDate();
+                if (value.seconds) return new Date(value.seconds * 1000);
+                const d = new Date(value);
+                return Number.isNaN(d.getTime()) ? null : d;
+            } catch (_) {
+                return null;
+            }
+        };
+
+        const formatDate = (value) => {
+            const d = safeDate(value);
+            if (!d) return 'Okänt datum';
+            return d.toLocaleDateString('sv-SE', { year: 'numeric', month: 'short', day: 'numeric' });
+        };
+
+        const formatDateTime = (value) => {
+            const d = safeDate(value);
+            if (!d) return 'Okänt';
+            return d.toLocaleString('sv-SE', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        };
+
+        const escapeHTML = (value) => String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+
+        const field = (car, keys, fallback = '-') => {
+            for (const key of keys) {
+                if (car?.[key] !== undefined && car?.[key] !== null && car?.[key] !== '') return car[key];
+            }
+            return fallback;
+        };
+
+        const carTitle = (car) => `${field(car, ['brand'], 'Okänt märke')} ${field(car, ['model'], 'Okänd modell')}`.trim();
+        const carFuel = (car) => field(car, ['fuel', 'fuelType', 'drivmedel'], '-');
+        const carBody = (car) => field(car, ['karosseri', 'bodyType', 'body', 'type'], '-');
+        const carGear = (car) => field(car, ['transmission', 'gearbox', 'gear'], '-');
+        const carImage = (car) => Array.isArray(car.images) && car.images.length ? car.images[0] : 'placeholder.jpg';
+        const isActiveCar = (car) => car.active !== false && car.status !== 'paused' && car.status !== 'deleted';
+
+        function toast(message) {
+            const zone = $('toastZone');
+            const div = document.createElement('div');
+            div.className = 'toast';
+            div.textContent = message;
+            zone.appendChild(div);
+            setTimeout(() => div.remove(), 4200);
+        }
+
+        function setLoading() {
+            $('adsList').innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+            $('chatList').innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+            $('healthList').innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+            $('fuelChart').innerHTML = '<div class="skeleton"></div>';
+            $('bodyChart').innerHTML = '<div class="skeleton"></div>';
+        }
+
+        async function loadAllData() {
+            if (!state.user) return;
+            setLoading();
+            try {
+                const userRef = doc(db, 'users', state.user.uid);
+                const userSnap = await getDoc(userRef);
+                state.userDoc = userSnap.exists() ? userSnap.data() : {};
+
+                const carsSnap = await getDocs(query(collection(db, 'cars'), where('sellerId', '==', state.user.uid)));
+                state.cars = carsSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                state.cars.sort((a, b) => (safeDate(b.createdAt)?.getTime() || 0) - (safeDate(a.createdAt)?.getTime() || 0));
+
+                const chatsSnap = await getDocs(query(collection(db, 'chats'), where('participants', 'array-contains', state.user.uid)));
+                state.chats = chatsSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                state.chats.sort((a, b) => (safeDate(b.updatedAt)?.getTime() || 0) - (safeDate(a.updatedAt)?.getTime() || 0));
+
+                state.loadedAt = new Date();
+                renderDashboard();
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Fel', 'Dashboard-data kunde inte laddas: ' + error.message, 'error');
+            }
+        }
+
+        function renderDashboard() {
+            renderHero();
+            renderStats();
+            renderProfile();
+            renderAds();
+            renderChats();
+            renderQuality();
+            renderCharts();
+        }
+
+        function renderHero() {
+            const name = state.userDoc.name || state.user.displayName || state.user.email?.split('@')[0] || 'användare';
+            const accountType = state.userDoc.userType === 'business' ? 'Företag' : 'Privatperson';
+            const initials = name.trim().split(/\s+/).map(part => part[0]).join('').slice(0, 2).toUpperCase() || 'B';
+
+            $('miniAvatar').textContent = initials;
+            $('miniName').textContent = name;
+            $('miniEmail').textContent = state.user.email || 'Ingen e-post';
+            $('welcomeUser').textContent = `Hej, ${name}`;
+            $('heroSubtitle').textContent = `Du har ${state.cars.length} annonser och ${state.chats.length} aktiva chattar i BilMarknad-HK.`;
+            $('accountTypeStamp').innerHTML = `<i class="fa-solid fa-user-check"></i> ${escapeHTML(accountType)}`;
+            $('verifiedStamp').innerHTML = state.user.emailVerified
+                ? '<i class="fa-solid fa-circle-check"></i> Verifierad e-post'
+                : '<i class="fa-solid fa-circle-exclamation"></i> E-post ej verifierad';
+            $('lastLoginStamp').innerHTML = `<i class="fa-solid fa-clock"></i> ${escapeHTML(formatDateTime(state.user.metadata?.lastSignInTime))}`;
+        }
+
+        function renderStats() {
+            const total = state.cars.length;
+            const active = state.cars.filter(isActiveCar).length;
+            const paused = total - active;
+            const totalValue = state.cars.reduce((sum, car) => sum + (Number(car.price) || 0), 0);
+            const avgPrice = total ? Math.round(totalValue / total) : 0;
+            const issues = collectQualityIssues().length;
+            const latestChat = state.chats[0];
+
+            $('activeAdsCount').textContent = formatNumber(active);
+            $('totalAdsSub').textContent = `${formatNumber(total)} totalt • ${formatNumber(paused)} pausade/inaktiva`;
+            $('inventoryValue').textContent = formatCurrency(totalValue);
+            $('avgPriceSub').textContent = `Snitt: ${formatCurrency(avgPrice)}`;
+            $('chatCount').textContent = formatNumber(state.chats.length);
+            $('latestChatSub').textContent = latestChat ? `Senast: ${formatDateTime(latestChat.updatedAt)}` : 'Inga chattar ännu';
+            $('qualityIssuesCount').textContent = formatNumber(issues);
+            $('qualitySub').textContent = issues ? 'Förbättringar rekommenderas' : 'Alla kontroller godkända';
+        }
+
+        function renderProfile() {
+            const userDoc = state.userDoc || {};
+            const name = userDoc.name || state.user.displayName || '-';
+            const userType = userDoc.userType === 'business' ? 'Företag / Bilhandlare' : 'Privatperson';
+
+            $('displayName').textContent = name;
+            $('displayUserType').textContent = userType;
+            $('displayEmail').textContent = state.user.email || '-';
+            $('displayEmailStatus').textContent = state.user.emailVerified ? 'Verifierad' : 'Ej verifierad';
+            $('displayPhone').textContent = userDoc.phone || 'Ej angivet';
+            $('displayTaxId').textContent = userDoc.taxId || 'Ej angivet';
+            $('displayAddress').textContent = userDoc.address || 'Ej angivet';
+
+            $('editName').value = name === '-' ? '' : name;
+            $('editPhone').value = userDoc.phone || '';
+            $('editAddress').value = userDoc.address || '';
+        }
+
+        function renderAds() {
+            const list = $('adsList');
+            if (!state.cars.length) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-regular fa-rectangle-list"></i>
+                        <strong>Du har inga annonser ännu</strong>
+                        <p>Publicera din första bilannons och följ den härifrån.</p>
+                        <div style="margin-top:16px;"><a class="btn btn-primary" href="sell.html"><i class="fa-solid fa-plus"></i> Lägg till annons</a></div>
+                    </div>`;
+                return;
+            }
+
+            list.innerHTML = state.cars.slice(0, 8).map((car) => {
+                const active = isActiveCar(car);
+                const title = carTitle(car);
+                const meta = [field(car, ['year'], '-'), `${field(car, ['mileage'], '-')} mil`, carFuel(car), carGear(car), carBody(car)].filter(Boolean).join(' • ');
+                return `
+                    <article class="ad-card">
+                        <img src="${escapeHTML(carImage(car))}" alt="${escapeHTML(title)}" loading="lazy" onerror="this.src='placeholder.jpg'">
+                        <div>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:7px;">
+                                <span class="badge ${active ? 'active' : 'paused'}"><i class="fa-solid ${active ? 'fa-circle-check' : 'fa-pause'}"></i> ${active ? 'Aktiv' : 'Inaktiv'}</span>
+                                <span class="badge neutral">${escapeHTML(formatDate(car.createdAt))}</span>
+                            </div>
+                            <h3>${escapeHTML(title)}</h3>
+                            <div class="meta">${escapeHTML(meta)}</div>
+                            <div class="price">${formatCurrency(car.price)}</div>
+                        </div>
+                        <div class="ad-actions">
+                            <a class="btn btn-soft" href="details.html?id=${encodeURIComponent(car.id)}"><i class="fa-solid fa-eye"></i> Visa</a>
+                            <a class="btn btn-dark" href="edit-car.html?id=${encodeURIComponent(car.id)}"><i class="fa-solid fa-pen"></i> Redigera</a>
+                        </div>
+                    </article>`;
+            }).join('');
+        }
+
+        function renderChats() {
+            const list = $('chatList');
+            if (!state.chats.length) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-regular fa-comments"></i>
+                        <strong>Inga chattar ännu</strong>
+                        <p>När någon kontaktar dig om en bil syns konversationen här.</p>
+                    </div>`;
+                return;
+            }
+
+            list.innerHTML = state.chats.slice(0, 6).map((chat) => {
+                const title = chat.carName || chat.title || chat.carId || 'Konversation';
+                const lastMessage = chat.lastMessage || 'Inget meddelande ännu';
+                return `
+                    <div class="chat-card">
+                        <div>
+                            <strong>${escapeHTML(title)}</strong>
+                            <small>${escapeHTML(lastMessage)}</small>
+                            <small>${escapeHTML(formatDateTime(chat.updatedAt))}</small>
+                        </div>
+                        <a class="btn btn-soft" href="messages.html"><i class="fa-solid fa-arrow-right"></i></a>
+                    </div>`;
+            }).join('');
+        }
+
+        function collectQualityIssues() {
+            const issues = [];
+            state.cars.forEach((car) => {
+                const title = carTitle(car);
+                if (!Array.isArray(car.images) || car.images.length === 0) issues.push({ type: 'bad', title, message: 'Annonsen saknar bilder. Lägg till tydliga bilder för högre trovärdighet.' });
+                if (!car.description || String(car.description).trim().length < 40) issues.push({ type: 'warn', title, message: 'Beskrivningen är kort. Lägg till servicehistorik, skick, däck och utrustning.' });
+                if (!Number(car.price)) issues.push({ type: 'bad', title, message: 'Priset saknas eller är ogiltigt.' });
+                if (carFuel(car) === '-') issues.push({ type: 'warn', title, message: 'Drivmedel saknas. Detta påverkar sökfilter och detaljer.' });
+                if (!field(car, ['year'], '')) issues.push({ type: 'warn', title, message: 'Årsmodell saknas.' });
+                if (!isActiveCar(car)) issues.push({ type: 'warn', title, message: 'Annonsen verkar vara inaktiv eller pausad.' });
+            });
+            return issues;
+        }
+
+        function renderQuality() {
+            const issues = collectQualityIssues();
+            const list = $('healthList');
+            $('qualityBadge').textContent = issues.length ? `${issues.length} att fixa` : 'Perfekt';
+            $('qualityBadge').className = issues.length ? 'badge danger' : 'badge active';
+
+            if (!state.cars.length) {
+                list.innerHTML = `
+                    <div class="health-item">
+                        <div class="health-icon warn"><i class="fa-solid fa-circle-info"></i></div>
+                        <div><strong>Inga annonser att analysera</strong><p>Publicera en annons först så kan dashboarden kontrollera kvaliteten.</p></div>
+                    </div>`;
+                return;
+            }
+
+            if (!issues.length) {
+                list.innerHTML = `
+                    <div class="health-item">
+                        <div class="health-icon good"><i class="fa-solid fa-circle-check"></i></div>
+                        <div><strong>Alla annonser ser bra ut</strong><p>Bilder, pris, beskrivning och grundfält är ifyllda enligt kontrollen.</p></div>
+                    </div>`;
+                return;
+            }
+
+            list.innerHTML = issues.slice(0, 10).map((issue) => `
+                <div class="health-item">
+                    <div class="health-icon ${issue.type}"><i class="fa-solid ${issue.type === 'bad' ? 'fa-triangle-exclamation' : 'fa-circle-info'}"></i></div>
+                    <div><strong>${escapeHTML(issue.title)}</strong><p>${escapeHTML(issue.message)}</p></div>
+                </div>`).join('');
+        }
+
+        function buildCountMap(items, getter) {
+            const map = new Map();
+            items.forEach((item) => {
+                const key = getter(item) || '-';
+                map.set(key, (map.get(key) || 0) + 1);
+            });
+            return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+        }
+
+        function renderChart(containerId, data) {
+            const el = $(containerId);
+            if (!data.length) {
+                el.innerHTML = '<div class="empty-state" style="padding:14px;"><p>Ingen data ännu.</p></div>';
+                return;
+            }
+            const max = Math.max(...data.map(([, count]) => count), 1);
+            el.innerHTML = data.map(([label, count]) => `
+                <div class="chart-row">
+                    <span>${escapeHTML(label)}</span>
+                    <div class="chart-track"><div class="chart-fill" style="width:${Math.max(8, Math.round((count / max) * 100))}%"></div></div>
+                    <strong>${count}</strong>
+                </div>`).join('');
+        }
+
+        function renderCharts() {
+            renderChart('fuelChart', buildCountMap(state.cars, carFuel));
+            renderChart('bodyChart', buildCountMap(state.cars, carBody));
+        }
+
+        async function saveProfile(event) {
+            event.preventDefault();
+            if (!state.user) return;
+            const btn = $('saveProfileBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sparar...';
+            try {
+                const payload = {
+                    name: $('editName').value.trim(),
+                    phone: $('editPhone').value.trim(),
+                    address: $('editAddress').value.trim(),
+                    email: state.user.email,
+                    updatedAt: serverTimestamp()
+                };
+
+                await setDoc(doc(db, 'users', state.user.uid), payload, { merge: true });
+                if (payload.name) await updateProfile(state.user, { displayName: payload.name });
+                toast('Profilen har sparats.');
+                await loadAllData();
+            } catch (error) {
+                Swal.fire('Fel', 'Kunde inte spara profilen: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Spara profil';
+            }
+        }
+
+        async function sendResetLink() {
+            if (!state.user?.email) return;
+            try {
+                await sendPasswordResetEmail(auth, state.user.email);
+                Swal.fire('Skickat!', 'Ett lösenordsmejl har skickats till din e-post.', 'success');
+            } catch (error) {
+                Swal.fire('Fel', error.message, 'error');
+            }
+        }
+
+        async function sendVerifyLink() {
+            if (!state.user) return;
+            try {
+                await sendEmailVerification(state.user);
+                Swal.fire('Skickat!', 'Verifieringsmejl har skickats. Kontrollera inkorgen och skräpposten.', 'success');
+            } catch (error) {
+                Swal.fire('Fel', error.message, 'error');
+            }
+        }
+
+        async function logout() {
+            await signOut(auth);
+            window.location.href = 'login.html';
+        }
+
+        function setupEvents() {
+            $('profileForm').addEventListener('submit', saveProfile);
+            $('resetPasswordBtn').addEventListener('click', sendResetLink);
+            $('sendVerificationBtn').addEventListener('click', sendVerifyLink);
+            $('logoutBtn').addEventListener('click', logout);
+            $('logoutTopBtn').addEventListener('click', logout);
+            $('refreshBtn').addEventListener('click', () => loadAllData().then(() => toast('Dashboarden har uppdaterats.')));
+
+            document.querySelectorAll('.side-link[data-scroll]').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.side-link').forEach((item) => item.classList.remove('active'));
+                    btn.classList.add('active');
+                    const target = $(btn.dataset.scroll);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+        }
+
+        setupEvents();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            state.user = user;
+            await loadAllData();
+        });
+    </script>
+</body>
+</html>
