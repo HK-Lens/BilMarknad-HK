@@ -2,17 +2,13 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Sökresultat | BILHK</title>
 
-    <meta name="description" content="Sökresultat för bilar på BILHK. Filtrera efter märke, modell, pris, miltal, drivmedel och utrustning.">
-
+    <meta name="description" content="Sökresultat för bilannonser på BILHK.">
     <meta name="robots" content="noindex, nofollow">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
@@ -36,24 +32,17 @@
             --border-strong: #cbd5e1;
 
             --success: #16a34a;
-            --success-soft: rgba(22, 163, 74, 0.10);
-
             --danger: #dc2626;
-            --danger-soft: rgba(220, 38, 38, 0.10);
-
             --warning: #f59e0b;
-            --warning-soft: rgba(245, 158, 11, 0.13);
 
             --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
-            --shadow-md: 0 14px 34px rgba(15, 23, 42, 0.10);
-            --shadow-lg: 0 24px 70px rgba(15, 23, 42, 0.15);
+            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
+            --shadow-lg: 0 28px 80px rgba(15, 23, 42, 0.16);
 
             --radius-sm: 12px;
             --radius-md: 18px;
             --radius-lg: 28px;
             --radius-full: 999px;
-
-            --max-width: 1240px;
         }
 
         * {
@@ -69,12 +58,11 @@
         body {
             min-height: 100vh;
             font-family: 'Inter', sans-serif;
-            background:
-                radial-gradient(circle at 8% 0%, rgba(245, 130, 32, 0.14), transparent 33%),
-                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
             color: var(--text);
-            display: flex;
-            flex-direction: column;
+            background:
+                radial-gradient(circle at 10% 8%, rgba(245, 130, 32, 0.14), transparent 28%),
+                radial-gradient(circle at 88% 10%, rgba(15, 23, 42, 0.10), transparent 30%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
         }
 
         a {
@@ -83,6 +71,7 @@
         }
 
         button,
+        input,
         select {
             font-family: inherit;
         }
@@ -91,19 +80,24 @@
             cursor: pointer;
         }
 
-        .site-header {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(255, 255, 255, 0.94);
-            backdrop-filter: blur(18px);
-            border-bottom: 1px solid var(--border);
+        .page-shell {
+            width: min(1280px, calc(100% - 32px));
+            margin: 0 auto;
         }
 
-        .header-inner {
-            max-width: var(--max-width);
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.92);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+        }
+
+        .topbar-inner {
+            width: min(1280px, calc(100% - 32px));
+            min-height: 78px;
             margin: 0 auto;
-            padding: 16px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -113,12 +107,11 @@
         .logo {
             display: inline-flex;
             align-items: center;
-            gap: 11px;
+            gap: 10px;
+            color: var(--dark);
             font-size: 1.75rem;
             font-weight: 900;
             letter-spacing: -0.06em;
-            color: var(--dark);
-            white-space: nowrap;
         }
 
         .logo-icon {
@@ -127,17 +120,16 @@
             border-radius: 15px;
             display: grid;
             place-items: center;
-            background: linear-gradient(135deg, var(--primary), #ffb15c);
             color: white;
-            box-shadow: 0 12px 28px rgba(245, 130, 32, 0.30);
-            font-size: 18px;
+            background: linear-gradient(135deg, var(--primary), #ffb15c);
+            box-shadow: 0 14px 28px rgba(245, 130, 32, 0.28);
         }
 
         .logo span {
             color: var(--primary);
         }
 
-        .header-actions {
+        .top-actions {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -147,14 +139,15 @@
 
         .nav-btn {
             min-height: 42px;
-            padding: 10px 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
             border-radius: var(--radius-full);
             border: 1px solid var(--border);
             background: white;
             color: var(--dark);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
             font-size: 13px;
             font-weight: 900;
             transition: 0.25s ease;
@@ -167,10 +160,10 @@
         }
 
         .nav-btn.primary {
-            background: var(--primary);
             border-color: var(--primary);
+            background: var(--primary);
             color: white;
-            box-shadow: 0 10px 24px rgba(245, 130, 32, 0.22);
+            box-shadow: 0 12px 24px rgba(245, 130, 32, 0.22);
         }
 
         .nav-btn.primary:hover {
@@ -178,207 +171,110 @@
             color: white;
         }
 
-        main {
-            flex: 1;
-        }
-
         .hero {
+            padding: 46px 0 28px;
+        }
+
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 34px;
+            padding: 38px;
             background:
-                radial-gradient(circle at 20% 0%, rgba(245, 130, 32, 0.32), transparent 34%),
-                linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.96)),
+                radial-gradient(circle at 18% 20%, rgba(245, 130, 32, 0.35), transparent 34%);
             color: white;
-            padding: 46px 24px 92px;
+            box-shadow: var(--shadow-lg);
         }
 
-        .hero-inner {
-            max-width: var(--max-width);
-            margin: 0 auto;
+        .hero-card::before {
+            content: "";
+            position: absolute;
+            right: -130px;
+            bottom: -170px;
+            width: 380px;
+            height: 380px;
+            border-radius: 999px;
+            background: rgba(245, 130, 32, 0.17);
         }
 
-        .breadcrumb {
-            display: flex;
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 28px;
+            align-items: end;
+        }
+
+        .hero-badge {
+            width: fit-content;
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
-            color: #cbd5e1;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 22px;
-        }
-
-        .breadcrumb a {
+            gap: 9px;
+            padding: 9px 14px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
         }
 
-        .breadcrumb a:hover {
-            color: white;
-        }
-
-        .hero-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            gap: 24px;
-            flex-wrap: wrap;
+        .hero-badge i {
+            color: var(--primary);
         }
 
         .hero h1 {
-            font-size: clamp(30px, 5vw, 54px);
+            max-width: 760px;
+            font-size: clamp(32px, 4vw, 52px);
             line-height: 1.04;
-            letter-spacing: -0.06em;
             font-weight: 900;
-            margin-bottom: 12px;
+            letter-spacing: -0.06em;
+            margin-bottom: 14px;
         }
 
         .hero p {
-            max-width: 720px;
+            max-width: 680px;
             color: #cbd5e1;
             font-size: 15px;
-            line-height: 1.75;
-            font-weight: 600;
+            line-height: 1.8;
+            font-weight: 650;
         }
 
-        .result-counter-card {
-            min-width: 220px;
-            padding: 18px 20px;
+        .hero-counter {
+            min-width: 190px;
+            padding: 20px;
             border-radius: 24px;
             background: rgba(255, 255, 255, 0.10);
-            border: 1px solid rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
             text-align: center;
-            backdrop-filter: blur(10px);
         }
 
-        .result-counter-card strong {
+        .hero-counter strong {
             display: block;
-            font-size: 34px;
+            font-size: 38px;
             font-weight: 900;
             color: var(--primary);
             line-height: 1;
+            margin-bottom: 7px;
         }
 
-        .result-counter-card span {
+        .hero-counter span {
             display: block;
-            margin-top: 6px;
             color: #e2e8f0;
             font-size: 12px;
-            font-weight: 850;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.08em;
         }
 
-        .content-shell {
-            max-width: var(--max-width);
-            margin: -58px auto 0;
-            padding: 0 24px 76px;
-        }
-
-        .search-panel {
-            background: rgba(255, 255, 255, 0.98);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            box-shadow: var(--shadow-lg);
-            padding: 24px;
-            margin-bottom: 26px;
-        }
-
-        .panel-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            flex-wrap: wrap;
-            margin-bottom: 18px;
-        }
-
-        .panel-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .panel-title-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 16px;
-            background: var(--primary-soft);
-            color: var(--primary);
-            display: grid;
-            place-items: center;
-            font-size: 17px;
-        }
-
-        .panel-title h2 {
-            font-size: 20px;
-            font-weight: 900;
-            letter-spacing: -0.04em;
-        }
-
-        .panel-title p {
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 700;
-            margin-top: 3px;
-        }
-
-        .sort-box {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--surface-soft);
-            border: 1px solid var(--border);
-            padding: 8px;
-            border-radius: 16px;
-        }
-
-        .sort-box label {
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 900;
-            padding-left: 8px;
-        }
-
-        .sort-box select {
-            min-height: 40px;
-            border: none;
-            outline: none;
-            background: white;
-            color: var(--dark);
-            border-radius: 12px;
-            padding: 0 12px;
-            font-size: 13px;
-            font-weight: 850;
-        }
-
-        .active-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 9px;
-        }
-
-        .filter-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 9px 12px;
-            border-radius: var(--radius-full);
-            background: #fff7ed;
-            color: #9a3412;
-            border: 1px solid #fed7aa;
-            font-size: 12px;
-            font-weight: 900;
-        }
-
-        .filter-chip i {
-            color: var(--primary);
-        }
-
-        .empty-filters {
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .toolbar {
-            margin: 0 0 22px;
+        .filter-summary {
+            margin: 22px 0 28px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -386,1277 +282,1469 @@
             flex-wrap: wrap;
         }
 
-        .toolbar-left {
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 800;
+        .summary-left {
+            min-width: 0;
         }
 
-        .toolbar-left strong {
+        .summary-title {
             color: var(--dark);
+            font-size: 22px;
             font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 6px;
         }
 
-        .toolbar-actions {
+        .summary-subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.55;
+        }
+
+        .chips {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
-        .small-btn {
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--dark);
-            min-height: 42px;
-            padding: 10px 14px;
-            border-radius: var(--radius-full);
-            font-size: 12px;
-            font-weight: 900;
+        .chip {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: 0.25s ease;
+            gap: 7px;
+            padding: 9px 12px;
+            border-radius: var(--radius-full);
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 900;
         }
 
-        .small-btn:hover {
-            border-color: rgba(245, 130, 32, 0.45);
-            color: var(--primary-hover);
-            transform: translateY(-1px);
+        .chip i {
+            color: var(--primary);
+        }
+
+        .toolbar {
+            margin-bottom: 22px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 220px;
+            gap: 14px;
+        }
+
+        .search-box,
+        .sort-box {
+            position: relative;
+        }
+
+        .search-box i,
+        .sort-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-light);
+            pointer-events: none;
+        }
+
+        .search-box input,
+        .sort-box select {
+            width: 100%;
+            min-height: 52px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: white;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 800;
+            outline: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-box input {
+            padding: 13px 16px 13px 44px;
+        }
+
+        .sort-box select {
+            appearance: none;
+            padding: 13px 40px 13px 44px;
+        }
+
+        .search-box input:focus,
+        .sort-box select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.12);
         }
 
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(286px, 1fr));
             gap: 22px;
+            padding-bottom: 80px;
         }
 
         .car-card {
+            overflow: hidden;
+            border-radius: 26px;
             background: white;
             border: 1px solid var(--border);
-            border-radius: 24px;
-            overflow: hidden;
+            box-shadow: var(--shadow-sm);
             cursor: pointer;
             transition: 0.25s ease;
-            box-shadow: var(--shadow-sm);
-            position: relative;
         }
 
         .car-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-md);
-            border-color: rgba(245, 130, 32, 0.36);
+            border-color: rgba(245, 130, 32, 0.35);
         }
 
-        .image-wrap {
+        .car-image-wrap {
             position: relative;
             height: 205px;
+            background: var(--surface-soft);
             overflow: hidden;
-            background: linear-gradient(135deg, #e2e8f0, #f8fafc);
         }
 
-        .image-wrap img {
+        .car-image-wrap img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
             display: block;
-            transition: 0.4s ease;
+            object-fit: cover;
+            transition: 0.35s ease;
         }
 
-        .car-card:hover .image-wrap img {
-            transform: scale(1.045);
+        .car-card:hover .car-image-wrap img {
+            transform: scale(1.04);
         }
 
-        .image-badge {
+        .image-count {
             position: absolute;
-            top: 13px;
-            left: 13px;
+            right: 12px;
+            bottom: 12px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 8px 11px;
+            padding: 7px 10px;
             border-radius: var(--radius-full);
-            background: rgba(15, 23, 42, 0.76);
+            background: rgba(15, 23, 42, 0.80);
             color: white;
             font-size: 11px;
             font-weight: 900;
             backdrop-filter: blur(8px);
         }
 
-        .card-content {
-            padding: 19px;
+        .car-badge {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.92);
+            color: var(--dark);
+            font-size: 11px;
+            font-weight: 900;
+            backdrop-filter: blur(8px);
         }
 
-        .card-price {
+        .car-badge i {
+            color: var(--primary);
+        }
+
+        .car-content {
+            padding: 20px;
+        }
+
+        .price {
             color: var(--primary);
             font-size: 24px;
-            line-height: 1;
             font-weight: 900;
             letter-spacing: -0.04em;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
-        .card-title {
+        .car-title {
             color: var(--dark);
             font-size: 17px;
             font-weight: 900;
-            margin-bottom: 8px;
             line-height: 1.35;
-        }
-
-        .card-description {
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 650;
-            line-height: 1.55;
-            margin-bottom: 15px;
-            min-height: 38px;
+            margin-bottom: 12px;
         }
 
         .meta-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 9px;
+            gap: 8px;
+            margin-bottom: 16px;
         }
 
         .meta-item {
-            padding: 10px;
-            border-radius: 14px;
-            background: var(--surface-soft);
+            min-height: 38px;
             display: flex;
             align-items: center;
             gap: 8px;
+            padding: 9px 10px;
+            border-radius: 13px;
+            background: var(--surface-soft);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 850;
             min-width: 0;
         }
 
         .meta-item i {
             color: var(--primary);
-            font-size: 13px;
             width: 14px;
             text-align: center;
+            flex: 0 0 14px;
         }
 
         .meta-item span {
-            min-width: 0;
-            color: #475569;
-            font-size: 11px;
-            font-weight: 850;
-            white-space: nowrap;
             overflow: hidden;
+            white-space: nowrap;
             text-overflow: ellipsis;
         }
 
+        .description {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 650;
+            line-height: 1.65;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 42px;
+        }
+
         .card-footer {
-            margin-top: 16px;
-            padding-top: 14px;
-            border-top: 1px solid var(--border);
+            margin-top: 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 10px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
         }
 
-        .seller-note {
+        .seller-info {
+            min-width: 0;
             color: var(--muted-light);
             font-size: 11px;
-            font-weight: 800;
-        }
-
-        .details-link {
-            color: var(--dark);
-            background: var(--surface-soft);
-            border-radius: var(--radius-full);
-            padding: 9px 12px;
+            font-weight: 850;
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            font-size: 11px;
-            font-weight: 900;
         }
 
-        .loading-state,
-        .empty-state,
-        .error-state {
+        .details-link {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 950;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex: 0 0 auto;
+        }
+
+        .state-card {
             grid-column: 1 / -1;
+            min-height: 360px;
+            display: grid;
+            place-items: center;
             background: white;
             border: 1px solid var(--border);
             border-radius: 30px;
-            min-height: 330px;
-            padding: 48px 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
             box-shadow: var(--shadow-sm);
+            padding: 42px 24px;
+            text-align: center;
         }
 
-        .state-icon {
+        .state-card i {
             width: 76px;
             height: 76px;
             border-radius: 26px;
             display: grid;
             place-items: center;
-            margin-bottom: 18px;
-            font-size: 30px;
-        }
-
-        .loading-state .state-icon {
             background: var(--primary-soft);
             color: var(--primary);
+            font-size: 30px;
+            margin: 0 auto 18px;
         }
 
-        .empty-state .state-icon {
-            background: var(--warning-soft);
-            color: var(--warning);
-        }
-
-        .error-state .state-icon {
-            background: var(--danger-soft);
-            color: var(--danger);
-        }
-
-        .state-title {
-            font-size: 22px;
+        .state-card h2 {
+            color: var(--dark);
+            font-size: 25px;
             font-weight: 900;
             letter-spacing: -0.04em;
-            margin-bottom: 8px;
-            color: var(--dark);
+            margin-bottom: 10px;
         }
 
-        .state-text {
+        .state-card p {
+            max-width: 560px;
             color: var(--muted);
-            line-height: 1.7;
             font-size: 14px;
             font-weight: 650;
-            max-width: 560px;
-            margin-bottom: 22px;
+            line-height: 1.75;
+            margin: 0 auto 20px;
         }
 
-        .spinner {
-            animation: spin 0.85s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .site-footer {
-            background: var(--dark);
-            color: #94a3b8;
-            padding: 36px 24px;
-            margin-top: auto;
-        }
-
-        .footer-inner {
-            max-width: var(--max-width);
-            margin: 0 auto;
+        .state-actions {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 16px;
+            justify-content: center;
+            gap: 10px;
             flex-wrap: wrap;
-            font-size: 12px;
-            font-weight: 700;
         }
 
-        .footer-inner strong {
-            color: white;
+        .skeleton-card {
+            overflow: hidden;
+            border-radius: 26px;
+            background: white;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
         }
 
-        @media (max-width: 760px) {
-            .header-inner {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 15px 18px;
+        .skeleton-image {
+            height: 205px;
+            background: linear-gradient(90deg, #eef2f7, #f8fafc, #eef2f7);
+            background-size: 200% 100%;
+            animation: shimmer 1.15s infinite linear;
+        }
+
+        .skeleton-body {
+            padding: 20px;
+        }
+
+        .skeleton-line {
+            height: 14px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #eef2f7, #f8fafc, #eef2f7);
+            background-size: 200% 100%;
+            animation: shimmer 1.15s infinite linear;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-line.wide {
+            width: 82%;
+        }
+
+        .skeleton-line.medium {
+            width: 58%;
+        }
+
+        .skeleton-line.small {
+            width: 36%;
+        }
+
+        @keyframes shimmer {
+            from {
+                background-position: 200% 0;
             }
 
-            .header-actions {
-                justify-content: flex-start;
+            to {
+                background-position: -200% 0;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-counter {
+                width: fit-content;
+                min-width: 170px;
+            }
+
+            .toolbar {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .topbar-inner {
+                min-height: auto;
+                padding: 14px 0;
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .top-actions {
                 width: 100%;
-                overflow-x: auto;
-                flex-wrap: nowrap;
-                padding-bottom: 3px;
+                justify-content: flex-start;
+            }
+
+            .nav-btn {
+                flex: 1;
             }
 
             .hero {
-                padding: 34px 18px 82px;
+                padding-top: 24px;
             }
 
-            .content-shell {
-                padding: 0 18px 60px;
+            .hero-card {
+                padding: 28px 22px;
+                border-radius: 28px;
             }
 
-            .search-panel {
-                padding: 18px;
-                border-radius: 26px;
-            }
-
-            .panel-top {
+            .filter-summary {
                 align-items: flex-start;
-            }
-
-            .sort-box {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .sort-box select {
-                flex: 1;
             }
 
             .results-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .result-counter-card {
-                width: 100%;
             }
         }
     </style>
 </head>
 
 <body>
-
-<header class="site-header">
-    <div class="header-inner">
-        <a href="index.html" class="logo" aria-label="BILHK startsida">
-            <span class="logo-icon">
-                <i class="fa-solid fa-car-side"></i>
-            </span>
-            BIL<span>HK</span>
-        </a>
-
-        <nav class="header-actions" aria-label="Sidmeny">
-            <a href="index.html" class="nav-btn">
-                <i class="fa-solid fa-house"></i>
-                Hem
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="index.html" class="logo" aria-label="Gå till startsidan">
+                <span class="logo-icon">
+                    <i class="fa-solid fa-car-side"></i>
+                </span>
+                BIL<span>HK</span>
             </a>
 
-            <a href="filter.html" class="nav-btn">
-                <i class="fa-solid fa-sliders"></i>
-                Ändra sökning
-            </a>
+            <nav class="top-actions" aria-label="Sidnavigation">
+                <a href="index.html" class="nav-btn">
+                    <i class="fa-solid fa-house"></i>
+                    Startsida
+                </a>
 
-            <a href="sell.html" class="nav-btn primary">
-                <i class="fa-solid fa-circle-plus"></i>
-                Sälj bil
-            </a>
-        </nav>
-    </div>
-</header>
+                <a href="filter.html" class="nav-btn">
+                    <i class="fa-solid fa-sliders"></i>
+                    Sökfilter
+                </a>
 
-<main>
-    <section class="hero">
-        <div class="hero-inner">
-            <div class="breadcrumb">
-                <a href="index.html">Hem</a>
-                <i class="fa-solid fa-chevron-right"></i>
-                <span>Sökresultat</span>
-            </div>
-
-            <div class="hero-title-row">
-                <div>
-                    <h1>Sökresultat</h1>
-                    <p>
-                        Här visas annonser som matchar dina valda filter. Kontrollera alltid fordonets uppgifter,
-                        historik och säljare innan du går vidare med en affär.
-                    </p>
-                </div>
-
-                <div class="result-counter-card">
-                    <strong id="resultCounter">0</strong>
-                    <span>Matchande fordon</span>
-                </div>
-            </div>
+                <a href="sell.html" class="nav-btn primary">
+                    <i class="fa-solid fa-circle-plus"></i>
+                    Sälj bil
+                </a>
+            </nav>
         </div>
-    </section>
+    </header>
 
-    <section class="content-shell">
-        <div class="search-panel">
-            <div class="panel-top">
-                <div class="panel-title">
-                    <div class="panel-title-icon">
-                        <i class="fa-solid fa-filter"></i>
-                    </div>
-
+    <main class="page-shell">
+        <section class="hero">
+            <div class="hero-card">
+                <div class="hero-content">
                     <div>
-                        <h2>Aktiva filter</h2>
-                        <p id="filterSummaryText">Läser filter...</p>
+                        <div class="hero-badge">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            Sökresultat
+                        </div>
+
+                        <h1>Hitta rätt bil bland publicerade annonser.</h1>
+
+                        <p id="heroText">
+                            Resultaten uppdateras baserat på dina valda filter. Du kan justera sökningen eller öppna en annons för mer information.
+                        </p>
+                    </div>
+
+                    <div class="hero-counter">
+                        <strong id="resultCount">0</strong>
+                        <span>annonser</span>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <div class="sort-box">
-                    <label for="sortSelect">Sortera</label>
-                    <select id="sortSelect">
-                        <option value="newest">Nyast först</option>
-                        <option value="priceAsc">Pris: lägst först</option>
-                        <option value="priceDesc">Pris: högst först</option>
-                        <option value="yearDesc">År: nyast först</option>
-                        <option value="mileageAsc">Miltal: lägst först</option>
-                    </select>
-                </div>
+        <section class="filter-summary" aria-label="Aktiv sökning">
+            <div class="summary-left">
+                <h2 class="summary-title" id="resultTitle">Laddar resultat...</h2>
+                <p class="summary-subtitle" id="resultSubtitle">Vänta medan annonserna hämtas.</p>
             </div>
 
-            <div id="activeFilters" class="active-filters"></div>
-        </div>
+            <div class="chips" id="activeFilters"></div>
+        </section>
 
-        <div class="toolbar">
-            <div class="toolbar-left" id="toolbarText">
-                Söker efter fordon...
+        <section class="toolbar" aria-label="Resultatverktyg">
+            <div class="search-box">
+                <i class="fa-solid fa-search"></i>
+                <input type="search" id="localSearchInput" placeholder="Sök i visade resultat..." autocomplete="off">
             </div>
 
-            <div class="toolbar-actions">
-                <button type="button" class="small-btn" id="backToFilterBtn">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                    Justera filter
-                </button>
-
-                <button type="button" class="small-btn" id="clearFiltersBtn">
-                    <i class="fa-solid fa-rotate-left"></i>
-                    Rensa filter
-                </button>
+            <div class="sort-box">
+                <i class="fa-solid fa-arrow-up-wide-short"></i>
+                <select id="sortSelect" aria-label="Sortera resultat">
+                    <option value="newest">Nyast först</option>
+                    <option value="price_low">Lägsta pris</option>
+                    <option value="price_high">Högsta pris</option>
+                    <option value="year_high">Nyaste årsmodell</option>
+                    <option value="mileage_low">Lägst miltal</option>
+                </select>
             </div>
-        </div>
+        </section>
 
-        <div id="resultsGrid" class="results-grid" aria-live="polite"></div>
-    </section>
-</main>
+        <section id="resultsGrid" class="results-grid" aria-live="polite"></section>
+    </main>
 
-<footer class="site-footer">
-    <div class="footer-inner">
-        <div>
-            <strong>BILHK</strong> &copy; 2026. Öppen marknadsplats för fordonsannonser.
-        </div>
+    <script type="module">
+        import { db } from "./firebase-config.js";
 
-        <div>
-            All handel sker på användarens eget ansvar.
-        </div>
-    </div>
-</footer>
+        import {
+            collection,
+            getDocs,
+            query,
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-<script type="module">
-    import { db } from "./firebase-config.js";
+        const CONFIG = Object.freeze({
+            COLLECTIONS: {
+                CARS: "cars"
+            },
 
-    import {
-        collection,
-        getDocs,
-        query,
-        where,
-        orderBy,
-        limit
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+            ROUTES: {
+                INDEX: "index.html",
+                FILTER: "filter.html",
+                DETAILS: "details.html"
+            },
 
-    const RESULTS_CONFIG = {
-        COLLECTIONS: {
-            CARS: "cars"
-        },
+            PLACEHOLDER_IMAGE:
+                "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
+                        <rect width="900" height="600" fill="#f1f5f9"/>
+                        <circle cx="450" cy="260" r="70" fill="#e2e8f0"/>
+                        <rect x="250" y="360" width="400" height="34" rx="17" fill="#e2e8f0"/>
+                        <rect x="320" y="415" width="260" height="24" rx="12" fill="#e2e8f0"/>
+                        <text x="450" y="515" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700" fill="#94a3b8">BILHK</text>
+                    </svg>
+                `),
 
-        ROUTES: {
-            DETAILS: "details.html",
-            FILTER: "filter.html",
-            HOME: "index.html"
-        },
+            FILTER_KEYS: {
+                BRAND: "brand",
+                MODEL: "model",
+                BODY: "kar",
+                BODY_ALT: "bodyType",
+                FUEL: "fuel",
+                GEAR: "gear",
+                TRANSMISSION: "transmission",
+                DRIVE: "drive",
+                MIN_PRICE: "minP",
+                MAX_PRICE: "maxP",
+                MIN_YEAR: "minY",
+                MAX_YEAR: "maxY",
+                MIN_MILEAGE: "minM",
+                MAX_MILEAGE: "maxM",
+                MAX_MILEAGE_ALT: "maxMil",
+                MIN_HP: "hp",
+                MAX_TAX: "tax",
+                MAX_OWNERS: "owners",
+                TECHS: "techs",
+                TEXT: "text",
+                BESIKTNING: "bes"
+            }
+        });
 
-        QUERY: {
-            MAX_READ_LIMIT: 250,
-            ACTIVE_FIELD: "active",
-            CREATED_FIELD: "createdAt"
-        },
+        const state = {
+            allCars: [],
+            filteredCars: [],
+            visibleCars: [],
+            activeFilters: {},
+            localSearchText: "",
+            sortMode: "newest"
+        };
 
-        DEFAULTS: {
-            PLACEHOLDER_IMAGE: "placeholder.jpg",
-            FALLBACK_IMAGE_ALT: "Bild saknas"
-        },
+        const elements = {
+            resultsGrid: document.getElementById("resultsGrid"),
+            resultCount: document.getElementById("resultCount"),
+            resultTitle: document.getElementById("resultTitle"),
+            resultSubtitle: document.getElementById("resultSubtitle"),
+            activeFilters: document.getElementById("activeFilters"),
+            localSearchInput: document.getElementById("localSearchInput"),
+            sortSelect: document.getElementById("sortSelect"),
+            heroText: document.getElementById("heroText")
+        };
 
-        FIELD_ALIASES: {
-            BODY_TYPE: ["bodyType", "karosseri", "kar"],
-            FUEL: ["fuelType", "fuel"],
-            TRANSMISSION: ["transmission", "gearbox", "gear"],
-            DRIVE: ["drive", "drivning"],
-            FEATURES: ["features", "techs", "equipment"],
-            REGISTRATION: ["regNo", "regNr", "registrationNumber"]
+        initializeResultsPage();
+
+        function initializeResultsPage() {
+            attachEventListeners();
+            parseUrlFilters();
+            renderLoadingState();
+            loadResults();
         }
-    };
 
-    const elements = {
-        resultCounter: document.getElementById("resultCounter"),
-        resultsGrid: document.getElementById("resultsGrid"),
-        activeFilters: document.getElementById("activeFilters"),
-        filterSummaryText: document.getElementById("filterSummaryText"),
-        toolbarText: document.getElementById("toolbarText"),
-        sortSelect: document.getElementById("sortSelect"),
-        backToFilterBtn: document.getElementById("backToFilterBtn"),
-        clearFiltersBtn: document.getElementById("clearFiltersBtn")
-    };
-
-    const state = {
-        urlParams: new URLSearchParams(window.location.search),
-        filters: {},
-        allMatches: [],
-        renderedMatches: []
-    };
-
-    initializeResultsPage();
-
-    function initializeResultsPage() {
-        attachGlobalErrorHandlers();
-        attachEvents();
-
-        state.filters = parseFilters(state.urlParams);
-
-        renderActiveFilters(state.filters);
-        loadResults();
-    }
-
-    function attachEvents() {
-        elements.sortSelect.addEventListener("change", () => {
-            renderResults(sortCars([...state.allMatches], elements.sortSelect.value));
-        });
-
-        elements.backToFilterBtn.addEventListener("click", () => {
-            window.location.href = `${RESULTS_CONFIG.ROUTES.FILTER}${window.location.search || ""}`;
-        });
-
-        elements.clearFiltersBtn.addEventListener("click", () => {
-            window.location.href = RESULTS_CONFIG.ROUTES.HOME;
-        });
-    }
-
-    async function loadResults() {
-        renderLoadingState();
-
-        try {
-            const baseQuery = buildFirestoreBaseQuery(state.filters);
-            const snapshot = await getDocs(baseQuery);
-
-            const cars = snapshot.docs.map((documentSnapshot) => {
-                return normalizeCarDocument(documentSnapshot.id, documentSnapshot.data());
+        function attachEventListeners() {
+            elements.localSearchInput.addEventListener("input", () => {
+                state.localSearchText = normalizeText(elements.localSearchInput.value, 200).toLowerCase();
+                applyLocalSearchAndSort();
+                renderResults();
             });
 
-            const filteredCars = cars.filter((car) => doesCarMatchFilters(car, state.filters));
-
-            state.allMatches = sortCars(filteredCars, elements.sortSelect.value);
-
-            renderResults(state.allMatches);
-        } catch (error) {
-            console.error("[BILHK] Failed to load search results:", error);
-            renderErrorState(error);
-        }
-    }
-
-    function buildFirestoreBaseQuery(filters) {
-        const constraints = [];
-
-        constraints.push(where(RESULTS_CONFIG.QUERY.ACTIVE_FIELD, "==", true));
-
-        if (filters.brand && filters.brand !== "all") {
-            constraints.push(where("brand", "==", filters.brand));
+            elements.sortSelect.addEventListener("change", () => {
+                state.sortMode = elements.sortSelect.value;
+                applyLocalSearchAndSort();
+                renderResults();
+            });
         }
 
-        constraints.push(orderBy(RESULTS_CONFIG.QUERY.CREATED_FIELD, "desc"));
-        constraints.push(limit(RESULTS_CONFIG.QUERY.MAX_READ_LIMIT));
+        function parseUrlFilters() {
+            const params = new URLSearchParams(window.location.search);
 
-        return query(collection(db, RESULTS_CONFIG.COLLECTIONS.CARS), ...constraints);
-    }
+            state.activeFilters = {
+                brand: normalizeParam(params.get(CONFIG.FILTER_KEYS.BRAND)),
+                model: normalizeParam(params.get(CONFIG.FILTER_KEYS.MODEL)),
+                bodyType: normalizeParam(
+                    params.get(CONFIG.FILTER_KEYS.BODY) ||
+                    params.get(CONFIG.FILTER_KEYS.BODY_ALT)
+                ),
+                fuel: normalizeParam(params.get(CONFIG.FILTER_KEYS.FUEL)),
+                transmission: normalizeParam(
+                    params.get(CONFIG.FILTER_KEYS.GEAR) ||
+                    params.get(CONFIG.FILTER_KEYS.TRANSMISSION)
+                ),
+                drive: normalizeParam(params.get(CONFIG.FILTER_KEYS.DRIVE)),
+                minPrice: normalizeNumberParam(params.get(CONFIG.FILTER_KEYS.MIN_PRICE)),
+                maxPrice: normalizeNumberParam(params.get(CONFIG.FILTER_KEYS.MAX_PRICE)),
+                minYear: normalizeNumberParam(params.get(CONFIG.FILTER_KEYS.MIN_YEAR)),
+                maxYear: normalizeNumberParam(params.get(CONFIG.FILTER_KEYS.MAX_YEAR)),
+                minMileage: normalizeNumberParam(params.get(CONFIG.FILTER_KEYS.MIN_MILEAGE)),
+                maxMileage: normalizeNumberParam(
+                    params.get(CONFIG.FILTER_KEYS.MAX_MILEAGE) ||
+                    params.get(CONFIG.FILTER_KEYS.MAX_MILEAGE_ALT)
+                ),
+                minHp: normalizeNumberParam(params.get(CONFIG.FILTER_KEYS.MIN_HP)),
+                maxTax: normalizeNumberParam(params.get(CONFIG.FILTER_KEYS.MAX_TAX)),
+                maxOwners: normalizeNumberParam(params.get(CONFIG.FILTER_KEYS.MAX_OWNERS)),
+                techs: normalizeTechs(params.get(CONFIG.FILTER_KEYS.TECHS)),
+                text: normalizeParam(params.get(CONFIG.FILTER_KEYS.TEXT)).toLowerCase(),
+                besiktning: normalizeParam(params.get(CONFIG.FILTER_KEYS.BESIKTNING))
+            };
+        }
 
-    function parseFilters(params) {
-        return {
-            brand: cleanParam(params.get("brand")),
-            model: cleanParam(params.get("model")),
-            bodyType: cleanParam(params.get("kar")),
-            fuel: cleanParam(params.get("fuel")),
-            transmission: cleanParam(params.get("gear")),
-            drive: cleanParam(params.get("drive")),
+        async function loadResults() {
+            try {
+                const carsQuery = query(
+                    collection(db, CONFIG.COLLECTIONS.CARS),
+                    orderBy("createdAt", "desc")
+                );
 
-            minPrice: cleanNumber(params.get("minP")),
-            maxPrice: cleanNumber(params.get("maxP")),
+                const snapshot = await getDocs(carsQuery);
 
-            minYear: cleanNumber(params.get("minY")),
-            maxYear: cleanNumber(params.get("maxY")),
+                state.allCars = snapshot.docs.map((documentSnapshot) => {
+                    return normalizeCarRecord(documentSnapshot.id, documentSnapshot.data());
+                });
 
-            minMileage: cleanNumber(params.get("minM")),
-            maxMileage: cleanNumber(params.get("maxM") || params.get("maxMil")),
+                state.filteredCars = state.allCars.filter((car) => {
+                    return matchesAllFilters(car, state.activeFilters);
+                });
 
-            maxTax: cleanNumber(params.get("tax") || params.get("maxTax")),
-            maxOwners: cleanNumber(params.get("owners") || params.get("maxOwners")),
-            minHp: cleanNumber(params.get("hp") || params.get("minHp")),
+                applyLocalSearchAndSort();
+                renderResults();
+            } catch (error) {
+                console.error("[BILHK] Could not load search results:", error);
+                renderErrorState();
+            }
+        }
 
-            inspectionDate: cleanParam(params.get("bes")),
-            text: cleanParam(params.get("text")).toLowerCase(),
+        function normalizeCarRecord(id, rawData) {
+            const data = rawData || {};
 
-            techs: parseListParam(params.get("techs"))
-        };
-    }
+            const fuel =
+                data.fuelType ||
+                data.fuel ||
+                data.drivmedel ||
+                "";
 
-    function normalizeCarDocument(id, data) {
-        const raw = data || {};
+            const bodyType =
+                data.karosseri ||
+                data.bodyType ||
+                data.kar ||
+                "";
 
-        const imageList = Array.isArray(raw.images) ? raw.images : [];
+            const transmission =
+                data.transmission ||
+                data.gearbox ||
+                data.gear ||
+                "";
 
-        return {
-            id,
+            const images = Array.isArray(data.images)
+                ? data.images.filter(Boolean)
+                : [];
 
-            brand: safeText(raw.brand),
-            model: safeText(raw.model),
-            year: cleanNumber(raw.year),
-            price: cleanNumber(raw.price),
-            mileage: cleanNumber(raw.mileage),
+            const createdAtMillis = safeTimestampToMillis(data.createdAt);
+            const updatedAtMillis = safeTimestampToMillis(data.updatedAt);
 
-            bodyType: safeText(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.BODY_TYPE)),
-            fuel: safeText(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.FUEL)),
-            transmission: safeText(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.TRANSMISSION)),
-            drive: safeText(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.DRIVE)),
+            return {
+                id,
+                raw: data,
 
-            hp: cleanNumber(raw.hp),
-            tax: cleanNumber(raw.tax),
-            owners: cleanNumber(raw.owners),
+                brand: normalizeText(data.brand, 80),
+                model: normalizeText(data.model, 100),
+                year: normalizeNumber(data.year, 0),
+                price: normalizeNumber(data.price, 0),
+                mileage: normalizeNumber(data.mileage, 0),
 
-            color: safeText(raw.color),
-            description: safeText(raw.description, 260),
-            sellerId: safeText(raw.sellerId),
-            regNo: safeText(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.REGISTRATION)),
+                fuel: normalizeText(fuel, 60),
+                fuelType: normalizeText(fuel, 60),
 
-            besiktning: safeText(raw.besiktning),
-            createdAt: raw.createdAt || null,
+                transmission: normalizeText(transmission, 60),
+                bodyType: normalizeText(bodyType, 60),
+                karosseri: normalizeText(bodyType, 60),
 
-            active: raw.active !== false,
+                drive: normalizeText(data.drive, 60),
+                hp: normalizeNumber(data.hp, 0),
+                tax: normalizeNumber(data.tax, 0),
+                owners: normalizeNumber(data.owners, 0),
+                color: normalizeText(data.color, 80),
+                seats: normalizeNumber(data.seats, 0),
+                regNo: normalizeText(data.regNo || data.regNr, 20),
+                besiktning: normalizeText(data.besiktning, 40),
 
-            features: normalizeFeatures(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.FEATURES)),
+                description: normalizeLongText(data.description, 5000),
+                features: Array.isArray(data.features)
+                    ? data.features.map((item) => normalizeText(item, 80)).filter(Boolean)
+                    : [],
 
-            image: getSafeImageUrl(imageList[0])
-        };
-    }
+                images,
+                sellerId: normalizeText(data.sellerId, 120),
+                active: data.active !== false,
 
-    function doesCarMatchFilters(car, filters) {
-        if (!car.active) return false;
+                createdAtMillis,
+                updatedAtMillis
+            };
+        }
 
-        if (!matchesStringFilter(car.brand, filters.brand)) return false;
-        if (!matchesStringFilter(car.model, filters.model)) return false;
-        if (!matchesStringFilter(car.bodyType, filters.bodyType)) return false;
-        if (!matchesStringFilter(car.fuel, filters.fuel)) return false;
-        if (!matchesStringFilter(car.transmission, filters.transmission)) return false;
-        if (!matchesStringFilter(car.drive, filters.drive)) return false;
-
-        if (!matchesNumberRange(car.price, filters.minPrice, filters.maxPrice)) return false;
-        if (!matchesNumberRange(car.year, filters.minYear, filters.maxYear)) return false;
-        if (!matchesNumberRange(car.mileage, filters.minMileage, filters.maxMileage)) return false;
-
-        if (filters.maxTax !== null && numberOrInfinity(car.tax) > filters.maxTax) return false;
-        if (filters.maxOwners !== null && numberOrInfinity(car.owners) > filters.maxOwners) return false;
-        if (filters.minHp !== null && numberOrZero(car.hp) < filters.minHp) return false;
-
-        if (filters.inspectionDate && filters.inspectionDate !== "all") {
-            if (!car.besiktning) return false;
-
-            const carDate = Date.parse(car.besiktning);
-            const filterDate = Date.parse(filters.inspectionDate);
-
-            if (Number.isFinite(carDate) && Number.isFinite(filterDate) && carDate > filterDate) {
+        function matchesAllFilters(car, filters) {
+            if (!car.active) {
                 return false;
             }
-        }
 
-        if (filters.techs.length > 0) {
-            const normalizedCarFeatures = car.features.map((feature) => feature.toLowerCase());
-
-            const hasAllRequestedTechs = filters.techs.every((tech) => {
-                return normalizedCarFeatures.includes(tech.toLowerCase());
-            });
-
-            if (!hasAllRequestedTechs) return false;
-        }
-
-        if (filters.text) {
-            const searchableText = [
-                car.brand,
-                car.model,
-                car.bodyType,
-                car.fuel,
-                car.transmission,
-                car.description,
-                car.color
-            ].join(" ").toLowerCase();
-
-            if (!searchableText.includes(filters.text)) return false;
-        }
-
-        return true;
-    }
-
-    function renderResults(cars) {
-        state.renderedMatches = cars;
-
-        clearElement(elements.resultsGrid);
-
-        elements.resultCounter.textContent = String(cars.length);
-
-        elements.toolbarText.innerHTML = "";
-
-        const strong = document.createElement("strong");
-        strong.textContent = String(cars.length);
-
-        elements.toolbarText.appendChild(document.createTextNode("Visar "));
-        elements.toolbarText.appendChild(strong);
-        elements.toolbarText.appendChild(document.createTextNode(cars.length === 1 ? " fordon" : " fordon"));
-
-        elements.filterSummaryText.textContent = buildFilterSummaryText(state.filters);
-
-        if (cars.length === 0) {
-            renderEmptyState();
-            return;
-        }
-
-        const fragment = document.createDocumentFragment();
-
-        cars.forEach((car) => {
-            fragment.appendChild(createCarCard(car));
-        });
-
-        elements.resultsGrid.appendChild(fragment);
-    }
-
-    function createCarCard(car) {
-        const card = document.createElement("article");
-        card.className = "car-card";
-        card.tabIndex = 0;
-        card.setAttribute("role", "link");
-        card.setAttribute("aria-label", `Öppna annons för ${car.brand} ${car.model}`);
-
-        card.addEventListener("click", () => {
-            openDetailsPage(car.id);
-        });
-
-        card.addEventListener("keydown", (event) => {
-            if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                openDetailsPage(car.id);
+            if (!matchesText(car.brand, filters.brand)) {
+                return false;
             }
-        });
 
-        const imageWrap = document.createElement("div");
-        imageWrap.className = "image-wrap";
+            if (!matchesText(car.model, filters.model)) {
+                return false;
+            }
 
-        const image = document.createElement("img");
-        image.loading = "lazy";
-        image.alt = car.brand && car.model ? `${car.brand} ${car.model}` : RESULTS_CONFIG.DEFAULTS.FALLBACK_IMAGE_ALT;
-        image.src = car.image;
+            if (!matchesText(car.bodyType, filters.bodyType)) {
+                return false;
+            }
 
-        image.onerror = () => {
-            image.src = RESULTS_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE;
-        };
+            if (!matchesText(car.fuel, filters.fuel)) {
+                return false;
+            }
 
-        const badge = document.createElement("div");
-        badge.className = "image-badge";
+            if (!matchesText(car.transmission, filters.transmission)) {
+                return false;
+            }
 
-        const badgeIcon = document.createElement("i");
-        badgeIcon.className = "fa-solid fa-camera";
+            if (!matchesText(car.drive, filters.drive)) {
+                return false;
+            }
 
-        const badgeText = document.createElement("span");
-        badgeText.textContent = car.image === RESULTS_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE ? "Ingen bild" : "Bild";
+            if (!matchesNumberRange(car.price, filters.minPrice, filters.maxPrice)) {
+                return false;
+            }
 
-        badge.appendChild(badgeIcon);
-        badge.appendChild(badgeText);
+            if (!matchesNumberRange(car.year, filters.minYear, filters.maxYear)) {
+                return false;
+            }
 
-        imageWrap.appendChild(image);
-        imageWrap.appendChild(badge);
+            if (!matchesNumberRange(car.mileage, filters.minMileage, filters.maxMileage)) {
+                return false;
+            }
 
-        const content = document.createElement("div");
-        content.className = "card-content";
+            if (filters.minHp !== null && car.hp < filters.minHp) {
+                return false;
+            }
 
-        const price = document.createElement("div");
-        price.className = "card-price";
-        price.textContent = formatCurrency(car.price);
+            if (filters.maxTax !== null && car.tax > filters.maxTax) {
+                return false;
+            }
 
-        const title = document.createElement("h3");
-        title.className = "card-title";
-        title.textContent = formatCarTitle(car);
+            if (filters.maxOwners !== null && car.owners > filters.maxOwners) {
+                return false;
+            }
 
-        const description = document.createElement("p");
-        description.className = "card-description";
-        description.textContent = car.description || "Ingen beskrivning angiven för denna annons.";
+            if (filters.techs.length > 0 && !matchesTechs(car.features, filters.techs)) {
+                return false;
+            }
 
-        const metaGrid = document.createElement("div");
-        metaGrid.className = "meta-grid";
+            if (filters.text && !matchesFreeText(car, filters.text)) {
+                return false;
+            }
 
-        metaGrid.appendChild(createMetaItem("fa-calendar", car.year ? String(car.year) : "År saknas"));
-        metaGrid.appendChild(createMetaItem("fa-road", car.mileage !== null ? `${formatNumber(car.mileage)} mil` : "Miltal saknas"));
-        metaGrid.appendChild(createMetaItem("fa-gas-pump", car.fuel || "Drivmedel saknas"));
-        metaGrid.appendChild(createMetaItem("fa-gears", car.transmission || "Växellåda saknas"));
+            if (filters.besiktning && !matchesBesiktning(car.besiktning, filters.besiktning)) {
+                return false;
+            }
 
-        const footer = document.createElement("div");
-        footer.className = "card-footer";
-
-        const sellerNote = document.createElement("span");
-        sellerNote.className = "seller-note";
-        sellerNote.textContent = car.bodyType || "Fordonsannons";
-
-        const detailsLink = document.createElement("span");
-        detailsLink.className = "details-link";
-
-        const detailsIcon = document.createElement("i");
-        detailsIcon.className = "fa-solid fa-arrow-right";
-
-        detailsLink.appendChild(document.createTextNode("Visa detaljer"));
-        detailsLink.appendChild(detailsIcon);
-
-        footer.appendChild(sellerNote);
-        footer.appendChild(detailsLink);
-
-        content.appendChild(price);
-        content.appendChild(title);
-        content.appendChild(description);
-        content.appendChild(metaGrid);
-        content.appendChild(footer);
-
-        card.appendChild(imageWrap);
-        card.appendChild(content);
-
-        return card;
-    }
-
-    function createMetaItem(iconName, text) {
-        const item = document.createElement("div");
-        item.className = "meta-item";
-
-        const icon = document.createElement("i");
-        icon.className = `fa-solid ${iconName}`;
-
-        const span = document.createElement("span");
-        span.textContent = text;
-
-        item.appendChild(icon);
-        item.appendChild(span);
-
-        return item;
-    }
-
-    function renderActiveFilters(filters) {
-        clearElement(elements.activeFilters);
-
-        const chips = buildFilterChips(filters);
-
-        if (chips.length === 0) {
-            const empty = document.createElement("span");
-            empty.className = "empty-filters";
-            empty.textContent = "Inga specifika filter valda. Visar senaste aktiva annonser.";
-            elements.activeFilters.appendChild(empty);
-            return;
-        }
-
-        const fragment = document.createDocumentFragment();
-
-        chips.forEach((chip) => {
-            const item = document.createElement("span");
-            item.className = "filter-chip";
-
-            const icon = document.createElement("i");
-            icon.className = chip.icon;
-
-            const text = document.createElement("span");
-            text.textContent = chip.label;
-
-            item.appendChild(icon);
-            item.appendChild(text);
-
-            fragment.appendChild(item);
-        });
-
-        elements.activeFilters.appendChild(fragment);
-    }
-
-    function buildFilterChips(filters) {
-        const chips = [];
-
-        if (isUsefulFilter(filters.brand)) chips.push({ icon: "fa-solid fa-car", label: `Märke: ${filters.brand}` });
-        if (isUsefulFilter(filters.model)) chips.push({ icon: "fa-solid fa-tag", label: `Modell: ${filters.model}` });
-        if (isUsefulFilter(filters.bodyType)) chips.push({ icon: "fa-solid fa-car-side", label: `Kaross: ${filters.bodyType}` });
-        if (isUsefulFilter(filters.fuel)) chips.push({ icon: "fa-solid fa-gas-pump", label: `Drivmedel: ${filters.fuel}` });
-        if (isUsefulFilter(filters.transmission)) chips.push({ icon: "fa-solid fa-gears", label: `Växellåda: ${filters.transmission}` });
-        if (isUsefulFilter(filters.drive)) chips.push({ icon: "fa-solid fa-road", label: `Drivning: ${filters.drive}` });
-
-        if (filters.minPrice !== null) chips.push({ icon: "fa-solid fa-coins", label: `Pris från: ${formatCurrency(filters.minPrice)}` });
-        if (filters.maxPrice !== null) chips.push({ icon: "fa-solid fa-coins", label: `Pris till: ${formatCurrency(filters.maxPrice)}` });
-
-        if (filters.minYear !== null) chips.push({ icon: "fa-solid fa-calendar", label: `År från: ${filters.minYear}` });
-        if (filters.maxYear !== null) chips.push({ icon: "fa-solid fa-calendar", label: `År till: ${filters.maxYear}` });
-
-        if (filters.minMileage !== null) chips.push({ icon: "fa-solid fa-road", label: `Miltal från: ${formatNumber(filters.minMileage)} mil` });
-        if (filters.maxMileage !== null) chips.push({ icon: "fa-solid fa-road", label: `Miltal till: ${formatNumber(filters.maxMileage)} mil` });
-
-        if (filters.maxTax !== null) chips.push({ icon: "fa-solid fa-receipt", label: `Max skatt: ${formatCurrency(filters.maxTax)}` });
-        if (filters.maxOwners !== null) chips.push({ icon: "fa-solid fa-users", label: `Max ägare: ${filters.maxOwners}` });
-        if (filters.minHp !== null) chips.push({ icon: "fa-solid fa-gauge-high", label: `Min hk: ${filters.minHp}` });
-
-        if (isUsefulFilter(filters.inspectionDate)) chips.push({ icon: "fa-solid fa-clipboard-check", label: `Besiktigad senast: ${filters.inspectionDate}` });
-
-        if (filters.techs.length > 0) {
-            filters.techs.forEach((tech) => {
-                chips.push({ icon: "fa-solid fa-shield-check", label: `Utrustning: ${tech}` });
-            });
-        }
-
-        if (filters.text) chips.push({ icon: "fa-solid fa-magnifying-glass", label: `Text: ${filters.text}` });
-
-        return chips;
-    }
-
-    function renderLoadingState() {
-        elements.resultCounter.textContent = "0";
-        elements.toolbarText.textContent = "Söker efter fordon...";
-        elements.filterSummaryText.textContent = "Läser filter och hämtar annonser...";
-
-        clearElement(elements.resultsGrid);
-
-        const stateBox = document.createElement("div");
-        stateBox.className = "loading-state";
-
-        const iconBox = document.createElement("div");
-        iconBox.className = "state-icon";
-
-        const icon = document.createElement("i");
-        icon.className = "fa-solid fa-circle-notch spinner";
-
-        const title = document.createElement("div");
-        title.className = "state-title";
-        title.textContent = "Söker efter matchningar";
-
-        const text = document.createElement("div");
-        text.className = "state-text";
-        text.textContent = "Vi hämtar aktiva annonser och jämför dem med dina valda filter.";
-
-        iconBox.appendChild(icon);
-        stateBox.appendChild(iconBox);
-        stateBox.appendChild(title);
-        stateBox.appendChild(text);
-
-        elements.resultsGrid.appendChild(stateBox);
-    }
-
-    function renderEmptyState() {
-        clearElement(elements.resultsGrid);
-
-        const stateBox = document.createElement("div");
-        stateBox.className = "empty-state";
-
-        const iconBox = document.createElement("div");
-        iconBox.className = "state-icon";
-
-        const icon = document.createElement("i");
-        icon.className = "fa-solid fa-car-burst";
-
-        const title = document.createElement("div");
-        title.className = "state-title";
-        title.textContent = "Inga fordon matchade sökningen";
-
-        const text = document.createElement("div");
-        text.className = "state-text";
-        text.textContent = "Prova att ta bort några filter, höja maxpriset eller välja alla modeller.";
-
-        const action = document.createElement("button");
-        action.type = "button";
-        action.className = "small-btn";
-        action.innerHTML = '<i class="fa-solid fa-sliders"></i> Ändra filter';
-        action.addEventListener("click", () => {
-            window.location.href = `${RESULTS_CONFIG.ROUTES.FILTER}${window.location.search || ""}`;
-        });
-
-        iconBox.appendChild(icon);
-        stateBox.appendChild(iconBox);
-        stateBox.appendChild(title);
-        stateBox.appendChild(text);
-        stateBox.appendChild(action);
-
-        elements.resultsGrid.appendChild(stateBox);
-    }
-
-    function renderErrorState(error) {
-        clearElement(elements.resultsGrid);
-
-        elements.resultCounter.textContent = "0";
-        elements.toolbarText.textContent = "Kunde inte ladda resultat.";
-        elements.filterSummaryText.textContent = "Ett fel uppstod vid hämtning av annonser.";
-
-        const stateBox = document.createElement("div");
-        stateBox.className = "error-state";
-
-        const iconBox = document.createElement("div");
-        iconBox.className = "state-icon";
-
-        const icon = document.createElement("i");
-        icon.className = "fa-solid fa-triangle-exclamation";
-
-        const title = document.createElement("div");
-        title.className = "state-title";
-        title.textContent = "Något gick fel";
-
-        const text = document.createElement("div");
-        text.className = "state-text";
-        text.textContent = getFriendlyFirestoreError(error);
-
-        const retry = document.createElement("button");
-        retry.type = "button";
-        retry.className = "small-btn";
-        retry.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Försök igen';
-        retry.addEventListener("click", loadResults);
-
-        iconBox.appendChild(icon);
-        stateBox.appendChild(iconBox);
-        stateBox.appendChild(title);
-        stateBox.appendChild(text);
-        stateBox.appendChild(retry);
-
-        elements.resultsGrid.appendChild(stateBox);
-    }
-
-    function sortCars(cars, sortMode) {
-        const sorted = [...cars];
-
-        if (sortMode === "priceAsc") {
-            sorted.sort((a, b) => numberOrInfinity(a.price) - numberOrInfinity(b.price));
-        } else if (sortMode === "priceDesc") {
-            sorted.sort((a, b) => numberOrZero(b.price) - numberOrZero(a.price));
-        } else if (sortMode === "yearDesc") {
-            sorted.sort((a, b) => numberOrZero(b.year) - numberOrZero(a.year));
-        } else if (sortMode === "mileageAsc") {
-            sorted.sort((a, b) => numberOrInfinity(a.mileage) - numberOrInfinity(b.mileage));
-        } else {
-            sorted.sort((a, b) => getTimestampMillis(b.createdAt) - getTimestampMillis(a.createdAt));
-        }
-
-        return sorted;
-    }
-
-    function openDetailsPage(carId) {
-        const safeId = encodeURIComponent(String(carId || ""));
-
-        if (!safeId) {
-            return;
-        }
-
-        window.location.href = `${RESULTS_CONFIG.ROUTES.DETAILS}?id=${safeId}`;
-    }
-
-    function matchesStringFilter(value, filterValue) {
-        if (!isUsefulFilter(filterValue)) {
             return true;
         }
 
-        return normalizeComparable(value) === normalizeComparable(filterValue);
-    }
+        function applyLocalSearchAndSort() {
+            let nextCars = [...state.filteredCars];
 
-    function matchesNumberRange(value, min, max) {
-        const numericValue = cleanNumber(value);
-
-        if (numericValue === null) {
-            return min === null && max === null;
-        }
-
-        if (min !== null && numericValue < min) return false;
-        if (max !== null && numericValue > max) return false;
-
-        return true;
-    }
-
-    function isUsefulFilter(value) {
-        return Boolean(value && value !== "all" && value !== "null" && value !== "undefined");
-    }
-
-    function buildFilterSummaryText(filters) {
-        const chips = buildFilterChips(filters);
-
-        if (chips.length === 0) {
-            return "Inga filter valda.";
-        }
-
-        return `${chips.length} aktiva filter används.`;
-    }
-
-    function getFirstAvailable(source, keys) {
-        if (!source || !Array.isArray(keys)) {
-            return "";
-        }
-
-        for (const key of keys) {
-            if (source[key] !== undefined && source[key] !== null && source[key] !== "") {
-                return source[key];
+            if (state.localSearchText) {
+                nextCars = nextCars.filter((car) => {
+                    return matchesFreeText(car, state.localSearchText);
+                });
             }
+
+            nextCars.sort((a, b) => {
+                if (state.sortMode === "price_low") {
+                    return safeSortNumber(a.price, b.price, "asc");
+                }
+
+                if (state.sortMode === "price_high") {
+                    return safeSortNumber(a.price, b.price, "desc");
+                }
+
+                if (state.sortMode === "year_high") {
+                    return safeSortNumber(a.year, b.year, "desc");
+                }
+
+                if (state.sortMode === "mileage_low") {
+                    return safeSortNumber(a.mileage, b.mileage, "asc");
+                }
+
+                return safeSortNumber(a.createdAtMillis, b.createdAtMillis, "desc");
+            });
+
+            state.visibleCars = nextCars;
         }
 
-        return "";
-    }
+        function renderLoadingState() {
+            elements.resultTitle.textContent = "Laddar resultat...";
+            elements.resultSubtitle.textContent = "Annonserna hämtas från databasen.";
+            elements.resultCount.textContent = "0";
 
-    function normalizeFeatures(value) {
-        if (Array.isArray(value)) {
-            return value.map((item) => safeText(item)).filter(Boolean);
+            renderActiveFilterChips();
+
+            const skeletons = Array.from({ length: 8 }).map(() => {
+                return `
+                    <article class="skeleton-card" aria-hidden="true">
+                        <div class="skeleton-image"></div>
+                        <div class="skeleton-body">
+                            <div class="skeleton-line small"></div>
+                            <div class="skeleton-line wide"></div>
+                            <div class="skeleton-line medium"></div>
+                            <div class="skeleton-line wide"></div>
+                        </div>
+                    </article>
+                `;
+            });
+
+            elements.resultsGrid.innerHTML = skeletons.join("");
         }
 
-        if (typeof value === "string") {
-            return value
+        function renderResults() {
+            const count = state.visibleCars.length;
+
+            elements.resultCount.textContent = String(count);
+
+            if (state.filteredCars.length === 0) {
+                elements.resultTitle.textContent = "Inga annonser matchade sökningen";
+                elements.resultSubtitle.textContent = "Prova att ta bort några filter eller välj en bredare sökning.";
+            } else if (count === 0 && state.localSearchText) {
+                elements.resultTitle.textContent = "Inga resultat i den visade listan";
+                elements.resultSubtitle.textContent = "Din textsökning matchade inga av de filtrerade annonserna.";
+            } else {
+                elements.resultTitle.textContent = count === 1
+                    ? "1 annons hittades"
+                    : `${count} annonser hittades`;
+
+                elements.resultSubtitle.textContent = buildResultSubtitle();
+            }
+
+            renderActiveFilterChips();
+
+            if (count === 0) {
+                renderEmptyState();
+                return;
+            }
+
+            elements.resultsGrid.textContent = "";
+
+            const fragment = document.createDocumentFragment();
+
+            state.visibleCars.forEach((car) => {
+                fragment.appendChild(createCarCard(car));
+            });
+
+            elements.resultsGrid.appendChild(fragment);
+        }
+
+        function createCarCard(car) {
+            const card = document.createElement("article");
+            card.className = "car-card";
+            card.tabIndex = 0;
+            card.setAttribute("role", "link");
+            card.setAttribute("aria-label", `Öppna annons för ${car.brand} ${car.model}`);
+
+            card.addEventListener("click", () => {
+                window.location.href = `${CONFIG.ROUTES.DETAILS}?id=${encodeURIComponent(car.id)}`;
+            });
+
+            card.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    window.location.href = `${CONFIG.ROUTES.DETAILS}?id=${encodeURIComponent(car.id)}`;
+                }
+            });
+
+            const imageWrap = document.createElement("div");
+            imageWrap.className = "car-image-wrap";
+
+            const image = document.createElement("img");
+            image.src = getPrimaryImage(car);
+            image.alt = `${car.brand || "Bil"} ${car.model || ""}`.trim();
+            image.loading = "lazy";
+            image.referrerPolicy = "no-referrer";
+
+            image.onerror = () => {
+                image.src = CONFIG.PLACEHOLDER_IMAGE;
+            };
+
+            const bodyBadge = document.createElement("div");
+            bodyBadge.className = "car-badge";
+
+            const bodyIcon = document.createElement("i");
+            bodyIcon.className = "fa-solid fa-car";
+
+            const bodyText = document.createElement("span");
+            bodyText.textContent = car.bodyType || "Annons";
+
+            bodyBadge.appendChild(bodyIcon);
+            bodyBadge.appendChild(bodyText);
+
+            const imageCount = document.createElement("div");
+            imageCount.className = "image-count";
+
+            const imageCountIcon = document.createElement("i");
+            imageCountIcon.className = "fa-solid fa-camera";
+
+            const imageCountText = document.createElement("span");
+            imageCountText.textContent = String(car.images.length || 1);
+
+            imageCount.appendChild(imageCountIcon);
+            imageCount.appendChild(imageCountText);
+
+            imageWrap.appendChild(image);
+            imageWrap.appendChild(bodyBadge);
+            imageWrap.appendChild(imageCount);
+
+            const content = document.createElement("div");
+            content.className = "car-content";
+
+            const price = document.createElement("div");
+            price.className = "price";
+            price.textContent = formatPrice(car.price);
+
+            const title = document.createElement("h3");
+            title.className = "car-title";
+            title.textContent = buildCarTitle(car);
+
+            const metaGrid = document.createElement("div");
+            metaGrid.className = "meta-grid";
+
+            metaGrid.appendChild(createMetaItem("fa-calendar", car.year ? String(car.year) : "År saknas"));
+            metaGrid.appendChild(createMetaItem("fa-road", car.mileage ? `${formatNumber(car.mileage)} mil` : "Miltal saknas"));
+            metaGrid.appendChild(createMetaItem("fa-gas-pump", car.fuel || "Drivmedel saknas"));
+            metaGrid.appendChild(createMetaItem("fa-gears", car.transmission || "Växellåda saknas"));
+
+            const description = document.createElement("p");
+            description.className = "description";
+            description.textContent = car.description || "Ingen beskrivning angiven.";
+
+            const footer = document.createElement("div");
+            footer.className = "card-footer";
+
+            const seller = document.createElement("div");
+            seller.className = "seller-info";
+
+            const sellerIcon = document.createElement("i");
+            sellerIcon.className = "fa-solid fa-shield-halved";
+
+            const sellerText = document.createElement("span");
+            sellerText.textContent = "BILHK-annons";
+
+            seller.appendChild(sellerIcon);
+            seller.appendChild(sellerText);
+
+            const details = document.createElement("div");
+            details.className = "details-link";
+
+            const detailsText = document.createElement("span");
+            detailsText.textContent = "Visa detaljer";
+
+            const detailsIcon = document.createElement("i");
+            detailsIcon.className = "fa-solid fa-arrow-right";
+
+            details.appendChild(detailsText);
+            details.appendChild(detailsIcon);
+
+            footer.appendChild(seller);
+            footer.appendChild(details);
+
+            content.appendChild(price);
+            content.appendChild(title);
+            content.appendChild(metaGrid);
+            content.appendChild(description);
+            content.appendChild(footer);
+
+            card.appendChild(imageWrap);
+            card.appendChild(content);
+
+            return card;
+        }
+
+        function createMetaItem(iconName, text) {
+            const item = document.createElement("div");
+            item.className = "meta-item";
+
+            const icon = document.createElement("i");
+            icon.className = `fa-solid ${iconName}`;
+
+            const span = document.createElement("span");
+            span.textContent = text;
+
+            item.appendChild(icon);
+            item.appendChild(span);
+
+            return item;
+        }
+
+        function renderEmptyState() {
+            elements.resultsGrid.innerHTML = "";
+
+            const stateCard = document.createElement("div");
+            stateCard.className = "state-card";
+
+            const inner = document.createElement("div");
+
+            const icon = document.createElement("i");
+            icon.className = "fa-solid fa-car-burst";
+
+            const title = document.createElement("h2");
+            title.textContent = "Inga fordon hittades";
+
+            const text = document.createElement("p");
+            text.textContent = "Det finns inga publicerade annonser som matchar sökningen just nu. Försök med färre filter eller gå tillbaka till startsidan.";
+
+            const actions = document.createElement("div");
+            actions.className = "state-actions";
+
+            const resetLink = document.createElement("a");
+            resetLink.className = "nav-btn primary";
+            resetLink.href = CONFIG.ROUTES.INDEX;
+
+            const resetIcon = document.createElement("i");
+            resetIcon.className = "fa-solid fa-house";
+
+            resetLink.appendChild(resetIcon);
+            resetLink.appendChild(document.createTextNode("Till startsidan"));
+
+            const filterLink = document.createElement("a");
+            filterLink.className = "nav-btn";
+            filterLink.href = CONFIG.ROUTES.FILTER;
+
+            const filterIcon = document.createElement("i");
+            filterIcon.className = "fa-solid fa-sliders";
+
+            filterLink.appendChild(filterIcon);
+            filterLink.appendChild(document.createTextNode("Ändra filter"));
+
+            actions.appendChild(resetLink);
+            actions.appendChild(filterLink);
+
+            inner.appendChild(icon);
+            inner.appendChild(title);
+            inner.appendChild(text);
+            inner.appendChild(actions);
+
+            stateCard.appendChild(inner);
+            elements.resultsGrid.appendChild(stateCard);
+        }
+
+        function renderErrorState() {
+            elements.resultCount.textContent = "0";
+            elements.resultTitle.textContent = "Kunde inte ladda annonser";
+            elements.resultSubtitle.textContent = "Kontrollera anslutningen och försök igen.";
+
+            elements.resultsGrid.innerHTML = "";
+
+            const stateCard = document.createElement("div");
+            stateCard.className = "state-card";
+
+            const inner = document.createElement("div");
+
+            const icon = document.createElement("i");
+            icon.className = "fa-solid fa-triangle-exclamation";
+
+            const title = document.createElement("h2");
+            title.textContent = "Ett tekniskt fel uppstod";
+
+            const text = document.createElement("p");
+            text.textContent = "Resultaten kunde inte hämtas från databasen. Ladda om sidan eller försök igen senare.";
+
+            const reloadButton = document.createElement("button");
+            reloadButton.type = "button";
+            reloadButton.className = "nav-btn primary";
+
+            const reloadIcon = document.createElement("i");
+            reloadIcon.className = "fa-solid fa-rotate-right";
+
+            reloadButton.appendChild(reloadIcon);
+            reloadButton.appendChild(document.createTextNode("Ladda om"));
+
+            reloadButton.addEventListener("click", () => {
+                window.location.reload();
+            });
+
+            inner.appendChild(icon);
+            inner.appendChild(title);
+            inner.appendChild(text);
+            inner.appendChild(reloadButton);
+
+            stateCard.appendChild(inner);
+            elements.resultsGrid.appendChild(stateCard);
+        }
+
+        function renderActiveFilterChips() {
+            elements.activeFilters.textContent = "";
+
+            const chips = buildActiveFilterList();
+
+            if (chips.length === 0) {
+                const chip = createChip("fa-border-all", "Alla annonser");
+                elements.activeFilters.appendChild(chip);
+                return;
+            }
+
+            chips.forEach((item) => {
+                elements.activeFilters.appendChild(createChip(item.icon, item.text));
+            });
+        }
+
+        function createChip(iconClass, text) {
+            const chip = document.createElement("div");
+            chip.className = "chip";
+
+            const icon = document.createElement("i");
+            icon.className = `fa-solid ${iconClass}`;
+
+            const span = document.createElement("span");
+            span.textContent = text;
+
+            chip.appendChild(icon);
+            chip.appendChild(span);
+
+            return chip;
+        }
+
+        function buildActiveFilterList() {
+            const filters = state.activeFilters;
+            const list = [];
+
+            if (isActiveTextFilter(filters.brand)) {
+                list.push({ icon: "fa-copyright", text: `Märke: ${filters.brand}` });
+            }
+
+            if (isActiveTextFilter(filters.model)) {
+                list.push({ icon: "fa-car-side", text: `Modell: ${filters.model}` });
+            }
+
+            if (isActiveTextFilter(filters.bodyType)) {
+                list.push({ icon: "fa-car", text: `Kaross: ${filters.bodyType}` });
+            }
+
+            if (isActiveTextFilter(filters.fuel)) {
+                list.push({ icon: "fa-gas-pump", text: `Drivmedel: ${filters.fuel}` });
+            }
+
+            if (isActiveTextFilter(filters.transmission)) {
+                list.push({ icon: "fa-gears", text: `Växellåda: ${filters.transmission}` });
+            }
+
+            if (isActiveTextFilter(filters.drive)) {
+                list.push({ icon: "fa-road", text: `Drivning: ${filters.drive}` });
+            }
+
+            if (filters.minPrice !== null) {
+                list.push({ icon: "fa-coins", text: `Pris från ${formatPrice(filters.minPrice)}` });
+            }
+
+            if (filters.maxPrice !== null) {
+                list.push({ icon: "fa-coins", text: `Pris till ${formatPrice(filters.maxPrice)}` });
+            }
+
+            if (filters.minYear !== null) {
+                list.push({ icon: "fa-calendar", text: `Från år ${filters.minYear}` });
+            }
+
+            if (filters.maxYear !== null) {
+                list.push({ icon: "fa-calendar", text: `Till år ${filters.maxYear}` });
+            }
+
+            if (filters.minMileage !== null) {
+                list.push({ icon: "fa-road", text: `Minst ${formatNumber(filters.minMileage)} mil` });
+            }
+
+            if (filters.maxMileage !== null) {
+                list.push({ icon: "fa-road", text: `Max ${formatNumber(filters.maxMileage)} mil` });
+            }
+
+            if (filters.minHp !== null) {
+                list.push({ icon: "fa-gauge-high", text: `Minst ${filters.minHp} hk` });
+            }
+
+            if (filters.maxTax !== null) {
+                list.push({ icon: "fa-file-invoice", text: `Max skatt ${formatNumber(filters.maxTax)} kr` });
+            }
+
+            if (filters.maxOwners !== null) {
+                list.push({ icon: "fa-users", text: `Max ${filters.maxOwners} ägare` });
+            }
+
+            if (filters.techs.length > 0) {
+                list.push({ icon: "fa-shield-halved", text: `${filters.techs.length} utrustningsval` });
+            }
+
+            if (filters.text) {
+                list.push({ icon: "fa-search", text: `Text: ${filters.text}` });
+            }
+
+            return list;
+        }
+
+        function buildResultSubtitle() {
+            const activeFilters = buildActiveFilterList();
+
+            if (activeFilters.length === 0) {
+                return "Alla publicerade annonser visas.";
+            }
+
+            return "Resultatet är filtrerat enligt dina val.";
+        }
+
+        function matchesText(carValue, filterValue) {
+            if (!isActiveTextFilter(filterValue)) {
+                return true;
+            }
+
+            return normalizeComparable(carValue) === normalizeComparable(filterValue);
+        }
+
+        function matchesNumberRange(value, minValue, maxValue) {
+            const safeValue = Number(value);
+
+            if (!Number.isFinite(safeValue)) {
+                return false;
+            }
+
+            if (minValue !== null && safeValue < minValue) {
+                return false;
+            }
+
+            if (maxValue !== null && safeValue > maxValue) {
+                return false;
+            }
+
+            return true;
+        }
+
+        function matchesTechs(features, requiredTechs) {
+            const normalizedFeatures = new Set(
+                features.map((item) => normalizeComparable(item))
+            );
+
+            return requiredTechs.every((tech) => {
+                return normalizedFeatures.has(normalizeComparable(tech));
+            });
+        }
+
+        function matchesFreeText(car, text) {
+            const haystack = [
+                car.brand,
+                car.model,
+                car.year,
+                car.price,
+                car.mileage,
+                car.fuel,
+                car.transmission,
+                car.bodyType,
+                car.drive,
+                car.color,
+                car.regNo,
+                car.description,
+                ...car.features
+            ]
+                .join(" ")
+                .toLowerCase();
+
+            return haystack.includes(text);
+        }
+
+        function matchesBesiktning(carBesiktning, filterDate) {
+            if (!filterDate) {
+                return true;
+            }
+
+            if (!carBesiktning) {
+                return false;
+            }
+
+            const carDate = Date.parse(carBesiktning);
+            const selectedDate = Date.parse(filterDate);
+
+            if (!Number.isFinite(carDate) || !Number.isFinite(selectedDate)) {
+                return true;
+            }
+
+            return carDate >= selectedDate;
+        }
+
+        function isActiveTextFilter(value) {
+            if (!value) {
+                return false;
+            }
+
+            const normalized = normalizeComparable(value);
+
+            return normalized !== "all" &&
+                normalized !== "alla" &&
+                normalized !== "any" &&
+                normalized !== "null" &&
+                normalized !== "undefined";
+        }
+
+        function normalizeParam(value) {
+            return String(value ?? "")
+                .trim()
+                .slice(0, 200);
+        }
+
+        function normalizeNumberParam(value) {
+            const clean = String(value ?? "").trim();
+
+            if (!clean) {
+                return null;
+            }
+
+            const number = Number(clean);
+
+            if (!Number.isFinite(number)) {
+                return null;
+            }
+
+            return Math.floor(number);
+        }
+
+        function normalizeTechs(value) {
+            return String(value ?? "")
                 .split(",")
-                .map((item) => safeText(item))
+                .map((item) => normalizeText(item, 80))
                 .filter(Boolean);
         }
 
-        return [];
-    }
-
-    function parseListParam(value) {
-        if (!value) {
-            return [];
+        function normalizeComparable(value) {
+            return String(value ?? "")
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, " ");
         }
 
-        return String(value)
-            .split(",")
-            .map((item) => safeText(item, 60))
-            .filter((item) => item && item !== "all");
-    }
-
-    function cleanParam(value) {
-        return safeText(value, 120);
-    }
-
-    function safeText(value, maxLength = 180) {
-        return String(value ?? "")
-            .replace(/\s+/g, " ")
-            .trim()
-            .slice(0, maxLength);
-    }
-
-    function cleanNumber(value) {
-        if (value === null || value === undefined || value === "") {
-            return null;
+        function normalizeText(value, maxLength = 300) {
+            return String(value ?? "")
+                .replace(/\s+/g, " ")
+                .trim()
+                .slice(0, maxLength);
         }
 
-        const normalized = Number(String(value).replace(/[^\d.-]/g, ""));
-
-        if (!Number.isFinite(normalized)) {
-            return null;
+        function normalizeLongText(value, maxLength = 5000) {
+            return String(value ?? "")
+                .replace(/\r\n/g, "\n")
+                .replace(/\r/g, "\n")
+                .trim()
+                .slice(0, maxLength);
         }
 
-        if (normalized < 0) {
-            return null;
+        function normalizeNumber(value, fallback = 0) {
+            const number = Number(value);
+
+            if (!Number.isFinite(number)) {
+                return fallback;
+            }
+
+            return Math.floor(number);
         }
 
-        return normalized;
-    }
+        function safeTimestampToMillis(value) {
+            if (!value) {
+                return 0;
+            }
 
-    function normalizeComparable(value) {
-        return safeText(value)
-            .toLowerCase()
-            .normalize("NFKC");
-    }
+            if (typeof value.toMillis === "function") {
+                return value.toMillis();
+            }
 
-    function getSafeImageUrl(value) {
-        const text = safeText(value, 1000);
+            if (typeof value.toDate === "function") {
+                return value.toDate().getTime();
+            }
 
-        if (!text) {
-            return RESULTS_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE;
-        }
+            const parsed = Date.parse(value);
 
-        if (
-            text.startsWith("https://") ||
-            text.startsWith("http://") ||
-            text.startsWith("./") ||
-            text.startsWith("/") ||
-            text.startsWith("data:image/")
-        ) {
-            return text;
-        }
+            if (Number.isFinite(parsed)) {
+                return parsed;
+            }
 
-        return RESULTS_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE;
-    }
-
-    function formatCurrency(value) {
-        const amount = cleanNumber(value);
-
-        if (amount === null) {
-            return "Pris saknas";
-        }
-
-        return `${new Intl.NumberFormat("sv-SE").format(amount)} kr`;
-    }
-
-    function formatNumber(value) {
-        const number = cleanNumber(value);
-
-        if (number === null) {
-            return "-";
-        }
-
-        return new Intl.NumberFormat("sv-SE").format(number);
-    }
-
-    function formatCarTitle(car) {
-        const brand = car.brand || "Okänt märke";
-        const model = car.model || "Okänd modell";
-
-        return `${brand} ${model}`;
-    }
-
-    function numberOrZero(value) {
-        const number = cleanNumber(value);
-        return number === null ? 0 : number;
-    }
-
-    function numberOrInfinity(value) {
-        const number = cleanNumber(value);
-        return number === null ? Infinity : number;
-    }
-
-    function getTimestampMillis(timestamp) {
-        if (!timestamp) {
             return 0;
         }
 
-        if (typeof timestamp.toMillis === "function") {
-            return timestamp.toMillis();
+        function safeSortNumber(a, b, direction) {
+            const left = Number.isFinite(Number(a)) ? Number(a) : 0;
+            const right = Number.isFinite(Number(b)) ? Number(b) : 0;
+
+            if (direction === "asc") {
+                return left - right;
+            }
+
+            return right - left;
         }
 
-        if (typeof timestamp.toDate === "function") {
-            return timestamp.toDate().getTime();
+        function getPrimaryImage(car) {
+            if (car.images && car.images.length > 0 && car.images[0]) {
+                return car.images[0];
+            }
+
+            return CONFIG.PLACEHOLDER_IMAGE;
         }
 
-        const parsed = Date.parse(timestamp);
+        function buildCarTitle(car) {
+            const brand = car.brand || "Okänt märke";
+            const model = car.model || "Okänd modell";
 
-        return Number.isFinite(parsed) ? parsed : 0;
-    }
-
-    function getFriendlyFirestoreError(error) {
-        const code = error?.code || "";
-
-        if (code === "permission-denied") {
-            return "Du har inte behörighet att läsa annonserna. Kontrollera Firestore Security Rules.";
+            return `${brand} ${model}`;
         }
 
-        if (code === "failed-precondition") {
-            return "Firestore kräver troligen ett index för denna sökning. Kontrollera konsolen och skapa indexet som Firebase föreslår.";
+        function formatPrice(value) {
+            const number = Number(value);
+
+            if (!Number.isFinite(number) || number <= 0) {
+                return "Pris saknas";
+            }
+
+            return `${number.toLocaleString("sv-SE")} kr`;
         }
 
-        if (code === "unavailable") {
-            return "Tjänsten är tillfälligt otillgänglig. Försök igen om en stund.";
+        function formatNumber(value) {
+            const number = Number(value);
+
+            if (!Number.isFinite(number)) {
+                return "0";
+            }
+
+            return number.toLocaleString("sv-SE");
         }
-
-        return "Kunde inte hämta annonser just nu. Försök igen senare.";
-    }
-
-    function clearElement(element) {
-        while (element.firstChild) {
-            element.removeChild(element.firstChild);
-        }
-    }
-
-    function attachGlobalErrorHandlers() {
-        window.addEventListener("unhandledrejection", (event) => {
-            console.error("[BILHK] Unhandled promise rejection:", event.reason);
-        });
-
-        window.addEventListener("error", (event) => {
-            console.error("[BILHK] Results page error:", event.error || event.message);
-        });
-    }
-</script>
-
+    </script>
 </body>
 </html>
