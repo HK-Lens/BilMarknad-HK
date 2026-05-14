@@ -3,245 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sökresultat | BILHK Professional Search</title>
+    <title>Sökresultat | BILHK Advanced Search System</title>
 
-    <!-- Google Fonts & FontAwesome -->
+    <!-- External Assets -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- SweetAlert2 for Professional Alerts -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <style>
         :root {
-            --primary: #f58220;
-            --primary-hover: #e07210;
-            --primary-soft: #fff5eb;
-            --dark: #0f172a;
-            --dark-2: #1e293b;
-            --muted: #64748b;
-            --bg: #f8fafc;
+            --primary-orange: #f58220;
+            --primary-dark: #0f172a;
+            --accent-blue: #3b82f6;
+            --bg-slate: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
             --white: #ffffff;
-            --border: #e2e8f0;
-            --success: #10b981;
-            --shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* Base Reset */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--dark); line-height: 1.6; overflow-x: hidden; }
+        body { background-color: var(--bg-slate); color: var(--text-main); line-height: 1.7; overflow-x: hidden; }
 
-        /* --- Navigation --- */
+        /* Navigation Architecture */
         nav {
-            background: var(--white);
-            padding: 15px 6%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 18px 6%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 1100;
         }
-        .logo { font-size: 26px; font-weight: 900; text-decoration: none; color: var(--dark); letter-spacing: -1.5px; }
-        .logo span { color: var(--primary); }
+        .logo { font-size: 28px; font-weight: 900; text-decoration: none; color: var(--primary-dark); letter-spacing: -1.5px; }
+        .logo span { color: var(--primary-orange); }
 
-        /* --- Search Header --- */
+        /* Advanced Search Header */
         .results-header {
             background: var(--white);
-            padding: 25px 6%;
-            border-bottom: 1px solid var(--border);
+            padding: 40px 6%;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 25px;
         }
-        .summary-text h1 { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; }
-        .summary-text p { font-size: 14px; color: var(--muted); font-weight: 600; }
+        .summary-text h1 { font-size: 32px; font-weight: 900; color: var(--primary-dark); margin-bottom: 5px; letter-spacing: -1px; }
+        .summary-text p { font-size: 15px; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 8px; }
 
-        .controls-wrap { display: flex; gap: 12px; align-items: center; }
-        .pro-select {
-            padding: 12px 18px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: var(--bg);
+        /* Logic Controls */
+        .controls-panel { display: flex; gap: 15px; align-items: center; }
+        .custom-select {
+            appearance: none;
+            padding: 12px 45px 12px 20px;
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-slate) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") no-repeat right 15px center;
+            background-size: 18px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            outline: none;
-            transition: var(--transition);
+            transition: var(--transition-smooth);
         }
-        .pro-select:focus { border-color: var(--primary); background: white; }
+        .custom-select:focus { border-color: var(--primary-orange); outline: none; box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.1); }
 
-        .view-toggle-btn {
-            width: 46px;
-            height: 46px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
+        /* Sidebar Filter System */
+        .main-layout { max-width: 1500px; margin: 40px auto; padding: 0 5%; display: grid; grid-template-columns: 340px 1fr; gap: 45px; }
+        .filter-sidebar { position: sticky; top: 110px; height: fit-content; }
+        .filter-card {
             background: var(--white);
+            border-radius: 35px;
+            border: 1px solid var(--border-color);
+            padding: 35px;
+            box-shadow: var(--shadow-lg);
+        }
+        .filter-section { margin-bottom: 30px; }
+        .filter-section label { display: block; font-size: 11px; font-weight: 900; text-transform: uppercase; color: var(--text-muted); margin-bottom: 15px; letter-spacing: 1px; }
+        .input-field { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border-color); background: var(--bg-slate); font-size: 14px; font-weight: 600; transition: 0.3s; }
+        .input-field:focus { border-color: var(--primary-orange); background: white; outline: none; }
+        .range-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .btn-search-execute {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary-dark);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 15px;
             cursor: pointer;
+            transition: var(--transition-smooth);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--muted);
-            transition: var(--transition);
+            gap: 10px;
         }
-        .view-toggle-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+        .btn-search-execute:hover { background: var(--primary-orange); transform: translateY(-3px); box-shadow: 0 15px 30px rgba(245, 130, 32, 0.25); }
 
-        /* --- Layout Grid --- */
-        .main-content {
-            max-width: 1440px;
-            margin: 40px auto;
-            padding: 0 5%;
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 40px;
-        }
+        /* Dynamic Results Grid */
+        .results-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 35px; }
 
-        /* --- Sidebar Filters --- */
-        .sidebar { position: sticky; top: 100px; height: fit-content; }
-        .filter-panel {
+        /* Car Card Deep Design */
+        .car-ad-card {
             background: var(--white);
-            border-radius: 30px;
-            border: 1px solid var(--border);
-            padding: 30px;
-            box-shadow: var(--shadow);
-        }
-        .filter-group { margin-bottom: 25px; }
-        .filter-group label { display: block; font-size: 12px; font-weight: 900; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.5px; }
-        
-        .side-input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: var(--bg);
-            font-size: 14px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        .side-input:focus { border-color: var(--primary); background: white; outline: none; }
-
-        .dual-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-        .btn-update {
-            width: 100%;
-            padding: 16px;
-            background: var(--dark);
-            color: white;
-            border: none;
-            border-radius: 16px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-top: 10px;
-        }
-        .btn-update:hover { background: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-
-        /* --- Results Grid & Cards --- */
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-        }
-
-        .car-pro-card {
-            background: var(--white);
-            border-radius: 32px;
-            border: 1px solid var(--border);
+            border-radius: 38px;
+            border: 1px solid var(--border-color);
             overflow: hidden;
-            transition: var(--transition);
+            transition: var(--transition-smooth);
             text-decoration: none;
             color: inherit;
             display: flex;
             flex-direction: column;
-            cursor: pointer;
-            position: relative;
+            height: 100%;
         }
-        .car-pro-card:hover { transform: translateY(-12px); box-shadow: var(--shadow); border-color: var(--primary); }
+        .car-ad-card:hover { transform: translateY(-15px); border-color: var(--primary-orange); box-shadow: 0 30px 60px -12px rgba(0,0,0,0.12); }
 
-        .img-container { width: 100%; height: 230px; background: #f1f5f9; position: relative; overflow: hidden; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s ease; }
-        .car-pro-card:hover .img-container img { transform: scale(1.1); }
+        .media-portal { width: 100%; height: 260px; background: #eef2f6; position: relative; overflow: hidden; }
+        .media-portal img { width: 100%; height: 100%; object-fit: cover; transition: 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .car-ad-card:hover .media-portal img { transform: scale(1.15); }
 
-        .floating-price {
+        .price-badge {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: var(--primary);
+            bottom: 25px;
+            right: 25px;
+            background: var(--primary-orange);
             color: white;
-            padding: 10px 20px;
-            border-radius: 15px;
+            padding: 12px 24px;
+            border-radius: 20px;
             font-weight: 900;
-            font-size: 20px;
-            box-shadow: 0 10px 20px rgba(245, 130, 32, 0.3);
-            z-index: 2;
+            font-size: 22px;
+            box-shadow: 0 10px 20px rgba(245, 130, 32, 0.35);
+            z-index: 5;
         }
 
-        .card-details { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
-        .car-title { font-size: 20px; font-weight: 800; color: var(--dark); margin-bottom: 12px; }
+        .info-content { padding: 30px; flex-grow: 1; display: flex; flex-direction: column; }
+        .info-content h3 { font-size: 22px; font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; }
         
-        .tag-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-        .spec-tag { 
-            background: var(--bg); 
-            padding: 6px 12px; 
-            border-radius: 10px; 
-            font-size: 12px; 
+        .spec-cluster { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; }
+        .chip { 
+            background: var(--bg-slate); 
+            padding: 8px 14px; 
+            border-radius: 12px; 
+            font-size: 13px; 
             font-weight: 700; 
-            color: var(--muted); 
+            color: var(--text-muted); 
             display: flex; 
             align-items: center; 
-            gap: 6px; 
+            gap: 8px; 
         }
+        .chip i { color: var(--primary-orange); }
 
-        .card-meta {
+        .footer-meta {
             margin-top: auto;
-            padding-top: 18px;
-            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
-            color: var(--muted);
+            color: var(--text-muted);
         }
 
-        /* --- List View Logic --- */
-        .results-grid.list-view { grid-template-columns: 1fr; }
-        .results-grid.list-view .car-pro-card { flex-direction: row; height: 260px; }
-        .results-grid.list-view .img-container { width: 380px; height: 100%; }
-
-        /* --- Skeleton & Empty State --- */
-        .skeleton-box {
-            background: linear-gradient(90deg, #f1f5f9 25%, #f8fafc 50%, #f1f5f9 75%);
-            background-size: 200% 100%;
-            animation: pulse 1.5s infinite;
-            border-radius: 32px;
-            height: 420px;
-        }
-        @keyframes pulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-        .not-found {
+        /* Error States */
+        .empty-state-box {
             grid-column: 1 / -1;
             text-align: center;
-            padding: 80px 40px;
+            padding: 120px 40px;
             background: var(--white);
-            border-radius: 40px;
-            border: 2px dashed var(--border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
+            border-radius: 50px;
+            border: 3px dashed var(--border-color);
         }
-        .not-found i { font-size: 70px; color: var(--border); }
-        .not-found h2 { font-weight: 800; color: var(--dark); }
+        .empty-state-box i { font-size: 80px; color: #cbd5e1; margin-bottom: 30px; }
+        .empty-state-box h2 { font-size: 28px; font-weight: 900; margin-bottom: 15px; }
 
-        @media (max-width: 1024px) {
-            .main-content { grid-template-columns: 1fr; }
-            .sidebar { display: none; }
+        /* Loading Skeletons */
+        .skeleton { height: 450px; background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 38px; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        @media (max-width: 1100px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .filter-sidebar { display: none; }
         }
     </style>
 </head>
@@ -249,284 +200,313 @@
 
     <nav>
         <a href="index.html" class="logo">BIL<span>HK</span></a>
-        <div id="authNavContainer"></div>
+        <div id="authStatusIndicator"></div>
     </nav>
 
     <header class="results-header">
         <div class="summary-text">
-            <h1 id="viewTitle">Hittade fordon</h1>
-            <p id="totalFoundLabel">Ansluter till databasen...</p>
+            <h1 id="dynamicTitle">Hittade fordon</h1>
+            <p id="statusFeedback"><i class="fa-solid fa-circle-notch fa-spin"></i> Ansluter til servern...</p>
         </div>
 
-        <div class="controls-wrap">
-            <select id="sortMechanism" class="pro-select">
-                <option value="newest">Senast tillagda</option>
-                <option value="price_asc">Pris: Lågt till högt</option>
-                <option value="price_desc">Pris: Högt till lågt</option>
-                <option value="mil_asc">Miltal: Lägst först</option>
+        <div class="controls-panel">
+            <select id="sortEngine" class="custom-select">
+                <option value="newest">Senast inkommet</option>
+                <option value="price_asc">Pris: Billigast först</option>
+                <option value="price_desc">Pris: Dyrast först</option>
+                <option value="mil_asc">Miltal: Kortast körsträcka</option>
             </select>
-            <button class="view-toggle-btn active" id="btnGrid"><i class="fa-solid fa-table-cells-large"></i></button>
-            <button class="view-toggle-btn" id="btnList"><i class="fa-solid fa-list"></i></button>
         </div>
     </header>
 
-    <div class="main-content">
-        <aside class="sidebar">
-            <div class="filter-panel">
-                <div class="filter-group">
-                    <label>Märke</label>
-                    <select id="sideFilterBrand" class="side-input">
+    <div class="main-layout">
+        <aside class="filter-sidebar">
+            <div class="filter-card">
+                <div class="filter-section">
+                    <label>Bilproducent</label>
+                    <select id="filterBrand" class="input-field">
                         <option value="all">Alla märken</option>
                     </select>
                 </div>
                 
-                <div class="filter-group">
-                    <label>Bränsletyp</label>
-                    <select id="sideFilterFuel" class="side-input">
-                        <option value="all">Alla typer</option>
+                <div class="filter-section">
+                    <label>Drivmedel</label>
+                    <select id="filterFuel" class="input-field">
+                        <option value="all">Alla drivmedel</option>
                         <option value="Bensin">Bensin</option>
                         <option value="Diesel">Diesel</option>
-                        <option value="El">El</option>
+                        <option value="El">Elbil</option>
                         <option value="Hybrid">Hybrid</option>
                     </select>
                 </div>
 
-                <div class="filter-group">
-                    <label>Pris (kr)</label>
-                    <div class="dual-inputs">
-                        <input type="number" id="sideMinPrice" class="side-input" placeholder="Från">
-                        <input type="number" id="sideMaxPrice" class="side-input" placeholder="Till">
+                <div class="filter-section">
+                    <label>Prisintervall (SEK)</label>
+                    <div class="range-grid">
+                        <input type="number" id="filterMinPrice" class="input-field" placeholder="Från">
+                        <input type="number" id="filterMaxPrice" class="input-field" placeholder="Till">
                     </div>
                 </div>
 
-                <div class="filter-group">
+                <div class="filter-section">
                     <label>Miltal (mil)</label>
-                    <div class="dual-inputs">
-                        <input type="number" id="sideMinMil" class="side-input" placeholder="Min">
-                        <input type="number" id="sideMaxMil" class="side-input" placeholder="Max">
+                    <div class="range-grid">
+                        <input type="number" id="filterMinMil" class="input-field" placeholder="Min">
+                        <input type="number" id="filterMaxMil" class="input-field" placeholder="Max">
                     </div>
                 </div>
 
-                <button class="btn-update" id="triggerUpdate">
-                    Uppdatera sökning
+                <button class="btn-search-execute" id="applyFilters">
+                    <i class="fa-solid fa-magnifying-glass"></i> Uppdatera Resultat
                 </button>
             </div>
         </aside>
 
         <main>
-            <div class="results-grid" id="mainResultsGrid">
-                <!-- Skeletons placeholders -->
-                <div class="skeleton-box"></div>
-                <div class="skeleton-box"></div>
-                <div class="skeleton-box"></div>
+            <div class="results-container" id="adsGrid">
+                <!-- Advanced Skeleton Loaders -->
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
             </div>
         </main>
     </div>
 
+    <!-- Core Scripting Layer -->
     <script type="module">
-        import { auth, db } from './firebase-config.js';
-        import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        /**
+         * BILHK Advanced Search Engine v2.0
+         * Developer: AI Collaborative Suite
+         * Integration: Firebase Firestore SDK 10.8
+         */
+        import { db } from './firebase-config.js';
+        import { collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import carData from './cars-data.js';
 
-        // --- GLOBAL STATE ---
+        // --- Configuration & Constants ---
+        const ADS_COLLECTION = "cars";
+        const DEFAULT_THUMBNAIL = "assets/no-image.jpg";
         const urlParams = new URLSearchParams(window.location.search);
-        let carsCache = [];
 
-        /**
-         * 1. INITIALIZE UI COMPONENTS
-         * مزامنة الواجهة مع البيانات القادمة من الرابط والبيانات الثابتة
-         */
-        function initUI() {
-            const sideBrand = document.getElementById('sideFilterBrand');
-            
-            // إضافة الماركات من الملف المصدري carData بشكل مرتب
-            if (carData) {
-                const sortedBrands = Object.keys(carData).sort();
-                sortedBrands.forEach(b => {
-                    const opt = document.createElement('option');
-                    opt.value = b;
-                    opt.textContent = b;
-                    sideBrand.appendChild(opt);
-                });
-            }
+        // --- Object-Oriented Search Controller ---
+        const SearchController = {
+            cachedAds: [],
 
-            // مزامنة مدخلات الفلترة مع قيم الـ URL الحالية
-            sideBrand.value = urlParams.get('brand') || 'all';
-            document.getElementById('sideFilterFuel').value = urlParams.get('fuel') || 'all';
-            document.getElementById('sideMinPrice').value = urlParams.get('minP') || '';
-            document.getElementById('sideMaxPrice').value = urlParams.get('maxP') || '';
-            document.getElementById('sideMinMil').value = urlParams.get('minM') || '';
-            document.getElementById('sideMaxMil').value = urlParams.get('maxM') || '';
-            
-            console.log("UI Initialized with Params:", Object.fromEntries(urlParams));
-        }
+            /**
+             * Phase 1: UI Initialization
+             * بناء واجهة المستخدم بناءً على البيانات المتوفرة والروابط
+             */
+            init() {
+                console.log("🚀 System: Initializing Advanced Search Controller...");
+                this.populateBrandDropdown();
+                this.syncInputsWithURL();
+                this.bindEvents();
+                this.executeDeepQuery();
+            },
 
-        /**
-         * 2. DATA FETCHING ENGINE (FIRESTORE)
-         * جلب البيانات مع معالجة الأخطاء والتشخيص الدقيق
-         */
-        async function runSearchEngine() {
-            const grid = document.getElementById('mainResultsGrid');
-            
-            // استخراج المعايير لتحويلها إلى أرقام للمقارنة الدقيقة
-            const filterBrand = urlParams.get('brand');
-            const filterFuel = urlParams.get('fuel');
-            const minPrice = Number(urlParams.get('minP')) || 0;
-            const maxPrice = Number(urlParams.get('maxP')) || 10000000;
-            const minMil = Number(urlParams.get('minM')) || 0;
-            const maxMil = Number(urlParams.get('maxM')) || 1000000;
+            populateBrandDropdown() {
+                const brandSelect = document.getElementById('filterBrand');
+                if (carData) {
+                    Object.keys(carData).sort().forEach(brand => {
+                        const option = document.createElement('option');
+                        option.value = brand;
+                        option.textContent = brand;
+                        brandSelect.appendChild(option);
+                    });
+                }
+            },
 
-            try {
-                // جلب السيارات التي حالتها active فقط لضمان الخصوصية والأمان
-                const carsRef = collection(db, "cars");
-                const q = query(carsRef, where("status", "==", "active"));
-                
-                const querySnapshot = await getDocs(q);
-                
-                console.log(`Firestore Debug: Found ${querySnapshot.size} total active raw documents.`);
+            syncInputsWithURL() {
+                document.getElementById('filterBrand').value = urlParams.get('brand') || 'all';
+                document.getElementById('filterFuel').value = urlParams.get('fuel') || 'all';
+                document.getElementById('filterMinPrice').value = urlParams.get('minP') || '';
+                document.getElementById('filterMaxPrice').value = urlParams.get('maxP') || '';
+                document.getElementById('filterMinMil').value = urlParams.get('minM') || '';
+                document.getElementById('filterMaxMil').value = urlParams.get('maxM') || '';
+            },
 
-                carsCache = [];
-                querySnapshot.forEach(doc => {
-                    const data = doc.data();
-                    const car = { id: doc.id, ...data };
+            /**
+             * Phase 2: Data Extraction Engine
+             * سحب البيانات مع نظام تشخيص (Logs) لكل خطوة
+             */
+            async executeDeepQuery() {
+                const feedback = document.getElementById('statusFeedback');
+                const grid = document.getElementById('adsGrid');
 
-                    // تحويل القيم إلى أرقام لضمان عدم فشل المقارنة إذا كانت مخزنة كنصوص
-                    const carPrice = Number(car.price);
-                    const carMil = Number(car.mileage);
+                console.log("🔍 Query: Initiating Firestore handshake...");
 
-                    // منطق الفلترة الهجين (Hybrid Filtering Logic)
-                    const isBrandMatch = !filterBrand || filterBrand === 'all' || car.brand === filterBrand;
-                    const isFuelMatch = !filterFuel || filterFuel === 'all' || car.fuel === filterFuel;
-                    const isPriceInRange = carPrice >= minPrice && carPrice <= maxPrice;
-                    const isMilInRange = carMil >= minMil && carMil <= maxMil;
+                try {
+                    // 1. استهداف المجموعة الصحيحة وحالة "active"
+                    const adsRef = collection(db, ADS_COLLECTION);
+                    const baseQuery = query(adsRef, where("status", "==", "active"));
+                    
+                    const snapshot = await getDocs(baseQuery);
+                    
+                    console.log(`📊 Firestore Response: Received ${snapshot.size} raw documents.`);
 
-                    if (isBrandMatch && isFuelMatch && isPriceInRange && isMilInRange) {
-                        carsCache.push(car);
+                    if (snapshot.empty) {
+                        this.renderEmptyState("Inga aktiva annonser hittades i databasen.");
+                        feedback.innerHTML = "0 bilar hittades";
+                        return;
                     }
+
+                    // 2. تحليل البيانات ومعالجة الأخطاء في كل وثيقة
+                    this.cachedAds = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        
+                        // تنظيف وتحقق من صحة البيانات (Data Sanitization)
+                        const ad = {
+                            id: doc.id,
+                            brand: data.brand || "Okänt märke",
+                            model: data.model || "",
+                            year: data.year || "N/A",
+                            price: Number(data.price) || 0,
+                            mileage: Number(data.mileage) || 0,
+                            fuel: data.fuel || "N/A",
+                            city: data.city || "Sverige",
+                            images: Array.isArray(data.images) ? data.images : []
+                        };
+
+                        // تطبيق الفلترة المنطقية العميقة (Hybrid Filtering)
+                        if (this.matchesFilters(ad)) {
+                            this.cachedAds.push(ad);
+                        }
+                    });
+
+                    console.log(`✅ Logic: ${this.cachedAds.length} documents passed filter verification.`);
+                    this.renderResults();
+
+                } catch (error) {
+                    console.error("❌ Critical System Error:", error);
+                    this.renderErrorState(error.message);
+                }
+            },
+
+            /**
+             * Advanced Filter Logic
+             * يقوم بمطابقة كل سيارة مع الفلاتر المختارة بدقة متناهية
+             */
+            matchesFilters(ad) {
+                const fBrand = urlParams.get('brand') || 'all';
+                const fFuel = urlParams.get('fuel') || 'all';
+                const minP = Number(urlParams.get('minP')) || 0;
+                const maxP = Number(urlParams.get('maxP')) || 99999999;
+                const minM = Number(urlParams.get('minM')) || 0;
+                const maxM = Number(urlParams.get('maxM')) || 1000000;
+
+                const brandMatch = fBrand === 'all' || ad.brand === fBrand;
+                const fuelMatch = fFuel === 'all' || ad.fuel === fFuel;
+                const priceMatch = ad.price >= minP && ad.price <= maxP;
+                const milMatch = ad.mileage >= minM && ad.mileage <= maxM;
+
+                return brandMatch && fuelMatch && priceMatch && milMatch;
+            },
+
+            /**
+             * Phase 3: Visual Rendering Layer
+             * تحويل البيانات إلى عناصر HTML جذابة وروابط ديناميكية
+             */
+            renderResults() {
+                const grid = document.getElementById('adsGrid');
+                const feedback = document.getElementById('statusFeedback');
+                const sortType = document.getElementById('sortEngine').value;
+
+                // الترتيب البرمجي (Client-side Sorting)
+                this.cachedAds.sort((a, b) => {
+                    if (sortType === 'price_asc') return a.price - b.price;
+                    if (sortType === 'price_desc') return b.price - a.price;
+                    if (sortType === 'mil_asc') return a.mileage - b.mileage;
+                    return 0; // Newest by default (Firestore order)
                 });
 
-                console.log(`Final Processed Results: ${carsCache.length} cars passed all filters.`);
-                processAndRender();
+                grid.innerHTML = "";
+                feedback.innerHTML = `<i class="fa-solid fa-check-double"></i> ${this.cachedAds.length} bilar hittades enligt dina önskemål`;
 
-            } catch (error) {
-                console.error("Critical Engine Error:", error);
-                grid.innerHTML = `
-                    <div class="not-found">
-                        <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
-                        <h2>Systemfel</h2>
-                        <p>Kunde ikke hämta annonser. Kontrollera din anslutning eller Firebase Rules.</p>
-                        <small style="color: #94a3b8;">Error: ${error.message}</small>
-                    </div>`;
-            }
-        }
+                if (this.cachedAds.length === 0) {
+                    this.renderEmptyState("Inga bilar matchade din specifika sökning.");
+                    return;
+                }
 
-        /**
-         * 3. RENDERING & SORTING ENGINE
-         * مسؤول عن عرض الكروت والروابط الديناميكية
-         */
-        function processAndRender() {
-            const sortVal = document.getElementById('sortMechanism').value;
-            const grid = document.getElementById('mainResultsGrid');
-            const counter = document.getElementById('totalFoundLabel');
+                this.cachedAds.forEach(ad => {
+                    const priceFormatted = ad.price.toLocaleString('sv-SE');
+                    const coverImage = ad.images.length > 0 ? ad.images[0] : DEFAULT_THUMBNAIL;
 
-            // منطق الفرز المتقدم
-            carsCache.sort((a, b) => {
-                if (sortVal === 'price_asc') return Number(a.price) - Number(b.price);
-                if (sortVal === 'price_desc') return Number(b.price) - Number(a.price);
-                if (sortVal === 'mil_asc') return Number(a.mileage) - Number(b.mileage);
-                
-                // الترتيب حسب التاريخ (الأحدث أولاً)
-                const dateA = a.createdAt?.seconds || 0;
-                const dateB = b.createdAt?.seconds || 0;
-                return dateB - dateA;
-            });
-
-            grid.innerHTML = "";
-            counter.innerText = `${carsCache.length} bilar tillgängliga just nu`;
-
-            if (carsCache.length === 0) {
-                grid.innerHTML = `
-                    <div class="not-found">
-                        <i class="fa-solid fa-car-side"></i>
-                        <h2>Inga träffar hittades</h2>
-                        <p>Försök att bredda din sökning eller ändra filtren.</p>
-                    </div>`;
-                return;
-            }
-
-            // بناء واجهة الإعلانات
-            carsCache.forEach(car => {
-                const formattedPrice = Number(car.price).toLocaleString('sv-SE');
-                const thumbnail = (car.images && car.images.length > 0) ? car.images[0] : 'assets/placeholder-car.jpg';
-                
-                // الرابط الديناميكي هنا يربط الإعلان بصفحة التفاصيل عبر الـ ID
-                grid.innerHTML += `
-                    <a href="details.html?id=${car.id}" class="car-pro-card" title="${car.brand} ${car.model}">
-                        <div class="img-container">
-                            <img src="${thumbnail}" alt="${car.brand} ${car.model}" loading="lazy">
-                            <div class="floating-price">${formattedPrice} kr</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="car-title">${car.brand} ${car.model}</div>
-                            <div class="tag-row">
-                                <span class="spec-tag"><i class="fa-regular fa-calendar-days"></i> ${car.year}</span>
-                                <span class="spec-tag"><i class="fa-solid fa-road"></i> ${car.mileage} mil</span>
-                                <span class="spec-tag"><i class="fa-solid fa-gas-pump"></i> ${car.fuel}</span>
+                    const adElement = `
+                        <a href="details.html?id=${ad.id}" class="car-ad-card">
+                            <div class="media-portal">
+                                <img src="${coverImage}" alt="${ad.brand} ${ad.model}" loading="lazy">
+                                <div class="price-badge">${priceFormatted} kr</div>
                             </div>
-                            <div class="card-meta">
-                                <span><i class="fa-solid fa-location-dot"></i> ${car.city || 'Sverige'}</span>
-                                <span style="color:var(--primary); font-weight: 800;">Visa annons <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i></span>
+                            <div class="info-content">
+                                <h3>${ad.brand} ${ad.model}</h3>
+                                <div class="spec-cluster">
+                                    <span class="chip"><i class="fa-regular fa-calendar"></i> ${ad.year}</span>
+                                    <span class="chip"><i class="fa-solid fa-gauge-high"></i> ${ad.mileage} mil</span>
+                                    <span class="chip"><i class="fa-solid fa-gas-pump"></i> ${ad.fuel}</span>
+                                </div>
+                                <div class="footer-meta">
+                                    <span><i class="fa-solid fa-map-location-dot"></i> ${ad.city}</span>
+                                    <span style="color: var(--primary-orange)">Mer info <i class="fa-solid fa-arrow-right-long"></i></span>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                `;
-            });
-        }
+                        </a>
+                    `;
+                    grid.innerHTML += adElement;
+                });
+            },
 
-        /**
-         * 4. EVENT LISTENERS & NAVIGATION LOGIC
-         */
-        
-        // تبديل طرق العرض (Grid/List)
-        document.getElementById('btnGrid').onclick = () => {
-            document.getElementById('mainResultsGrid').classList.remove('list-view');
-            document.getElementById('btnGrid').classList.add('active');
-            document.getElementById('btnList').classList.remove('active');
+            renderEmptyState(msg) {
+                const grid = document.getElementById('adsGrid');
+                grid.innerHTML = `
+                    <div class="empty-state-box">
+                        <i class="fa-solid fa-car-on"></i>
+                        <h2>Hoppsan!</h2>
+                        <p>${msg}</p>
+                        <button onclick="window.location.href='results.html'" style="margin-top:20px; padding:10px 20px; border-radius:10px; cursor:pointer;">Visa alla bilar</button>
+                    </div>`;
+            },
+
+            renderErrorState(errorMsg) {
+                const grid = document.getElementById('adsGrid');
+                grid.innerHTML = `
+                    <div class="empty-state-box" style="border-color: #ef4444;">
+                        <i class="fa-solid fa-circle-exclamation" style="color:#ef4444;"></i>
+                        <h2 style="color:#ef4444;">Systemfel</h2>
+                        <p>Kunde inte ansluta till databasen. Försök igen senare.</p>
+                        <small style="display:block; margin-top:10px; color:var(--text-muted);">${errorMsg}</small>
+                    </div>`;
+            },
+
+            /**
+             * Phase 4: Event Orchestration
+             */
+            bindEvents() {
+                document.getElementById('applyFilters').onclick = () => {
+                    const params = new URLSearchParams();
+                    const brand = document.getElementById('filterBrand').value;
+                    const fuel = document.getElementById('filterFuel').value;
+                    const minP = document.getElementById('filterMinPrice').value;
+                    const maxP = document.getElementById('filterMaxPrice').value;
+                    const minM = document.getElementById('filterMinMil').value;
+                    const maxM = document.getElementById('filterMaxMil').value;
+
+                    if (brand !== 'all') params.set('brand', brand);
+                    if (fuel !== 'all') params.set('fuel', fuel);
+                    if (minP) params.set('minP', minP);
+                    if (maxP) params.set('maxP', maxP);
+                    if (minM) params.set('minM', minM);
+                    if (maxM) params.set('maxM', maxM);
+
+                    window.location.href = `results.html?${params.toString()}`;
+                };
+
+                document.getElementById('sortEngine').onchange = () => this.renderResults();
+            }
         };
 
-        document.getElementById('btnList').onclick = () => {
-            document.getElementById('mainResultsGrid').classList.add('list-view');
-            document.getElementById('btnList').classList.add('active');
-            document.getElementById('btnGrid').classList.remove('active');
-        };
-
-        // تحديث البحث عند الضغط على الزر
-        document.getElementById('triggerUpdate').onclick = () => {
-            const brand = document.getElementById('sideFilterBrand').value;
-            const fuel = document.getElementById('sideFilterFuel').value;
-            const minP = document.getElementById('sideMinPrice').value;
-            const maxP = document.getElementById('sideMaxPrice').value;
-            const minM = document.getElementById('sideMinMil').value;
-            const maxM = document.getElementById('sideMaxMil').value;
-
-            const params = new URLSearchParams();
-            if (brand !== 'all') params.set('brand', brand);
-            if (fuel !== 'all') params.set('fuel', fuel);
-            if (minP) params.set('minP', minP);
-            if (maxP) params.set('maxP', maxP);
-            if (minM) params.set('minM', minM);
-            if (maxM) params.set('maxM', maxM);
-
-            // إعادة توجيه الصفحة بالقيم الجديدة
-            window.location.href = `results.html?${params.toString()}`;
-        };
-
-        // إعادة الفرز عند تغيير خيار الترتيب
-        document.getElementById('sortMechanism').onchange = processAndRender;
-
-        // --- EXECUTION START ---
-        initUI();
-        runSearchEngine();
+        // --- Execution Entry Point ---
+        SearchController.init();
 
     </script>
 </body>
