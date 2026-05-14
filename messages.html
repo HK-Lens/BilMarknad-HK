@@ -2,242 +2,1979 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mina Meddelanden | BILHK</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <title>Meddelanden | BILHK</title>
+
+    <meta name="description" content="Hantera dina meddelanden och konversationer på BILHK.">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
-        :root { 
-            --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; 
-            --danger: #ef4444; --success: #22c55e;
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e67312;
+            --primary-soft: rgba(245, 130, 32, 0.12);
+
+            --dark: #0f172a;
+            --dark-soft: #1e293b;
+
+            --text: #0f172a;
+            --muted: #64748b;
+            --muted-light: #94a3b8;
+
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-soft: #f1f5f9;
+
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --success: #16a34a;
+            --success-soft: rgba(22, 163, 74, 0.10);
+
+            --danger: #dc2626;
+            --danger-soft: rgba(220, 38, 38, 0.10);
+
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.13);
+
+            --info: #2563eb;
+            --info-soft: rgba(37, 99, 235, 0.10);
+
+            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 28px;
+            --radius-full: 999px;
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { background: var(--bg); height: 100vh; display: flex; flex-direction: column; font-family: 'Inter', sans-serif; overflow: hidden; color: var(--dark); }
 
-        header { background: white; padding: 18px 5%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
-        header .logo { text-decoration: none; font-weight: 900; color: var(--dark); font-size: 26px; }
-        header .logo span { color: var(--primary); }
-        #userStatus { font-size: 12px; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 50px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        .app-container { display: flex; flex: 1; overflow: hidden; max-width: 1500px; margin: 0 auto; width: 100%; background: white; position: relative; }
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
 
-        .sidebar { width: 380px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #fff; z-index: 200; }
-        .sidebar-header { padding: 30px 20px; font-weight: 900; font-size: 1.4rem; border-bottom: 2px solid var(--bg); background: white; }
-        .chat-list { flex: 1; overflow-y: auto; }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 10% 8%, rgba(245, 130, 32, 0.10), transparent 30%),
+                radial-gradient(circle at 90% 4%, rgba(15, 23, 42, 0.08), transparent 32%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+            overflow: hidden;
+        }
 
-        .chat-item { position: relative; padding: 22px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-        .chat-item:hover { background: #f8fafc; }
-        .chat-item.active { background: #fff7ed; border-left: 6px solid var(--primary); }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
 
-        .chat-content { flex: 1; min-width: 0; }
-        .chat-content strong { display: block; font-size: 15px; font-weight: 800; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .chat-content small { color: #64748b; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+        button,
+        textarea,
+        input {
+            font-family: inherit;
+        }
 
-        .delete-chat-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #cbd5e1; transition: 0.3s; margin-left: 10px; }
-        .delete-chat-btn:hover { background: #fee2e2; color: var(--danger); }
+        button {
+            cursor: pointer;
+        }
 
-        .chat-window { flex: 1; display: flex; flex-direction: column; background: #ffffff; position: relative; }
-        .chat-header { padding: 20px 25px; border-bottom: 1px solid var(--border); background: white; display: flex; align-items: center; }
+        .site-header {
+            height: 74px;
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(18px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 0 5%;
+            position: relative;
+            z-index: 40;
+        }
 
-        .msg-display { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #fdfdfd; }
-        
-        .bubble { position: relative; padding: 14px 18px; border-radius: 22px; max-width: 75%; font-size: 15px; line-height: 1.5; word-wrap: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
-        .received { align-self: flex-start; background: white; border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+            color: var(--dark);
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            white-space: nowrap;
+        }
 
-        .msg-del-btn { position: absolute; top: -10px; right: -10px; background: var(--danger); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; opacity: 0; border: 2px solid white; transition: 0.2s; }
-        .bubble.sent:hover .msg-del-btn { opacity: 1; }
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary), #ffb15c);
+            color: white;
+            box-shadow: 0 12px 28px rgba(245, 130, 32, 0.32);
+            font-size: 18px;
+        }
 
-        .input-box { padding: 25px; border-top: 1px solid var(--border); display: flex; gap: 15px; background: white; align-items: center; }
-        #msgInput { flex: 1; padding: 16px 24px; border-radius: 35px; border: 1px solid var(--border); outline: none; font-size: 15px; background: #f8fafc; }
-        #msgInput:focus { background: white; border-color: var(--primary); }
-        
-        .send-btn { background: var(--primary); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; }
-        .send-btn:hover { transform: scale(1.1); }
-        .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .logo span {
+            color: var(--primary);
+        }
 
-        .timestamp { font-size: 9px; opacity: 0.7; margin-top: 5px; display: block; text-align: right; }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
 
-        @media (max-width: 850px) {
-            .sidebar { width: 100%; }
-            .sidebar.hide-mobile { display: none !important; }
-            .chat-window { display: none; }
-            .chat-window.show-mobile { display: flex !important; width: 100%; position: absolute; height: 100%; z-index: 500; }
+        .nav-btn {
+            min-height: 42px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            border-radius: var(--radius-full);
+            padding: 10px 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            transition: 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            border-color: rgba(245, 130, 32, 0.45);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .user-pill {
+            max-width: 260px;
+            min-height: 42px;
+            border-radius: var(--radius-full);
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 9px 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 850;
+            overflow: hidden;
+        }
+
+        .user-pill span {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .messenger-shell {
+            height: calc(100vh - 74px);
+            max-width: 1500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.96);
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 410px minmax(0, 1fr);
+            overflow: hidden;
+        }
+
+        .sidebar {
+            min-width: 0;
+            border-right: 1px solid var(--border);
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 24px 22px 18px;
+            border-bottom: 1px solid var(--border);
+            background: white;
+        }
+
+        .sidebar-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .sidebar-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark);
+            font-size: 1.35rem;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+        }
+
+        .sidebar-title i {
+            color: var(--primary);
+        }
+
+        .refresh-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            background: var(--surface-soft);
+            color: var(--muted);
+            display: grid;
+            place-items: center;
+            transition: 0.25s ease;
+        }
+
+        .refresh-btn:hover {
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-light);
+            pointer-events: none;
+        }
+
+        .search-wrap input {
+            width: 100%;
+            min-height: 46px;
+            padding: 12px 14px 12px 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: var(--surface-soft);
+            color: var(--dark);
+            outline: none;
+            font-size: 13px;
+            font-weight: 750;
+            transition: 0.25s ease;
+        }
+
+        .search-wrap input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.10);
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .chat-item {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: left;
+            border-radius: 20px;
+            padding: 14px;
+            display: grid;
+            grid-template-columns: 48px minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.25s ease;
+            position: relative;
+        }
+
+        .chat-item:hover {
+            background: var(--surface-soft);
+        }
+
+        .chat-item.active {
+            background: var(--primary-soft);
+            box-shadow: inset 4px 0 0 var(--primary);
+        }
+
+        .chat-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--dark), #334155);
+            color: white;
+            font-size: 18px;
+            flex: 0 0 auto;
+        }
+
+        .chat-text {
+            min-width: 0;
+        }
+
+        .chat-text strong {
+            display: block;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 900;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .chat-text small {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 650;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .chat-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .chat-time {
+            color: var(--muted-light);
+            font-size: 10px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .delete-chat-btn {
+            width: 34px;
+            height: 34px;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            color: #cbd5e1;
+            display: grid;
+            place-items: center;
+            transition: 0.25s ease;
+        }
+
+        .delete-chat-btn:hover {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .chat-window {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 20% 10%, rgba(245, 130, 32, 0.05), transparent 28%),
+                #fbfdff;
+        }
+
+        .chat-header {
+            min-height: 76px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            padding: 14px 22px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .back-mobile {
+            width: 42px;
+            height: 42px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            display: none;
+            place-items: center;
+        }
+
+        .active-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .active-info {
+            min-width: 0;
+        }
+
+        .active-info strong {
+            display: block;
+            color: var(--dark);
+            font-size: 16px;
+            font-weight: 900;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .active-info span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 750;
+            margin-top: 3px;
+        }
+
+        .msg-display {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .welcome-state,
+        .empty-state,
+        .loading-state,
+        .error-state {
+            height: 100%;
+            min-height: 280px;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .state-card {
+            max-width: 440px;
+            margin: 0 auto;
+        }
+
+        .state-icon {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 18px;
+            border-radius: 26px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 30px;
+        }
+
+        .state-card h3 {
+            color: var(--dark);
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 8px;
+        }
+
+        .state-card p {
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 650;
+            line-height: 1.7;
+        }
+
+        .message-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .message-row.sent {
+            justify-content: flex-end;
+        }
+
+        .message-row.received {
+            justify-content: flex-start;
+        }
+
+        .bubble {
+            position: relative;
+            max-width: min(72%, 680px);
+            padding: 13px 16px 10px;
+            border-radius: 22px;
+            box-shadow: var(--shadow-sm);
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        .message-row.sent .bubble {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+
+        .message-row.received .bubble {
+            background: white;
+            color: var(--dark);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 6px;
+        }
+
+        .bubble-text {
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.65;
+            font-weight: 600;
+        }
+
+        .bubble-footer {
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+            font-size: 10px;
+            font-weight: 850;
+            opacity: 0.78;
+        }
+
+        .msg-delete-btn {
+            width: 26px;
+            height: 26px;
+            border: 2px solid white;
+            border-radius: 999px;
+            background: var(--danger);
+            color: white;
+            display: grid;
+            place-items: center;
+            opacity: 0;
+            transform: translateY(2px);
+            transition: 0.2s ease;
+            flex: 0 0 auto;
+        }
+
+        .message-row.sent:hover .msg-delete-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .input-box {
+            border-top: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            padding: 16px 22px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 52px;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .message-input-wrap {
+            position: relative;
+        }
+
+        #msgInput {
+            width: 100%;
+            min-height: 52px;
+            max-height: 150px;
+            resize: none;
+            border-radius: 22px;
+            border: 1px solid var(--border);
+            background: var(--surface-soft);
+            color: var(--dark);
+            outline: none;
+            padding: 15px 18px;
+            font-size: 14px;
+            font-weight: 650;
+            line-height: 1.45;
+            transition: 0.25s ease;
+        }
+
+        #msgInput:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.10);
+        }
+
+        #msgInput:disabled {
+            cursor: not-allowed;
+            background: #e2e8f0;
+            color: #94a3b8;
+        }
+
+        .input-hint {
+            margin-top: 6px;
+            color: var(--muted-light);
+            font-size: 10px;
+            font-weight: 800;
+            padding-left: 6px;
+        }
+
+        .send-btn {
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 18px;
+            background: var(--primary);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 17px;
+            box-shadow: 0 14px 28px rgba(245, 130, 32, 0.25);
+            transition: 0.25s ease;
+        }
+
+        .send-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .send-btn:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 920px) {
+            .site-header {
+                height: 68px;
+                padding: 0 16px;
+            }
+
+            .nav-btn span {
+                display: none;
+            }
+
+            .user-pill {
+                max-width: 160px;
+            }
+
+            .messenger-shell {
+                height: calc(100vh - 68px);
+                grid-template-columns: 1fr;
+                border-left: none;
+                border-right: none;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+            }
+
+            .sidebar.hide-mobile {
+                display: none;
+            }
+
+            .chat-window {
+                display: none;
+            }
+
+            .chat-window.show-mobile {
+                display: flex;
+                height: calc(100vh - 68px);
+            }
+
+            .back-mobile {
+                display: grid;
+            }
+
+            .bubble {
+                max-width: 84%;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .logo {
+                font-size: 1.55rem;
+            }
+
+            .logo-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .header-actions {
+                gap: 6px;
+            }
+
+            .user-pill {
+                display: none;
+            }
+
+            .sidebar-header {
+                padding: 20px 16px 14px;
+            }
+
+            .chat-list {
+                padding: 6px;
+            }
+
+            .chat-item {
+                grid-template-columns: 44px minmax(0, 1fr) auto;
+                padding: 12px;
+            }
+
+            .chat-avatar,
+            .active-avatar {
+                width: 44px;
+                height: 44px;
+                border-radius: 16px;
+            }
+
+            .msg-display {
+                padding: 18px 14px;
+            }
+
+            .input-box {
+                padding: 12px;
+            }
+
+            .bubble {
+                max-width: 88%;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div id="userStatus">Laddar...</div>
+<header class="site-header">
+    <a href="index.html" class="logo" aria-label="Gå till startsidan">
+        <span class="logo-icon">
+            <i class="fa-solid fa-car-side"></i>
+        </span>
+        BIL<span>HK</span>
+    </a>
+
+    <div class="header-actions">
+        <a href="my-account.html" class="nav-btn">
+            <i class="fa-solid fa-user"></i>
+            <span>Mitt konto</span>
+        </a>
+
+        <a href="index.html" class="nav-btn">
+            <i class="fa-solid fa-house"></i>
+            <span>Startsida</span>
+        </a>
+
+        <div class="user-pill" id="userStatus">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            <span>Laddar...</span>
+        </div>
+    </div>
 </header>
 
-<div class="app-container">
-    <div class="sidebar" id="sidebarArea">
-        <div class="sidebar-header"><i class="fa-solid fa-comments"></i> Meddelanden</div>
-        <div class="chat-list" id="chatList"></div>
-    </div>
-    
-    <div class="chat-window" id="chatWindow">
-        <div class="chat-header">
-            <button onclick="closeChatMobile()" style="background:none; border:none; font-size:20px; margin-right:15px; cursor:pointer;"><i class="fa-solid fa-chevron-left"></i></button>
-            <div id="activeTitle" style="font-weight:900;">Välj en chatt</div>
-        </div>
-        
-        <div class="msg-display" id="msgArea">
-            <div style="text-align:center; padding-top:100px; color:#94a3b8;">
-                <i class="fa-regular fa-comment-dots" style="font-size:60px; margin-bottom:20px;"></i>
-                <p>Klicka på en konversation för att skriva</p>
+<main class="messenger-shell">
+
+    <aside class="sidebar" id="sidebarArea">
+        <div class="sidebar-header">
+            <div class="sidebar-title-row">
+                <div class="sidebar-title">
+                    <i class="fa-solid fa-comments"></i>
+                    <span>Meddelanden</span>
+                </div>
+
+                <button type="button" class="refresh-btn" id="refreshBtn" aria-label="Uppdatera konversationer">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
+
+            <div class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" id="chatSearch" placeholder="Sök efter bil, säljare eller senaste meddelande..." maxlength="120">
             </div>
         </div>
-        
-        <div class="input-box">
-            <input type="text" id="msgInput" placeholder="Skriv ditt medدلاند هير..." disabled>
-            <button id="sendBtn" class="send-btn" disabled onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+
+        <div class="chat-list" id="chatList"></div>
+    </aside>
+
+    <section class="chat-window" id="chatWindow" aria-label="Aktiv konversation">
+        <div class="chat-header">
+            <button type="button" class="back-mobile" id="closeChatBtn" aria-label="Tillbaka till konversationer">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+
+            <div class="active-avatar">
+                <i class="fa-solid fa-car"></i>
+            </div>
+
+            <div class="active-info">
+                <strong id="activeTitle">Välj en chatt</strong>
+                <span id="activeSubtitle">Klicka på en konversation för att skriva.</span>
+            </div>
         </div>
-    </div>
-</div>
+
+        <div class="msg-display" id="msgArea"></div>
+
+        <div class="input-box">
+            <div class="message-input-wrap">
+                <textarea id="msgInput" placeholder="Skriv ditt meddelande..." disabled maxlength="1000" rows="1"></textarea>
+                <div class="input-hint" id="inputHint">Välj en chatt för att börja skriva.</div>
+            </div>
+
+            <button type="button" id="sendBtn" class="send-btn" disabled aria-label="Skicka meddelande">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </section>
+
+</main>
 
 <script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, getDoc, deleteDoc, updateDoc, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import {
+        auth,
+        db
+    } from "./firebase-config.js";
 
-    let user = null;
-    let activeRoom = null;
-    let unsubMsg = null;
+    import {
+        onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    onAuthStateChanged(auth, (u) => { 
-        if(u) { user = u; document.getElementById('userStatus').innerText = u.email; loadRooms(); initIncoming(); } 
-        else { window.location.href="login.html"; }
-    });
+    import {
+        collection,
+        query,
+        where,
+        onSnapshot,
+        addDoc,
+        serverTimestamp,
+        orderBy,
+        doc,
+        getDoc,
+        deleteDoc,
+        updateDoc,
+        setDoc,
+        arrayUnion,
+        limit,
+        getDocs,
+        writeBatch
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // 💡 تفعيل الكتابة (الحل الجذري)
-    function unlockInput() {
-        const input = document.getElementById('msgInput');
-        const btn = document.getElementById('sendBtn');
-        input.disabled = false;
-        btn.disabled = false;
-        input.focus();
-    }
+    /**
+     * ============================================================
+     * BILHK - messages.html
+     * ------------------------------------------------------------
+     * Secure real-time chat page.
+     *
+     * Security decisions:
+     * 1. Requires authenticated user.
+     * 2. User only reads chats where participants contains uid.
+     * 3. User can only open/send in a chat if they are a participant.
+     * 4. Avoids innerHTML for user-controlled data.
+     * 5. Soft-deletes chat from current user's list using hiddenFor.
+     * 6. Deletes only user's own messages in UI.
+     *
+     * Important:
+     * Firestore Security Rules must enforce the same ownership and
+     * participant checks server-side.
+     * ============================================================
+     */
 
-    // 🔴 حذف الدردشة
-    window.deleteFullChat = async (e, roomId) => {
-        e.stopPropagation();
-        const res = await Swal.fire({
-            title: 'Radera chatt?',
-            text: "Den tas bort från din lista.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ja, radera'
-        });
-        if (res.isConfirmed) {
-            try {
-                const ref = doc(db, "chats", roomId);
-                const snap = await getDoc(ref);
-                if (snap.exists()) {
-                    const p = snap.data().participants;
-                    if (p.length <= 1) await deleteDoc(ref);
-                    else await updateDoc(ref, { participants: arrayRemove(user.uid) });
-                }
-                if (activeRoom === roomId) location.reload();
-            } catch (err) { console.error(err); }
+    const CHAT_CONFIG = {
+        ROUTES: {
+            LOGIN: "login.html",
+            HOME: "index.html",
+            ACCOUNT: "my-account.html",
+            DETAILS: "details.html"
+        },
+
+        COLLECTIONS: {
+            CHATS: "chats",
+            CARS: "cars",
+            USERS: "users"
+        },
+
+        LIMITS: {
+            MESSAGE_MAX_LENGTH: 1000,
+            SEARCH_MAX_LENGTH: 120,
+            READ_MARK_LIMIT: 40
+        },
+
+        DEFAULTS: {
+            UNKNOWN_CAR: "Okänd bil",
+            EMPTY_LAST_MESSAGE: "Ingen meddelandehistorik ännu"
+        },
+
+        MESSAGES: {
+            AUTH_REQUIRED: "Du måste logga in för att använda meddelanden.",
+            CHAT_LOAD_ERROR: "Kunde inte ladda dina konversationer just nu.",
+            MESSAGE_LOAD_ERROR: "Kunde inte ladda meddelanden just nu.",
+            NOT_PARTICIPANT: "Du har inte behörighet till denna konversation.",
+            EMPTY_MESSAGE: "Skriv ett meddelande först.",
+            MESSAGE_TOO_LONG: "Meddelandet är för långt.",
+            SEND_ERROR: "Meddelandet kunde inte skickas just nu.",
+            DELETE_CHAT_SUCCESS: "Konversationen har tagits bort från din lista.",
+            DELETE_CHAT_ERROR: "Konversationen kunde inte tas bort just nu.",
+            DELETE_MESSAGE_ERROR: "Meddelandet kunde inte raderas just nu.",
+            CAR_NOT_FOUND: "Annonsen kunde inte hittas."
         }
     };
 
-    // 🗑️ حذف رسالة
-    window.deleteSingleMsg = async (id) => {
-        try { await deleteDoc(doc(db, `chats/${activeRoom}/messages`, id)); } catch (e) {}
+    const state = {
+        currentUser: null,
+        activeChatId: null,
+        activeChatData: null,
+        chats: [],
+        filteredChats: [],
+        searchText: "",
+        isSending: false,
+        unsubscribeChats: null,
+        unsubscribeMessages: null
     };
 
-    function loadRooms() {
-        const q = query(collection(db, "chats"), where("participants", "array-contains", user.uid), orderBy("updatedAt", "desc"));
-        onSnapshot(q, snap => {
-            const list = document.getElementById('chatList');
-            list.innerHTML = "";
-            snap.forEach(d => {
-                const r = d.data();
-                const title = r.sellerId === user.uid ? `${r.carName} (Köpare)` : r.carName;
-                const div = document.createElement('div');
-                div.className = `chat-item ${activeRoom === d.id ? 'active' : ''}`;
-                div.innerHTML = `
-                    <div class="chat-content" onclick="openRoom('${d.id}', '${title}')">
-                        <strong>${title}</strong><small>${r.lastMessage || '...'}</small>
-                    </div>
-                    <div class="delete-chat-btn" onclick="deleteFullChat(event, '${d.id}')"><i class="fa-solid fa-trash-can"></i></div>`;
-                list.appendChild(div);
-            });
+    const elements = {
+        userStatus: document.getElementById("userStatus"),
+
+        sidebarArea: document.getElementById("sidebarArea"),
+        chatWindow: document.getElementById("chatWindow"),
+
+        chatList: document.getElementById("chatList"),
+        chatSearch: document.getElementById("chatSearch"),
+        refreshBtn: document.getElementById("refreshBtn"),
+
+        closeChatBtn: document.getElementById("closeChatBtn"),
+
+        activeTitle: document.getElementById("activeTitle"),
+        activeSubtitle: document.getElementById("activeSubtitle"),
+
+        msgArea: document.getElementById("msgArea"),
+        msgInput: document.getElementById("msgInput"),
+        sendBtn: document.getElementById("sendBtn"),
+        inputHint: document.getElementById("inputHint")
+    };
+
+    initializeMessagesPage();
+
+    function initializeMessagesPage() {
+        attachGlobalErrorHandlers();
+        attachEventListeners();
+        showWelcomeState();
+        observeAuthState();
+    }
+
+    function attachEventListeners() {
+        elements.refreshBtn.addEventListener("click", () => {
+            restartChatListener();
+        });
+
+        elements.closeChatBtn.addEventListener("click", closeChatMobile);
+
+        elements.chatSearch.addEventListener("input", () => {
+            state.searchText = normalizeText(elements.chatSearch.value, CHAT_CONFIG.LIMITS.SEARCH_MAX_LENGTH).toLowerCase();
+            applyChatSearchAndRender();
+        });
+
+        elements.sendBtn.addEventListener("click", sendMessage);
+
+        elements.msgInput.addEventListener("input", () => {
+            autoResizeTextarea(elements.msgInput);
+            updateSendButtonState();
+        });
+
+        elements.msgInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
         });
     }
 
-    async function initIncoming() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const sId = urlParams.get('sellerId'), cId = urlParams.get('carId'), title = urlParams.get('title');
-        if (sId && cId) {
-            const rId = [user.uid, sId].sort().join('_') + '_' + cId;
-            activeRoom = rId;
-            openRoom(rId, title);
-            const snap = await getDoc(doc(db, "chats", rId));
-            if (!snap.exists()) {
-                await setDoc(doc(db, "chats", rId), {
-                    carId: cId, carName: title, participants: [user.uid, sId],
-                    sellerId: sId, buyerId: user.uid, buyerName: user.email.split('@')[0],
-                    lastMessage: "", updatedAt: serverTimestamp()
+    function observeAuthState() {
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                await Swal.fire({
+                    icon: "info",
+                    title: "Inloggning krävs",
+                    text: CHAT_CONFIG.MESSAGES.AUTH_REQUIRED,
+                    confirmButtonColor: "#f58220",
+                    confirmButtonText: "Logga in"
+                });
+
+                window.location.href = CHAT_CONFIG.ROUTES.LOGIN;
+                return;
+            }
+
+            state.currentUser = user;
+            renderUserStatus(user);
+            restartChatListener();
+            await maybeOpenOrCreateIncomingChat();
+        });
+    }
+
+    function renderUserStatus(user) {
+        clearElement(elements.userStatus);
+
+        const icon = createIcon("fa-solid fa-circle-user");
+        const text = document.createElement("span");
+        text.textContent = user.email || "Inloggad";
+
+        elements.userStatus.appendChild(icon);
+        elements.userStatus.appendChild(text);
+    }
+
+    function restartChatListener() {
+        if (!state.currentUser) {
+            return;
+        }
+
+        if (typeof state.unsubscribeChats === "function") {
+            state.unsubscribeChats();
+            state.unsubscribeChats = null;
+        }
+
+        showChatListLoading();
+
+        const chatsQuery = query(
+            collection(db, CHAT_CONFIG.COLLECTIONS.CHATS),
+            where("participants", "array-contains", state.currentUser.uid),
+            orderBy("updatedAt", "desc")
+        );
+
+        state.unsubscribeChats = onSnapshot(
+            chatsQuery,
+            (snapshot) => {
+                state.chats = snapshot.docs
+                    .map((chatDoc) => {
+                        return {
+                            id: chatDoc.id,
+                            ...chatDoc.data()
+                        };
+                    })
+                    .filter((chat) => !Array.isArray(chat.hiddenFor) || !chat.hiddenFor.includes(state.currentUser.uid));
+
+                applyChatSearchAndRender();
+            },
+            (error) => {
+                console.error("[BILHK] Chat listener error:", error);
+                showChatListError();
+            }
+        );
+    }
+
+    function applyChatSearchAndRender() {
+        let chats = Array.isArray(state.chats) ? [...state.chats] : [];
+
+        if (state.searchText) {
+            chats = chats.filter((chat) => {
+                const combined = [
+                    chat.carName,
+                    chat.lastMessage,
+                    chat.buyerName,
+                    chat.sellerName,
+                    chat.carId
+                ].map((value) => normalizeText(value).toLowerCase()).join(" ");
+
+                return combined.includes(state.searchText);
+            });
+        }
+
+        state.filteredChats = chats;
+        renderChatList(chats);
+    }
+
+    function renderChatList(chats) {
+        clearElement(elements.chatList);
+
+        if (!Array.isArray(chats) || chats.length === 0) {
+            showChatListEmpty();
+            return;
+        }
+
+        chats.forEach((chat) => {
+            elements.chatList.appendChild(createChatItem(chat));
+        });
+    }
+
+    function createChatItem(chat) {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = `chat-item ${state.activeChatId === chat.id ? "active" : ""}`;
+        item.setAttribute("aria-label", `Öppna konversation ${getChatTitle(chat)}`);
+
+        const avatar = document.createElement("div");
+        avatar.className = "chat-avatar";
+        avatar.appendChild(createIcon("fa-solid fa-car"));
+
+        const textWrap = document.createElement("div");
+        textWrap.className = "chat-text";
+
+        const title = document.createElement("strong");
+        title.textContent = getChatTitle(chat);
+
+        const last = document.createElement("small");
+        last.textContent = getLastMessagePreview(chat);
+
+        textWrap.appendChild(title);
+        textWrap.appendChild(last);
+
+        const meta = document.createElement("div");
+        meta.className = "chat-meta";
+
+        const time = document.createElement("span");
+        time.className = "chat-time";
+        time.textContent = formatTimestampShort(chat.updatedAt);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "delete-chat-btn";
+        deleteButton.setAttribute("aria-label", "Ta bort konversation från listan");
+        deleteButton.appendChild(createIcon("fa-solid fa-trash-can"));
+
+        deleteButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            softDeleteChat(chat);
+        });
+
+        meta.appendChild(time);
+        meta.appendChild(deleteButton);
+
+        item.appendChild(avatar);
+        item.appendChild(textWrap);
+        item.appendChild(meta);
+
+        item.addEventListener("click", () => {
+            openChat(chat.id, chat);
+        });
+
+        return item;
+    }
+
+    async function maybeOpenOrCreateIncomingChat() {
+        const params = new URLSearchParams(window.location.search);
+
+        const sellerId = normalizeId(params.get("sellerId"));
+        const carId = normalizeId(params.get("carId"));
+
+        if (!sellerId || !carId || !state.currentUser) {
+            return;
+        }
+
+        if (sellerId === state.currentUser.uid) {
+            Swal.fire({
+                icon: "info",
+                title: "Din egen annons",
+                text: "Du kan inte starta en köparchatt med dig själv.",
+                confirmButtonColor: "#f58220"
+            });
+
+            return;
+        }
+
+        try {
+            const carSnap = await getDoc(doc(db, CHAT_CONFIG.COLLECTIONS.CARS, carId));
+
+            if (!carSnap.exists()) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Annons saknas",
+                    text: CHAT_CONFIG.MESSAGES.CAR_NOT_FOUND,
+                    confirmButtonColor: "#f58220"
+                });
+
+                return;
+            }
+
+            const car = carSnap.data();
+
+            if (car.sellerId && car.sellerId !== sellerId) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Ogiltig konversation",
+                    text: "Säljarinformationen matchar inte annonsen.",
+                    confirmButtonColor: "#f58220"
+                });
+
+                return;
+            }
+
+            const chatId = buildChatId(state.currentUser.uid, sellerId, carId);
+            const chatRef = doc(db, CHAT_CONFIG.COLLECTIONS.CHATS, chatId);
+            const chatSnap = await getDoc(chatRef);
+
+            const carName = buildCarName(car);
+
+            if (!chatSnap.exists()) {
+                await setDoc(chatRef, {
+                    carId: carId,
+                    carName: carName,
+                    participants: [state.currentUser.uid, sellerId],
+                    hiddenFor: [],
+                    sellerId: sellerId,
+                    buyerId: state.currentUser.uid,
+                    buyerName: getUserDisplayName(state.currentUser),
+                    lastMessage: "",
+                    lastSenderId: "",
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                });
+            } else {
+                await updateDoc(chatRef, {
+                    hiddenFor: [],
+                    updatedAt: serverTimestamp()
                 });
             }
+
+            await openChat(chatId, {
+                id: chatId,
+                carId: carId,
+                carName: carName,
+                participants: [state.currentUser.uid, sellerId],
+                sellerId: sellerId,
+                buyerId: state.currentUser.uid
+            });
+        } catch (error) {
+            console.error("[BILHK] Incoming chat error:", error);
+
+            Swal.fire({
+                icon: "error",
+                title: "Fel",
+                text: "Konversationen kunde inte öppnas just nu.",
+                confirmButtonColor: "#f58220"
+            });
         }
     }
 
-    window.openRoom = (id, name) => {
-        if (unsubMsg) unsubMsg();
-        activeRoom = id;
-        unlockInput(); // تفعيل الحقول فوراً هنا
-        document.getElementById('activeTitle').innerText = name;
-        document.getElementById('chatWindow').classList.add('show-mobile');
+    async function openChat(chatId, chatFromList = null) {
+        if (!chatId || !state.currentUser) {
+            return;
+        }
 
-        const q = query(collection(db, `chats/${id}/messages`), orderBy("createdAt", "asc"));
-        unsubMsg = onSnapshot(q, snap => {
-            const area = document.getElementById('msgArea'); area.innerHTML = "";
-            snap.forEach(d => {
-                const m = d.data();
-                const isMine = m.senderId === user.uid;
-                const div = document.createElement('div');
-                div.className = `bubble ${isMine ? 'sent' : 'received'}`;
-                div.innerHTML = `
-                    ${isMine ? `<div class="msg-del-btn" onclick="deleteSingleMsg('${d.id}')">×</div>` : ''}
-                    ${m.text}
-                    <span class="timestamp">${m.createdAt?.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) || '...'}</span>`;
-                area.appendChild(div);
-            });
-            area.scrollTop = area.scrollHeight;
-        }, (err) => {
-            console.error("Rules Error:", err);
-            // إذا فشل Snapshot بسبب القواعد، نحاول تفعيل الحقل على أي حال
-            unlockInput();
-        });
-    };
+        if (typeof state.unsubscribeMessages === "function") {
+            state.unsubscribeMessages();
+            state.unsubscribeMessages = null;
+        }
 
-    window.sendMessage = async () => {
-        const input = document.getElementById('msgInput'), text = input.value.trim();
-        if(!text) return; input.value = "";
         try {
-            await addDoc(collection(db, `chats/${activeRoom}/messages`), { senderId: user.uid, text, createdAt: serverTimestamp() });
-            await updateDoc(doc(db, "chats", activeRoom), { lastMessage: text, updatedAt: serverTimestamp() });
-        } catch (e) { console.error(e); }
-    };
+            const verification = await verifyChatAccess(chatId);
 
-    window.closeChatMobile = () => {
-        document.getElementById('chatWindow').classList.remove('show-mobile');
-    };
+            if (!verification.allowed) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Åtkomst nekad",
+                    text: CHAT_CONFIG.MESSAGES.NOT_PARTICIPANT,
+                    confirmButtonColor: "#f58220"
+                });
 
-    document.getElementById('msgInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+                return;
+            }
+
+            state.activeChatId = chatId;
+            state.activeChatData = verification.data || chatFromList;
+
+            renderActiveChatHeader(state.activeChatData);
+            unlockMessageInput();
+            showMessagesLoading();
+            applyChatSearchAndRender();
+
+            elements.chatWindow.classList.add("show-mobile");
+            elements.sidebarArea.classList.add("hide-mobile");
+
+            const messagesQuery = query(
+                collection(db, `${CHAT_CONFIG.COLLECTIONS.CHATS}/${chatId}/messages`),
+                orderBy("createdAt", "asc")
+            );
+
+            state.unsubscribeMessages = onSnapshot(
+                messagesQuery,
+                async (snapshot) => {
+                    clearElement(elements.msgArea);
+
+                    if (snapshot.empty) {
+                        showEmptyMessagesState();
+                        return;
+                    }
+
+                    snapshot.forEach((messageDoc) => {
+                        elements.msgArea.appendChild(createMessageBubble(messageDoc.id, messageDoc.data()));
+                    });
+
+                    scrollMessagesToBottom();
+                    await markIncomingMessagesAsRead(chatId);
+                },
+                (error) => {
+                    console.error("[BILHK] Message listener error:", error);
+                    showMessagesError();
+                }
+            );
+        } catch (error) {
+            console.error("[BILHK] Open chat error:", error);
+            showMessagesError();
+        }
+    }
+
+    async function verifyChatAccess(chatId) {
+        try {
+            const chatRef = doc(db, CHAT_CONFIG.COLLECTIONS.CHATS, chatId);
+            const chatSnap = await getDoc(chatRef);
+
+            if (!chatSnap.exists()) {
+                return {
+                    allowed: false,
+                    data: null
+                };
+            }
+
+            const chat = chatSnap.data();
+            const participants = Array.isArray(chat.participants) ? chat.participants : [];
+
+            return {
+                allowed: participants.includes(state.currentUser.uid),
+                data: {
+                    id: chatSnap.id,
+                    ...chat
+                }
+            };
+        } catch (error) {
+            console.error("[BILHK] Chat access verification failed:", error);
+
+            return {
+                allowed: false,
+                data: null
+            };
+        }
+    }
+
+    function renderActiveChatHeader(chat) {
+        elements.activeTitle.textContent = getChatTitle(chat);
+        elements.activeSubtitle.textContent = buildActiveSubtitle(chat);
+    }
+
+    function unlockMessageInput() {
+        elements.msgInput.disabled = false;
+        elements.inputHint.textContent = "Enter skickar. Shift + Enter skapar ny rad.";
+        updateSendButtonState();
+
+        window.setTimeout(() => {
+            elements.msgInput.focus();
+        }, 80);
+    }
+
+    function lockMessageInput() {
+        elements.msgInput.disabled = true;
+        elements.sendBtn.disabled = true;
+        elements.inputHint.textContent = "Välj en chatt för att börja skriva.";
+    }
+
+    async function sendMessage() {
+        if (state.isSending || !state.activeChatId || !state.currentUser) {
+            return;
+        }
+
+        const rawText = String(elements.msgInput.value || "");
+        const text = normalizeMessage(rawText);
+
+        if (!text) {
+            Swal.fire({
+                icon: "info",
+                title: "Tomt meddelande",
+                text: CHAT_CONFIG.MESSAGES.EMPTY_MESSAGE,
+                confirmButtonColor: "#f58220"
+            });
+
+            return;
+        }
+
+        if (text.length > CHAT_CONFIG.LIMITS.MESSAGE_MAX_LENGTH) {
+            Swal.fire({
+                icon: "warning",
+                title: "För långt meddelande",
+                text: CHAT_CONFIG.MESSAGES.MESSAGE_TOO_LONG,
+                confirmButtonColor: "#f58220"
+            });
+
+            return;
+        }
+
+        state.isSending = true;
+        updateSendButtonState(true);
+
+        try {
+            const verification = await verifyChatAccess(state.activeChatId);
+
+            if (!verification.allowed) {
+                throw new Error("not-participant");
+            }
+
+            const chat = verification.data;
+            const receiverId = getReceiverId(chat);
+
+            const messagePayload = {
+                senderId: state.currentUser.uid,
+                receiverId: receiverId,
+                text: text,
+                read: false,
+                deletedFor: [],
+                createdAt: serverTimestamp()
+            };
+
+            await addDoc(
+                collection(db, `${CHAT_CONFIG.COLLECTIONS.CHATS}/${state.activeChatId}/messages`),
+                messagePayload
+            );
+
+            await updateDoc(doc(db, CHAT_CONFIG.COLLECTIONS.CHATS, state.activeChatId), {
+                lastMessage: text,
+                lastSenderId: state.currentUser.uid,
+                lastReceiverId: receiverId,
+                hiddenFor: [],
+                updatedAt: serverTimestamp()
+            });
+
+            elements.msgInput.value = "";
+            autoResizeTextarea(elements.msgInput);
+        } catch (error) {
+            console.error("[BILHK] Send message failed:", error);
+
+            Swal.fire({
+                icon: "error",
+                title: "Fel",
+                text: CHAT_CONFIG.MESSAGES.SEND_ERROR,
+                confirmButtonColor: "#f58220"
+            });
+        } finally {
+            state.isSending = false;
+            updateSendButtonState();
+        }
+    }
+
+    function createMessageBubble(messageId, message) {
+        const isMine = message.senderId === state.currentUser.uid;
+
+        const row = document.createElement("div");
+        row.className = `message-row ${isMine ? "sent" : "received"}`;
+
+        if (isMine) {
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "msg-delete-btn";
+            deleteButton.setAttribute("aria-label", "Radera meddelande");
+            deleteButton.appendChild(createIcon("fa-solid fa-xmark"));
+            deleteButton.addEventListener("click", () => {
+                deleteOwnMessage(messageId, message);
+            });
+
+            row.appendChild(deleteButton);
+        }
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+
+        const text = document.createElement("div");
+        text.className = "bubble-text";
+        text.textContent = normalizeText(message.text, CHAT_CONFIG.LIMITS.MESSAGE_MAX_LENGTH);
+
+        const footer = document.createElement("div");
+        footer.className = "bubble-footer";
+
+        const time = document.createElement("span");
+        time.textContent = formatTimestampTime(message.createdAt);
+
+        footer.appendChild(time);
+
+        if (isMine) {
+            const readIcon = createIcon(message.read ? "fa-solid fa-check-double" : "fa-solid fa-check");
+            footer.appendChild(readIcon);
+        }
+
+        bubble.appendChild(text);
+        bubble.appendChild(footer);
+
+        row.appendChild(bubble);
+
+        return row;
+    }
+
+    async function deleteOwnMessage(messageId, message) {
+        if (!state.activeChatId || !messageId || message.senderId !== state.currentUser.uid) {
+            return;
+        }
+
+        const result = await Swal.fire({
+            icon: "warning",
+            title: "Radera meddelande?",
+            text: "Meddelandet tas bort permanent.",
+            showCancelButton: true,
+            confirmButtonText: "Radera",
+            cancelButtonText: "Avbryt",
+            confirmButtonColor: "#dc2626",
+            cancelButtonColor: "#64748b"
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        try {
+            await deleteDoc(doc(db, `${CHAT_CONFIG.COLLECTIONS.CHATS}/${state.activeChatId}/messages`, messageId));
+        } catch (error) {
+            console.error("[BILHK] Delete message failed:", error);
+
+            Swal.fire({
+                icon: "error",
+                title: "Fel",
+                text: CHAT_CONFIG.MESSAGES.DELETE_MESSAGE_ERROR,
+                confirmButtonColor: "#f58220"
+            });
+        }
+    }
+
+    async function softDeleteChat(chat) {
+        if (!chat || !chat.id || !state.currentUser) {
+            return;
+        }
+
+        const result = await Swal.fire({
+            icon: "warning",
+            title: "Ta bort konversation?",
+            text: "Konversationen tas bort från din lista, men den andra parten påverkas inte.",
+            showCancelButton: true,
+            confirmButtonText: "Ta bort",
+            cancelButtonText: "Avbryt",
+            confirmButtonColor: "#dc2626",
+            cancelButtonColor: "#64748b"
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        try {
+            const verification = await verifyChatAccess(chat.id);
+
+            if (!verification.allowed) {
+                throw new Error("not-participant");
+            }
+
+            await updateDoc(doc(db, CHAT_CONFIG.COLLECTIONS.CHATS, chat.id), {
+                hiddenFor: arrayUnion(state.currentUser.uid),
+                updatedAt: serverTimestamp()
+            });
+
+            if (state.activeChatId === chat.id) {
+                closeActiveChat();
+            }
+
+            Swal.fire({
+                icon: "success",
+                title: "Borttagen",
+                text: CHAT_CONFIG.MESSAGES.DELETE_CHAT_SUCCESS,
+                confirmButtonColor: "#f58220"
+            });
+        } catch (error) {
+            console.error("[BILHK] Soft delete chat failed:", error);
+
+            Swal.fire({
+                icon: "error",
+                title: "Fel",
+                text: CHAT_CONFIG.MESSAGES.DELETE_CHAT_ERROR,
+                confirmButtonColor: "#f58220"
+            });
+        }
+    }
+
+    async function markIncomingMessagesAsRead(chatId) {
+        if (!state.currentUser || !chatId) {
+            return;
+        }
+
+        try {
+            const unreadQuery = query(
+                collection(db, `${CHAT_CONFIG.COLLECTIONS.CHATS}/${chatId}/messages`),
+                where("receiverId", "==", state.currentUser.uid),
+                where("read", "==", false),
+                limit(CHAT_CONFIG.LIMITS.READ_MARK_LIMIT)
+            );
+
+            const snapshot = await getDocs(unreadQuery);
+
+            if (snapshot.empty) {
+                return;
+            }
+
+            const batch = writeBatch(db);
+
+            snapshot.docs.forEach((messageDoc) => {
+                batch.update(messageDoc.ref, {
+                    read: true,
+                    readAt: serverTimestamp()
+                });
+            });
+
+            await batch.commit();
+        } catch (error) {
+            console.warn("[BILHK] Could not mark messages as read:", error);
+        }
+    }
+
+    function closeActiveChat() {
+        if (typeof state.unsubscribeMessages === "function") {
+            state.unsubscribeMessages();
+            state.unsubscribeMessages = null;
+        }
+
+        state.activeChatId = null;
+        state.activeChatData = null;
+
+        elements.activeTitle.textContent = "Välj en chatt";
+        elements.activeSubtitle.textContent = "Klicka på en konversation för att skriva.";
+
+        elements.msgInput.value = "";
+        autoResizeTextarea(elements.msgInput);
+        lockMessageInput();
+        showWelcomeState();
+        applyChatSearchAndRender();
+        closeChatMobile();
+    }
+
+    function closeChatMobile() {
+        elements.chatWindow.classList.remove("show-mobile");
+        elements.sidebarArea.classList.remove("hide-mobile");
+    }
+
+    function showWelcomeState() {
+        clearElement(elements.msgArea);
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "welcome-state";
+
+        const card = createStateCard(
+            "fa-regular fa-comment-dots",
+            "Välj en konversation",
+            "Klicka på en konversation till vänster för att läsa och skicka meddelanden."
+        );
+
+        wrapper.appendChild(card);
+        elements.msgArea.appendChild(wrapper);
+    }
+
+    function showMessagesLoading() {
+        clearElement(elements.msgArea);
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "loading-state";
+
+        const card = createStateCard(
+            "fa-solid fa-circle-notch fa-spin",
+            "Laddar meddelanden...",
+            "Vi hämtar konversationen."
+        );
+
+        wrapper.appendChild(card);
+        elements.msgArea.appendChild(wrapper);
+    }
+
+    function showEmptyMessagesState() {
+        clearElement(elements.msgArea);
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "empty-state";
+
+        const card = createStateCard(
+            "fa-regular fa-message",
+            "Inga meddelanden ännu",
+            "Skriv det första meddelandet nedan."
+        );
+
+        wrapper.appendChild(card);
+        elements.msgArea.appendChild(wrapper);
+    }
+
+    function showMessagesError() {
+        clearElement(elements.msgArea);
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "error-state";
+
+        const card = createStateCard(
+            "fa-solid fa-triangle-exclamation",
+            "Något gick fel",
+            CHAT_CONFIG.MESSAGES.MESSAGE_LOAD_ERROR
+        );
+
+        wrapper.appendChild(card);
+        elements.msgArea.appendChild(wrapper);
+    }
+
+    function showChatListLoading() {
+        clearElement(elements.chatList);
+
+        const item = createListStateItem("fa-solid fa-circle-notch fa-spin", "Laddar konversationer...");
+        elements.chatList.appendChild(item);
+    }
+
+    function showChatListEmpty() {
+        clearElement(elements.chatList);
+
+        const item = createListStateItem("fa-regular fa-comments", "Inga konversationer hittades.");
+        elements.chatList.appendChild(item);
+    }
+
+    function showChatListError() {
+        clearElement(elements.chatList);
+
+        const item = createListStateItem("fa-solid fa-triangle-exclamation", CHAT_CONFIG.MESSAGES.CHAT_LOAD_ERROR);
+        elements.chatList.appendChild(item);
+    }
+
+    function createListStateItem(iconClass, text) {
+        const wrapper = document.createElement("div");
+        wrapper.style.padding = "28px 18px";
+        wrapper.style.textAlign = "center";
+        wrapper.style.color = "#64748b";
+        wrapper.style.fontSize = "14px";
+        wrapper.style.fontWeight = "800";
+        wrapper.style.lineHeight = "1.7";
+
+        const icon = createIcon(iconClass);
+        icon.style.display = "block";
+        icon.style.fontSize = "28px";
+        icon.style.color = "#f58220";
+        icon.style.marginBottom = "12px";
+
+        const span = document.createElement("span");
+        span.textContent = text;
+
+        wrapper.appendChild(icon);
+        wrapper.appendChild(span);
+
+        return wrapper;
+    }
+
+    function createStateCard(iconClass, titleText, messageText) {
+        const card = document.createElement("div");
+        card.className = "state-card";
+
+        const iconWrap = document.createElement("div");
+        iconWrap.className = "state-icon";
+        iconWrap.appendChild(createIcon(iconClass));
+
+        const title = document.createElement("h3");
+        title.textContent = titleText;
+
+        const message = document.createElement("p");
+        message.textContent = messageText;
+
+        card.appendChild(iconWrap);
+        card.appendChild(title);
+        card.appendChild(message);
+
+        return card;
+    }
+
+    function updateSendButtonState(forceDisabled = false) {
+        const text = normalizeMessage(elements.msgInput.value);
+        elements.sendBtn.disabled = forceDisabled || state.isSending || !state.activeChatId || !text || elements.msgInput.disabled;
+    }
+
+    function autoResizeTextarea(textarea) {
+        textarea.style.height = "auto";
+        textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
+    }
+
+    function getReceiverId(chat) {
+        const participants = Array.isArray(chat.participants) ? chat.participants : [];
+        return participants.find((id) => id !== state.currentUser.uid) || "";
+    }
+
+    function getChatTitle(chat) {
+        if (!chat) {
+            return CHAT_CONFIG.DEFAULTS.UNKNOWN_CAR;
+        }
+
+        const carName = normalizeText(chat.carName, 120);
+
+        if (carName) {
+            if (chat.sellerId === state.currentUser?.uid) {
+                return `${carName} - köpare`;
+            }
+
+            return carName;
+        }
+
+        return CHAT_CONFIG.DEFAULTS.UNKNOWN_CAR;
+    }
+
+    function getLastMessagePreview(chat) {
+        const lastMessage = normalizeText(chat.lastMessage, 160);
+
+        if (lastMessage) {
+            return lastMessage;
+        }
+
+        return CHAT_CONFIG.DEFAULTS.EMPTY_LAST_MESSAGE;
+    }
+
+    function buildActiveSubtitle(chat) {
+        if (!chat) {
+            return "Klicka på en konversation för att skriva.";
+        }
+
+        if (chat.sellerId === state.currentUser?.uid) {
+            return "Du svarar som säljare.";
+        }
+
+        return "Du kontaktar säljaren för denna annons.";
+    }
+
+    function buildChatId(buyerId, sellerId, carId) {
+        return `${[buyerId, sellerId].sort().join("_")}_${carId}`;
+    }
+
+    function buildCarName(car) {
+        const brand = normalizeText(car.brand, 60);
+        const model = normalizeText(car.model, 60);
+        const year = car.year ? String(car.year) : "";
+
+        const full = [brand, model, year].filter(Boolean).join(" ");
+
+        return full || CHAT_CONFIG.DEFAULTS.UNKNOWN_CAR;
+    }
+
+    function getUserDisplayName(user) {
+        if (!user) {
+            return "";
+        }
+
+        if (user.displayName) {
+            return normalizeText(user.displayName, 100);
+        }
+
+        if (user.email) {
+            return normalizeText(user.email.split("@")[0], 80);
+        }
+
+        return "Användare";
+    }
+
+    function normalizeId(value) {
+        return String(value || "")
+            .trim()
+            .replace(/[^a-zA-Z0-9_\-]/g, "")
+            .slice(0, 160);
+    }
+
+    function normalizeText(value, maxLength = 160) {
+        return String(value ?? "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, maxLength);
+    }
+
+    function normalizeMessage(value) {
+        return String(value ?? "")
+            .replace(/\r\n/g, "\n")
+            .replace(/\n{4,}/g, "\n\n\n")
+            .trim()
+            .slice(0, CHAT_CONFIG.LIMITS.MESSAGE_MAX_LENGTH);
+    }
+
+    function formatTimestampShort(timestamp) {
+        const date = timestampToDate(timestamp);
+
+        if (!date) {
+            return "";
+        }
+
+        const now = new Date();
+        const sameDay =
+            date.getFullYear() === now.getFullYear() &&
+            date.getMonth() === now.getMonth() &&
+            date.getDate() === now.getDate();
+
+        if (sameDay) {
+            return new Intl.DateTimeFormat("sv-SE", {
+                hour: "2-digit",
+                minute: "2-digit"
+            }).format(date);
+        }
+
+        return new Intl.DateTimeFormat("sv-SE", {
+            month: "short",
+            day: "2-digit"
+        }).format(date);
+    }
+
+    function formatTimestampTime(timestamp) {
+        const date = timestampToDate(timestamp);
+
+        if (!date) {
+            return "...";
+        }
+
+        return new Intl.DateTimeFormat("sv-SE", {
+            hour: "2-digit",
+            minute: "2-digit"
+        }).format(date);
+    }
+
+    function timestampToDate(timestamp) {
+        if (!timestamp) {
+            return null;
+        }
+
+        if (typeof timestamp.toDate === "function") {
+            return timestamp.toDate();
+        }
+
+        if (timestamp instanceof Date) {
+            return timestamp;
+        }
+
+        return null;
+    }
+
+    function scrollMessagesToBottom() {
+        window.requestAnimationFrame(() => {
+            elements.msgArea.scrollTop = elements.msgArea.scrollHeight;
+        });
+    }
+
+    function createIcon(className) {
+        const icon = document.createElement("i");
+        icon.className = className;
+        return icon;
+    }
+
+    function clearElement(element) {
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
+    }
+
+    function attachGlobalErrorHandlers() {
+        window.addEventListener("unhandledrejection", (event) => {
+            console.error("[BILHK] Unhandled promise rejection:", event.reason);
+        });
+
+        window.addEventListener("error", (event) => {
+            console.error("[BILHK] Global messages page error:", event.error || event.message);
+        });
+    }
 </script>
+
 </body>
 </html>
