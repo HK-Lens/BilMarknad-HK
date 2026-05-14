@@ -75,21 +75,21 @@ const IS_FIREBASE_HOSTING =
     HOSTNAME.endsWith(".web.app") ||
     HOSTNAME.endsWith(".firebaseapp.com");
 
+const IS_GITHUB_PAGES =
+    HOSTNAME.endsWith(".github.io");
+
 const IS_PRODUCTION = !IS_LOCALHOST;
 
 /**
- * إذا أردت تشغيل Emulators أثناء التطوير فقط:
- * غيّر القيمة إلى true عند الحاجة.
+ * أثناء التطوير المحلي فقط يمكن تشغيل Firebase Emulators.
+ * اتركيها false الآن حتى لا يتعطل الموقع المنشور.
  */
 const USE_FIREBASE_EMULATORS = false;
 
 /**
- * App Check:
- * ضع reCAPTCHA Enterprise Site Key الحقيقي من Firebase Console.
- * إذا بقي فارغًا، لن يتم تشغيل App Check من هذا الملف.
- *
- * لا تضعي Secret Key هنا.
- * هذا فقط Site Key الخاص بالواجهة.
+ * Firebase App Check:
+ * ضعي هنا reCAPTCHA Enterprise Site Key فقط عندما تفعّلين App Check من Firebase Console.
+ * لا تضعي secret key هنا أبدًا.
  */
 const APP_CHECK_RECAPTCHA_ENTERPRISE_SITE_KEY = "";
 
@@ -98,16 +98,16 @@ const APP_CHECK_RECAPTCHA_ENTERPRISE_SITE_KEY = "";
  * 2. Firebase web config
  * ============================================================
  *
- * هذه القيم تظهر في المتصفح طبيعيًا في Firebase Web Apps.
- * لكنها لا تكفي وحدها للوصول للبيانات إذا كانت Security Rules صحيحة.
- *
- * يفضّل أن تقيّدي apiKey من Google Cloud Console:
- * - HTTP referrers
- * - Firebase APIs المطلوبة فقط
+ * تم الحفاظ على بيانات مشروعك القديمة بدل placeholder.
+ * هذه ليست Admin secrets، لكنها يجب أن تُحمى من سوء الاستخدام عبر:
+ * - Authorized domains
+ * - Firestore Rules
+ * - Storage Rules
+ * - API key restrictions من Google Cloud
  */
 
 const firebaseConfig = Object.freeze({
-    apiKey: "PUT_YOUR_FIREBASE_WEB_API_KEY_HERE",
+    apiKey: "AIzaSyDCsMbG5pT3y6MC6b05LEdFoByWM1nT7NY",
     authDomain: "bilmarknad-hk.firebaseapp.com",
     projectId: "bilmarknad-hk",
     storageBucket: "bilmarknad-hk.firebasestorage.app",
@@ -126,8 +126,10 @@ export const APP_META = Object.freeze({
     LONG_NAME: "BILHK Bilmarknad",
     DEFAULT_LANGUAGE: "sv",
     DEFAULT_COUNTRY: "SE",
+    HOSTNAME,
     IS_LOCALHOST,
     IS_FIREBASE_HOSTING,
+    IS_GITHUB_PAGES,
     IS_PRODUCTION
 });
 
@@ -177,7 +179,7 @@ validateFirebaseConfig(firebaseConfig);
  * 5. Initialize Firebase safely
  * ============================================================
  *
- * getApps().length يمنع الخطأ الشائع:
+ * getApps().length يمنع الخطأ:
  * Firebase App named '[DEFAULT]' already exists
  */
 
@@ -195,17 +197,16 @@ const firebaseDb = getFirestore(firebaseApp);
 const firebaseAuth = getAuth(firebaseApp);
 const firebaseStorage = getStorage(firebaseApp);
 
-/**
- * لغة رسائل Firebase Auth.
- */
 firebaseAuth.languageCode = APP_META.DEFAULT_LANGUAGE;
 
 /**
  * حفظ جلسة المستخدم في المتصفح.
- * مفيد لموقع إعلانات حقيقي حتى لا يخرج المستخدم كل مرة.
  */
 setPersistence(firebaseAuth, browserLocalPersistence).catch((error) => {
-    console.error("[BILHK Firebase] Could not set auth persistence:", error);
+    console.error("[BILHK Firebase] Could not set auth persistence:", {
+        code: error?.code,
+        message: error?.message
+    });
 });
 
 /**
@@ -229,7 +230,7 @@ provider.addScope("profile");
  * ============================================================
  *
  * لا يعمل إلا إذا وضعت Site Key صحيح.
- * App Check لا يغني عن Security Rules، لكنه يقلل إساءة الاستخدام.
+ * App Check يساعد في تقليل سوء الاستخدام، لكنه لا يغني عن Security Rules.
  */
 
 let appCheck = null;
@@ -243,7 +244,10 @@ if (IS_PRODUCTION && APP_CHECK_RECAPTCHA_ENTERPRISE_SITE_KEY) {
             isTokenAutoRefreshEnabled: true
         });
     } catch (error) {
-        console.error("[BILHK Firebase] App Check initialization failed:", error);
+        console.error("[BILHK Firebase] App Check initialization failed:", {
+            code: error?.code,
+            message: error?.message
+        });
     }
 }
 
@@ -256,23 +260,32 @@ if (IS_PRODUCTION && APP_CHECK_RECAPTCHA_ENTERPRISE_SITE_KEY) {
 if (IS_LOCALHOST && USE_FIREBASE_EMULATORS) {
     try {
         connectFirestoreEmulator(firebaseDb, "127.0.0.1", 8080);
+
         connectAuthEmulator(firebaseAuth, "http://127.0.0.1:9099", {
             disableWarnings: true
         });
+
         connectStorageEmulator(firebaseStorage, "127.0.0.1", 9199);
     } catch (error) {
-        console.warn("[BILHK Firebase] Emulator connection warning:", error);
+        console.warn("[BILHK Firebase] Emulator connection warning:", {
+            code: error?.code,
+            message: error?.message
+        });
     }
 }
 
 /**
  * ============================================================
- * 10. Helper functions
+ * 10. Public helper functions
  * ============================================================
  */
 
 export function getFirebaseProjectId() {
     return firebaseConfig.projectId;
+}
+
+export function getFirebaseAuthDomain() {
+    return firebaseConfig.authDomain;
 }
 
 export function getFirebaseStorageBucket() {
@@ -435,12 +448,20 @@ function validateFirebaseConfig(config) {
         );
     }
 
-    if (config.apiKey && config.apiKey.startsWith("AIza") === false && !String(config.apiKey).includes("PUT_YOUR")) {
+    if (
+        config.apiKey &&
+        config.apiKey.startsWith("AIza") === false &&
+        !String(config.apiKey).includes("PUT_YOUR")
+    ) {
         console.warn("[BILHK Firebase] apiKey format looks unusual. Please verify it from Firebase Console.");
     }
 
     if (!String(config.authDomain || "").endsWith(".firebaseapp.com")) {
         console.warn("[BILHK Firebase] authDomain looks unusual. Please verify it from Firebase Console.");
+    }
+
+    if (config.projectId !== "bilmarknad-hk") {
+        console.warn("[BILHK Firebase] projectId does not match the expected BILHK project.");
     }
 }
 
@@ -470,6 +491,7 @@ function cryptoRandomId() {
     if (window.crypto && window.crypto.getRandomValues) {
         const array = new Uint32Array(2);
         window.crypto.getRandomValues(array);
+
         return `${array[0].toString(36)}${array[1].toString(36)}`;
     }
 
