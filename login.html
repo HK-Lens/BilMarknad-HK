@@ -1,100 +1,355 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="sv" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logga in | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Logga in | BILHK Professional Access</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f4f6f9; --border: #e5e7eb; }
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e07210;
+            --primary-soft: #fff5eb;
+            --dark: #0f172a;
+            --dark-2: #1e293b;
+            --muted: #64748b;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --shadow-custom: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         
-        .auth-card { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); width: 100%; max-width: 450px; text-align: center; border: 1px solid var(--border); }
-        .logo { text-decoration: none; font-size: 30px; font-weight: 900; color: var(--dark); margin-bottom: 25px; display: block; }
+        body {
+            background: radial-gradient(circle at top right, #f1f5f9, #f8fafc);
+            color: var(--dark);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* --- تصميم بطاقة الدخول (Auth Card) --- */
+        .auth-container {
+            background: var(--white);
+            padding: 50px 45px;
+            border-radius: 35px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-custom);
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            font-size: 34px;
+            font-weight: 900;
+            text-decoration: none;
+            color: var(--dark);
+            margin-bottom: 25px;
+            display: block;
+            text-align: center;
+            letter-spacing: -1.5px;
+        }
         .logo span { color: var(--primary); }
+
+        .auth-header { text-align: center; margin-bottom: 35px; }
+        .auth-header h2 { font-size: 26px; font-weight: 800; color: var(--dark); margin-bottom: 10px; }
+        .auth-header p { color: var(--muted); font-size: 15px; }
+
+        /* --- تنسيق الحقول والمكونات --- */
+        .form-group { margin-bottom: 22px; position: relative; }
+        .form-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--dark-2); }
         
-        h2 { font-size: 22px; margin-bottom: 25px; color: var(--dark); }
+        .input-icon-wrapper { position: relative; }
+        .input-icon-wrapper i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            transition: var(--transition);
+        }
         
-        .form-group { text-align: left; margin-bottom: 15px; }
-        label { display: block; font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 6px; }
-        input { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f9fafb; font-size: 14px; outline: none; transition: 0.2s; }
-        input:focus { border-color: var(--primary); background: white; }
+        .form-input {
+            width: 100%;
+            padding: 16px 18px 16px 52px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
 
-        .forgot-link { text-align: right; margin-bottom: 20px; }
-        .forgot-link a { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 600; }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 5px var(--primary-soft);
+        }
+        .form-input:focus + i { color: var(--primary); }
 
-        .btn-primary { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        .btn-primary:hover { background: #e07210; transform: translateY(-2px); }
-        .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+        .pass-toggle {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            cursor: pointer;
+            z-index: 10;
+        }
 
-        .footer-links { margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; font-size: 14px; color: #64748b; }
-        .footer-links a { color: var(--primary); text-decoration: none; font-weight: 700; }
+        /* --- الأزرار الاحترافية --- */
+        .btn-auth {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .btn-auth:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 130, 32, 0.25);
+        }
+        .btn-auth:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
+
+        .divider {
+            margin: 30px 0;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
+        .divider:not(:empty)::before { margin-right: 15px; }
+        .divider:not(:empty)::after { margin-left: 15px; }
+
+        .btn-magic {
+            background: var(--white);
+            color: var(--dark);
+            border: 1.5px solid var(--border);
+        }
+        .btn-magic:hover { border-color: var(--dark); background: var(--bg); }
+
+        .auth-footer { margin-top: 30px; text-align: center; font-size: 14px; color: var(--muted); }
+        .auth-footer a { color: var(--primary); text-decoration: none; font-weight: 700; transition: 0.2s; }
+        .auth-footer a:hover { text-decoration: underline; }
+
+        /* --- شاشة التحميل --- */
+        #globalLoader {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner { width: 45px; height: 45px; border: 4px solid var(--border); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
     </style>
 </head>
 <body>
 
-<div class="auth-card">
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <h2>Välkommen tillbaka</h2>
-    
-    <form id="loginForm">
-        <div class="form-group">
-            <label>E-postadress</label>
-            <input type="email" id="email" placeholder="din@epost.se" required>
+    <div id="globalLoader">
+        <div style="text-align: center;">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; font-weight: 700; color: var(--dark);">Säker anslutning...</p>
         </div>
-        
-        <div class="form-group">
-            <label>Lösenord</label>
-            <input type="password" id="pass" placeholder="Din lösenord" required>
-        </div>
-
-        <div class="forgot-link">
-            <a href="forgot-password.html">Glömt lösenord?</a>
-        </div>
-
-        <button type="submit" class="btn-primary" id="loginBtn">Logga in</button>
-    </form>
-
-    <div class="footer-links">
-        Har du inget konto? <a href="signup.html">Skapa ett här</a>
     </div>
-</div>
 
-<script type="module">
-    import { auth } from './firebase-config.js';
-    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-    const loginForm = document.getElementById('loginForm');
-    const loginBtn = document.getElementById('loginBtn');
-
-    loginForm.onsubmit = async (e) => {
-        e.preventDefault();
+    <div class="auth-container">
+        <a href="index.html" class="logo">BIL<span>HK</span></a>
         
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('pass').value;
+        <div class="auth-header">
+            <h2>Välkommen tillbaka</h2>
+            <p>Logga in för att hantera dina annonser och meddelanden.</p>
+        </div>
 
-        loginBtn.disabled = true;
-        loginBtn.innerText = "Loggar in...";
+        <form id="passwordLoginForm">
+            <div class="form-group">
+                <label>E-postadress</label>
+                <div class="input-icon-wrapper">
+                    <input type="email" id="emailInput" class="form-input" placeholder="din@epost.se" required>
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+            </div>
 
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            // التوجيه للصفحة الرئيسية بعد النجاح
-            window.location.href = "index.html"; 
-        } catch (error) {
-            console.error(error);
-            // ترجمة الأخطاء للعامل
-            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                alert("Fel e-postadress eller lösenord.");
-            } else if (error.code === 'auth/too-many-requests') {
-                alert("För många misslyckade försök. Försök igen senare.");
-            } else {
-                alert("Ett fel uppstod: " + error.message);
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <label style="margin-bottom: 0;">Lösenord</label>
+                    <a href="forgot-password.html" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 700;">Glömt lösenord?</a>
+                </div>
+                <div class="input-icon-wrapper">
+                    <input type="password" id="passInput" class="form-input" placeholder="••••••••" required>
+                    <i class="fa-solid fa-lock"></i>
+                    <i class="fa-solid fa-eye-slash pass-toggle" id="togglePass"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-auth" id="loginBtn">
+                <span>Logga in</span>
+                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            </button>
+        </form>
+
+        <div class="divider">ELLER</div>
+
+        <button class="btn-auth btn-magic" id="magicLinkBtn">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Logga in med e-postlänk</span>
+        </button>
+
+        <div class="auth-footer">
+            Har du inget konto? <a href="register.html">Skapa ett här</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import { 
+            signInWithEmailAndPassword, 
+            sendSignInLinkToEmail,
+            browserLocalPersistence,
+            setPersistence
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const passForm = document.getElementById('passwordLoginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const magicBtn = document.getElementById('magicLinkBtn');
+        const loader = document.getElementById('globalLoader');
+
+        // --- 1. معالجة الدخول بكلمة المرور ---
+        passForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('emailInput').value.trim();
+            const password = document.getElementById('passInput').value;
+
+            toggleLoading(true);
+
+            try {
+                // ضبط استمرارية الجلسة ليبقى المستخدم مسجلاً لدخوله
+                await setPersistence(auth, browserLocalPersistence);
+                await signInWithEmailAndPassword(auth, email, password);
+
+                // النجاح
+                window.location.href = "dashboard-fixed.html";
+            } catch (error) {
+                toggleLoading(false);
+                handleAuthError(error.code);
             }
-            loginBtn.disabled = false;
-            loginBtn.innerText = "Logga in";
+        });
+
+        // --- 2. نظام الرابط السحري (Passwordless) ---
+        magicBtn.addEventListener('click', async () => {
+            const email = document.getElementById('emailInput').value.trim();
+            
+            if (!email) {
+                Swal.fire('E-post saknas', 'Vänligen ange din e-postadress först.', 'warning');
+                return;
+            }
+
+            const actionCodeSettings = {
+                url: 'https://bilmarknad-hk.web.app/confirm.html', // رابط التأكيد الخاص بك
+                handleCodeInApp: true,
+            };
+
+            toggleLoading(true);
+
+            try {
+                await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+                window.localStorage.setItem('emailForSignIn', email);
+                
+                toggleLoading(false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Länk skickad!',
+                    text: 'Vi har skickat en inloggningslänk till din e-post. Kontrollera din inkorg.',
+                    confirmButtonColor: '#f58220'
+                });
+            } catch (error) {
+                toggleLoading(false);
+                handleAuthError(error.code);
+            }
+        });
+
+        // --- 3. وظائف مساعدة ---
+        function toggleLoading(isLoading) {
+            loader.style.display = isLoading ? 'flex' : 'none';
+            loginBtn.disabled = isLoading;
+            magicBtn.disabled = isLoading;
         }
-    };
-</script>
+
+        function handleAuthError(code) {
+            let msg = "Ett oväntat fel uppstod. Försök igen senare.";
+            
+            switch (code) {
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                case 'auth/invalid-credential':
+                    msg = "Fel e-postadress eller lösenord.";
+                    break;
+                case 'auth/too-many-requests':
+                    msg = "För många misslyckade försök. Kontot är tillfälligt låst.";
+                    break;
+                case 'auth/invalid-email':
+                    msg = "E-postadressen är inte giltig.";
+                    break;
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Inloggning misslyckades',
+                text: msg,
+                confirmButtonColor: '#0f172a'
+            });
+        }
+
+        // إظهار وإخفاء كلمة المرور
+        const togglePass = document.getElementById('togglePass');
+        const passInput = document.getElementById('passInput');
+        
+        togglePass.onclick = () => {
+            const isPass = passInput.type === 'password';
+            passInput.type = isPass ? 'text' : 'password';
+            togglePass.classList.toggle('fa-eye');
+            togglePass.classList.toggle('fa-eye-slash');
+        };
+    </script>
 </body>
 </html>
