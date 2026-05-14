@@ -1,15 +1,28 @@
 /**
- * BILHK - Firebase Core Configuration & Initialization
- * الإصدار الاحترافي: V10.8.0 Modular SDK
- * هذا الملف هو المحرك الأساسي لربط التطبيق بقاعدة البيانات ونظام المصادقة.
+ * BILHK - النواة المركزية لإعدادات Firebase
+ * الإصدار المحترف: V10.8.0 Modular SDK
+ * ---------------------------------------------------------
+ * هذا الملف يدير الاتصال بـ:
+ * 1. Firebase Auth (نظام المصادقة)
+ * 2. Firestore DB (قاعدة بيانات السيارات والمحادثات)
+ * 3. Firebase Storage (مخزن صور السيارات)
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { getAuth, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+    getFirestore, 
+    enableIndexedDbPersistence, 
+    initializeFirestore, 
+    CACHE_SIZE_UNLIMITED 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { 
+    getAuth, 
+    setPersistence, 
+    browserLocalPersistence 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-// --- 1. إعدادات الاتصال (Credentials) ---
+// --- 1. مفاتيح الربط الفنية (Credentials) ---
 const firebaseConfig = {
     apiKey: "AIzaSyDCsMbG5pT3y6MC6b05LEdFoByWM1nT7NY",
     authDomain: "bilmarknad-hk.firebaseapp.com",
@@ -18,53 +31,68 @@ const firebaseConfig = {
     appId: "1:284008879407:web:66bee60b51ec277e8dbdda"
 };
 
-// --- 2. تهيئة التطبيق (Initialization) ---
+// --- 2. تهيئة التطبيق الأساسي ---
 const app = initializeApp(firebaseConfig);
 
 // --- 3. تهيئة نظام المصادقة (Authentication) ---
 const auth = getAuth(app);
 
-// ضبط استمرارية الجلسة: يبقى المستخدم مسجلاً للدخول حتى لو أغلق المتصفح
+/**
+ * ضبط استمرارية الجلسة (Persistence):
+ * نستخدم browserLocalPersistence لضمان بقاء المستخدم مسجلاً لدخوله 
+ * حتى بعد إغلاق المتصفح أو إعادة تشغيل الجهاز.
+ */
 setPersistence(auth, browserLocalPersistence)
     .then(() => {
-        console.log("Firebase Auth: Persistence set to local.");
+        console.log("BILHK Auth: Persistence established (Local).");
     })
     .catch((error) => {
-        console.error("Firebase Auth Error:", error.message);
+        console.error("BILHK Auth Error: Could not set persistence.", error.message);
     });
 
-// --- 4. تهيئة قاعدة البيانات (Firestore) ---
-const db = getFirestore(app);
+// --- 4. تهيئة قاعدة البيانات (Firestore) مع إعدادات متقدمة ---
+/**
+ * نستخدم initializeFirestore بدلاً من getFirestore لتخصيص حجم الذاكرة المؤقتة.
+ * ضبط الكاش ليكون غير محدود (UNLIMITED) يسمح بتصفح أسرع للإعلانات المحملة مسبقاً.
+ */
+const db = initializeFirestore(app, {
+    cacheSizeBytes: CACHE_SIZE_UNLIMITED
+});
 
-// تفعيل ميزة التخزين المؤقت (Offline Persistence) 
-// لتمكين الموقع من العمل وتصفح السيارات حتى في حال ضعف الإنترنت
+/**
+ * تفعيل ميزة العمل بدون إنترنت (Offline Persistence):
+ * تسمح هذه الميزة للمستخدمين برؤية إعلانات السيارات التي تصفحوها سابقاً 
+ * وإرسال الرسائل التي سيتم مزامنتها فور عودة الاتصال.
+ */
 enableIndexedDbPersistence(db).catch((err) => {
-    if (err.code == 'failed-precondition') {
-        // تحدث عادة عند فتح الموقع في عدة تبويبات متزامنة
-        console.warn("Firestore Persistence failed: Multiple tabs open.");
-    } else if (err.code == 'unimplemented') {
-        // المتصفح لا يدعم هذه الميزة
-        console.warn("Firestore Persistence: Browser not supported.");
+    if (err.code === 'failed-precondition') {
+        // يحدث هذا الخطأ إذا فتح المستخدم الموقع في عدة تبويبات متزامنة
+        console.warn("Firestore Persistence: Multiple tabs detected, offline mode active in one tab only.");
+    } else if (err.code === 'unimplemented') {
+        // يحدث إذا كان المتصفح قديماً ولا يدعم تقنيات التخزين الحديثة
+        console.warn("Firestore Persistence: Browser does not support offline storage.");
     }
 });
 
-// --- 5. تهيئة نظام تخزين الملفات (Storage) ---
+// --- 5. تهيئة مخزن الملفات (Cloud Storage) ---
 const storage = getStorage(app);
 
-// --- 6. تصدير المراجع البرمجية (Exports) ---
+// --- 6. التصدير البرمجي (Exports) ---
 /**
- * نقوم بتصدير هذه المراجع ليتم استخدامها في الملفات الأخرى مثل:
- * index.html, dashboard.html, sell.html, app.js
+ * تصدير المراجع لاستخدامها في ملفات المشروع الأخرى:
+ * - app.js: لعرض السيارات والفلترة.
+ * - dashboard.html: لإدارة الحساب.
+ * - sell.html: لرفع صور السيارات الجديدة.
  */
 export { 
     app, 
     auth, 
     db, 
     storage,
-    firebaseConfig // مفيد أحياناً للتحقق من الإعدادات برمجياً
+    firebaseConfig 
 };
 
-// التصدير الافتراضي للإعدادات الخام
+// التصدير الافتراضي لتسهيل الاستدعاء السريع
 export default firebaseConfig;
 
-console.log("BILHK Firebase Engine: System Online.");
+console.log("BILHK Firebase Infrastructure: Online & Optimized.");
