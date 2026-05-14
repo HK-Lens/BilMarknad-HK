@@ -20,90 +20,85 @@
         body { background-color: var(--bg); color: var(--dark); overflow-x: hidden; }
 
         /* --- Navigation --- */
-        nav { background: var(--white); padding: 15px 6%; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
+        nav { background: var(--white); padding: 15px 6%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
         .logo { font-size: 26px; font-weight: 900; text-decoration: none; color: var(--dark); }
         .logo span { color: var(--primary); }
 
-        /* --- Body Type Shortcuts --- */
-        .body-shortcuts {
-            background: var(--white);
-            padding: 20px 6%;
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            border-bottom: 1px solid var(--border);
-            scrollbar-width: none;
+        /* --- Body Type Shortcuts (Horizontal Bar) --- */
+        .body-bar {
+            background: var(--white); padding: 20px 6%; display: flex; gap: 15px; 
+            overflow-x: auto; border-bottom: 1px solid var(--border); scrollbar-width: none;
         }
         .body-btn {
-            flex: 0 0 auto;
-            padding: 10px 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background: var(--bg);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            transition: 0.3s;
-            white-space: nowrap;
+            flex: 0 0 auto; padding: 12px 25px; border-radius: 15px; border: 1px solid var(--border);
+            background: var(--bg); cursor: pointer; display: flex; align-items: center; gap: 10px;
+            font-weight: 800; transition: 0.3s; white-space: nowrap; font-size: 14px;
         }
         .body-btn:hover, .body-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
         .body-btn i { color: var(--primary); }
 
-        /* --- Layout --- */
-        .main-wrapper {
-            max-width: 1600px; margin: 30px auto; padding: 0 4%;
-            display: grid; grid-template-columns: 350px 1fr; gap: 30px;
-        }
+        /* --- Main Layout --- */
+        .wrapper { max-width: 1650px; margin: 30px auto; padding: 0 3%; display: grid; grid-template-columns: 380px 1fr; gap: 30px; }
 
-        /* --- Advanced Filter Sidebar --- */
+        /* --- Sidebar: Advanced & Deep Search --- */
         .sidebar { position: sticky; top: 100px; height: calc(100vh - 120px); overflow-y: auto; padding-right: 10px; }
-        .filter-card { background: var(--white); border-radius: 25px; padding: 25px; border: 1px solid var(--border); box-shadow: var(--shadow); }
-        .filter-section { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-        .filter-section:last-child { border: none; }
-        .section-title { font-size: 13px; font-weight: 900; text-transform: uppercase; color: var(--muted); margin-bottom: 15px; display: flex; justify-content: space-between; }
+        .filter-card { background: var(--white); border-radius: 30px; padding: 30px; border: 1px solid var(--border); box-shadow: var(--shadow); }
         
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
-        .pro-input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); font-size: 14px; font-weight: 600; }
+        .section-header { font-size: 12px; font-weight: 900; text-transform: uppercase; color: var(--muted); margin: 25px 0 15px; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .section-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        /* Deep Search Feature Grid (35 Fields) */
-        .deep-features-grid { display: grid; grid-template-columns: 1fr; gap: 10px; max-height: 400px; overflow-y: auto; padding: 10px; background: var(--bg); border-radius: 10px; }
-        .feature-item { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
-        .feature-item input { accent-color: var(--primary); width: 16px; height: 16px; }
+        .input-box { margin-bottom: 15px; }
+        .input-box label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
+        .pro-input { width: 100%; padding: 13px 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); font-size: 14px; font-weight: 600; transition: 0.3s; }
+        .pro-input:focus { border-color: var(--primary); background: white; outline: none; }
 
-        .btn-apply { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        /* Deep Search (35 Features) Grid */
+        .features-container { 
+            display: grid; grid-template-columns: 1fr; gap: 12px; max-height: 450px; 
+            overflow-y: auto; padding: 15px; background: var(--bg); border-radius: 15px; border: 1px solid var(--border);
+        }
+        .feature-label { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .feature-label:hover { color: var(--primary); }
+        .feature-label input { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+
+        .action-btn { 
+            width: 100%; padding: 18px; background: var(--primary); color: white; 
+            border: none; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; margin-top: 20px;
+            transition: 0.3s; box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2);
+        }
+        .action-btn:hover { background: var(--primary-dark); transform: translateY(-3px); }
 
         /* --- Results Grid --- */
-        .results-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-        .car-card { background: var(--white); border-radius: 30px; border: 1px solid var(--border); overflow: hidden; transition: 0.4s; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
-        .car-card:hover { transform: translateY(-10px); box-shadow: var(--shadow); border-color: var(--primary); }
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 30px; }
         
-        .img-box { width: 100%; height: 220px; background: #eee; position: relative; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .price-tag { position: absolute; bottom: 15px; right: 15px; background: var(--primary); color: white; padding: 8px 16px; border-radius: 12px; font-weight: 900; }
+        .car-card { background: var(--white); border-radius: 35px; border: 1px solid var(--border); overflow: hidden; transition: 0.4s; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
+        .car-card:hover { transform: translateY(-12px); border-color: var(--primary); box-shadow: var(--shadow); }
+        
+        .img-portal { width: 100%; height: 240px; background: #eee; position: relative; }
+        .img-portal img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
+        .car-card:hover .img-portal img { transform: scale(1.05); }
+        .price-badge { position: absolute; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 10px 20px; border-radius: 15px; font-weight: 900; font-size: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
-        .card-info { padding: 20px; flex-grow: 1; }
-        .card-info h3 { font-size: 19px; font-weight: 800; margin-bottom: 10px; }
-        .specs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-        .spec { background: var(--bg); padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--muted); }
+        .card-details { padding: 25px; flex-grow: 1; }
+        .card-details h3 { font-size: 21px; font-weight: 800; margin-bottom: 15px; }
+        .tag-cluster { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tag-item { background: var(--bg); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--muted); }
 
-        .not-found { grid-column: 1/-1; text-align: center; padding: 100px; }
+        .empty-state { grid-column: 1/-1; text-align: center; padding: 100px 40px; border: 2px dashed var(--border); border-radius: 40px; }
 
-        @media (max-width: 1100px) { .main-wrapper { grid-template-columns: 1fr; } .sidebar { display: none; } }
+        @media (max-width: 1100px) { .wrapper { grid-template-columns: 1fr; } .sidebar { display: none; } }
     </style>
 </head>
 <body>
 
     <nav>
         <a href="index.html" class="logo">BIL<span>HK</span></a>
-        <p id="totalAds">Laddar...</p>
+        <div style="font-weight: 800; color: var(--muted);" id="carCounter">Laddar bilar...</div>
     </nav>
 
-    <div class="body-shortcuts" id="bodyShortcuts">
+    <div class="body-bar" id="bodyShortcuts">
         <button class="body-btn" data-type="Sedan"><i class="fa-solid fa-car"></i> Sedan</button>
-        <button class="body-btn" data-type="SUV"><i class="fa-solid fa-truck-monster"></i> SUV / Crossover</button>
+        <button class="body-btn" data-type="SUV"><i class="fa-solid fa-truck-monster"></i> SUV</button>
         <button class="body-btn" data-type="Halvkombi"><i class="fa-solid fa-car-rear"></i> Halvkombi</button>
         <button class="body-btn" data-type="Kombi"><i class="fa-solid fa-car-side"></i> Kombi</button>
         <button class="body-btn" data-type="Coupé"><i class="fa-solid fa-car-burst"></i> Coupé</button>
@@ -111,33 +106,29 @@
         <button class="body-btn" data-type="Pickup"><i class="fa-solid fa-truck-pickup"></i> Pickup</button>
     </div>
 
-    <div class="main-wrapper">
+    <div class="wrapper">
         <aside class="sidebar">
             <div class="filter-card">
-                <div class="filter-section">
-                    <span class="section-title">Snabbfiltrering</span>
-                    <div class="input-group"><label>Märke</label><select id="fBrand" class="pro-input"><option value="all">Alla</option></select></div>
-                    <div class="input-group"><label>Bränsletyp</label><select id="fFuel" class="pro-input"><option value="all">Alla</option><option>Bensin</option><option>Diesel</option><option>El</option><option>Hybrid</option></select></div>
-                    <div class="input-group"><label>Växellåda</label><select id="fGear" class="pro-input"><option value="all">Alla</option><option>Automat</option><option>Manuell</option></select></div>
-                    <div class="input-group"><label>Stad</label><input type="text" id="fCity" class="pro-input" placeholder="T.ex. Stockholm"></div>
-                    <div class="input-group"><label>Pris från</label><input type="number" id="fMinPrice" class="pro-input" placeholder="0"></div>
-                    <div class="input-group"><label>Pris till</label><input type="number" id="fMaxPrice" class="pro-input" placeholder="1 000 000+"></div>
-                    <div class="input-group"><label>Årsmodell min</label><input type="number" id="fMinYear" class="pro-input" placeholder="2010"></div>
-                    <div class="input-group"><label>Miltal max (mil)</label><input type="number" id="fMaxMil" class="pro-input" placeholder="20 000"></div>
-                </div>
+                <div class="section-header">Normal Sökning</div>
+                <div class="input-box"><label>Märke</label><select id="fBrand" class="pro-input"><option value="all">Alla märken</option></select></div>
+                <div class="input-box"><label>Bränsletyp</label><select id="fFuel" class="pro-input"><option value="all">Alla</option><option>Bensin</option><option>Diesel</option><option>El</option><option>Hybrid</option></select></div>
+                <div class="input-box"><label>Växellåda</label><select id="fGear" class="pro-input"><option value="all">Alla</option><option>Automat</option><option>Manuell</option></select></div>
+                <div class="input-box"><label>Stad / Ort</label><input type="text" id="fCity" class="pro-input" placeholder="T.ex. Stockholm"></div>
+                <div class="input-box"><label>Pris (Från)</label><input type="number" id="fMinPrice" class="pro-input" placeholder="0 kr"></div>
+                <div class="input-box"><label>Pris (Till)</label><input type="number" id="fMaxPrice" class="pro-input" placeholder="Obegränsat"></div>
+                <div class="input-box"><label>Årsmodell (Min)</label><input type="number" id="fMinYear" class="pro-input" placeholder="2015"></div>
+                <div class="input-box"><label>Miltal (Max mil)</label><input type="number" id="fMaxMil" class="pro-input" placeholder="20 000"></div>
 
-                <div class="filter-section">
-                    <span class="section-title">Teknisk Utrustning (35+)</span>
-                    <div class="deep-features-grid" id="deepFeatures">
-                        </div>
-                </div>
+                <div class="section-header">Djup Sökning (Mera val)</div>
+                <div class="features-container" id="deepFeaturesBox">
+                    </div>
 
-                <button class="btn-apply" id="applySearch">Visa resultat</button>
+                <button class="action-btn" id="runSearch">Uppdatera Sökning</button>
             </div>
         </aside>
 
         <main>
-            <div class="results-container" id="resultsGrid">
+            <div class="results-grid" id="mainGrid">
                 </div>
         </main>
     </div>
@@ -147,138 +138,141 @@
         import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import carData from './cars-data.js';
 
-        const features = [
-            "Backkamera", "Parkeringssensorer", "Dragkrok", "Skinnklädsel", "Panoramaglastak", 
-            "Apple CarPlay", "Android Auto", "Bluetooth", "Adaptiv farthållare", "Dödavinkel-varning",
-            "LED-strålkastare", "Elstolar", "Sätesvärme fram", "Sätesvärme bak", "Rattvärme",
-            "Keyless Entry", "Keyless Go", "Elektrisk bagagelucka", "360-kamera", "Head-up display",
-            "Navigationssystem", "Larm", "Fyrhjulsdrift", "Luftfjädring", "Sportstolar",
-            "Tonade rutor", "Multifunktionsratt", "Regnsensor", "Start-/stoppfunktion", "Vägfilsassistans",
-            "Elinfällbara sidospeglar", "Avbländande backspegel", "ACC / Klimatanläggning", "ISOFIX-fästen", "Euro 6"
+        // 35 Deep Search Features
+        const deepFeaturesList = [
+            "Backkamera", "Dragkrok", "Panoramaglastak", "Skinnklädsel", "Bluetooth", "Navigation (GPS)",
+            "360-kamera", "Adaptiv farthållare", "Dödavinkel-varning", "LED-strålkastare", "Elstolar",
+            "Apple CarPlay", "Android Auto", "Parkeringssensorer", "Sätesvärme fram", "Sätesvärme bak",
+            "Rattvärme", "Keyless Go", "Keyless Entry", "Elektrisk bagagelucka", "Head-up display",
+            "Fyrhjulsdrift (4WD)", "Luftfjädring", "Sportstolar", "Tonade rutor", "Multifunktionsratt",
+            "Regnsensor", "Start-/stoppfunktion", "Vägfilsassistans", "Elinfällbara sidospeglar",
+            "Avbländande backspegel", "ACC / Klimatanläggning", "ISOFIX-fästen", "Euro 6", "Larm"
         ];
 
         let allCars = [];
         const urlParams = new URLSearchParams(window.location.search);
 
-        // --- Initialization ---
-        function init() {
-            // Inject 35 Features
-            const featureBox = document.getElementById('deepFeatures');
-            features.sort().forEach(feat => {
+        async function initialize() {
+            // 1. Inject 35 features
+            const featureBox = document.getElementById('deepFeaturesBox');
+            deepFeaturesList.sort().forEach(feat => {
                 featureBox.innerHTML += `
-                    <label class="feature-item">
-                        <input type="checkbox" value="${feat}" class="deep-check"> ${feat}
+                    <label class="feature-label">
+                        <input type="checkbox" value="${feat}" class="deep-checkbox"> ${feat}
                     </label>`;
             });
 
-            // Inject Brands
+            // 2. Inject Brands
             const bSelect = document.getElementById('fBrand');
             if(carData) Object.keys(carData).sort().forEach(b => {
-                bSelect.innerHTML += `<option value="${b}">${b}</option>`;
+                const opt = document.createElement('option');
+                opt.value = b; opt.innerText = b;
+                bSelect.appendChild(opt);
             });
 
-            syncWithURL();
+            // 3. Initial Data Fetch
             fetchData();
         }
 
         async function fetchData() {
-            const grid = document.getElementById('resultsGrid');
             try {
-                // جلب كل البيانات النشطة لضمان دقة الفلترة المحلية
+                // جلب كل الإعلانات المفعلة (active: true)
                 const snap = await getDocs(query(collection(db, "cars"), where("active", "==", true)));
                 allCars = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                applyFilters();
+                
+                // مزامنة مبدئية مع الرابط إذا وجد
+                if(urlParams.get('brand')) document.getElementById('fBrand').value = urlParams.get('brand');
+                
+                performFiltering();
             } catch (err) {
-                console.error(err);
-                grid.innerHTML = "Ett fel uppstod.";
+                console.error("Fetch Error:", err);
             }
         }
 
-        function applyFilters() {
+        function performFiltering() {
             const fBrand = document.getElementById('fBrand').value;
             const fFuel = document.getElementById('fFuel').value;
             const fGear = document.getElementById('fGear').value;
-            const fCity = document.getElementById('fCity').value.toLowerCase();
+            const fCity = document.getElementById('fCity').value.trim().toLowerCase();
             const minP = Number(document.getElementById('fMinPrice').value) || 0;
             const maxP = Number(document.getElementById('fMaxPrice').value) || Infinity;
             const minY = Number(document.getElementById('fMinYear').value) || 0;
             const maxM = Number(document.getElementById('fMaxMil').value) || Infinity;
-            
-            // Body Type from shortcuts
-            const activeBody = document.querySelector('.body-btn.active')?.dataset.type;
 
-            // Deep Features selected
-            const selectedFeatures = Array.from(document.querySelectorAll('.deep-check:checked')).map(c => c.value);
+            const activeBody = document.querySelector('.body-btn.active')?.dataset.type;
+            const selectedFeatures = Array.from(document.querySelectorAll('.deep-checkbox:checked')).map(c => c.value);
 
             const filtered = allCars.filter(car => {
-                const matchBrand = fBrand === 'all' || car.brand === fBrand;
-                const matchFuel = fFuel === 'all' || car.fuel === fFuel;
-                const matchGear = fGear === 'all' || car.transmission === fGear;
-                const matchCity = !fCity || (car.city && car.city.toLowerCase().includes(fCity));
-                const matchPrice = Number(car.price) >= minP && Number(car.price) <= maxP;
-                const matchYear = Number(car.year) >= minY;
-                const matchMil = Number(car.mileage) <= maxM;
-                const matchBody = !activeBody || car.karosseri === activeBody;
+                // منطق "تجاهل إذا كان فارغاً"
+                const matchBrand = (fBrand === 'all') ? true : car.brand === fBrand;
+                const matchFuel = (fFuel === 'all') ? true : car.fuel === fFuel;
+                const matchGear = (fGear === 'all') ? true : car.transmission === fGear;
+                const matchCity = (!fCity) ? true : (car.city && car.city.toLowerCase().includes(fCity));
+                const matchPrice = (Number(car.price) >= minP && Number(car.price) <= maxP);
+                const matchYear = (Number(car.year) >= minY);
+                const matchMil = (Number(car.mileage) <= maxM);
+                const matchBody = (!activeBody) ? true : car.karosseri === activeBody;
 
-                // Deep matching: التأكد من وجود كل الميزات المختارة في مصفوفة ميزات السيارة
-                const matchFeatures = selectedFeatures.every(f => car.features && car.features.includes(f));
+                // منطق البحث العميق الذكي:
+                // إذا لم يتم اختيار أي ميزة، النتيجة دائماً صحيحة.
+                // إذا تم الاختيار، يجب أن تتوفر جميع الميزات المختارة في مصفوفة ميزات السيارة.
+                const matchDeep = (selectedFeatures.length === 0) ? true : 
+                    selectedFeatures.every(f => car.features && car.features.includes(f));
 
-                return matchBrand && matchFuel && matchGear && matchCity && matchPrice && matchYear && matchMil && matchBody && matchFeatures;
+                return matchBrand && matchFuel && matchGear && matchCity && matchPrice && matchYear && matchMil && matchBody && matchDeep;
             });
 
-            render(filtered);
+            renderResults(filtered);
         }
 
-        function render(cars) {
-            const grid = document.getElementById('resultsGrid');
-            const total = document.getElementById('totalAds');
+        function renderResults(cars) {
+            const grid = document.getElementById('mainGrid');
+            const counter = document.getElementById('carCounter');
             grid.innerHTML = "";
-            total.innerText = `${cars.length} bilar hittades`;
+            counter.innerText = `${cars.length} bilar tillgängliga`;
 
             if(cars.length === 0) {
-                grid.innerHTML = `<div class="not-found"><h2>Inga träffar</h2><p>Försök ändra dina filter.</p></div>`;
+                grid.innerHTML = `<div class="empty-state"><h2>Inga träffar hittades</h2><p>Försök att nollställa dina filter eller sök bredare.</p></div>`;
                 return;
             }
 
             cars.forEach(car => {
-                const img = car.images?.[0] || 'assets/placeholder.jpg';
+                const img = car.images?.[0] || 'assets/placeholder-car.jpg';
                 grid.innerHTML += `
                     <a href="details.html?id=${car.id}" class="car-card">
-                        <div class="img-box">
+                        <div class="img-portal">
                             <img src="${img}" loading="lazy">
-                            <div class="price-tag">${Number(car.price).toLocaleString()} kr</div>
+                            <div class="price-badge">${Number(car.price).toLocaleString()} kr</div>
                         </div>
-                        <div class="card-info">
+                        <div class="card-details">
                             <h3>${car.brand} ${car.model}</h3>
-                            <div class="specs">
-                                <span class="spec">${car.year}</span>
-                                <span class="spec">${car.mileage} mil</span>
-                                <span class="spec">${car.fuel}</span>
-                                <span class="spec">${car.transmission}</span>
+                            <div class="tag-cluster">
+                                <span class="tag-item">${car.year}</span>
+                                <span class="tag-item">${car.mileage} mil</span>
+                                <span class="tag-item">${car.fuel}</span>
+                                <span class="tag-item">${car.transmission}</span>
                             </div>
                         </div>
                     </a>`;
             });
         }
 
-        // --- Events ---
-        document.getElementById('applySearch').onclick = applyFilters;
+        // --- Event Orchestration ---
+        document.getElementById('runSearch').onclick = performFiltering;
 
         document.querySelectorAll('.body-btn').forEach(btn => {
             btn.onclick = () => {
-                document.querySelectorAll('.body-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                applyFilters();
+                if(btn.classList.contains('active')) {
+                    btn.classList.remove('active');
+                } else {
+                    document.querySelectorAll('.body-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                }
+                performFiltering();
             };
         });
 
-        function syncWithURL() {
-            // مزامنة مبدئية إذا كان المستخدم قادماً من الصفحة الرئيسية بماركة معينة
-            const b = urlParams.get('brand');
-            if(b) document.getElementById('fBrand').value = b;
-        }
-
-        init();
+        initialize();
     </script>
 </body>
 </html>
