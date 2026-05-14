@@ -2,271 +2,2178 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fordonsdetaljer | BILHK</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.min.css">
-    
-    <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --reg-blue: #005599; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); line-height: 1.6; }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
-        /* معرض الصور الاحترافي */
-        .gallery-container {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 15px;
-            margin-bottom: 30px;
-            height: 500px;
-            border-radius: 24px;
-            overflow: hidden;
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fordonsdetaljer | BILHK</title>
+
+    <meta name="description" content="Detaljsida för fordonsannons på BILHK.">
+
+    <meta name="robots" content="index, follow">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.min.css">
+
+    <style>
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e67312;
+            --primary-soft: rgba(245, 130, 32, 0.12);
+
+            --dark: #0f172a;
+            --dark-soft: #1e293b;
+
+            --text: #0f172a;
+            --muted: #64748b;
+            --muted-light: #94a3b8;
+
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-soft: #f1f5f9;
+
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --success: #16a34a;
+            --success-soft: rgba(22, 163, 74, 0.10);
+
+            --danger: #dc2626;
+            --danger-soft: rgba(220, 38, 38, 0.10);
+
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.13);
+
+            --reg-blue: #005599;
+
+            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
+            --shadow-lg: 0 30px 90px rgba(15, 23, 42, 0.18);
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 30px;
+            --radius-full: 999px;
+
+            --max-width: 1220px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at 12% 12%, rgba(245, 130, 32, 0.14), transparent 28%),
+                radial-gradient(circle at 88% 8%, rgba(15, 23, 42, 0.10), transparent 31%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font-family: inherit;
             cursor: pointer;
         }
-        .main-stage { width: 100%; height: 100%; position: relative; }
-        .main-stage img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .main-stage:hover img { transform: scale(1.03); }
-        
-        .side-stack { display: grid; grid-template-rows: 1fr 1fr; gap: 15px; }
-        .side-stack img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* منطقة الأكشن: اللوحة والزر */
-        .header-bar {
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        .top-bar {
+            width: 100%;
+            background: linear-gradient(90deg, var(--dark) 0%, var(--dark-soft) 65%, #2b1d12 100%);
+            color: white;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .top-bar i {
+            color: var(--primary);
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 17px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: white;
-            padding: 20px 30px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
-        .reg-plate {
-            display: inline-flex;
-            align-items: center;
-            border: 2px solid #222;
-            border-radius: 6px;
-            padding: 2px 12px;
-            font-weight: 800;
-            font-size: 24px;
-            letter-spacing: 2px;
-            background: #fff;
-        }
-        .reg-plate i {
-            background: var(--reg-blue);
-            color: white;
-            font-style: normal;
-            font-size: 11px;
-            padding: 6px 4px;
-            margin-right: 10px;
-            border-radius: 2px;
-            display: flex;
-            flex-direction: column;
-            line-height: 1;
+            gap: 22px;
         }
 
-        .btn-contact {
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--dark);
+            letter-spacing: -0.06em;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary) 0%, #ffb15c 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(245, 130, 32, 0.35);
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: var(--radius-full);
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 850;
+            transition: 0.25s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-soft);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .page-shell {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 26px 24px 80px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .breadcrumb a {
+            color: var(--dark);
+            transition: 0.25s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-hover);
+        }
+
+        .loading-state,
+        .error-state,
+        .empty-state {
+            min-height: 520px;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .state-card {
+            width: 100%;
+            max-width: 560px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 34px;
+        }
+
+        .state-icon {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 18px;
+            border-radius: 26px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 30px;
+        }
+
+        .state-icon.error {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .spinner {
+            width: 42px;
+            height: 42px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .state-card h1,
+        .state-card h2 {
+            color: var(--dark);
+            font-size: 26px;
+            line-height: 1.2;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 10px;
+        }
+
+        .state-card p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.75;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+            gap: 15px;
+            margin-bottom: 24px;
+            height: 520px;
+            border-radius: 28px;
+            overflow: hidden;
+            background: #e2e8f0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .main-stage,
+        .side-photo-link {
+            position: relative;
+            overflow: hidden;
+            background: #e2e8f0;
+            cursor: zoom-in;
+        }
+
+        .main-stage img,
+        .side-photo-link img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.55s ease;
+        }
+
+        .main-stage:hover img,
+        .side-photo-link:hover img {
+            transform: scale(1.035);
+        }
+
+        .side-stack {
+            display: grid;
+            grid-template-rows: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+            min-height: 0;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            right: 18px;
+            bottom: 18px;
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 10px 15px;
+            border-radius: var(--radius-full);
+            background: rgba(15, 23, 42, 0.82);
+            color: white;
+            font-size: 13px;
+            font-weight: 900;
+            backdrop-filter: blur(12px);
+        }
+
+        .summary-bar {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 18px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            box-shadow: var(--shadow-sm);
+            padding: 20px 22px;
+            margin-bottom: 24px;
+        }
+
+        .summary-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 0;
+        }
+
+        .reg-plate {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            min-height: 45px;
+            border: 2px solid #222;
+            border-radius: 7px;
+            padding: 2px 13px 2px 3px;
+            font-weight: 900;
+            font-size: 23px;
+            letter-spacing: 2px;
+            background: #fff;
+            color: #111827;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+        }
+
+        .reg-plate-country {
+            min-height: 37px;
+            min-width: 27px;
+            margin-right: 10px;
+            border-radius: 4px;
+            display: grid;
+            place-items: center;
+            background: var(--reg-blue);
+            color: white;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0;
+        }
+
+        .summary-title {
+            min-width: 0;
+        }
+
+        .summary-title h1 {
+            color: var(--dark);
+            font-size: clamp(26px, 4vw, 40px);
+            line-height: 1.1;
+            font-weight: 900;
+            letter-spacing: -0.055em;
+            margin-bottom: 7px;
+        }
+
+        .summary-title p {
+            color: var(--muted);
+            font-size: 15px;
+            font-weight: 750;
+        }
+
+        .btn {
+            min-height: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+            border-radius: 17px;
+            padding: 12px 18px;
+            font-size: 14px;
+            font-weight: 900;
+            text-align: center;
+            transition: 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 14px 28px rgba(245, 130, 32, 0.28);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-dark {
             background: var(--dark);
             color: white;
-            text-decoration: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-weight: 700;
+        }
+
+        .btn-dark:hover {
+            background: var(--dark-soft);
+            transform: translateY(-1px);
+        }
+
+        .btn-light {
+            background: white;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-light:hover {
+            color: var(--primary-hover);
+            border-color: rgba(245, 130, 32, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) 370px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            box-shadow: var(--shadow-sm);
+            padding: 30px;
+            margin-bottom: 24px;
+        }
+
+        .price-text {
+            font-size: clamp(34px, 5vw, 52px);
+            line-height: 1;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: -0.06em;
+            margin: 16px 0 20px;
+        }
+
+        .key-facts {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 13px;
+            margin-bottom: 24px;
+        }
+
+        .key-fact {
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 15px;
+        }
+
+        .key-fact i {
+            width: 34px;
+            height: 34px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .key-fact label {
+            display: block;
+            color: var(--muted-light);
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 5px;
+        }
+
+        .key-fact strong {
+            display: block;
+            color: var(--dark);
             font-size: 14px;
+            font-weight: 900;
+            word-break: break-word;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .section-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .section-heading h2,
+        .section-heading h3 {
+            color: var(--dark);
+            font-size: 19px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .specs-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 13px;
+        }
+
+        .spec-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            padding: 15px 16px;
+            border-radius: 17px;
+            font-size: 14px;
+        }
+
+        .spec-label {
+            color: var(--muted);
+            font-weight: 750;
+        }
+
+        .spec-value {
+            color: var(--dark);
+            font-weight: 900;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .tag {
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 15px;
+            background: #fff5eb;
+            color: var(--primary-hover);
+            border: 1px solid rgba(245, 130, 32, 0.25);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .description-text {
+            white-space: pre-wrap;
+            color: #334155;
+            font-size: 15px;
+            line-height: 1.9;
+            font-weight: 550;
+        }
+
+        .seller-card {
+            position: sticky;
+            top: 100px;
+            background:
+                linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.94)),
+                radial-gradient(circle at top right, rgba(245, 130, 32, 0.35), transparent 38%);
+            color: white;
+            border-radius: 28px;
+            box-shadow: var(--shadow-md);
+            padding: 26px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            overflow: hidden;
+        }
+
+        .seller-card::before {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            right: -95px;
+            top: -95px;
+            border-radius: 50%;
+            background: rgba(245, 130, 32, 0.16);
+        }
+
+        .seller-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .seller-icon {
+            width: 68px;
+            height: 68px;
+            border-radius: 24px;
+            display: grid;
+            place-items: center;
+            background: rgba(245, 130, 32, 0.16);
+            color: var(--primary);
+            font-size: 30px;
+            margin-bottom: 18px;
+        }
+
+        .seller-card h3 {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.035em;
+            margin-bottom: 9px;
+        }
+
+        .seller-card p {
+            color: #cbd5e1;
+            font-size: 13px;
+            line-height: 1.75;
+            font-weight: 650;
+            margin-bottom: 18px;
+        }
+
+        .seller-mini-info {
+            display: grid;
+            gap: 10px;
+            margin: 18px 0;
+        }
+
+        .seller-mini-row {
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: 0.3s;
-        }
-        .btn-contact:hover { background: var(--primary); transform: translateY(-2px); }
-
-        /* شبكة المعلومات */
-        .details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-        .info-card { background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); margin-bottom: 25px; }
-        
-        .price-text { font-size: 45px; font-weight: 900; color: var(--primary); margin: 10px 0; }
-        
-        .specs-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-top: 25px;
-        }
-        .spec-box {
-            display: flex;
-            justify-content: space-between;
-            background: #f1f5f9;
-            padding: 15px 20px;
-            border-radius: 15px;
-            font-size: 14px;
-            font-weight: 700;
-        }
-        .spec-label { color: #64748b; font-weight: 500; }
-
-        .feature-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-        .tag {
-            padding: 10px 18px;
-            background: #fff5eb;
-            color: var(--primary);
-            border: 1px solid #fbd38d;
-            border-radius: 50px;
-            font-size: 12px;
+            color: #e2e8f0;
+            font-size: 13px;
             font-weight: 800;
-            text-transform: uppercase;
         }
 
-        /* فوتر الأمان */
-        .safety-footer {
-            margin-top: 50px;
-            padding: 40px;
-            background: white;
-            border-radius: 30px;
-            border: 1px solid var(--border);
+        .seller-mini-row i {
+            color: var(--primary);
+            width: 18px;
         }
+
+        .seller-card .btn {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .safety-footer {
+            margin-top: 36px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
         .safety-box {
             background: #fff5eb;
             border-left: 6px solid var(--primary);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            padding: 22px;
+            border-radius: 18px;
+            margin-bottom: 18px;
         }
-        .disclaimer { font-size: 12px; color: #94a3b8; text-align: justify; line-height: 1.8; }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-            .gallery-container { grid-template-columns: 1fr; height: 350px; }
-            .side-stack { display: none; }
-            .details-grid { grid-template-columns: 1fr; }
-            .header-bar { flex-direction: column; gap: 20px; text-align: center; }
-            .price-text { font-size: 35px; }
+        .safety-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark);
+            font-size: 16px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .safety-box h4 i {
+            color: var(--primary);
+        }
+
+        .safety-box p {
+            color: #7c2d12;
+            font-size: 14px;
+            line-height: 1.7;
+            font-weight: 650;
+        }
+
+        .safety-list {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .safety-item {
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 15px;
+        }
+
+        .safety-item i {
+            color: var(--success);
+            margin-bottom: 8px;
+        }
+
+        .safety-item strong {
+            display: block;
+            color: var(--dark);
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .safety-item span {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 650;
+            line-height: 1.55;
+        }
+
+        .disclaimer {
+            font-size: 12px;
+            color: var(--muted-light);
+            text-align: justify;
+            line-height: 1.8;
+            font-weight: 600;
+        }
+
+        .footer {
+            background: var(--dark);
+            color: #94a3b8;
+            border-top: 1px solid #1e293b;
+            padding: 34px 24px;
+        }
+
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .footer-brand strong {
+            display: block;
+            color: white;
+            font-size: 14px;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .footer-brand span {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            font-size: 12px;
+            font-weight: 800;
+            transition: 0.25s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 1020px) {
+            .gallery-container {
+                grid-template-columns: 1fr;
+                height: 420px;
+            }
+
+            .side-stack {
+                display: none;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .seller-card {
+                position: static;
+            }
+
+            .summary-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-left {
+                align-items: flex-start;
+            }
+
+            .summary-bar .btn {
+                width: 100%;
+            }
+
+            .safety-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .top-bar {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+
+            .header-inner {
+                padding: 14px 18px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-actions {
+                width: 100%;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                padding-bottom: 2px;
+            }
+
+            .nav-link {
+                white-space: nowrap;
+                font-size: 13px;
+                padding: 9px 13px;
+            }
+
+            .page-shell {
+                padding: 20px 18px 60px;
+            }
+
+            .gallery-container {
+                height: 340px;
+                border-radius: 22px;
+            }
+
+            .summary-left {
+                flex-direction: column;
+            }
+
+            .info-card,
+            .seller-card,
+            .safety-footer {
+                border-radius: 23px;
+                padding: 22px;
+            }
+
+            .key-facts {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .specs-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .logo {
+                font-size: 1.55rem;
+            }
+
+            .logo-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .key-facts {
+                grid-template-columns: 1fr;
+            }
+
+            .reg-plate {
+                font-size: 19px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container" id="app">
-    <div style="text-align:center; padding:100px;">Laddar fordonsdata...</div>
-</div>
+    <div class="top-bar">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Kontrollera alltid fordonets historik innan köp.</span>
+    </div>
 
-<script type="module">
-    import { db } from './firebase-config.js';
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe-lightbox.esm.min.js';
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo" aria-label="Gå till startsidan">
+                <span class="logo-icon">
+                    <i class="fa-solid fa-car-side"></i>
+                </span>
+                BIL<span>HK</span>
+            </a>
 
-    const carId = new URLSearchParams(window.location.search).get('id');
-    const app = document.getElementById('app');
+            <nav class="nav-actions" aria-label="Huvudmeny">
+                <a href="index.html" class="nav-link">
+                    <i class="fa-solid fa-house"></i>
+                    Hem
+                </a>
 
-    async function init() {
-        if (!carId) return;
-        try {
-            const snap = await getDoc(doc(db, "cars", carId));
-            if (!snap.exists()) { app.innerHTML = "Annonsen hittades inte."; return; }
-            const car = snap.data();
+                <a href="results.html" class="nav-link">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Sök bilar
+                </a>
 
-            app.innerHTML = `
-                <div class="pswp-gallery gallery-container" id="mainGallery">
-                    <a href="${car.images[0]}" data-pswp-width="1920" data-pswp-height="1280" target="_blank" class="main-stage">
-                        <img src="${car.images[0]}" alt="Huvudbild">
-                    </a>
-                    <div class="side-stack">
-                        ${car.images.slice(1, 3).map(img => `
-                            <a href="${img}" data-pswp-width="1920" data-pswp-height="1280" target="_blank">
-                                <img src="${img}">
-                            </a>
-                        `).join('')}
-                    </div>
-                </div>
+                <a href="add-car.html" class="nav-link">
+                    <i class="fa-solid fa-plus"></i>
+                    Lägg till annons
+                </a>
 
-                <div class="header-bar">
-                    <div class="reg-plate">
-                        <i>S</i> ${(car.regNo || '--- ---').toUpperCase()}
-                    </div>
-                    <a href="messages.html?sellerId=${car.sellerId}&carId=${carId}" class="btn-contact">
-                        <i class="fa-solid fa-comments"></i> Kontakta säljaren
-                    </a>
-                </div>
+                <a href="my-account.html" class="nav-link">
+                    <i class="fa-solid fa-user"></i>
+                    Mitt konto
+                </a>
+            </nav>
+        </div>
+    </header>
 
-                <div class="details-grid">
-                    <div class="content-left">
-                        <div class="info-card">
-                            <h1 style="font-size:38px; font-weight:900;">${car.brand} ${car.model}</h1>
-                            <p style="color:#64748b; font-weight:700; font-size:18px;">Modellår: ${car.year} • ${car.mileage} mil</p>
-                            <div class="price-text">${Number(car.price).toLocaleString()} kr</div>
-                            
-                            <div class="specs-list">
-                                <div class="spec-box"><span class="spec-label">Årsmodell</span><span>${car.year}</span></div>
-                                <div class="spec-box"><span class="spec-label">Drivmedel</span><span>${car.fuel}</span></div>
-                                <div class="spec-box"><span class="spec-label">Växellåda</span><span>${car.transmission || car.gearbox}</span></div>
-                                <div class="spec-box"><span class="spec-label">Drivning</span><span>${car.drive || '-'}</span></div>
-                                <div class="spec-box"><span class="spec-label">Hästkrafter</span><span>${car.hp || '-'} hk</span></div>
-                                <div class="spec-box"><span class="spec-label">Årsskatt</span><span>${car.tax || '-'} kr</span></div>
-                                <div class="spec-box"><span class="spec-label">Antal ägare</span><span>${car.owners || '-'} st</span></div>
-                                <div class="spec-item spec-box"><span class="spec-label">Färg</span><span>${car.color || '-'}</span></div>
-                                <div class="spec-item spec-box"><span class="spec-label">Besiktigad</span><span>${car.besiktning || '-'}</span></div>
-                                <div class="spec-item spec-box"><span class="spec-label">Säten</span><span>${car.seats || '-'}</span></div>
-                            </div>
+    <main class="page-shell">
+        <nav class="breadcrumb" aria-label="Brödsmulor">
+            <a href="index.html">Hem</a>
+            <i class="fa-solid fa-chevron-right"></i>
+            <a href="results.html">Annonser</a>
+            <i class="fa-solid fa-chevron-right"></i>
+            <span>Fordonsdetaljer</span>
+        </nav>
 
-                            <div style="margin-top:35px;">
-                                <h4 style="text-transform:uppercase; font-size:11px; color:#94a3b8; margin-bottom:15px; font-weight:900;">Utrustning & Säkerhet</h4>
-                                <div class="feature-tags">
-                                    ${(car.features || []).map(f => `<span class="tag">${f}</span>`).join('')}
-                                </div>
-                            </div>
-                        </div>
+        <div id="app"></div>
+    </main>
 
-                        <div class="info-card">
-                            <h3 style="margin-bottom:20px; font-weight:900;">Beskrivning</h3>
-                            <p style="white-space: pre-wrap; line-height:1.8; color:#334155;">${car.description}</p>
-                        </div>
-                    </div>
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <strong>BILHK</strong>
+                <span>&copy; 2026 BILHK. En öppen marknadsplats för bilannonser.</span>
+            </div>
 
-                    <div class="content-right">
-                        <div class="info-card" style="text-align:center; position:sticky; top:100px; background:var(--dark); color:white;">
-                            <i class="fa-solid fa-shield-check" style="font-size:45px; color:var(--primary); margin-bottom:20px;"></i>
-                            <h3 style="margin-bottom:10px;">Gör en trygg affär</h3>
-                            <p style="font-size:13px; color:#94a3b8;">Vi rekommenderar att alltid granska serviceboken och mätarställningen.</p>
-                            <button onclick="location.href='messages.html?sellerId=${car.sellerId}&carId=${carId}'" style="width:100%; margin-top:25px; padding:18px; border-radius:15px; border:none; background:var(--primary); color:white; font-weight:900; cursor:pointer;">
-                                INTRESSEANMÄLAN
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div class="footer-links">
+                <a href="index.html">Hem</a>
+                <a href="results.html">Annonser</a>
+                <a href="add-car.html">Lägg till annons</a>
+                <a href="terms.html">Villkor</a>
+            </div>
+        </div>
+    </footer>
 
-                <div class="safety-footer">
-                    <div class="safety-box">
-                        <h4><i class="fa-solid fa-circle-exclamation"></i> Säker affär</h4>
-                        <p style="font-size:14px; margin-top:10px;">Kontrollera alltid fordonets historik, servicebok och mätarställning innan köp.</p>
-                    </div>
-                    <p class="disclaimer">
-                        <strong>Ansvarsfriskrivning:</strong> BILHK är en öppen plattform. Vi granskar inte fordonens faktiska skick. All handel sker på användarens eget ansvar.
-                    </p>
-                </div>
-            `;
+    <script type="module">
+        import { db } from "./firebase-config.js";
 
-            // تفعيل نظام ملء الشاشة مع الأسهم والتحريك
-            const lightbox = new PhotoSwipeLightbox({
-                gallery: '#mainGallery',
-                children: 'a',
-                pswpModule: () => import('https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.esm.min.js'),
-                // تفعيل ميزات التنقل
-                arrowPrev: true,
-                arrowNext: true,
-                zoom: true,
-                close: true,
-                counter: true
+        import {
+            doc,
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        import PhotoSwipeLightbox from "https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe-lightbox.esm.min.js";
+
+        /**
+         * ============================================================
+         * BILHK - details.html
+         * ------------------------------------------------------------
+         * صفحة تفاصيل إعلان سيارة.
+         *
+         * أهداف الإصلاح:
+         * 1. عدم استخدام innerHTML مع بيانات Firestore.
+         * 2. تنظيف وتوحيد بيانات الإعلان قبل العرض.
+         * 3. حماية روابط الصور وروابط التواصل.
+         * 4. التعامل مع الصور الناقصة أو الحقول الناقصة.
+         * 5. استخدام PhotoSwipe بطريقة آمنة ومنظمة.
+         * 6. عرض حالات التحميل والخطأ وعدم وجود إعلان.
+         * ============================================================
+         */
+
+        const DETAILS_CONFIG = {
+            COLLECTIONS: {
+                CARS: "cars"
+            },
+
+            ROUTES: {
+                HOME: "index.html",
+                RESULTS: "results.html",
+                MESSAGES: "messages.html",
+                PLACEHOLDER_IMAGE: "placeholder.jpg"
+            },
+
+            DEFAULTS: {
+                EMPTY: "-",
+                UNKNOWN_CAR: "Okänt fordon",
+                IMAGE_WIDTH: 1920,
+                IMAGE_HEIGHT: 1280
+            },
+
+            LIMITS: {
+                DOCUMENT_ID_MAX_LENGTH: 140,
+                TEXT_MAX_LENGTH: 300,
+                DESCRIPTION_MAX_LENGTH: 5000,
+                FEATURE_MAX_LENGTH: 60,
+                FEATURE_MAX_COUNT: 40,
+                IMAGE_MAX_COUNT: 20
+            }
+        };
+
+        const state = {
+            carId: "",
+            car: null,
+            lightbox: null,
+            isLoading: false
+        };
+
+        const elements = {
+            app: document.getElementById("app")
+        };
+
+        initializeDetailsPage();
+
+        function initializeDetailsPage() {
+            attachGlobalErrorHandlers();
+
+            const rawCarId = new URLSearchParams(window.location.search).get("id");
+            state.carId = normalizeDocumentId(rawCarId);
+
+            if (!state.carId) {
+                renderErrorState({
+                    title: "Ogiltig annonslänk",
+                    message: "Annonsens ID saknas eller är ogiltigt.",
+                    actionText: "Till annonser",
+                    actionHref: DETAILS_CONFIG.ROUTES.RESULTS
+                });
+                return;
+            }
+
+            loadCarDetails(state.carId);
+        }
+
+        async function loadCarDetails(carId) {
+            setLoadingState(true);
+
+            try {
+                renderLoadingState();
+
+                const carRef = doc(db, DETAILS_CONFIG.COLLECTIONS.CARS, carId);
+                const carSnap = await getDoc(carRef);
+
+                if (!carSnap.exists()) {
+                    renderErrorState({
+                        title: "Annonsen hittades inte",
+                        message: "Annonsen kan ha tagits bort, pausats eller så är länken fel.",
+                        actionText: "Visa andra annonser",
+                        actionHref: DETAILS_CONFIG.ROUTES.RESULTS
+                    });
+                    return;
+                }
+
+                const normalizedCar = normalizeCarDocument(carSnap.id, carSnap.data());
+
+                if (!shouldDisplayCar(normalizedCar)) {
+                    renderErrorState({
+                        title: "Annonsen är inte aktiv",
+                        message: "Den här annonsen är inte längre tillgänglig.",
+                        actionText: "Visa andra annonser",
+                        actionHref: DETAILS_CONFIG.ROUTES.RESULTS
+                    });
+                    return;
+                }
+
+                state.car = normalizedCar;
+
+                updateDocumentMetadata(normalizedCar);
+                renderCarDetails(normalizedCar);
+                initializePhotoSwipe();
+            } catch (error) {
+                console.error("Could not load car details:", error);
+
+                renderErrorState({
+                    title: "Kunde inte ladda annonsen",
+                    message: getFriendlyFirestoreErrorMessage(error),
+                    actionText: "Försök igen",
+                    onAction: () => loadCarDetails(carId)
+                });
+            } finally {
+                setLoadingState(false);
+            }
+        }
+
+        function normalizeCarDocument(id, data) {
+            const images = normalizeImages(data?.images, data?.mainImage);
+
+            const brand = normalizeText(data?.brand);
+            const model = normalizeText(data?.model);
+
+            const year = toSafeNumber(data?.year, 0);
+            const mileage = toSafeNumber(data?.mileage, 0);
+            const price = toSafeNumber(data?.price, 0);
+
+            return {
+                id: normalizeDocumentId(id),
+
+                brand,
+                model,
+                title: normalizeText(data?.title) || buildCarTitle(brand, model, year),
+
+                year,
+                mileage,
+                price,
+
+                fuelType: normalizeText(data?.fuelType || data?.fuel),
+                transmission: normalizeText(data?.transmission || data?.gearbox || data?.gear),
+                drive: normalizeText(data?.drive || data?.drivning),
+                bodyType: normalizeText(data?.bodyType || data?.karosseri || data?.kar),
+                color: normalizeText(data?.color),
+                hp: normalizeText(data?.hp || data?.horsepower),
+                tax: normalizeText(data?.tax || data?.annualTax),
+                owners: normalizeText(data?.owners),
+                inspection: normalizeText(data?.besiktning || data?.inspection),
+                seats: normalizeText(data?.seats),
+                doors: normalizeText(data?.doors),
+                location: normalizeText(data?.location || data?.city),
+
+                regNo: normalizeRegistrationNumber(data?.regNo || data?.registrationNumber),
+
+                description: normalizeLongText(data?.description),
+
+                features: normalizeFeatures(data?.features),
+
+                images,
+                mainImage: images[0]?.src || DETAILS_CONFIG.ROUTES.PLACEHOLDER_IMAGE,
+
+                sellerId: normalizeDocumentId(data?.sellerId),
+                sellerName: normalizeText(data?.sellerName || data?.companyName),
+                sellerType: normalizeText(data?.sellerType || data?.userType),
+
+                active: data?.active !== false,
+                isDeleted: data?.isDeleted === true,
+                status: normalizeText(data?.status || "active"),
+
+                createdAt: data?.createdAt || null,
+                updatedAt: data?.updatedAt || null
+            };
+        }
+
+        function shouldDisplayCar(car) {
+            if (!car || !car.id) {
+                return false;
+            }
+
+            if (car.isDeleted === true) {
+                return false;
+            }
+
+            if (car.active === false) {
+                return false;
+            }
+
+            const status = normalizeForSearch(car.status);
+
+            if (status && !["active", "published"].includes(status)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        function renderCarDetails(car) {
+            clearElement(elements.app);
+
+            const fragment = document.createDocumentFragment();
+
+            fragment.appendChild(createGallerySection(car));
+            fragment.appendChild(createSummaryBar(car));
+            fragment.appendChild(createDetailsGrid(car));
+            fragment.appendChild(createSafetyFooter());
+
+            elements.app.appendChild(fragment);
+        }
+
+        function createGallerySection(car) {
+            const gallery = document.createElement("section");
+            gallery.className = "pswp-gallery gallery-container";
+            gallery.id = "mainGallery";
+            gallery.setAttribute("aria-label", "Fordonsbilder");
+
+            const images = car.images.length > 0
+                ? car.images
+                : [{
+                    src: DETAILS_CONFIG.ROUTES.PLACEHOLDER_IMAGE,
+                    width: DETAILS_CONFIG.DEFAULTS.IMAGE_WIDTH,
+                    height: DETAILS_CONFIG.DEFAULTS.IMAGE_HEIGHT,
+                    alt: "Bild saknas"
+                }];
+
+            const mainLink = createPhotoLink(images[0], "main-stage", true, car);
+
+            const overlay = document.createElement("div");
+            overlay.className = "photo-overlay";
+
+            const overlayIcon = document.createElement("i");
+            overlayIcon.className = "fa-solid fa-images";
+
+            overlay.appendChild(overlayIcon);
+            overlay.appendChild(document.createTextNode(` Visa ${images.length} ${images.length === 1 ? "bild" : "bilder"}`));
+
+            mainLink.appendChild(overlay);
+            gallery.appendChild(mainLink);
+
+            const sideStack = document.createElement("div");
+            sideStack.className = "side-stack";
+
+            const sideImages = images.slice(1, 3);
+
+            while (sideImages.length < 2) {
+                sideImages.push(images[0]);
+            }
+
+            sideImages.forEach((imageData) => {
+                sideStack.appendChild(createPhotoLink(imageData, "side-photo-link", false, car));
             });
-            lightbox.init();
 
-        } catch (e) { app.innerHTML = "Error: " + e.message; }
-    }
+            gallery.appendChild(sideStack);
 
-    init();
-</script>
+            for (let index = 3; index < images.length; index += 1) {
+                const hiddenLink = createPhotoLink(images[index], "hidden-photo-link", false, car);
+                hiddenLink.style.display = "none";
+                gallery.appendChild(hiddenLink);
+            }
+
+            return gallery;
+        }
+
+        function createPhotoLink(imageData, className, isMain, car) {
+            const link = document.createElement("a");
+
+            link.href = getSafeImageURL(imageData.src);
+            link.className = className;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.setAttribute("data-pswp-width", String(imageData.width || DETAILS_CONFIG.DEFAULTS.IMAGE_WIDTH));
+            link.setAttribute("data-pswp-height", String(imageData.height || DETAILS_CONFIG.DEFAULTS.IMAGE_HEIGHT));
+            link.setAttribute("aria-label", isMain ? "Öppna huvudbild" : "Öppna fordonsbild");
+
+            const img = document.createElement("img");
+            img.src = getSafeImageURL(imageData.src);
+            img.alt = imageData.alt || buildImageAltText(car);
+            img.loading = isMain ? "eager" : "lazy";
+            img.decoding = "async";
+
+            img.addEventListener("error", () => {
+                img.src = DETAILS_CONFIG.ROUTES.PLACEHOLDER_IMAGE;
+                link.href = DETAILS_CONFIG.ROUTES.PLACEHOLDER_IMAGE;
+            });
+
+            link.appendChild(img);
+
+            return link;
+        }
+
+        function createSummaryBar(car) {
+            const bar = document.createElement("section");
+            bar.className = "summary-bar";
+
+            const left = document.createElement("div");
+            left.className = "summary-left";
+
+            left.appendChild(createRegistrationPlate(car.regNo));
+
+            const titleBox = document.createElement("div");
+            titleBox.className = "summary-title";
+
+            const title = document.createElement("h1");
+            title.textContent = car.title || buildCarTitle(car.brand, car.model, car.year);
+
+            const subtitle = document.createElement("p");
+            subtitle.textContent = buildSubtitle(car);
+
+            titleBox.appendChild(title);
+            titleBox.appendChild(subtitle);
+
+            left.appendChild(titleBox);
+
+            const contactButton = createContactButton(car, "btn btn-dark", "Kontakta säljaren", "fa-solid fa-comments");
+
+            bar.appendChild(left);
+            bar.appendChild(contactButton);
+
+            return bar;
+        }
+
+        function createRegistrationPlate(regNo) {
+            const plate = document.createElement("div");
+            plate.className = "reg-plate";
+
+            const country = document.createElement("span");
+            country.className = "reg-plate-country";
+            country.textContent = "S";
+
+            const number = document.createElement("span");
+            number.textContent = normalizeRegistrationNumber(regNo) || "--- ---";
+
+            plate.appendChild(country);
+            plate.appendChild(number);
+
+            return plate;
+        }
+
+        function createDetailsGrid(car) {
+            const grid = document.createElement("section");
+            grid.className = "details-grid";
+
+            const left = document.createElement("div");
+            left.className = "content-left";
+
+            left.appendChild(createMainInfoCard(car));
+            left.appendChild(createFeatureCard(car));
+            left.appendChild(createDescriptionCard(car));
+
+            const right = document.createElement("aside");
+            right.className = "content-right";
+
+            right.appendChild(createSellerCard(car));
+
+            grid.appendChild(left);
+            grid.appendChild(right);
+
+            return grid;
+        }
+
+        function createMainInfoCard(car) {
+            const card = document.createElement("section");
+            card.className = "info-card";
+
+            const heading = createSectionHeading(
+                "Fordonsöversikt",
+                "Viktig information från annonsen",
+                "fa-solid fa-car-side"
+            );
+
+            const price = document.createElement("div");
+            price.className = "price-text";
+            price.textContent = formatPrice(car.price);
+
+            card.appendChild(heading);
+            card.appendChild(price);
+            card.appendChild(createKeyFacts(car));
+            card.appendChild(createSpecsList(car));
+
+            return card;
+        }
+
+        function createKeyFacts(car) {
+            const facts = document.createElement("div");
+            facts.className = "key-facts";
+
+            const items = [
+                {
+                    icon: "fa-solid fa-calendar-days",
+                    label: "Årsmodell",
+                    value: formatYear(car.year)
+                },
+                {
+                    icon: "fa-solid fa-road",
+                    label: "Miltal",
+                    value: formatMileage(car.mileage)
+                },
+                {
+                    icon: "fa-solid fa-gas-pump",
+                    label: "Drivmedel",
+                    value: car.fuelType || DETAILS_CONFIG.DEFAULTS.EMPTY
+                },
+                {
+                    icon: "fa-solid fa-gears",
+                    label: "Växellåda",
+                    value: car.transmission || DETAILS_CONFIG.DEFAULTS.EMPTY
+                }
+            ];
+
+            items.forEach((item) => {
+                const fact = document.createElement("div");
+                fact.className = "key-fact";
+
+                const icon = document.createElement("i");
+                icon.className = item.icon;
+
+                const label = document.createElement("label");
+                label.textContent = item.label;
+
+                const value = document.createElement("strong");
+                value.textContent = item.value;
+
+                fact.appendChild(icon);
+                fact.appendChild(label);
+                fact.appendChild(value);
+
+                facts.appendChild(fact);
+            });
+
+            return facts;
+        }
+
+        function createSpecsList(car) {
+            const list = document.createElement("div");
+            list.className = "specs-list";
+
+            const specs = [
+                ["Årsmodell", formatYear(car.year)],
+                ["Miltal", formatMileage(car.mileage)],
+                ["Drivmedel", car.fuelType],
+                ["Växellåda", car.transmission],
+                ["Drivning", car.drive],
+                ["Karosseri", car.bodyType],
+                ["Hästkrafter", formatHorsepower(car.hp)],
+                ["Årsskatt", formatTax(car.tax)],
+                ["Antal ägare", formatOwners(car.owners)],
+                ["Färg", car.color],
+                ["Besiktigad", car.inspection],
+                ["Säten", car.seats],
+                ["Dörrar", car.doors],
+                ["Plats", car.location]
+            ];
+
+            specs.forEach(([label, value]) => {
+                list.appendChild(createSpecBox(label, value));
+            });
+
+            return list;
+        }
+
+        function createSpecBox(labelText, valueText) {
+            const box = document.createElement("div");
+            box.className = "spec-box";
+
+            const label = document.createElement("span");
+            label.className = "spec-label";
+            label.textContent = labelText;
+
+            const value = document.createElement("span");
+            value.className = "spec-value";
+            value.textContent = normalizeText(valueText) || DETAILS_CONFIG.DEFAULTS.EMPTY;
+
+            box.appendChild(label);
+            box.appendChild(value);
+
+            return box;
+        }
+
+        function createFeatureCard(car) {
+            const card = document.createElement("section");
+            card.className = "info-card";
+
+            card.appendChild(createSectionHeading(
+                "Utrustning & säkerhet",
+                "Funktioner som säljaren har angett",
+                "fa-solid fa-shield-halved"
+            ));
+
+            const tags = document.createElement("div");
+            tags.className = "feature-tags";
+
+            if (car.features.length === 0) {
+                const empty = document.createElement("p");
+                empty.className = "description-text";
+                empty.textContent = "Ingen extra utrustning har angetts.";
+                card.appendChild(empty);
+                return card;
+            }
+
+            car.features.forEach((feature) => {
+                const tag = document.createElement("span");
+                tag.className = "tag";
+
+                const icon = document.createElement("i");
+                icon.className = "fa-solid fa-check";
+
+                tag.appendChild(icon);
+                tag.appendChild(document.createTextNode(feature));
+
+                tags.appendChild(tag);
+            });
+
+            card.appendChild(tags);
+
+            return card;
+        }
+
+        function createDescriptionCard(car) {
+            const card = document.createElement("section");
+            card.className = "info-card";
+
+            card.appendChild(createSectionHeading(
+                "Beskrivning",
+                "Säljarens egna uppgifter om bilen",
+                "fa-solid fa-align-left"
+            ));
+
+            const paragraph = document.createElement("p");
+            paragraph.className = "description-text";
+            paragraph.textContent = car.description || "Ingen beskrivning har angetts.";
+
+            card.appendChild(paragraph);
+
+            return card;
+        }
+
+        function createSellerCard(car) {
+            const card = document.createElement("section");
+            card.className = "seller-card";
+
+            const content = document.createElement("div");
+            content.className = "seller-content";
+
+            const icon = document.createElement("div");
+            icon.className = "seller-icon";
+
+            const iconSymbol = document.createElement("i");
+            iconSymbol.className = "fa-solid fa-shield-check";
+
+            icon.appendChild(iconSymbol);
+
+            const title = document.createElement("h3");
+            title.textContent = "Gör en trygg affär";
+
+            const text = document.createElement("p");
+            text.textContent = "Kontakta säljaren via meddelanden och kontrollera alltid fordonets historik, servicebok och mätarställning innan köp.";
+
+            const miniInfo = document.createElement("div");
+            miniInfo.className = "seller-mini-info";
+
+            miniInfo.appendChild(createSellerMiniRow("fa-solid fa-user", car.sellerName || "Säljare"));
+            miniInfo.appendChild(createSellerMiniRow("fa-solid fa-location-dot", car.location || "Plats ej angiven"));
+            miniInfo.appendChild(createSellerMiniRow("fa-solid fa-car", car.title || DETAILS_CONFIG.DEFAULTS.UNKNOWN_CAR));
+
+            const contactButton = createContactButton(car, "btn btn-primary", "INTRESSEANMÄLAN", "fa-solid fa-paper-plane");
+
+            content.appendChild(icon);
+            content.appendChild(title);
+            content.appendChild(text);
+            content.appendChild(miniInfo);
+            content.appendChild(contactButton);
+
+            card.appendChild(content);
+
+            return card;
+        }
+
+        function createSellerMiniRow(iconClass, textValue) {
+            const row = document.createElement("div");
+            row.className = "seller-mini-row";
+
+            const icon = document.createElement("i");
+            icon.className = iconClass;
+
+            const text = document.createElement("span");
+            text.textContent = normalizeText(textValue) || DETAILS_CONFIG.DEFAULTS.EMPTY;
+
+            row.appendChild(icon);
+            row.appendChild(text);
+
+            return row;
+        }
+
+        function createContactButton(car, className, text, iconClass) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = className;
+
+            const icon = document.createElement("i");
+            icon.className = iconClass;
+
+            button.appendChild(icon);
+            button.appendChild(document.createTextNode(` ${text}`));
+
+            if (!car.sellerId) {
+                button.disabled = true;
+                button.title = "Säljare saknas";
+                return button;
+            }
+
+            button.addEventListener("click", () => {
+                const params = new URLSearchParams();
+                params.set("sellerId", car.sellerId);
+                params.set("carId", car.id);
+
+                window.location.href = `${DETAILS_CONFIG.ROUTES.MESSAGES}?${params.toString()}`;
+            });
+
+            return button;
+        }
+
+        function createSafetyFooter() {
+            const footer = document.createElement("section");
+            footer.className = "safety-footer";
+
+            const safetyBox = document.createElement("div");
+            safetyBox.className = "safety-box";
+
+            const safetyTitle = document.createElement("h4");
+
+            const safetyIcon = document.createElement("i");
+            safetyIcon.className = "fa-solid fa-circle-exclamation";
+
+            safetyTitle.appendChild(safetyIcon);
+            safetyTitle.appendChild(document.createTextNode(" Säker affär"));
+
+            const safetyText = document.createElement("p");
+            safetyText.textContent = "Kontrollera alltid fordonets historik, servicebok, mätarställning, skulder och identitet innan köp.";
+
+            safetyBox.appendChild(safetyTitle);
+            safetyBox.appendChild(safetyText);
+
+            const safetyList = document.createElement("div");
+            safetyList.className = "safety-list";
+
+            safetyList.appendChild(createSafetyItem(
+                "fa-solid fa-file-lines",
+                "Granska dokument",
+                "Kontrollera registreringsbevis, servicehistorik och besiktningsuppgifter."
+            ));
+
+            safetyList.appendChild(createSafetyItem(
+                "fa-solid fa-gauge-high",
+                "Kontrollera mätarställning",
+                "Jämför miltal med servicebok, historik och bilens skick."
+            ));
+
+            safetyList.appendChild(createSafetyItem(
+                "fa-solid fa-handshake",
+                "Betala säkert",
+                "Undvik förskottsbetalning och gör affären på ett tryggt sätt."
+            ));
+
+            const disclaimer = document.createElement("p");
+            disclaimer.className = "disclaimer";
+            disclaimer.textContent = "Ansvarsfriskrivning: BILHK är en öppen plattform för annonser. Vi granskar inte fordonens faktiska skick, juridiska status eller säljarens uppgifter. All handel sker på användarens eget ansvar.";
+
+            footer.appendChild(safetyBox);
+            footer.appendChild(safetyList);
+            footer.appendChild(disclaimer);
+
+            return footer;
+        }
+
+        function createSafetyItem(iconClass, titleText, bodyText) {
+            const item = document.createElement("div");
+            item.className = "safety-item";
+
+            const icon = document.createElement("i");
+            icon.className = iconClass;
+
+            const strong = document.createElement("strong");
+            strong.textContent = titleText;
+
+            const span = document.createElement("span");
+            span.textContent = bodyText;
+
+            item.appendChild(icon);
+            item.appendChild(strong);
+            item.appendChild(span);
+
+            return item;
+        }
+
+        function createSectionHeading(titleText, subtitleText, iconClass) {
+            const heading = document.createElement("div");
+            heading.className = "section-heading";
+
+            const iconBox = document.createElement("div");
+            iconBox.className = "section-icon";
+
+            const icon = document.createElement("i");
+            icon.className = iconClass;
+
+            iconBox.appendChild(icon);
+
+            const textBox = document.createElement("div");
+
+            const title = document.createElement("h2");
+            title.textContent = titleText;
+
+            const subtitle = document.createElement("p");
+            subtitle.textContent = subtitleText;
+
+            textBox.appendChild(title);
+            textBox.appendChild(subtitle);
+
+            heading.appendChild(iconBox);
+            heading.appendChild(textBox);
+
+            return heading;
+        }
+
+        function initializePhotoSwipe() {
+            if (state.lightbox) {
+                state.lightbox.destroy();
+                state.lightbox = null;
+            }
+
+            const gallery = document.getElementById("mainGallery");
+
+            if (!gallery) {
+                return;
+            }
+
+            state.lightbox = new PhotoSwipeLightbox({
+                gallery: "#mainGallery",
+                children: "a",
+                pswpModule: () => import("https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.esm.min.js"),
+                showHideAnimationType: "zoom",
+                bgOpacity: 0.92,
+                wheelToZoom: true,
+                padding: {
+                    top: 30,
+                    bottom: 30,
+                    left: 20,
+                    right: 20
+                }
+            });
+
+            state.lightbox.init();
+        }
+
+        function renderLoadingState() {
+            clearElement(elements.app);
+
+            const wrapper = document.createElement("section");
+            wrapper.className = "loading-state";
+
+            const card = document.createElement("div");
+            card.className = "state-card";
+
+            const icon = document.createElement("div");
+            icon.className = "state-icon";
+
+            const spinner = document.createElement("div");
+            spinner.className = "spinner";
+
+            icon.appendChild(spinner);
+
+            const title = document.createElement("h1");
+            title.textContent = "Laddar fordonsdata...";
+
+            const text = document.createElement("p");
+            text.textContent = "Vänligen vänta medan vi hämtar annonsen.";
+
+            card.appendChild(icon);
+            card.appendChild(title);
+            card.appendChild(text);
+
+            wrapper.appendChild(card);
+            elements.app.appendChild(wrapper);
+        }
+
+        function renderErrorState({ title, message, actionText, actionHref, onAction }) {
+            clearElement(elements.app);
+
+            const wrapper = document.createElement("section");
+            wrapper.className = "error-state";
+
+            const card = document.createElement("div");
+            card.className = "state-card";
+
+            const icon = document.createElement("div");
+            icon.className = "state-icon error";
+
+            const iconSymbol = document.createElement("i");
+            iconSymbol.className = "fa-solid fa-triangle-exclamation";
+
+            icon.appendChild(iconSymbol);
+
+            const heading = document.createElement("h1");
+            heading.textContent = title || "Ett fel uppstod";
+
+            const paragraph = document.createElement("p");
+            paragraph.textContent = message || "Annonsen kunde inte visas.";
+
+            card.appendChild(icon);
+            card.appendChild(heading);
+            card.appendChild(paragraph);
+
+            if (typeof onAction === "function") {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "btn btn-primary";
+                button.textContent = actionText || "Försök igen";
+                button.addEventListener("click", onAction);
+                card.appendChild(button);
+            } else {
+                const link = document.createElement("a");
+                link.className = "btn btn-primary";
+                link.href = actionHref || DETAILS_CONFIG.ROUTES.RESULTS;
+                link.textContent = actionText || "Till annonser";
+                card.appendChild(link);
+            }
+
+            wrapper.appendChild(card);
+            elements.app.appendChild(wrapper);
+        }
+
+        function setLoadingState(isLoading) {
+            state.isLoading = isLoading;
+        }
+
+        function updateDocumentMetadata(car) {
+            const title = `${car.title || buildCarTitle(car.brand, car.model, car.year)} | BILHK`;
+            document.title = title;
+
+            const description = `${car.title || "Fordonsannons"} - ${formatPrice(car.price)} - ${formatMileage(car.mileage)}.`;
+
+            const metaDescription = document.querySelector('meta[name="description"]');
+
+            if (metaDescription) {
+                metaDescription.setAttribute("content", description);
+            }
+        }
+
+        function normalizeImages(images, mainImage) {
+            const rawImages = [];
+
+            if (mainImage) {
+                rawImages.push(mainImage);
+            }
+
+            if (Array.isArray(images)) {
+                images.forEach((image) => rawImages.push(image));
+            }
+
+            const seen = new Set();
+            const safeImages = [];
+
+            rawImages.forEach((image) => {
+                const src = typeof image === "string"
+                    ? image
+                    : image?.src || image?.url || "";
+
+                const safeSrc = normalizeURL(src);
+
+                if (!safeSrc || seen.has(safeSrc)) {
+                    return;
+                }
+
+                seen.add(safeSrc);
+
+                safeImages.push({
+                    src: safeSrc,
+                    width: toSafeNumber(image?.width, DETAILS_CONFIG.DEFAULTS.IMAGE_WIDTH),
+                    height: toSafeNumber(image?.height, DETAILS_CONFIG.DEFAULTS.IMAGE_HEIGHT),
+                    alt: normalizeText(image?.alt)
+                });
+            });
+
+            return safeImages.slice(0, DETAILS_CONFIG.LIMITS.IMAGE_MAX_COUNT);
+        }
+
+        function normalizeFeatures(features) {
+            if (!Array.isArray(features)) {
+                return [];
+            }
+
+            const seen = new Set();
+            const cleanFeatures = [];
+
+            features.forEach((feature) => {
+                const clean = normalizeText(feature).slice(0, DETAILS_CONFIG.LIMITS.FEATURE_MAX_LENGTH);
+                const key = normalizeForSearch(clean);
+
+                if (!clean || seen.has(key)) {
+                    return;
+                }
+
+                seen.add(key);
+                cleanFeatures.push(clean);
+            });
+
+            return cleanFeatures.slice(0, DETAILS_CONFIG.LIMITS.FEATURE_MAX_COUNT);
+        }
+
+        function normalizeText(value) {
+            return String(value ?? "")
+                .replace(/\s+/g, " ")
+                .trim()
+                .slice(0, DETAILS_CONFIG.LIMITS.TEXT_MAX_LENGTH);
+        }
+
+        function normalizeLongText(value) {
+            return String(value ?? "")
+                .replace(/\r\n/g, "\n")
+                .replace(/\r/g, "\n")
+                .replace(/[ \t]+/g, " ")
+                .trim()
+                .slice(0, DETAILS_CONFIG.LIMITS.DESCRIPTION_MAX_LENGTH);
+        }
+
+        function normalizeForSearch(value) {
+            return normalizeText(value)
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function normalizeDocumentId(value) {
+            return String(value ?? "")
+                .trim()
+                .slice(0, DETAILS_CONFIG.LIMITS.DOCUMENT_ID_MAX_LENGTH)
+                .replace(/[^\w.-]/g, "");
+        }
+
+        function normalizeRegistrationNumber(value) {
+            const clean = String(value ?? "")
+                .toUpperCase()
+                .replace(/[^A-Z0-9]/g, "")
+                .slice(0, 7);
+
+            if (!clean) {
+                return "";
+            }
+
+            if (clean.length >= 6) {
+                return `${clean.slice(0, 3)} ${clean.slice(3)}`;
+            }
+
+            return clean;
+        }
+
+        function normalizeURL(value) {
+            const rawUrl = String(value ?? "").trim();
+
+            if (!rawUrl) {
+                return "";
+            }
+
+            if (rawUrl === DETAILS_CONFIG.ROUTES.PLACEHOLDER_IMAGE) {
+                return rawUrl;
+            }
+
+            try {
+                const parsedUrl = new URL(rawUrl, window.location.origin);
+
+                if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+                    return "";
+                }
+
+                return parsedUrl.href;
+            } catch {
+                return "";
+            }
+        }
+
+        function getSafeImageURL(value) {
+            const safeUrl = normalizeURL(value);
+
+            return safeUrl || DETAILS_CONFIG.ROUTES.PLACEHOLDER_IMAGE;
+        }
+
+        function toSafeNumber(value, fallback = 0) {
+            const number = Number(value);
+
+            if (!Number.isFinite(number)) {
+                return fallback;
+            }
+
+            return number;
+        }
+
+        function formatNumber(value) {
+            const number = Number(value);
+
+            if (!Number.isFinite(number)) {
+                return "";
+            }
+
+            return number.toLocaleString("sv-SE");
+        }
+
+        function formatPrice(price) {
+            const number = Number(price);
+
+            if (!Number.isFinite(number) || number <= 0) {
+                return "Pris saknas";
+            }
+
+            return `${formatNumber(number)} kr`;
+        }
+
+        function formatMileage(mileage) {
+            const number = Number(mileage);
+
+            if (!Number.isFinite(number) || number < 0) {
+                return DETAILS_CONFIG.DEFAULTS.EMPTY;
+            }
+
+            return `${formatNumber(number)} mil`;
+        }
+
+        function formatYear(year) {
+            const number = Number(year);
+
+            if (!Number.isFinite(number) || number <= 0) {
+                return DETAILS_CONFIG.DEFAULTS.EMPTY;
+            }
+
+            return String(Math.floor(number));
+        }
+
+        function formatHorsepower(value) {
+            const clean = normalizeText(value);
+
+            if (!clean) {
+                return DETAILS_CONFIG.DEFAULTS.EMPTY;
+            }
+
+            if (clean.toLowerCase().includes("hk")) {
+                return clean;
+            }
+
+            return `${clean} hk`;
+        }
+
+        function formatTax(value) {
+            const clean = normalizeText(value);
+
+            if (!clean) {
+                return DETAILS_CONFIG.DEFAULTS.EMPTY;
+            }
+
+            if (clean.toLowerCase().includes("kr")) {
+                return clean;
+            }
+
+            return `${clean} kr`;
+        }
+
+        function formatOwners(value) {
+            const clean = normalizeText(value);
+
+            if (!clean) {
+                return DETAILS_CONFIG.DEFAULTS.EMPTY;
+            }
+
+            if (clean.toLowerCase().includes("st")) {
+                return clean;
+            }
+
+            return `${clean} st`;
+        }
+
+        function buildCarTitle(brand, model, year) {
+            const parts = [
+                normalizeText(brand),
+                normalizeText(model)
+            ].filter(Boolean);
+
+            const title = parts.length > 0
+                ? parts.join(" ")
+                : DETAILS_CONFIG.DEFAULTS.UNKNOWN_CAR;
+
+            const formattedYear = formatYear(year);
+
+            if (formattedYear !== DETAILS_CONFIG.DEFAULTS.EMPTY) {
+                return `${title} ${formattedYear}`;
+            }
+
+            return title;
+        }
+
+        function buildSubtitle(car) {
+            const values = [
+                formatYear(car.year) !== DETAILS_CONFIG.DEFAULTS.EMPTY ? `Modellår ${formatYear(car.year)}` : "",
+                formatMileage(car.mileage) !== DETAILS_CONFIG.DEFAULTS.EMPTY ? formatMileage(car.mileage) : "",
+                car.fuelType,
+                car.transmission
+            ].filter(Boolean);
+
+            return values.join(" • ") || "Fordonsinformation saknas";
+        }
+
+        function buildImageAltText(car) {
+            return `Bild på ${car.title || buildCarTitle(car.brand, car.model, car.year)}`;
+        }
+
+        function clearElement(element) {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+
+        function getFriendlyFirestoreErrorMessage(error) {
+            const code = error?.code || "";
+
+            const messages = {
+                "permission-denied": "Du saknar behörighet att läsa den här annonsen.",
+                "unavailable": "Tjänsten är tillfälligt otillgänglig. Försök igen senare.",
+                "deadline-exceeded": "Begäran tog för lång tid. Försök igen.",
+                "not-found": "Annonsen hittades inte."
+            };
+
+            return messages[code] || "Ett oväntat fel uppstod när annonsen skulle laddas.";
+        }
+
+        function attachGlobalErrorHandlers() {
+            window.addEventListener("unhandledrejection", (event) => {
+                console.error("Unhandled promise rejection:", event.reason);
+            });
+
+            window.addEventListener("error", (event) => {
+                console.error("Global details page error:", event.error || event.message);
+            });
+
+            window.addEventListener("beforeunload", () => {
+                if (state.lightbox) {
+                    state.lightbox.destroy();
+                    state.lightbox = null;
+                }
+            });
+        }
+    </script>
+
 </body>
 </html>
