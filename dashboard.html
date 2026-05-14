@@ -3,221 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>لوحة التحكم | BILHK Dashboard</title>
-    
+    <title>BILHK | Professional Dashboard Control</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
             --primary: #f58220;
-            --primary-dark: #d66d0d;
-            --dark: #0f172a;
-            --dark-2: #1e293b;
-            --muted: #64748b;
-            --soft: #f8fafc;
-            --soft-2: #f1f5f9;
-            --border: #e2e8f0;
-            --white: #ffffff;
+            --primary-hover: #e07210;
+            --primary-light: #fff5eb;
+            --dark-bg: #0f172a;
+            --sidebar-bg: #ffffff;
+            --content-bg: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
             --danger: #ef4444;
-            --success: #16a34a;
-            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+            --white: #ffffff;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
         body {
-            background: var(--soft);
-            color: var(--dark);
-            display: flex;
+            background-color: var(--content-bg);
+            color: var(--text-main);
             min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
         }
 
-        /* --- Sidebar Navigation --- */
+        /* --- Sidebar Architecture --- */
         .sidebar {
             width: 280px;
-            background: var(--white);
-            border-right: 1px solid var(--border);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            height: 100vh;
+            position: fixed;
             display: flex;
             flex-direction: column;
-            position: fixed;
-            height: 100vh;
             z-index: 1000;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .sidebar-header {
-            padding: 30px;
-            text-align: center;
+            padding: 40px 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .logo {
-            font-size: 24px;
+        .logo-text {
+            font-size: 26px;
             font-weight: 900;
+            color: var(--dark-bg);
             text-decoration: none;
-            color: var(--dark);
+            letter-spacing: -1px;
         }
+        .logo-text span { color: var(--primary); }
 
-        .logo span { color: var(--primary); }
-
-        .nav-menu {
-            flex: 1;
-            padding: 10px 20px;
-        }
-
+        .nav-group { flex: 1; padding: 0 15px; }
+        
         .nav-item {
             display: flex;
             align-items: center;
-            padding: 14px 18px;
+            gap: 15px;
+            padding: 14px 20px;
+            color: var(--text-muted);
             text-decoration: none;
-            color: var(--muted);
-            border-radius: 12px;
-            margin-bottom: 5px;
+            border-radius: 16px;
             font-weight: 600;
-            transition: 0.2s;
+            margin-bottom: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
         }
 
-        .nav-item i {
-            width: 24px;
-            font-size: 18px;
-            margin-right: 12px;
-        }
+        .nav-item:hover { background: var(--primary-light); color: var(--primary); }
+        .nav-item.active { background: var(--primary); color: var(--white); box-shadow: 0 10px 20px -5px rgba(245, 130, 32, 0.4); }
 
-        .nav-item:hover, .nav-item.active {
-            background: var(--soft-2);
-            color: var(--primary);
-        }
-
-        .nav-item.active {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        .badge {
+        .nav-badge {
+            position: absolute;
+            right: 15px;
             background: var(--danger);
             color: white;
             font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 20px;
-            margin-left: auto;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 10px;
             display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
         }
 
-        /* --- Main Content Area --- */
-        .main-content {
+        /* --- Main Content Architecture --- */
+        .main-container {
             flex: 1;
             margin-left: 280px;
             padding: 40px;
-            max-width: 1200px;
+            transition: var(--transition);
         }
 
-        .header-action {
+        .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 40px;
         }
 
-        .welcome-text h1 { font-size: 28px; font-weight: 800; }
-        .welcome-text p { color: var(--muted); margin-top: 5px; }
+        .welcome-section h1 { font-size: 32px; font-weight: 800; color: var(--dark-bg); }
+        .welcome-section p { color: var(--text-muted); margin-top: 5px; font-size: 15px; }
 
-        /* --- Stats Cards --- */
+        .account-badge {
+            background: var(--white);
+            padding: 10px 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* --- Dashboard Sections --- */
+        .view-section { display: none; animation: slideUp 0.5s ease-out forwards; }
+        .view-section.active { display: block; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
             margin-bottom: 40px;
         }
 
         .stat-card {
             background: var(--white);
-            padding: 25px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 25px;
+            box-shadow: var(--shadow);
         }
 
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 14px;
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 24px;
         }
 
-        .stat-info h3 { font-size: 22px; font-weight: 800; }
-        .stat-info p { font-size: 13px; color: var(--muted); }
+        .stat-val { font-size: 28px; font-weight: 800; display: block; }
+        .stat-label { color: var(--text-muted); font-size: 14px; font-weight: 500; }
 
-        /* --- Action Grid --- */
-        .actions-grid {
+        /* Cards & Forms */
+        .content-card {
+            background: var(--white);
+            border-radius: 28px;
+            border: 1px solid var(--border-color);
+            padding: 35px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .card-title { font-size: 20px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+
+        .pro-form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 25px;
         }
 
-        .action-card {
-            background: var(--white);
-            padding: 30px;
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            transition: 0.3s;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow);
-            border-color: var(--primary);
-        }
-
-        .action-card i {
-            font-size: 32px;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-
-        .action-card h2 { font-size: 20px; margin-bottom: 10px; }
-        .action-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
-
-        .logout-btn {
-            margin-top: auto;
-            padding: 20px;
-            border-top: 1px solid var(--border);
-        }
-
-        .btn-logout {
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 14px; font-weight: 700; color: var(--dark-bg); margin-bottom: 10px; }
+        .pro-input {
             width: 100%;
-            padding: 12px;
-            background: var(--soft-2);
+            padding: 15px 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            background: var(--content-bg);
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .pro-input:focus { outline: none; border-color: var(--primary); background: var(--white); box-shadow: 0 0 0 4px var(--primary-light); }
+
+        .btn-action {
+            padding: 16px 35px;
+            border-radius: 16px;
             border: none;
-            border-radius: 10px;
-            color: var(--danger);
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
-            display: flex;
+            transition: var(--transition);
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 992px) {
-            .sidebar { width: 80px; padding: 10px 0; }
-            .sidebar .logo, .sidebar .nav-item span, .sidebar .badge, .sidebar .logout-btn span { display: none; }
-            .main-content { margin-left: 80px; padding: 20px; }
-            .sidebar .nav-item i { margin-right: 0; font-size: 22px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245, 130, 32, 0.2); }
+
+        /* Delete Account Section */
+        .danger-zone {
+            border: 2px dashed var(--danger);
+            background: #fff5f5;
+        }
+
+        /* Responsive Mobile */
+        @media (max-width: 1024px) {
+            .sidebar { width: 85px; }
+            .sidebar span, .sidebar-header b, .nav-badge { display: none; }
+            .main-container { margin-left: 85px; padding: 20px; }
+            .pro-form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -225,159 +235,342 @@
 
     <aside class="sidebar">
         <div class="sidebar-header">
-            <a href="index.html" class="logo">BIL<span>HK</span></a>
+            <a href="index.html" class="logo-text"><i class="fa-solid fa-gauge-high" style="color:var(--primary)"></i> <b>BIL<span>HK</span></b></a>
         </div>
 
-        <nav class="nav-menu">
-            <a href="dashboard.html" class="nav-item active">
-                <i class="fa-solid fa-house"></i> <span>Översikt</span>
-            </a>
+        <nav class="nav-group">
+            <div class="nav-item active" data-view="overview">
+                <i class="fa-solid fa-grid-2"></i> <span>Översikt</span>
+            </div>
+            <div class="nav-item" data-view="profile">
+                <i class="fa-solid fa-user-pen"></i> <span>Profilredigering</span>
+            </div>
             <a href="manage.html" class="nav-item">
-                <i class="fa-solid fa-car"></i> <span>Mina Annonser</span>
+                <i class="fa-solid fa-rectangle-ad"></i> <span>Mina Annonser</span>
             </a>
             <a href="messages.html" class="nav-item">
-                <i class="fa-solid fa-comment-dots"></i> <span>Meddelanden</span>
-                <span class="badge" id="msgBadge">0</span>
+                <i class="fa-solid fa-comment-lines"></i> <span>Meddelanden</span>
+                <div class="nav-badge" id="sidebarBadge">0</div>
             </a>
-            <a href="sell.html" class="nav-item">
-                <i class="fa-solid fa-plus-circle"></i> <span>Skapa Annons</span>
-            </a>
+            <div class="nav-item" data-view="security">
+                <i class="fa-solid fa-shield-check"></i> <span>Säkerhet & Konto</span>
+            </div>
         </nav>
 
-        <div class="logout-btn">
-            <button class="btn-logout" id="logoutBtn">
-                <i class="fa-solid fa-right-from-bracket"></i> <span>Logga ut</span>
-            </button>
+        <div style="padding: 20px; border-top: 1px solid var(--border-color);">
+            <div class="nav-item" id="logoutTrigger" style="color:var(--danger); background: #fff5f5;">
+                <i class="fa-solid fa-power-off"></i> <span>Logga ut</span>
+            </div>
         </div>
     </aside>
 
-    <main class="main-content">
-        <header class="header-action">
-            <div class="welcome-text">
-                <h1 id="userName">Hej, Användare!</h1>
-                <p>Välkommen till din kontrollpanel på BILHK.</p>
+    <main class="main-container">
+        
+        <header class="top-bar">
+            <div class="welcome-section">
+                <h1 id="userGreeting">Hej!</h1>
+                <p>Välkommen till din centrala kontrollpanel.</p>
             </div>
-            <div class="user-status">
-                <span id="userTypeBadge" style="background: #e0f2fe; color: #0369a1; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">
-                    Laddar...
-                </span>
+            <div class="account-badge" id="accountTypeDisplay">
+                <i class="fa-solid fa-circle-check" style="color:var(--success)"></i>
+                <span>Laddar status...</span>
             </div>
         </header>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon" style="background: #fff7ed; color: #f58220;">
-                    <i class="fa-solid fa-car"></i>
+        <section id="overview" class="view-section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon-box" style="background:#fff7ed; color:var(--primary);"><i class="fa-solid fa-car-rear"></i></div>
+                    <div><span class="stat-val" id="activeAdsCount">0</span><span class="stat-label">Aktiva Annonser</span></div>
                 </div>
-                <div class="stat-info">
-                    <h3 id="adsCount">0</h3>
-                    <p>Aktiva annonser</p>
+                <div class="stat-card">
+                    <div class="icon-box" style="background:#f0fdf4; color:var(--success);"><i class="fa-solid fa-paper-plane"></i></div>
+                    <div><span class="stat-val" id="unreadMsgsCount">0</span><span class="stat-label">Nya Meddelanden</span></div>
                 </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" style="background: #f0fdf4; color: #16a34a;">
-                    <i class="fa-solid fa-envelope"></i>
-                </div>
-                <div class="stat-info">
-                    <h3 id="unreadCount">0</h3>
-                    <p>Nya meddelanden</p>
+                <div class="stat-card">
+                    <div class="icon-box" style="background:#eff6ff; color:#3b82f6;"><i class="fa-solid fa-chart-line"></i></div>
+                    <div><span class="stat-val">-</span><span class="stat-label">Visningar totalt</span></div>
                 </div>
             </div>
-        </div>
 
-        <div class="actions-grid">
-            <a href="sell.html" class="action-card">
-                <i class="fa-solid fa-circle-plus"></i>
-                <h2>Sälj din bil</h2>
-                <p>Lägg ut en ny annons snabbt och enkelt. Nå tusentals köpare i hela Sverige.</p>
-            </a>
+            <div class="content-card">
+                <h2 class="card-title"><i class="fa-solid fa-rocket"></i> Snabbstart</h2>
+                <div style="display:flex; gap:15px; flex-wrap: wrap;">
+                    <button class="btn-action btn-primary" onclick="location.href='sell.html'"><i class="fa-solid fa-plus"></i> Skapa ny annons</button>
+                    <button class="btn-action" style="background:var(--content-bg)" onclick="location.href='messages.html'"><i class="fa-solid fa-comments"></i> Öppna inkorgen</button>
+                </div>
+            </div>
+        </section>
 
-            <a href="manage.html" class="action-card">
-                <i class="fa-solid fa-list-check"></i>
-                <h2>Hantera annonser</h2>
-                <p>Ändra priser, uppdatera bilder eller markera dina fordon som sålda.</p>
-            </a>
+        <section id="profile" class="view-section">
+            <div class="content-card">
+                <h2 class="card-title"><i class="fa-solid fa-id-card"></i> Personliga uppgifter</h2>
+                <form id="profileUpdateForm">
+                    <div class="pro-form-grid">
+                        <div class="input-group">
+                            <label>Fullständigt namn / Företag</label>
+                            <input type="text" id="inputName" class="pro-input" placeholder="Ange namn" required>
+                        </div>
+                        <div class="input-group">
+                            <label>E-post (Kan ej ändras)</label>
+                            <input type="email" id="inputEmail" class="pro-input" readonly style="opacity: 0.6; cursor: not-allowed;">
+                        </div>
+                        <div class="input-group">
+                            <label>Telefonnummer</label>
+                            <input type="tel" id="inputPhone" class="pro-input" placeholder="Ex: 070 123 45 67">
+                        </div>
+                        <div class="input-group">
+                            <label>Stad / Region</label>
+                            <input type="text" id="inputAddress" class="pro-input" placeholder="Ex: Stockholm">
+                        </div>
+                    </div>
 
-            <a href="messages.html" class="action-card">
-                <i class="fa-solid fa-comments"></i>
-                <h2>Konversationer</h2>
-                <p>Fortsätt dina pågående chattar med potentiella köpare eller säljare.</p>
-            </a>
-        </div>
+                    <div id="businessFields" style="display:none; margin-top: 20px; padding-top: 25px; border-top: 1px dashed var(--border-color);">
+                        <div class="pro-form-grid">
+                            <div class="input-group">
+                                <label>Organisationsnummer</label>
+                                <input type="text" id="inputTax" class="pro-input">
+                            </div>
+                            <div class="input-group">
+                                <label>Officiell Webbplats</label>
+                                <input type="url" id="inputWeb" class="pro-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-action btn-primary" style="margin-top: 20px;">
+                        <i class="fa-solid fa-floppy-disk"></i> Spara alla ändringar
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section id="security" class="view-section">
+            <div class="content-card">
+                <h2 class="card-title"><i class="fa-solid fa-lock-keyhole"></i> Inloggning & Säkerhet</h2>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+                    <div style="padding:20px; background:var(--content-bg); border-radius:20px;">
+                        <h4 style="margin-bottom:10px;">Lösenord</h4>
+                        <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Vi skickar en säkerhetslänk till din e-post för att välja ett nytt lösenord.</p>
+                        <button class="btn-action btn-primary" id="resetPassAction" style="padding:10px 20px; font-size:13px;">Återställ nu</button>
+                    </div>
+                    
+                    <div id="verificationBox" style="padding:20px; background:var(--primary-light); border-radius:20px; border:1px solid var(--primary); display:none;">
+                        <h4 style="color:var(--primary); margin-bottom:10px;">Verifiera konto</h4>
+                        <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Din e-postadress är inte bekräftad ännu.</p>
+                        <button class="btn-action btn-primary" id="sendVerifyAction" style="padding:10px 20px; font-size:13px;">Skicka bekräftelse</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-card danger-zone">
+                <h2 class="card-title" style="color:var(--danger)"><i class="fa-solid fa-triangle-exclamation"></i> Avsluta konto</h2>
+                <p style="color:var(--text-muted); margin-bottom: 20px; font-size: 14px;">När du raderar ditt konto tas alla dina annonser, bilder och meddelanden bort permanent. Denna åtgärd kan inte ångras.</p>
+                <button class="btn-action" id="deleteAccountTrigger" style="background:var(--danger); color:white;">
+                    <i class="fa-solid fa-trash-can"></i> Radera mitt konto permanent
+                </button>
+            </div>
+        </section>
+
     </main>
 
     <script type="module">
         import { auth, db } from './firebase-config.js';
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { collection, query, where, getDocs, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { 
+            onAuthStateChanged, 
+            signOut, 
+            sendPasswordResetEmail, 
+            sendEmailVerification,
+            deleteUser,
+            reauthenticateWithCredential,
+            EmailAuthProvider
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        
+        import { 
+            doc, 
+            getDoc, 
+            updateDoc, 
+            collection, 
+            query, 
+            where, 
+            onSnapshot,
+            getDocs,
+            writeBatch,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // 1. مراقبة حالة تسجيل الدخول
+        let currentUid = null;
+
+        // --- 1. System Auth Core ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                console.log("User logged in:", user.uid);
-                loadUserData(user);
-                setupRealtimeStats(user);
+                currentUid = user.uid;
+                initDashboard(user);
+                startLiveSubscriptions(user);
             } else {
-                window.location.href = "login.html";
+                window.location.href = 'login.html';
             }
         });
 
-        // 2. جلب بيانات المستخدم الأساسية
-        async function loadUserData(user) {
+        async function initDashboard(user) {
             const userRef = doc(db, "users", user.uid);
-            const userSnap = await getDoc(userRef);
+            const snap = await getDoc(userRef);
 
-            if (userSnap.exists()) {
-                const data = userSnap.data();
-                document.getElementById('userName').innerText = `Hej, ${data.name || 'Vän'}!`;
-                document.getElementById('userTypeBadge').innerText = 
-                    data.userType === 'Foretag' ? '🏢 Företagskonto' : '👤 Privatkonto';
+            if (snap.exists()) {
+                const data = snap.data();
+                
+                // UI Mapping
+                document.getElementById('userGreeting').innerText = `Hej, ${data.name || 'Användare'}!`;
+                document.getElementById('inputName').value = data.name || '';
+                document.getElementById('inputEmail').value = user.email;
+                document.getElementById('inputPhone').value = data.phone || '';
+                document.getElementById('inputAddress').value = data.address || '';
+                
+                const typeLabel = document.getElementById('accountTypeDisplay');
+                if (data.userType === 'Foretag') {
+                    typeLabel.innerHTML = `<i class="fa-solid fa-building"></i> 🏢 Företagskonto`;
+                    document.getElementById('businessFields').style.display = 'block';
+                    document.getElementById('inputTax').value = data.taxId || '';
+                    document.getElementById('inputWeb').value = data.website || '';
+                } else {
+                    typeLabel.innerHTML = `<i class="fa-solid fa-user"></i> 👤 Privatkonto`;
+                }
+
+                if (!user.emailVerified) {
+                    document.getElementById('verificationBox').style.display = 'block';
+                }
             }
         }
 
-        // 3. مراقبة الإحصائيات والرسائل (Real-time)
-        function setupRealtimeStats(user) {
-            // مراقبة عدد الإعلانات
+        // --- 2. Real-time Synchronization (High Precision) ---
+        function startLiveSubscriptions(user) {
+            // Live Ads Count
             const qAds = query(collection(db, "cars"), where("ownerId", "==", user.uid));
             onSnapshot(qAds, (snapshot) => {
-                document.getElementById('adsCount').innerText = snapshot.size;
+                document.getElementById('activeAdsCount').innerText = snapshot.size;
             });
 
-            // مراقبة عداد الرسائل غير المقروءة
+            // Live Message Counter (Advanced Chat Logic)
             const qChats = query(collection(db, "chats"), where("participants", "array-contains", user.uid));
             onSnapshot(qChats, (snapshot) => {
-                let unread = 0;
+                let unreadCount = 0;
                 snapshot.docs.forEach(doc => {
                     const chat = doc.data();
                     if (chat.lastMessageReceiver === user.uid && chat.unreadCount > 0) {
-                        unread += chat.unreadCount;
+                        unreadCount += chat.unreadCount;
                     }
                 });
-
-                // تحديث العدادات في الواجهة
-                document.getElementById('unreadCount').innerText = unread;
-                const badge = document.getElementById('msgBadge');
-                if (badge) {
-                    badge.innerText = unread;
-                    badge.style.display = unread > 0 ? 'flex' : 'none';
+                
+                const badge = document.getElementById('sidebarBadge');
+                document.getElementById('unreadMsgsCount').innerText = unreadCount;
+                if (unreadCount > 0) {
+                    badge.innerText = unreadCount;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
                 }
             });
         }
 
-        // 4. تسجيل الخروج
-        document.getElementById('logoutBtn').onclick = async () => {
-            const result = await Swal.fire({
+        // --- 3. View Switcher Logic ---
+        document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+            item.onclick = () => {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                
+                item.classList.add('active');
+                document.getElementById(item.dataset.view).classList.add('active');
+            };
+        });
+
+        // --- 4. Profile Operations ---
+        document.getElementById('profileUpdateForm').onsubmit = async (e) => {
+            e.preventDefault();
+            Swal.fire({ title: 'Sparar...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                const userRef = doc(db, "users", currentUid);
+                const updates = {
+                    name: document.getElementById('inputName').value,
+                    phone: document.getElementById('inputPhone').value,
+                    address: document.getElementById('inputAddress').value,
+                    updatedAt: serverTimestamp()
+                };
+
+                if (document.getElementById('businessFields').style.display === 'block') {
+                    updates.taxId = document.getElementById('inputTax').value;
+                    updates.website = document.getElementById('inputWeb').value;
+                }
+
+                await updateDoc(userRef, updates);
+                Swal.fire('Klart!', 'Din profil har uppdaterats framgångsrikt.', 'success');
+            } catch (err) {
+                Swal.fire('Fel', 'Kunde inte spara data: ' + err.message, 'error');
+            }
+        };
+
+        // --- 5. Security Actions ---
+        document.getElementById('resetPassAction').onclick = async () => {
+            await sendPasswordResetEmail(auth, auth.currentUser.email);
+            Swal.fire('E-post skickad', 'Kolla din inkorg för att återställa lösenordet.', 'success');
+        };
+
+        document.getElementById('sendVerifyAction').onclick = async () => {
+            await sendEmailVerification(auth.currentUser);
+            Swal.fire('Skickat!', 'En verifieringslänk har skickats.', 'info');
+        };
+
+        document.getElementById('logoutTrigger').onclick = async () => {
+            const confirm = await Swal.fire({
                 title: 'Vill du logga ut?',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Ja, logga ut',
-                cancelButtonText: 'Avbryt',
+                confirmButtonColor: '#ef4444'
+            });
+            if (confirm.isConfirmed) {
+                await signOut(auth);
+                window.location.href = 'login.html';
+            }
+        };
+
+        // --- 6. Account Destruction (Advanced Batch Deletion) ---
+        document.getElementById('deleteAccountTrigger').onclick = async () => {
+            const warning = await Swal.fire({
+                title: 'Är du helt säker?',
+                text: "All data (annonser, meddelanden, profil) raderas permanent!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'JA, RADERA ALLT',
                 confirmButtonColor: '#ef4444'
             });
 
-            if (result.isConfirmed) {
-                await signOut(auth);
-                window.location.href = "login.html";
+            if (warning.isConfirmed) {
+                try {
+                    Swal.fire({ title: 'Raderar allt...', didOpen: () => Swal.showLoading() });
+                    const batch = writeBatch(db);
+                    
+                    // A. Delete Ads
+                    const adsQ = query(collection(db, "cars"), where("ownerId", "==", currentUid));
+                    const adsSnap = await getDocs(adsQ);
+                    adsSnap.forEach(d => batch.delete(d.ref));
+
+                    // B. Delete Profile
+                    batch.delete(doc(db, "users", currentUid));
+
+                    await batch.commit();
+                    await deleteUser(auth.currentUser);
+
+                    Swal.fire('Raderat', 'Ditt konto har tagits bort.', 'success')
+                        .then(() => window.location.href = 'index.html');
+
+                } catch (err) {
+                    if (err.code === 'auth/requires-recent-login') {
+                        Swal.fire('Säkerhetsstopp', 'Logga ut och logga in igen för att bekräfta raderingen.', 'info');
+                    } else {
+                        Swal.fire('Fel', err.message, 'error');
+                    }
+                }
             }
         };
     </script>
