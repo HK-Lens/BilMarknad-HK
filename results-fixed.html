@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sökresultat | BILHK Professional Search Engine</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -22,11 +25,11 @@
             --border: #e2e8f0;
             --success: #10b981;
             --shadow: 0 15px 35px rgba(0,0,0,0.05);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--dark); line-height: 1.6; }
+        body { background-color: var(--bg); color: var(--dark); line-height: 1.6; overflow-x: hidden; }
 
         /* --- Navigation Architecture --- */
         nav {
@@ -39,135 +42,221 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
-        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: var(--dark); letter-spacing: -1px; }
+        .logo { font-size: 26px; font-weight: 900; text-decoration: none; color: var(--dark); letter-spacing: -1.5px; }
         .logo span { color: var(--primary); }
 
-        /* --- Search Bar Header --- */
+        /* --- Search Bar & Control Header --- */
         .results-header {
             background: var(--white);
-            padding: 20px 6%;
+            padding: 25px 6%;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 25px;
         }
 
-        .search-summary h1 { font-size: 22px; font-weight: 800; }
-        .search-summary p { font-size: 14px; color: var(--muted); }
+        .search-summary h1 { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; }
+        .search-summary p { font-size: 14px; color: var(--muted); font-weight: 500; margin-top: 4px; }
 
-        .view-controls { display: flex; gap: 10px; align-items: center; }
-        .control-btn {
-            padding: 10px 15px;
-            background: var(--soft);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            transition: var(--transition);
-        }
-        .control-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
-        .control-btn:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
-
-        /* --- Main Layout Grid --- */
-        .main-layout {
-            max-width: 1400px;
-            margin: 40px auto;
-            padding: 0 40px;
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 40px;
-        }
-
-        /* --- Sidebar Filters --- */
-        .sidebar { position: sticky; top: 100px; height: fit-content; }
-        .filter-card {
-            background: var(--white);
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            padding: 25px;
-            box-shadow: var(--shadow);
-        }
-        .filter-section { margin-bottom: 25px; }
-        .filter-section h4 { font-size: 14px; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; color: var(--muted); }
+        .view-controls { display: flex; gap: 12px; align-items: center; }
         
-        .filter-input {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 10px;
+        .sort-select {
+            padding: 12px 20px;
+            border-radius: 14px;
             border: 1px solid var(--border);
             background: var(--bg);
             font-size: 14px;
-            margin-bottom: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition);
         }
+        .sort-select:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px var(--primary-soft); }
+
+        .layout-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-size: 18px;
+            transition: var(--transition);
+        }
+        .layout-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+        .layout-btn:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+        /* --- Main Content Layout --- */
+        .main-layout {
+            max-width: 1440px;
+            margin: 40px auto;
+            padding: 0 5%;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+        }
+
+        /* --- Sidebar Filters Engine --- */
+        .sidebar { position: sticky; top: 100px; height: fit-content; }
+        .filter-card {
+            background: var(--white);
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        .filter-section { margin-bottom: 25px; }
+        .filter-section h4 { 
+            font-size: 12px; 
+            font-weight: 900; 
+            margin-bottom: 15px; 
+            text-transform: uppercase; 
+            color: var(--muted); 
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .filter-input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+            outline: none;
+        }
+        .filter-input:focus { border-color: var(--primary); background: white; }
+
+        .range-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .apply-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--dark);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .apply-btn:hover { background: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
         /* --- Results Grid Architecture --- */
         .results-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 30px;
-            transition: var(--transition);
+            transition: opacity 0.3s ease;
         }
 
-        /* Grid View Card */
+        /* Vehicle Card Design */
         .car-card {
             background: var(--white);
-            border-radius: 28px;
+            border-radius: 32px;
             border: 1px solid var(--border);
             overflow: hidden;
             transition: var(--transition);
             text-decoration: none;
             color: inherit;
+            display: flex;
+            flex-direction: column;
             position: relative;
         }
-        .car-card:hover { transform: translateY(-10px); box-shadow: var(--shadow); border-color: var(--primary); }
+        .car-card:hover { transform: translateY(-12px); box-shadow: var(--shadow); border-color: var(--primary); }
 
-        .img-box { width: 100%; height: 220px; background: #eee; position: relative; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .price-badge {
+        .img-box { width: 100%; height: 230px; background: #f1f5f9; position: relative; overflow: hidden; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .car-card:hover .img-box img { transform: scale(1.1); }
+
+        .price-tag {
             position: absolute;
-            bottom: 15px;
-            right: 15px;
+            bottom: 20px;
+            right: 20px;
             background: var(--primary);
             color: white;
-            padding: 8px 16px;
-            border-radius: 12px;
+            padding: 10px 20px;
+            border-radius: 16px;
             font-weight: 900;
-            font-size: 18px;
+            font-size: 20px;
+            box-shadow: 0 10px 20px rgba(245, 130, 32, 0.3);
+            z-index: 2;
         }
 
-        .card-body { padding: 25px; }
-        .card-title { font-size: 19px; font-weight: 800; margin-bottom: 10px; }
-        .card-specs { display: flex; gap: 15px; font-size: 13px; color: var(--muted); font-weight: 600; }
-        .card-specs span { display: flex; align-items: center; gap: 5px; }
+        .card-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .car-name { font-size: 20px; font-weight: 800; color: var(--dark); margin-bottom: 12px; letter-spacing: -0.5px; }
+        
+        .spec-tags { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .tag { 
+            background: var(--bg); 
+            padding: 6px 14px; 
+            border-radius: 12px; 
+            font-size: 12px; 
+            font-weight: 700; 
+            color: var(--muted); 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+        }
 
-        /* List View Modifier */
-        .results-container.list-view { grid-template-columns: 1fr; }
-        .results-container.list-view .car-card { display: flex; height: 200px; }
-        .results-container.list-view .img-box { width: 300px; height: 100%; }
+        .card-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+        }
 
-        /* --- Skeleton Loader --- */
+        /* --- List View Logic --- */
+        .results-container.list-mode { grid-template-columns: 1fr; }
+        .results-container.list-mode .car-card { flex-direction: row; height: 240px; }
+        .results-container.list-mode .img-box { width: 350px; height: 100%; }
+
+        /* --- Skeleton & Animation --- */
         .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background: linear-gradient(90deg, #f0f3f6 25%, #f8fafc 50%, #f0f3f6 75%);
             background-size: 200% 100%;
-            animation: loading 1.5s infinite;
+            animation: shimmer 1.5s infinite;
+            border-radius: 32px;
+            height: 400px;
         }
-        @keyframes loading { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
         /* --- Empty State --- */
-        .no-results {
+        .empty-state {
             grid-column: 1 / -1;
             text-align: center;
-            padding: 100px 20px;
+            padding: 120px 20px;
+            background: var(--white);
+            border-radius: 40px;
+            border: 2px dashed var(--border);
         }
-        .no-results i { font-size: 60px; color: var(--border); margin-bottom: 20px; }
+        .empty-state i { font-size: 70px; color: var(--border); margin-bottom: 30px; }
+        .empty-state h2 { font-size: 26px; font-weight: 800; margin-bottom: 10px; }
 
-        @media (max-width: 992px) {
-            .main-layout { grid-template-columns: 1fr; padding: 20px; }
-            .sidebar { display: none; } /* يمكن تحويله لفلتر منسدل لاحقاً */
+        @media (max-width: 1024px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; } /* يمكن تحويله لـ Modal في الجوال */
         }
     </style>
 </head>
@@ -175,27 +264,24 @@
 
     <nav>
         <a href="index.html" class="logo">BIL<span>HK</span></a>
-        <div id="navAuthArea">
-            </div>
+        <div id="navAuthStatus"></div>
     </nav>
 
     <header class="results-header">
         <div class="search-summary">
-            <h1 id="resultTitle">Sökresultat</h1>
-            <p id="resultCount">Hittar fordon...</p>
+            <h1 id="headerTitle">Hittade bilar</h1>
+            <p id="vehicleCounter">Laddar fordon...</p>
         </div>
 
         <div class="view-controls">
-            <div style="margin-right: 20px;">
-                <select id="sortOrder" class="control-btn" style="width: 180px;">
-                    <option value="newest">Senast inkomna</option>
-                    <option value="priceLow">Pris: Lågt till högt</option>
-                    <option value="priceHigh">Pris: Högt till lågt</option>
-                    <option value="milLow">Miltal: Lägst först</option>
-                </select>
-            </div>
-            <button class="control-btn active" id="gridViewBtn"><i class="fa-solid fa-grid-2"></i></button>
-            <button class="control-btn" id="listViewBtn"><i class="fa-solid fa-list"></i></button>
+            <select id="masterSort" class="sort-select">
+                <option value="newest">Senaste inkomna</option>
+                <option value="price_asc">Pris: Lågt till högt</option>
+                <option value="price_desc">Pris: Högt till lågt</option>
+                <option value="mil_asc">Miltal: Lägst först</option>
+            </select>
+            <button class="layout-btn active" id="setGrid"><i class="fa-solid fa-grid-2"></i></button>
+            <button class="layout-btn" id="setList"><i class="fa-solid fa-list-ul"></i></button>
         </div>
     </header>
 
@@ -203,38 +289,53 @@
         <aside class="sidebar">
             <div class="filter-card">
                 <div class="filter-section">
-                    <h4>Märke</h4>
-                    <select id="sideBrand" class="filter-input">
+                    <h4>Märke <i class="fa-solid fa-chevron-down"></i></h4>
+                    <select id="filterBrand" class="filter-input">
                         <option value="all">Alla märken</option>
                     </select>
                 </div>
+                
                 <div class="filter-section">
-                    <h4>Bränsle</h4>
-                    <select id="sideFuel" class="filter-input">
+                    <h4>Drivmedel</h4>
+                    <select id="filterFuel" class="filter-input">
                         <option value="all">Alla typer</option>
                         <option value="Bensin">Bensin</option>
                         <option value="Diesel">Diesel</option>
                         <option value="El">Elbil</option>
+                        <option value="Hybrid">Hybrid</option>
                     </select>
                 </div>
+
                 <div class="filter-section">
-                    <h4>Prisintervall</h4>
-                    <div style="display: flex; gap: 5px;">
-                        <input type="number" id="sideMinP" class="filter-input" placeholder="Från">
-                        <input type="number" id="sideMaxP" class="filter-input" placeholder="Till">
+                    <h4>Pris (SEK)</h4>
+                    <div class="range-grid">
+                        <input type="number" id="minPrice" class="filter-input" placeholder="Från">
+                        <input type="number" id="maxPrice" class="filter-input" placeholder="Till">
                     </div>
                 </div>
-                <button class="control-btn active" style="width: 100%; background: var(--primary); border: none;" id="applySideFilter">Uppdatera sökning</button>
+
+                <div class="filter-section">
+                    <h4>Miltal (mil)</h4>
+                    <div class="range-grid">
+                        <input type="number" id="minMil" class="filter-input" placeholder="Min">
+                        <input type="number" id="maxMil" class="filter-input" placeholder="Max">
+                    </div>
+                </div>
+
+                <button class="apply-btn" id="executeFilter">
+                    <i class="fa-solid fa-sliders"></i> Uppdatera resultat
+                </button>
             </div>
         </aside>
 
-        <section>
-            <div class="results-container" id="resultsGrid">
-                <div class="car-card skeleton" style="height: 380px;"></div>
-                <div class="car-card skeleton" style="height: 380px;"></div>
-                <div class="car-card skeleton" style="height: 380px;"></div>
+        <main>
+            <div class="results-container" id="masterGrid">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
             </div>
-        </section>
+        </main>
     </div>
 
     <script type="module">
@@ -243,110 +344,120 @@
         import carData from './cars-data.js';
 
         const urlParams = new URLSearchParams(window.location.search);
-        let currentCars = [];
+        let carsDatabase = []; // الحالة المحلية للبيانات
 
-        // 1. تهيئة الفلاتر الجانبية
-        function initSidebar() {
-            const sideBrand = document.getElementById('sideBrand');
-            Object.keys(carData).sort().forEach(b => {
+        // --- 1. بناء القوائم الديناميكية ---
+        function initializeUI() {
+            const brandDropdown = document.getElementById('filterBrand');
+            Object.keys(carData).sort().forEach(brand => {
                 const opt = document.createElement('option');
-                opt.value = b;
-                opt.textContent = b;
-                sideBrand.appendChild(opt);
+                opt.value = brand;
+                opt.textContent = brand;
+                brandDropdown.appendChild(opt);
             });
 
-            // تعبئة الفلاتر من الرابط الحالي
-            sideBrand.value = urlParams.get('brand') || 'all';
-            document.getElementById('sideFuel').value = urlParams.get('fuel') || 'all';
-            document.getElementById('sideMinP').value = urlParams.get('minP') || '';
-            document.getElementById('sideMaxP').value = urlParams.get('maxP') || '';
+            // مزامنة الفلاتر مع الرابط (URL Recovery)
+            document.getElementById('filterBrand').value = urlParams.get('brand') || 'all';
+            document.getElementById('filterFuel').value = urlParams.get('fuel') || 'all';
+            document.getElementById('minPrice').value = urlParams.get('minP') || '';
+            document.getElementById('maxPrice').value = urlParams.get('maxP') || '';
+            document.getElementById('minMil').value = urlParams.get('minM') || '';
+            document.getElementById('maxMil').value = urlParams.get('maxM') || '';
         }
 
-        // 2. المحرك الرئيسي لجلب البيانات
-        async function fetchResults() {
-            const grid = document.getElementById('resultsGrid');
+        // --- 2. محرك جلب البيانات العميقة (Deep Data Engine) ---
+        async function fetchVehicles() {
+            const grid = document.getElementById('masterGrid');
             const brand = urlParams.get('brand');
             const fuel = urlParams.get('fuel');
             const minP = Number(urlParams.get('minP')) || 0;
-            const maxP = Number(urlParams.get('maxP')) || Infinity;
+            const maxP = Number(urlParams.get('maxP')) || 99999999;
+            const minM = Number(urlParams.get('minM')) || 0;
+            const maxM = Number(urlParams.get('maxM')) || 999999;
 
             try {
-                // بناء الاستعلام الأساسي (Firebase لا يدعم الفلترة المتعددة بنطاقات بسهولة بدون اندكسات مركبة)
-                // لذا سنقوم بجلب البيانات وفلترتها برمجياً لضمان "العمق" والمرونة
-                let q = query(collection(db, "cars"), where("status", "==", "active"));
+                /**
+                 * استراتيجية الفلترة الذكية:
+                 * نجلب فقط الإعلانات النشطة ("active") لضمان الأداء،
+                 * ثم نقوم بفلترة النطاقات المعقدة برمجياً لتجاوز قيود الـ Indexing في Firebase.
+                 */
+                const q = query(collection(db, "cars"), where("status", "==", "active"));
+                const snap = await getDocs(q);
                 
-                const querySnapshot = await getDocs(q);
-                currentCars = [];
-
-                querySnapshot.forEach((doc) => {
+                carsDatabase = [];
+                snap.forEach(doc => {
                     const data = doc.data();
                     const car = { id: doc.id, ...data };
 
-                    // الفلترة البرمجية المتقدمة
+                    // منطق المطابقة المتعدد (Logical Intersection)
                     const matchesBrand = !brand || brand === 'all' || car.brand === brand;
                     const matchesFuel = !fuel || fuel === 'all' || car.fuel === fuel;
                     const price = Number(car.price);
-                    const matchesPrice = price >= minP && price <= maxP;
+                    const mileage = Number(car.mileage);
+                    
+                    const inPriceRange = price >= minP && price <= maxP;
+                    const inMilRange = mileage >= minM && mileage <= maxM;
 
-                    if (matchesBrand && matchesFuel && matchesPrice) {
-                        currentCars.push(car);
+                    if (matchesBrand && matchesFuel && inPriceRange && inMilRange) {
+                        carsDatabase.push(car);
                     }
                 });
 
-                applySortingAndRender();
+                applySortingAndDisplay();
             } catch (err) {
-                console.error("Fetch Error:", err);
+                console.error("Database Engine Error:", err);
+                grid.innerHTML = `<div class="empty-state"><h2>Ett fel uppstod. Kontrollera din anslutning.</h2></div>`;
             }
         }
 
-        // 3. نظام الفرز والعرض
-        function applySortingAndRender() {
-            const sort = document.getElementById('sortOrder').value;
-            
-            // الفرز
-            currentCars.sort((a, b) => {
-                if (sort === 'priceLow') return a.price - b.price;
-                if (sort === 'priceHigh') return b.price - a.price;
-                if (sort === 'milLow') return a.mileage - b.mileage;
-                return b.createdAt - a.createdAt; // newest
+        // --- 3. نظام الفرز والعرض اللحظي ---
+        function applySortingAndDisplay() {
+            const sortType = document.getElementById('masterSort').value;
+            const grid = document.getElementById('masterGrid');
+            const counter = document.getElementById('vehicleCounter');
+
+            // منطق الفرز المتقدم
+            carsDatabase.sort((a, b) => {
+                if (sortType === 'price_asc') return a.price - b.price;
+                if (sortType === 'price_desc') return b.price - a.price;
+                if (sortType === 'mil_asc') return a.mileage - b.mileage;
+                return b.createdAt - a.createdAt; 
             });
 
-            renderResults();
-        }
-
-        function renderResults() {
-            const grid = document.getElementById('resultsGrid');
-            const countEl = document.getElementById('resultCount');
-            
             grid.innerHTML = "";
-            countEl.innerText = `${currentCars.length} fordon hittades`;
+            counter.innerText = `${carsDatabase.length} fordon matchar din sökning`;
 
-            if (currentCars.length === 0) {
+            if (carsDatabase.length === 0) {
                 grid.innerHTML = `
-                    <div class="no-results">
-                        <i class="fa-solid fa-car-magnifying-glass"></i>
-                        <h2>Inga bilar matchar din sökning</h2>
-                        <p>Prova att ändra dina filter eller sök på något annat.</p>
+                    <div class="empty-state">
+                        <i class="fa-solid fa-car-on"></i>
+                        <h2>Inga träffar hittades</h2>
+                        <p>Försök att justera dina filter för att se fler bilar.</p>
+                        <button onclick="window.location.href='results-fixed.html'" class="apply-btn" style="width:auto; margin:20px auto;">Rensa alla filter</button>
                     </div>`;
                 return;
             }
 
-            currentCars.forEach(car => {
-                const price = Number(car.price).toLocaleString('sv-SE');
-                const img = (car.images && car.images.length > 0) ? car.images[0] : 'placeholder.jpg';
+            carsDatabase.forEach(car => {
+                const formattedPrice = Number(car.price).toLocaleString('sv-SE');
+                const mainImg = (car.images && car.images.length > 0) ? car.images[0] : 'assets/no-image.jpg';
                 
                 grid.innerHTML += `
                     <a href="details.html?id=${car.id}" class="car-card">
                         <div class="img-box">
-                            <img src="${img}" alt="${car.brand}" loading="lazy">
-                            <div class="price-badge">${price} kr</div>
+                            <img src="${mainImg}" alt="${car.brand} ${car.model}" loading="lazy">
+                            <div class="price-tag">${formattedPrice} kr</div>
                         </div>
-                        <div class="card-body">
-                            <div class="card-title">${car.brand} ${car.model}</div>
-                            <div class="card-specs">
-                                <span><i class="fa-regular fa-calendar"></i> ${car.year}</span>
-                                <span><i class="fa-solid fa-gauge"></i> ${car.mileage} mil</span>
-                                <span><i class="fa-solid fa-gas-pump"></i> ${car.fuel}</span>
+                        <div class="card-info">
+                            <div class="car-name">${car.brand} ${car.model}</div>
+                            <div class="spec-tags">
+                                <span class="tag"><i class="fa-regular fa-calendar"></i> ${car.year}</span>
+                                <span class="tag"><i class="fa-solid fa-gauge-high"></i> ${car.mileage} mil</span>
+                                <span class="tag"><i class="fa-solid fa-gas-pump"></i> ${car.fuel}</span>
+                            </div>
+                            <div class="card-footer">
+                                <span><i class="fa-solid fa-location-dot"></i> ${car.city || 'Sverige'}</span>
+                                <span style="color:var(--primary)">Se detaljer <i class="fa-solid fa-arrow-right"></i></span>
                             </div>
                         </div>
                     </a>
@@ -354,40 +465,46 @@
             });
         }
 
-        // 4. التحكم في العرض (Grid/List)
-        document.getElementById('gridViewBtn').onclick = () => {
-            document.getElementById('resultsGrid').classList.remove('list-view');
-            document.getElementById('gridViewBtn').classList.add('active');
-            document.getElementById('listViewBtn').classList.remove('active');
+        // --- 4. معالجة أحداث الواجهة (UI Events) ---
+
+        // تبديل أوضاع العرض (Grid/List)
+        document.getElementById('setGrid').onclick = () => {
+            document.getElementById('masterGrid').classList.remove('list-mode');
+            document.getElementById('setGrid').classList.add('active');
+            document.getElementById('setList').classList.remove('active');
         };
 
-        document.getElementById('listViewBtn').onclick = () => {
-            document.getElementById('resultsGrid').classList.add('list-view');
-            document.getElementById('listViewBtn').classList.add('active');
-            document.getElementById('gridViewBtn').classList.remove('active');
+        document.getElementById('setList').onclick = () => {
+            document.getElementById('masterGrid').classList.add('list-mode');
+            document.getElementById('setList').classList.add('active');
+            document.getElementById('setGrid').classList.remove('active');
         };
 
-        // 5. تطبيق الفلاتر الجانبية
-        document.getElementById('applySideFilter').onclick = () => {
-            const brand = document.getElementById('sideBrand').value;
-            const fuel = document.getElementById('sideFuel').value;
-            const minP = document.getElementById('sideMinP').value;
-            const maxP = document.getElementById('sideMaxP').value;
+        // تحديث البحث (sidebar Action)
+        document.getElementById('executeFilter').onclick = () => {
+            const brand = document.getElementById('filterBrand').value;
+            const fuel = document.getElementById('filterFuel').value;
+            const minP = document.getElementById('minPrice').value;
+            const maxP = document.getElementById('maxPrice').value;
+            const minM = document.getElementById('minMil').value;
+            const maxM = document.getElementById('maxMil').value;
 
             const params = new URLSearchParams();
             if (brand !== 'all') params.set('brand', brand);
             if (fuel !== 'all') params.set('fuel', fuel);
             if (minP) params.set('minP', minP);
             if (maxP) params.set('maxP', maxP);
+            if (minM) params.set('minM', minM);
+            if (maxM) params.set('maxM', maxM);
 
             window.location.href = `results-fixed.html?${params.toString()}`;
         };
 
-        document.getElementById('sortOrder').onchange = applySortingAndRender;
+        document.getElementById('masterSort').onchange = applySortingAndDisplay;
 
-        // التشغيل
-        initSidebar();
-        fetchResults();
+        // بدء التشغيل
+        initializeUI();
+        fetchVehicles();
     </script>
 </body>
 </html>
