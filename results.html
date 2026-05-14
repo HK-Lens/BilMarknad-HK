@@ -1,67 +1,481 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="sv" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>Sökresultat | BILHK</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sökresultat | BILHK Professional Auto Search</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; padding: 20px; }
-        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: auto; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; }
-        .no-results { text-align: center; padding: 100px; grid-column: 1/-1; }
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e07210;
+            --primary-soft: #fff5eb;
+            --dark: #0f172a;
+            --dark-2: #1e293b;
+            --muted: #64748b;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --shadow: 0 15px 35px rgba(0,0,0,0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--dark); line-height: 1.6; overflow-x: hidden; }
+
+        /* --- Navigation & Header --- */
+        nav {
+            background: var(--white);
+            padding: 15px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: var(--dark); letter-spacing: -1.2px; }
+        .logo span { color: var(--primary); }
+
+        .search-stats-bar {
+            background: var(--white);
+            padding: 20px 6%;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .summary-info h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        .summary-info p { color: var(--muted); font-size: 14px; font-weight: 500; }
+
+        /* --- View & Sort Controls --- */
+        .controls-wrap { display: flex; gap: 12px; align-items: center; }
+        .control-select {
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: 0.2s;
+        }
+        .control-select:focus { border-color: var(--primary); background: white; }
+
+        .view-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            transition: 0.3s;
+        }
+        .view-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+        /* --- Main Layout Grid --- */
+        .results-layout {
+            max-width: 1440px;
+            margin: 40px auto;
+            padding: 0 5%;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+        }
+
+        /* --- Advanced Sidebar Filters --- */
+        .filter-sidebar { position: sticky; top: 100px; height: fit-content; }
+        .filter-panel {
+            background: var(--white);
+            border-radius: 28px;
+            border: 1px solid var(--border);
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        .filter-group { margin-bottom: 25px; }
+        .filter-group label { display: block; font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.5px; }
+        
+        .filter-ui-input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .filter-ui-input:focus { border-color: var(--primary); background: white; outline: none; }
+
+        .range-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .btn-apply-filters {
+            width: 100%;
+            padding: 16px;
+            background: var(--dark);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .btn-apply-filters:hover { background: var(--primary); transform: translateY(-3px); }
+
+        /* --- Results Grid & Card Design --- */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .car-pro-card {
+            background: var(--white);
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .car-pro-card:hover { transform: translateY(-12px); box-shadow: var(--shadow); border-color: var(--primary); }
+
+        .image-wrapper { width: 100%; height: 230px; background: #f1f5f9; position: relative; overflow: hidden; }
+        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
+        .car-pro-card:hover .image-wrapper img { transform: scale(1.08); }
+
+        .floating-price {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 15px;
+            font-weight: 900;
+            font-size: 20px;
+            box-shadow: 0 10px 20px rgba(245, 130, 32, 0.3);
+        }
+
+        .card-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .car-title { font-size: 20px; font-weight: 800; margin-bottom: 12px; color: var(--dark); }
+        
+        .meta-tags { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+        .meta-tag { background: var(--bg); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+
+        .card-footer {
+            margin-top: auto;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        /* List View Modifier */
+        .results-grid.list-mode { grid-template-columns: 1fr; }
+        .results-grid.list-mode .car-pro-card { flex-direction: row; height: 220px; }
+        .results-grid.list-mode .image-wrapper { width: 320px; height: 100%; }
+
+        /* --- Empty State --- */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 100px 20px;
+            background: var(--white);
+            border-radius: 30px;
+            border: 2px dashed var(--border);
+        }
+        .empty-state i { font-size: 64px; color: var(--border); margin-bottom: 25px; }
+
+        /* --- Skeleton Loader --- */
+        .skeleton-card {
+            height: 400px;
+            background: linear-gradient(90deg, #f0f2f5 25%, #f8fafc 50%, #f0f2f5 75%);
+            background-size: 200% 100%;
+            animation: skeleton-wave 1.5s infinite;
+            border-radius: 30px;
+        }
+        @keyframes skeleton-wave { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        @media (max-width: 1024px) {
+            .results-layout { grid-template-columns: 1fr; }
+            .filter-sidebar { display: none; } /* يمكن تحويله لـ Modal في الموبايل */
+        }
     </style>
 </head>
 <body>
-    <h2 style="text-align:center; margin-bottom:30px;">Hittade fordon</h2>
-    <div id="resultsGrid" class="results-grid"></div>
 
-<script type="module">
-    import { db } from './firebase-config.js';
-    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <nav>
+        <a href="index.html" class="logo">BIL<span>HK</span></a>
+        <div id="navUserZone">
+            </div>
+    </nav>
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const grid = document.getElementById('resultsGrid');
+    <header class="search-stats-bar">
+        <div class="summary-info">
+            <h1 id="mainSearchHeading">Hittade fordon</h1>
+            <p id="totalCountDisplay">Laddar resultat...</p>
+        </div>
 
-    async function loadResults() {
-        grid.innerHTML = "<p class='no-results'>Söker efter matchningar...</p>";
-        
-        try {
-            const snapshot = await getDocs(collection(db, "cars"));
-            grid.innerHTML = "";
-            let foundCount = 0;
+        <div class="controls-wrap">
+            <select id="sortEngine" class="control-select">
+                <option value="newest">Senast inkomna</option>
+                <option value="price_asc">Pris: Lågt till högt</option>
+                <option value="price_desc">Pris: Högt till lågt</option>
+                <option value="mil_asc">Miltal: Lägst först</option>
+            </select>
+            <button class="view-btn active" id="gridMode"><i class="fa-solid fa-grid-2"></i></button>
+            <button class="view-btn" id="listMode"><i class="fa-solid fa-list"></i></button>
+        </div>
+    </header>
 
-            snapshot.forEach(doc => {
-                const car = doc.data();
+    <div class="results-layout">
+        <aside class="filter-sidebar">
+            <div class="filter-panel">
+                <div class="filter-group">
+                    <label>Märke</label>
+                    <select id="filterBrand" class="filter-ui-input">
+                        <option value="all">Alla märken</option>
+                    </select>
+                </div>
                 
-                // 💡 منطق الفلترة المطابق لصفحة البيع
-                const matchesBrand = urlParams.get('brand') === 'all' || !urlParams.get('brand') || car.brand === urlParams.get('brand');
-                const matchesKar = urlParams.get('kar') === 'all' || car.karosseri === urlParams.get('kar');
-                const matchesFuel = urlParams.get('fuel') === 'all' || !urlParams.get('fuel') || car.fuel === urlParams.get('fuel');
-                
-                // فلترة السعر
-                const price = Number(car.price);
-                const minP = Number(urlParams.get('minP')) || 0;
-                const maxP = Number(urlParams.get('maxP')) || Infinity;
+                <div class="filter-group">
+                    <label>Bränsletyp</label>
+                    <select id="filterFuel" class="filter-ui-input">
+                        <option value="all">Alla bränslen</option>
+                        <option value="Bensin">Bensin</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="El">Elbil</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
 
-                if (matchesBrand && matchesKar && matchesFuel && price >= minP && price <= maxP) {
-                    foundCount++;
-                    grid.innerHTML += `
-                        <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
-                            <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:200px; object-fit:cover;">
-                            <div style="padding:15px;">
-                                <h3 style="color:#f58220;">${price.toLocaleString()} kr</h3>
-                                <p><strong>${car.brand} ${car.model}</strong></p>
-                                <p style="font-size:12px; color:#64748b;">${car.year} | ${car.mileage} mil | ${car.fuel}</p>
-                            </div>
-                        </div>`;
-                }
+                <div class="filter-group">
+                    <label>Pris (kr)</label>
+                    <div class="range-inputs">
+                        <input type="number" id="filterMinP" class="filter-ui-input" placeholder="Från">
+                        <input type="number" id="filterMaxP" class="filter-ui-input" placeholder="Till">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Miltal (mil)</label>
+                    <div class="range-inputs">
+                        <input type="number" id="filterMinM" class="filter-ui-input" placeholder="Från">
+                        <input type="number" id="filterMaxM" class="filter-ui-input" placeholder="Till">
+                    </div>
+                </div>
+
+                <button class="btn-apply-filters" id="reSearchAction">
+                    Uppdatera resultat
+                </button>
+            </div>
+        </aside>
+
+        <main>
+            <div class="results-grid" id="masterResultsGrid">
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { collection, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import carData from './cars-data.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let carsState = []; // الحالة المحلية للبيانات المحملة
+
+        // --- 1. تهيئة واجهة المستخدم الجانبية ---
+        function initSidebar() {
+            const brandSelect = document.getElementById('filterBrand');
+            Object.keys(carData).sort().forEach(b => {
+                const opt = document.createElement('option');
+                opt.value = b;
+                opt.textContent = b;
+                brandSelect.appendChild(opt);
             });
 
-            if (foundCount === 0) grid.innerHTML = "<div class='no-results'>Inga fordon matchade din sökning. Prova bredare filter!</div>";
-        } catch (err) { console.error(err); }
-    }
+            // مزامنة الحقول مع الرابط
+            document.getElementById('filterBrand').value = urlParams.get('brand') || 'all';
+            document.getElementById('filterFuel').value = urlParams.get('fuel') || 'all';
+            document.getElementById('filterMinP').value = urlParams.get('minP') || '';
+            document.getElementById('filterMaxP').value = urlParams.get('maxP') || '';
+            document.getElementById('filterMinM').value = urlParams.get('minM') || '';
+            document.getElementById('filterMaxM').value = urlParams.get('maxM') || '';
+        }
 
-    loadResults();
-</script>
+        // --- 2. محرك جلب ومعالجة البيانات ---
+        async function fetchEngine() {
+            const grid = document.getElementById('masterResultsGrid');
+            const brand = urlParams.get('brand');
+            const fuel = urlParams.get('fuel');
+            const minP = Number(urlParams.get('minP')) || 0;
+            const maxP = Number(urlParams.get('maxP')) || 9999999;
+            const minM = Number(urlParams.get('minM')) || 0;
+            const maxM = Number(urlParams.get('maxM')) || 999999;
+
+            try {
+                /**
+                 * استراتيجية البحث الهجين:
+                 * نقوم بجلب البيانات بناءً على الفئات الأساسية (الحالة، الماركة) 
+                 * ثم نقوم بفلترة النطاقات برمجياً لتجنب تعقيد الـ Composite Indexes في Firebase
+                 */
+                let q = query(collection(db, "cars"), where("status", "==", "active"));
+                
+                const snap = await getDocs(q);
+                carsState = [];
+
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    const car = { id: doc.id, ...data };
+
+                    // الفلترة المنطقية العميقة
+                    const brandMatch = !brand || brand === 'all' || car.brand === brand;
+                    const fuelMatch = !fuel || fuel === 'all' || car.fuel === fuel;
+                    const price = Number(car.price);
+                    const mileage = Number(car.mileage);
+                    
+                    const priceMatch = price >= minP && price <= maxP;
+                    const milMatch = mileage >= minM && mileage <= maxM;
+
+                    if (brandMatch && fuelMatch && priceMatch && milMatch) {
+                        carsState.push(car);
+                    }
+                });
+
+                processAndRender();
+            } catch (err) {
+                console.error("Fetch Engine Error:", err);
+                grid.innerHTML = `<div class="empty-state"><h2>Ett fel uppstod vid hämtning av data.</h2></div>`;
+            }
+        }
+
+        // --- 3. محرك الفرز والعرض اللحظي ---
+        function processAndRender() {
+            const sortVal = document.getElementById('sortEngine').value;
+            const grid = document.getElementById('masterResultsGrid');
+            const countDisplay = document.getElementById('totalCountDisplay');
+
+            // منطق الفرز المتقدم
+            carsState.sort((a, b) => {
+                if (sortVal === 'price_asc') return a.price - b.price;
+                if (sortVal === 'price_desc') return b.price - a.price;
+                if (sortVal === 'mil_asc') return a.mileage - b.mileage;
+                return b.createdAt - a.createdAt; // newest
+            });
+
+            grid.innerHTML = "";
+            countDisplay.innerText = `${carsState.length} fordon matchar din sökning`;
+
+            if (carsState.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-car-on"></i>
+                        <h2>Inga bilar matchade din sökning</h2>
+                        <p>Prova att bredda dina filter för att se fler resultat.</p>
+                        <button onclick="window.location.href='results.html'" class="btn-apply-filters" style="width:auto; padding:10px 25px; margin-top:20px;">Rensa alla filter</button>
+                    </div>`;
+                return;
+            }
+
+            carsState.forEach(car => {
+                const pFormatted = Number(car.price).toLocaleString('sv-SE');
+                const img = (car.images && car.images.length > 0) ? car.images[0] : 'placeholder.jpg';
+                
+                grid.innerHTML += `
+                    <a href="details.html?id=${car.id}" class="car-pro-card">
+                        <div class="image-wrapper">
+                            <img src="${img}" alt="${car.brand}" loading="lazy">
+                            <div class="floating-price">${pFormatted} kr</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="car-title">${car.brand} ${car.model}</div>
+                            <div class="meta-tags">
+                                <span class="meta-tag"><i class="fa-regular fa-calendar"></i> ${car.year}</span>
+                                <span class="meta-tag"><i class="fa-solid fa-gauge-high"></i> ${car.mileage} mil</span>
+                                <span class="meta-tag"><i class="fa-solid fa-gas-pump"></i> ${car.fuel}</span>
+                            </div>
+                            <div class="card-footer">
+                                <span><i class="fa-solid fa-location-dot"></i> ${car.city || 'Sverige'}</span>
+                                <span style="color:var(--primary)">Visa detaljer →</span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            });
+        }
+
+        // --- 4. إدارة أحداث الواجهة (Event Listeners) ---
+        
+        // تبديل أوضاع العرض
+        document.getElementById('gridMode').onclick = () => {
+            document.getElementById('masterResultsGrid').classList.remove('list-mode');
+            document.getElementById('gridMode').classList.add('active');
+            document.getElementById('listMode').classList.remove('active');
+        };
+
+        document.getElementById('listMode').onclick = () => {
+            document.getElementById('masterResultsGrid').classList.add('list-mode');
+            document.getElementById('listMode').classList.add('active');
+            document.getElementById('gridMode').classList.remove('active');
+        };
+
+        // تحديث البحث
+        document.getElementById('reSearchAction').onclick = () => {
+            const params = new URLSearchParams();
+            const brand = document.getElementById('filterBrand').value;
+            const fuel = document.getElementById('filterFuel').value;
+            const minP = document.getElementById('filterMinP').value;
+            const maxP = document.getElementById('filterMaxP').value;
+            const minM = document.getElementById('filterMinM').value;
+            const maxM = document.getElementById('filterMaxM').value;
+
+            if (brand !== 'all') params.set('brand', brand);
+            if (fuel !== 'all') params.set('fuel', fuel);
+            if (minP) params.set('minP', minP);
+            if (maxP) params.set('maxP', maxP);
+            if (minM) params.set('minM', minM);
+            if (maxM) params.set('maxM', maxM);
+
+            window.location.href = `results.html?${params.toString()}`;
+        };
+
+        document.getElementById('sortEngine').onchange = processAndRender;
+
+        // التشغيل الأولي
+        initSidebar();
+        fetchEngine();
+    </script>
 </body>
 </html>
