@@ -2,66 +2,1661 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Sökresultat | BILHK</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <meta name="description" content="Sökresultat för bilar på BILHK. Filtrera efter märke, modell, pris, miltal, drivmedel och utrustning.">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; padding: 20px; }
-        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: auto; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; }
-        .no-results { text-align: center; padding: 100px; grid-column: 1/-1; }
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e67312;
+            --primary-soft: rgba(245, 130, 32, 0.12);
+
+            --dark: #0f172a;
+            --dark-soft: #1e293b;
+
+            --text: #0f172a;
+            --muted: #64748b;
+            --muted-light: #94a3b8;
+
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-soft: #f1f5f9;
+
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --success: #16a34a;
+            --success-soft: rgba(22, 163, 74, 0.10);
+
+            --danger: #dc2626;
+            --danger-soft: rgba(220, 38, 38, 0.10);
+
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.13);
+
+            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 14px 34px rgba(15, 23, 42, 0.10);
+            --shadow-lg: 0 24px 70px rgba(15, 23, 42, 0.15);
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 28px;
+            --radius-full: 999px;
+
+            --max-width: 1240px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at 8% 0%, rgba(245, 130, 32, 0.14), transparent 33%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        select {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 1.75rem;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            color: var(--dark);
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary), #ffb15c);
+            color: white;
+            box-shadow: 0 12px 28px rgba(245, 130, 32, 0.30);
+            font-size: 18px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .nav-btn {
+            min-height: 42px;
+            padding: 10px 15px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            transition: 0.25s ease;
+        }
+
+        .nav-btn:hover {
+            border-color: rgba(245, 130, 32, 0.45);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 10px 24px rgba(245, 130, 32, 0.22);
+        }
+
+        .nav-btn.primary:hover {
+            background: var(--primary-hover);
+            color: white;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .hero {
+            background:
+                radial-gradient(circle at 20% 0%, rgba(245, 130, 32, 0.32), transparent 34%),
+                linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 46px 24px 92px;
+        }
+
+        .hero-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #cbd5e1;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 22px;
+        }
+
+        .breadcrumb a {
+            color: #e2e8f0;
+        }
+
+        .breadcrumb a:hover {
+            color: white;
+        }
+
+        .hero-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .hero h1 {
+            font-size: clamp(30px, 5vw, 54px);
+            line-height: 1.04;
+            letter-spacing: -0.06em;
+            font-weight: 900;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            max-width: 720px;
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.75;
+            font-weight: 600;
+        }
+
+        .result-counter-card {
+            min-width: 220px;
+            padding: 18px 20px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-counter-card strong {
+            display: block;
+            font-size: 34px;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .result-counter-card span {
+            display: block;
+            margin-top: 6px;
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 850;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .content-shell {
+            max-width: var(--max-width);
+            margin: -58px auto 0;
+            padding: 0 24px 76px;
+        }
+
+        .search-panel {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            box-shadow: var(--shadow-lg);
+            padding: 24px;
+            margin-bottom: 26px;
+        }
+
+        .panel-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-title-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 16px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 17px;
+        }
+
+        .panel-title h2 {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+        }
+
+        .panel-title p {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 3px;
+        }
+
+        .sort-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 16px;
+        }
+
+        .sort-box label {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 900;
+            padding-left: 8px;
+        }
+
+        .sort-box select {
+            min-height: 40px;
+            border: none;
+            outline: none;
+            background: white;
+            color: var(--dark);
+            border-radius: 12px;
+            padding: 0 12px;
+            font-size: 13px;
+            font-weight: 850;
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 12px;
+            border-radius: var(--radius-full);
+            background: #fff7ed;
+            color: #9a3412;
+            border: 1px solid #fed7aa;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .filter-chip i {
+            color: var(--primary);
+        }
+
+        .empty-filters {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .toolbar {
+            margin: 0 0 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-left {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .toolbar-left strong {
+            color: var(--dark);
+            font-weight: 900;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .small-btn {
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            min-height: 42px;
+            padding: 10px 14px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.25s ease;
+        }
+
+        .small-btn:hover {
+            border-color: rgba(245, 130, 32, 0.45);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+            gap: 22px;
+        }
+
+        .car-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.25s ease;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .car-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(245, 130, 32, 0.36);
+        }
+
+        .image-wrap {
+            position: relative;
+            height: 205px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #e2e8f0, #f8fafc);
+        }
+
+        .image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: 0.4s ease;
+        }
+
+        .car-card:hover .image-wrap img {
+            transform: scale(1.045);
+        }
+
+        .image-badge {
+            position: absolute;
+            top: 13px;
+            left: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 11px;
+            border-radius: var(--radius-full);
+            background: rgba(15, 23, 42, 0.76);
+            color: white;
+            font-size: 11px;
+            font-weight: 900;
+            backdrop-filter: blur(8px);
+        }
+
+        .card-content {
+            padding: 19px;
+        }
+
+        .card-price {
+            color: var(--primary);
+            font-size: 24px;
+            line-height: 1;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            color: var(--dark);
+            font-size: 17px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .card-description {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 650;
+            line-height: 1.55;
+            margin-bottom: 15px;
+            min-height: 38px;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .meta-item {
+            padding: 10px;
+            border-radius: 14px;
+            background: var(--surface-soft);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .meta-item i {
+            color: var(--primary);
+            font-size: 13px;
+            width: 14px;
+            text-align: center;
+        }
+
+        .meta-item span {
+            min-width: 0;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 850;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-footer {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .seller-note {
+            color: var(--muted-light);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .details-link {
+            color: var(--dark);
+            background: var(--surface-soft);
+            border-radius: var(--radius-full);
+            padding: 9px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .loading-state,
+        .empty-state,
+        .error-state {
+            grid-column: 1 / -1;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            min-height: 330px;
+            padding: 48px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .state-icon {
+            width: 76px;
+            height: 76px;
+            border-radius: 26px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 18px;
+            font-size: 30px;
+        }
+
+        .loading-state .state-icon {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .empty-state .state-icon {
+            background: var(--warning-soft);
+            color: var(--warning);
+        }
+
+        .error-state .state-icon {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .state-title {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .state-text {
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 14px;
+            font-weight: 650;
+            max-width: 560px;
+            margin-bottom: 22px;
+        }
+
+        .spinner {
+            animation: spin 0.85s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .site-footer {
+            background: var(--dark);
+            color: #94a3b8;
+            padding: 36px 24px;
+            margin-top: auto;
+        }
+
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .footer-inner strong {
+            color: white;
+        }
+
+        @media (max-width: 760px) {
+            .header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 18px;
+            }
+
+            .header-actions {
+                justify-content: flex-start;
+                width: 100%;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 3px;
+            }
+
+            .hero {
+                padding: 34px 18px 82px;
+            }
+
+            .content-shell {
+                padding: 0 18px 60px;
+            }
+
+            .search-panel {
+                padding: 18px;
+                border-radius: 26px;
+            }
+
+            .panel-top {
+                align-items: flex-start;
+            }
+
+            .sort-box {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .sort-box select {
+                flex: 1;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-counter-card {
+                width: 100%;
+            }
+        }
     </style>
 </head>
+
 <body>
-    <h2 style="text-align:center; margin-bottom:30px;">Hittade fordon</h2>
-    <div id="resultsGrid" class="results-grid"></div>
+
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo" aria-label="BILHK startsida">
+            <span class="logo-icon">
+                <i class="fa-solid fa-car-side"></i>
+            </span>
+            BIL<span>HK</span>
+        </a>
+
+        <nav class="header-actions" aria-label="Sidmeny">
+            <a href="index.html" class="nav-btn">
+                <i class="fa-solid fa-house"></i>
+                Hem
+            </a>
+
+            <a href="filter.html" class="nav-btn">
+                <i class="fa-solid fa-sliders"></i>
+                Ändra sökning
+            </a>
+
+            <a href="sell.html" class="nav-btn primary">
+                <i class="fa-solid fa-circle-plus"></i>
+                Sälj bil
+            </a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="breadcrumb">
+                <a href="index.html">Hem</a>
+                <i class="fa-solid fa-chevron-right"></i>
+                <span>Sökresultat</span>
+            </div>
+
+            <div class="hero-title-row">
+                <div>
+                    <h1>Sökresultat</h1>
+                    <p>
+                        Här visas annonser som matchar dina valda filter. Kontrollera alltid fordonets uppgifter,
+                        historik och säljare innan du går vidare med en affär.
+                    </p>
+                </div>
+
+                <div class="result-counter-card">
+                    <strong id="resultCounter">0</strong>
+                    <span>Matchande fordon</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-shell">
+        <div class="search-panel">
+            <div class="panel-top">
+                <div class="panel-title">
+                    <div class="panel-title-icon">
+                        <i class="fa-solid fa-filter"></i>
+                    </div>
+
+                    <div>
+                        <h2>Aktiva filter</h2>
+                        <p id="filterSummaryText">Läser filter...</p>
+                    </div>
+                </div>
+
+                <div class="sort-box">
+                    <label for="sortSelect">Sortera</label>
+                    <select id="sortSelect">
+                        <option value="newest">Nyast först</option>
+                        <option value="priceAsc">Pris: lägst först</option>
+                        <option value="priceDesc">Pris: högst först</option>
+                        <option value="yearDesc">År: nyast först</option>
+                        <option value="mileageAsc">Miltal: lägst först</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="activeFilters" class="active-filters"></div>
+        </div>
+
+        <div class="toolbar">
+            <div class="toolbar-left" id="toolbarText">
+                Söker efter fordon...
+            </div>
+
+            <div class="toolbar-actions">
+                <button type="button" class="small-btn" id="backToFilterBtn">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    Justera filter
+                </button>
+
+                <button type="button" class="small-btn" id="clearFiltersBtn">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Rensa filter
+                </button>
+            </div>
+        </div>
+
+        <div id="resultsGrid" class="results-grid" aria-live="polite"></div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div>
+            <strong>BILHK</strong> &copy; 2026. Öppen marknadsplats för fordonsannonser.
+        </div>
+
+        <div>
+            All handel sker på användarens eget ansvar.
+        </div>
+    </div>
+</footer>
 
 <script type="module">
-    import { db } from './firebase-config.js';
-    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { db } from "./firebase-config.js";
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const grid = document.getElementById('resultsGrid');
+    import {
+        collection,
+        getDocs,
+        query,
+        where,
+        orderBy,
+        limit
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    async function loadResults() {
-        grid.innerHTML = "<p class='no-results'>Söker efter matchningar...</p>";
-        
-        try {
-            const snapshot = await getDocs(collection(db, "cars"));
-            grid.innerHTML = "";
-            let foundCount = 0;
+    const RESULTS_CONFIG = {
+        COLLECTIONS: {
+            CARS: "cars"
+        },
 
-            snapshot.forEach(doc => {
-                const car = doc.data();
-                
-                // 💡 منطق الفلترة المطابق لصفحة البيع
-                const matchesBrand = urlParams.get('brand') === 'all' || !urlParams.get('brand') || car.brand === urlParams.get('brand');
-                const matchesKar = urlParams.get('kar') === 'all' || car.karosseri === urlParams.get('kar');
-                const matchesFuel = urlParams.get('fuel') === 'all' || !urlParams.get('fuel') || car.fuel === urlParams.get('fuel');
-                
-                // فلترة السعر
-                const price = Number(car.price);
-                const minP = Number(urlParams.get('minP')) || 0;
-                const maxP = Number(urlParams.get('maxP')) || Infinity;
+        ROUTES: {
+            DETAILS: "details.html",
+            FILTER: "filter.html",
+            HOME: "index.html"
+        },
 
-                if (matchesBrand && matchesKar && matchesFuel && price >= minP && price <= maxP) {
-                    foundCount++;
-                    grid.innerHTML += `
-                        <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
-                            <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:200px; object-fit:cover;">
-                            <div style="padding:15px;">
-                                <h3 style="color:#f58220;">${price.toLocaleString()} kr</h3>
-                                <p><strong>${car.brand} ${car.model}</strong></p>
-                                <p style="font-size:12px; color:#64748b;">${car.year} | ${car.mileage} mil | ${car.fuel}</p>
-                            </div>
-                        </div>`;
-                }
-            });
+        QUERY: {
+            MAX_READ_LIMIT: 250,
+            ACTIVE_FIELD: "active",
+            CREATED_FIELD: "createdAt"
+        },
 
-            if (foundCount === 0) grid.innerHTML = "<div class='no-results'>Inga fordon matchade din sökning. Prova bredare filter!</div>";
-        } catch (err) { console.error(err); }
+        DEFAULTS: {
+            PLACEHOLDER_IMAGE: "placeholder.jpg",
+            FALLBACK_IMAGE_ALT: "Bild saknas"
+        },
+
+        FIELD_ALIASES: {
+            BODY_TYPE: ["bodyType", "karosseri", "kar"],
+            FUEL: ["fuelType", "fuel"],
+            TRANSMISSION: ["transmission", "gearbox", "gear"],
+            DRIVE: ["drive", "drivning"],
+            FEATURES: ["features", "techs", "equipment"],
+            REGISTRATION: ["regNo", "regNr", "registrationNumber"]
+        }
+    };
+
+    const elements = {
+        resultCounter: document.getElementById("resultCounter"),
+        resultsGrid: document.getElementById("resultsGrid"),
+        activeFilters: document.getElementById("activeFilters"),
+        filterSummaryText: document.getElementById("filterSummaryText"),
+        toolbarText: document.getElementById("toolbarText"),
+        sortSelect: document.getElementById("sortSelect"),
+        backToFilterBtn: document.getElementById("backToFilterBtn"),
+        clearFiltersBtn: document.getElementById("clearFiltersBtn")
+    };
+
+    const state = {
+        urlParams: new URLSearchParams(window.location.search),
+        filters: {},
+        allMatches: [],
+        renderedMatches: []
+    };
+
+    initializeResultsPage();
+
+    function initializeResultsPage() {
+        attachGlobalErrorHandlers();
+        attachEvents();
+
+        state.filters = parseFilters(state.urlParams);
+
+        renderActiveFilters(state.filters);
+        loadResults();
     }
 
-    loadResults();
+    function attachEvents() {
+        elements.sortSelect.addEventListener("change", () => {
+            renderResults(sortCars([...state.allMatches], elements.sortSelect.value));
+        });
+
+        elements.backToFilterBtn.addEventListener("click", () => {
+            window.location.href = `${RESULTS_CONFIG.ROUTES.FILTER}${window.location.search || ""}`;
+        });
+
+        elements.clearFiltersBtn.addEventListener("click", () => {
+            window.location.href = RESULTS_CONFIG.ROUTES.HOME;
+        });
+    }
+
+    async function loadResults() {
+        renderLoadingState();
+
+        try {
+            const baseQuery = buildFirestoreBaseQuery(state.filters);
+            const snapshot = await getDocs(baseQuery);
+
+            const cars = snapshot.docs.map((documentSnapshot) => {
+                return normalizeCarDocument(documentSnapshot.id, documentSnapshot.data());
+            });
+
+            const filteredCars = cars.filter((car) => doesCarMatchFilters(car, state.filters));
+
+            state.allMatches = sortCars(filteredCars, elements.sortSelect.value);
+
+            renderResults(state.allMatches);
+        } catch (error) {
+            console.error("[BILHK] Failed to load search results:", error);
+            renderErrorState(error);
+        }
+    }
+
+    function buildFirestoreBaseQuery(filters) {
+        const constraints = [];
+
+        constraints.push(where(RESULTS_CONFIG.QUERY.ACTIVE_FIELD, "==", true));
+
+        if (filters.brand && filters.brand !== "all") {
+            constraints.push(where("brand", "==", filters.brand));
+        }
+
+        constraints.push(orderBy(RESULTS_CONFIG.QUERY.CREATED_FIELD, "desc"));
+        constraints.push(limit(RESULTS_CONFIG.QUERY.MAX_READ_LIMIT));
+
+        return query(collection(db, RESULTS_CONFIG.COLLECTIONS.CARS), ...constraints);
+    }
+
+    function parseFilters(params) {
+        return {
+            brand: cleanParam(params.get("brand")),
+            model: cleanParam(params.get("model")),
+            bodyType: cleanParam(params.get("kar")),
+            fuel: cleanParam(params.get("fuel")),
+            transmission: cleanParam(params.get("gear")),
+            drive: cleanParam(params.get("drive")),
+
+            minPrice: cleanNumber(params.get("minP")),
+            maxPrice: cleanNumber(params.get("maxP")),
+
+            minYear: cleanNumber(params.get("minY")),
+            maxYear: cleanNumber(params.get("maxY")),
+
+            minMileage: cleanNumber(params.get("minM")),
+            maxMileage: cleanNumber(params.get("maxM") || params.get("maxMil")),
+
+            maxTax: cleanNumber(params.get("tax") || params.get("maxTax")),
+            maxOwners: cleanNumber(params.get("owners") || params.get("maxOwners")),
+            minHp: cleanNumber(params.get("hp") || params.get("minHp")),
+
+            inspectionDate: cleanParam(params.get("bes")),
+            text: cleanParam(params.get("text")).toLowerCase(),
+
+            techs: parseListParam(params.get("techs"))
+        };
+    }
+
+    function normalizeCarDocument(id, data) {
+        const raw = data || {};
+
+        const imageList = Array.isArray(raw.images) ? raw.images : [];
+
+        return {
+            id,
+
+            brand: safeText(raw.brand),
+            model: safeText(raw.model),
+            year: cleanNumber(raw.year),
+            price: cleanNumber(raw.price),
+            mileage: cleanNumber(raw.mileage),
+
+            bodyType: safeText(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.BODY_TYPE)),
+            fuel: safeText(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.FUEL)),
+            transmission: safeText(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.TRANSMISSION)),
+            drive: safeText(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.DRIVE)),
+
+            hp: cleanNumber(raw.hp),
+            tax: cleanNumber(raw.tax),
+            owners: cleanNumber(raw.owners),
+
+            color: safeText(raw.color),
+            description: safeText(raw.description, 260),
+            sellerId: safeText(raw.sellerId),
+            regNo: safeText(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.REGISTRATION)),
+
+            besiktning: safeText(raw.besiktning),
+            createdAt: raw.createdAt || null,
+
+            active: raw.active !== false,
+
+            features: normalizeFeatures(getFirstAvailable(raw, RESULTS_CONFIG.FIELD_ALIASES.FEATURES)),
+
+            image: getSafeImageUrl(imageList[0])
+        };
+    }
+
+    function doesCarMatchFilters(car, filters) {
+        if (!car.active) return false;
+
+        if (!matchesStringFilter(car.brand, filters.brand)) return false;
+        if (!matchesStringFilter(car.model, filters.model)) return false;
+        if (!matchesStringFilter(car.bodyType, filters.bodyType)) return false;
+        if (!matchesStringFilter(car.fuel, filters.fuel)) return false;
+        if (!matchesStringFilter(car.transmission, filters.transmission)) return false;
+        if (!matchesStringFilter(car.drive, filters.drive)) return false;
+
+        if (!matchesNumberRange(car.price, filters.minPrice, filters.maxPrice)) return false;
+        if (!matchesNumberRange(car.year, filters.minYear, filters.maxYear)) return false;
+        if (!matchesNumberRange(car.mileage, filters.minMileage, filters.maxMileage)) return false;
+
+        if (filters.maxTax !== null && numberOrInfinity(car.tax) > filters.maxTax) return false;
+        if (filters.maxOwners !== null && numberOrInfinity(car.owners) > filters.maxOwners) return false;
+        if (filters.minHp !== null && numberOrZero(car.hp) < filters.minHp) return false;
+
+        if (filters.inspectionDate && filters.inspectionDate !== "all") {
+            if (!car.besiktning) return false;
+
+            const carDate = Date.parse(car.besiktning);
+            const filterDate = Date.parse(filters.inspectionDate);
+
+            if (Number.isFinite(carDate) && Number.isFinite(filterDate) && carDate > filterDate) {
+                return false;
+            }
+        }
+
+        if (filters.techs.length > 0) {
+            const normalizedCarFeatures = car.features.map((feature) => feature.toLowerCase());
+
+            const hasAllRequestedTechs = filters.techs.every((tech) => {
+                return normalizedCarFeatures.includes(tech.toLowerCase());
+            });
+
+            if (!hasAllRequestedTechs) return false;
+        }
+
+        if (filters.text) {
+            const searchableText = [
+                car.brand,
+                car.model,
+                car.bodyType,
+                car.fuel,
+                car.transmission,
+                car.description,
+                car.color
+            ].join(" ").toLowerCase();
+
+            if (!searchableText.includes(filters.text)) return false;
+        }
+
+        return true;
+    }
+
+    function renderResults(cars) {
+        state.renderedMatches = cars;
+
+        clearElement(elements.resultsGrid);
+
+        elements.resultCounter.textContent = String(cars.length);
+
+        elements.toolbarText.innerHTML = "";
+
+        const strong = document.createElement("strong");
+        strong.textContent = String(cars.length);
+
+        elements.toolbarText.appendChild(document.createTextNode("Visar "));
+        elements.toolbarText.appendChild(strong);
+        elements.toolbarText.appendChild(document.createTextNode(cars.length === 1 ? " fordon" : " fordon"));
+
+        elements.filterSummaryText.textContent = buildFilterSummaryText(state.filters);
+
+        if (cars.length === 0) {
+            renderEmptyState();
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        cars.forEach((car) => {
+            fragment.appendChild(createCarCard(car));
+        });
+
+        elements.resultsGrid.appendChild(fragment);
+    }
+
+    function createCarCard(car) {
+        const card = document.createElement("article");
+        card.className = "car-card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "link");
+        card.setAttribute("aria-label", `Öppna annons för ${car.brand} ${car.model}`);
+
+        card.addEventListener("click", () => {
+            openDetailsPage(car.id);
+        });
+
+        card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openDetailsPage(car.id);
+            }
+        });
+
+        const imageWrap = document.createElement("div");
+        imageWrap.className = "image-wrap";
+
+        const image = document.createElement("img");
+        image.loading = "lazy";
+        image.alt = car.brand && car.model ? `${car.brand} ${car.model}` : RESULTS_CONFIG.DEFAULTS.FALLBACK_IMAGE_ALT;
+        image.src = car.image;
+
+        image.onerror = () => {
+            image.src = RESULTS_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE;
+        };
+
+        const badge = document.createElement("div");
+        badge.className = "image-badge";
+
+        const badgeIcon = document.createElement("i");
+        badgeIcon.className = "fa-solid fa-camera";
+
+        const badgeText = document.createElement("span");
+        badgeText.textContent = car.image === RESULTS_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE ? "Ingen bild" : "Bild";
+
+        badge.appendChild(badgeIcon);
+        badge.appendChild(badgeText);
+
+        imageWrap.appendChild(image);
+        imageWrap.appendChild(badge);
+
+        const content = document.createElement("div");
+        content.className = "card-content";
+
+        const price = document.createElement("div");
+        price.className = "card-price";
+        price.textContent = formatCurrency(car.price);
+
+        const title = document.createElement("h3");
+        title.className = "card-title";
+        title.textContent = formatCarTitle(car);
+
+        const description = document.createElement("p");
+        description.className = "card-description";
+        description.textContent = car.description || "Ingen beskrivning angiven för denna annons.";
+
+        const metaGrid = document.createElement("div");
+        metaGrid.className = "meta-grid";
+
+        metaGrid.appendChild(createMetaItem("fa-calendar", car.year ? String(car.year) : "År saknas"));
+        metaGrid.appendChild(createMetaItem("fa-road", car.mileage !== null ? `${formatNumber(car.mileage)} mil` : "Miltal saknas"));
+        metaGrid.appendChild(createMetaItem("fa-gas-pump", car.fuel || "Drivmedel saknas"));
+        metaGrid.appendChild(createMetaItem("fa-gears", car.transmission || "Växellåda saknas"));
+
+        const footer = document.createElement("div");
+        footer.className = "card-footer";
+
+        const sellerNote = document.createElement("span");
+        sellerNote.className = "seller-note";
+        sellerNote.textContent = car.bodyType || "Fordonsannons";
+
+        const detailsLink = document.createElement("span");
+        detailsLink.className = "details-link";
+
+        const detailsIcon = document.createElement("i");
+        detailsIcon.className = "fa-solid fa-arrow-right";
+
+        detailsLink.appendChild(document.createTextNode("Visa detaljer"));
+        detailsLink.appendChild(detailsIcon);
+
+        footer.appendChild(sellerNote);
+        footer.appendChild(detailsLink);
+
+        content.appendChild(price);
+        content.appendChild(title);
+        content.appendChild(description);
+        content.appendChild(metaGrid);
+        content.appendChild(footer);
+
+        card.appendChild(imageWrap);
+        card.appendChild(content);
+
+        return card;
+    }
+
+    function createMetaItem(iconName, text) {
+        const item = document.createElement("div");
+        item.className = "meta-item";
+
+        const icon = document.createElement("i");
+        icon.className = `fa-solid ${iconName}`;
+
+        const span = document.createElement("span");
+        span.textContent = text;
+
+        item.appendChild(icon);
+        item.appendChild(span);
+
+        return item;
+    }
+
+    function renderActiveFilters(filters) {
+        clearElement(elements.activeFilters);
+
+        const chips = buildFilterChips(filters);
+
+        if (chips.length === 0) {
+            const empty = document.createElement("span");
+            empty.className = "empty-filters";
+            empty.textContent = "Inga specifika filter valda. Visar senaste aktiva annonser.";
+            elements.activeFilters.appendChild(empty);
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        chips.forEach((chip) => {
+            const item = document.createElement("span");
+            item.className = "filter-chip";
+
+            const icon = document.createElement("i");
+            icon.className = chip.icon;
+
+            const text = document.createElement("span");
+            text.textContent = chip.label;
+
+            item.appendChild(icon);
+            item.appendChild(text);
+
+            fragment.appendChild(item);
+        });
+
+        elements.activeFilters.appendChild(fragment);
+    }
+
+    function buildFilterChips(filters) {
+        const chips = [];
+
+        if (isUsefulFilter(filters.brand)) chips.push({ icon: "fa-solid fa-car", label: `Märke: ${filters.brand}` });
+        if (isUsefulFilter(filters.model)) chips.push({ icon: "fa-solid fa-tag", label: `Modell: ${filters.model}` });
+        if (isUsefulFilter(filters.bodyType)) chips.push({ icon: "fa-solid fa-car-side", label: `Kaross: ${filters.bodyType}` });
+        if (isUsefulFilter(filters.fuel)) chips.push({ icon: "fa-solid fa-gas-pump", label: `Drivmedel: ${filters.fuel}` });
+        if (isUsefulFilter(filters.transmission)) chips.push({ icon: "fa-solid fa-gears", label: `Växellåda: ${filters.transmission}` });
+        if (isUsefulFilter(filters.drive)) chips.push({ icon: "fa-solid fa-road", label: `Drivning: ${filters.drive}` });
+
+        if (filters.minPrice !== null) chips.push({ icon: "fa-solid fa-coins", label: `Pris från: ${formatCurrency(filters.minPrice)}` });
+        if (filters.maxPrice !== null) chips.push({ icon: "fa-solid fa-coins", label: `Pris till: ${formatCurrency(filters.maxPrice)}` });
+
+        if (filters.minYear !== null) chips.push({ icon: "fa-solid fa-calendar", label: `År från: ${filters.minYear}` });
+        if (filters.maxYear !== null) chips.push({ icon: "fa-solid fa-calendar", label: `År till: ${filters.maxYear}` });
+
+        if (filters.minMileage !== null) chips.push({ icon: "fa-solid fa-road", label: `Miltal från: ${formatNumber(filters.minMileage)} mil` });
+        if (filters.maxMileage !== null) chips.push({ icon: "fa-solid fa-road", label: `Miltal till: ${formatNumber(filters.maxMileage)} mil` });
+
+        if (filters.maxTax !== null) chips.push({ icon: "fa-solid fa-receipt", label: `Max skatt: ${formatCurrency(filters.maxTax)}` });
+        if (filters.maxOwners !== null) chips.push({ icon: "fa-solid fa-users", label: `Max ägare: ${filters.maxOwners}` });
+        if (filters.minHp !== null) chips.push({ icon: "fa-solid fa-gauge-high", label: `Min hk: ${filters.minHp}` });
+
+        if (isUsefulFilter(filters.inspectionDate)) chips.push({ icon: "fa-solid fa-clipboard-check", label: `Besiktigad senast: ${filters.inspectionDate}` });
+
+        if (filters.techs.length > 0) {
+            filters.techs.forEach((tech) => {
+                chips.push({ icon: "fa-solid fa-shield-check", label: `Utrustning: ${tech}` });
+            });
+        }
+
+        if (filters.text) chips.push({ icon: "fa-solid fa-magnifying-glass", label: `Text: ${filters.text}` });
+
+        return chips;
+    }
+
+    function renderLoadingState() {
+        elements.resultCounter.textContent = "0";
+        elements.toolbarText.textContent = "Söker efter fordon...";
+        elements.filterSummaryText.textContent = "Läser filter och hämtar annonser...";
+
+        clearElement(elements.resultsGrid);
+
+        const stateBox = document.createElement("div");
+        stateBox.className = "loading-state";
+
+        const iconBox = document.createElement("div");
+        iconBox.className = "state-icon";
+
+        const icon = document.createElement("i");
+        icon.className = "fa-solid fa-circle-notch spinner";
+
+        const title = document.createElement("div");
+        title.className = "state-title";
+        title.textContent = "Söker efter matchningar";
+
+        const text = document.createElement("div");
+        text.className = "state-text";
+        text.textContent = "Vi hämtar aktiva annonser och jämför dem med dina valda filter.";
+
+        iconBox.appendChild(icon);
+        stateBox.appendChild(iconBox);
+        stateBox.appendChild(title);
+        stateBox.appendChild(text);
+
+        elements.resultsGrid.appendChild(stateBox);
+    }
+
+    function renderEmptyState() {
+        clearElement(elements.resultsGrid);
+
+        const stateBox = document.createElement("div");
+        stateBox.className = "empty-state";
+
+        const iconBox = document.createElement("div");
+        iconBox.className = "state-icon";
+
+        const icon = document.createElement("i");
+        icon.className = "fa-solid fa-car-burst";
+
+        const title = document.createElement("div");
+        title.className = "state-title";
+        title.textContent = "Inga fordon matchade sökningen";
+
+        const text = document.createElement("div");
+        text.className = "state-text";
+        text.textContent = "Prova att ta bort några filter, höja maxpriset eller välja alla modeller.";
+
+        const action = document.createElement("button");
+        action.type = "button";
+        action.className = "small-btn";
+        action.innerHTML = '<i class="fa-solid fa-sliders"></i> Ändra filter';
+        action.addEventListener("click", () => {
+            window.location.href = `${RESULTS_CONFIG.ROUTES.FILTER}${window.location.search || ""}`;
+        });
+
+        iconBox.appendChild(icon);
+        stateBox.appendChild(iconBox);
+        stateBox.appendChild(title);
+        stateBox.appendChild(text);
+        stateBox.appendChild(action);
+
+        elements.resultsGrid.appendChild(stateBox);
+    }
+
+    function renderErrorState(error) {
+        clearElement(elements.resultsGrid);
+
+        elements.resultCounter.textContent = "0";
+        elements.toolbarText.textContent = "Kunde inte ladda resultat.";
+        elements.filterSummaryText.textContent = "Ett fel uppstod vid hämtning av annonser.";
+
+        const stateBox = document.createElement("div");
+        stateBox.className = "error-state";
+
+        const iconBox = document.createElement("div");
+        iconBox.className = "state-icon";
+
+        const icon = document.createElement("i");
+        icon.className = "fa-solid fa-triangle-exclamation";
+
+        const title = document.createElement("div");
+        title.className = "state-title";
+        title.textContent = "Något gick fel";
+
+        const text = document.createElement("div");
+        text.className = "state-text";
+        text.textContent = getFriendlyFirestoreError(error);
+
+        const retry = document.createElement("button");
+        retry.type = "button";
+        retry.className = "small-btn";
+        retry.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Försök igen';
+        retry.addEventListener("click", loadResults);
+
+        iconBox.appendChild(icon);
+        stateBox.appendChild(iconBox);
+        stateBox.appendChild(title);
+        stateBox.appendChild(text);
+        stateBox.appendChild(retry);
+
+        elements.resultsGrid.appendChild(stateBox);
+    }
+
+    function sortCars(cars, sortMode) {
+        const sorted = [...cars];
+
+        if (sortMode === "priceAsc") {
+            sorted.sort((a, b) => numberOrInfinity(a.price) - numberOrInfinity(b.price));
+        } else if (sortMode === "priceDesc") {
+            sorted.sort((a, b) => numberOrZero(b.price) - numberOrZero(a.price));
+        } else if (sortMode === "yearDesc") {
+            sorted.sort((a, b) => numberOrZero(b.year) - numberOrZero(a.year));
+        } else if (sortMode === "mileageAsc") {
+            sorted.sort((a, b) => numberOrInfinity(a.mileage) - numberOrInfinity(b.mileage));
+        } else {
+            sorted.sort((a, b) => getTimestampMillis(b.createdAt) - getTimestampMillis(a.createdAt));
+        }
+
+        return sorted;
+    }
+
+    function openDetailsPage(carId) {
+        const safeId = encodeURIComponent(String(carId || ""));
+
+        if (!safeId) {
+            return;
+        }
+
+        window.location.href = `${RESULTS_CONFIG.ROUTES.DETAILS}?id=${safeId}`;
+    }
+
+    function matchesStringFilter(value, filterValue) {
+        if (!isUsefulFilter(filterValue)) {
+            return true;
+        }
+
+        return normalizeComparable(value) === normalizeComparable(filterValue);
+    }
+
+    function matchesNumberRange(value, min, max) {
+        const numericValue = cleanNumber(value);
+
+        if (numericValue === null) {
+            return min === null && max === null;
+        }
+
+        if (min !== null && numericValue < min) return false;
+        if (max !== null && numericValue > max) return false;
+
+        return true;
+    }
+
+    function isUsefulFilter(value) {
+        return Boolean(value && value !== "all" && value !== "null" && value !== "undefined");
+    }
+
+    function buildFilterSummaryText(filters) {
+        const chips = buildFilterChips(filters);
+
+        if (chips.length === 0) {
+            return "Inga filter valda.";
+        }
+
+        return `${chips.length} aktiva filter används.`;
+    }
+
+    function getFirstAvailable(source, keys) {
+        if (!source || !Array.isArray(keys)) {
+            return "";
+        }
+
+        for (const key of keys) {
+            if (source[key] !== undefined && source[key] !== null && source[key] !== "") {
+                return source[key];
+            }
+        }
+
+        return "";
+    }
+
+    function normalizeFeatures(value) {
+        if (Array.isArray(value)) {
+            return value.map((item) => safeText(item)).filter(Boolean);
+        }
+
+        if (typeof value === "string") {
+            return value
+                .split(",")
+                .map((item) => safeText(item))
+                .filter(Boolean);
+        }
+
+        return [];
+    }
+
+    function parseListParam(value) {
+        if (!value) {
+            return [];
+        }
+
+        return String(value)
+            .split(",")
+            .map((item) => safeText(item, 60))
+            .filter((item) => item && item !== "all");
+    }
+
+    function cleanParam(value) {
+        return safeText(value, 120);
+    }
+
+    function safeText(value, maxLength = 180) {
+        return String(value ?? "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, maxLength);
+    }
+
+    function cleanNumber(value) {
+        if (value === null || value === undefined || value === "") {
+            return null;
+        }
+
+        const normalized = Number(String(value).replace(/[^\d.-]/g, ""));
+
+        if (!Number.isFinite(normalized)) {
+            return null;
+        }
+
+        if (normalized < 0) {
+            return null;
+        }
+
+        return normalized;
+    }
+
+    function normalizeComparable(value) {
+        return safeText(value)
+            .toLowerCase()
+            .normalize("NFKC");
+    }
+
+    function getSafeImageUrl(value) {
+        const text = safeText(value, 1000);
+
+        if (!text) {
+            return RESULTS_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE;
+        }
+
+        if (
+            text.startsWith("https://") ||
+            text.startsWith("http://") ||
+            text.startsWith("./") ||
+            text.startsWith("/") ||
+            text.startsWith("data:image/")
+        ) {
+            return text;
+        }
+
+        return RESULTS_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE;
+    }
+
+    function formatCurrency(value) {
+        const amount = cleanNumber(value);
+
+        if (amount === null) {
+            return "Pris saknas";
+        }
+
+        return `${new Intl.NumberFormat("sv-SE").format(amount)} kr`;
+    }
+
+    function formatNumber(value) {
+        const number = cleanNumber(value);
+
+        if (number === null) {
+            return "-";
+        }
+
+        return new Intl.NumberFormat("sv-SE").format(number);
+    }
+
+    function formatCarTitle(car) {
+        const brand = car.brand || "Okänt märke";
+        const model = car.model || "Okänd modell";
+
+        return `${brand} ${model}`;
+    }
+
+    function numberOrZero(value) {
+        const number = cleanNumber(value);
+        return number === null ? 0 : number;
+    }
+
+    function numberOrInfinity(value) {
+        const number = cleanNumber(value);
+        return number === null ? Infinity : number;
+    }
+
+    function getTimestampMillis(timestamp) {
+        if (!timestamp) {
+            return 0;
+        }
+
+        if (typeof timestamp.toMillis === "function") {
+            return timestamp.toMillis();
+        }
+
+        if (typeof timestamp.toDate === "function") {
+            return timestamp.toDate().getTime();
+        }
+
+        const parsed = Date.parse(timestamp);
+
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function getFriendlyFirestoreError(error) {
+        const code = error?.code || "";
+
+        if (code === "permission-denied") {
+            return "Du har inte behörighet att läsa annonserna. Kontrollera Firestore Security Rules.";
+        }
+
+        if (code === "failed-precondition") {
+            return "Firestore kräver troligen ett index för denna sökning. Kontrollera konsolen och skapa indexet som Firebase föreslår.";
+        }
+
+        if (code === "unavailable") {
+            return "Tjänsten är tillfälligt otillgänglig. Försök igen om en stund.";
+        }
+
+        return "Kunde inte hämta annonser just nu. Försök igen senare.";
+    }
+
+    function clearElement(element) {
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
+    }
+
+    function attachGlobalErrorHandlers() {
+        window.addEventListener("unhandledrejection", (event) => {
+            console.error("[BILHK] Unhandled promise rejection:", event.reason);
+        });
+
+        window.addEventListener("error", (event) => {
+            console.error("[BILHK] Results page error:", event.error || event.message);
+        });
+    }
 </script>
+
 </body>
 </html>
