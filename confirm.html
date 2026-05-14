@@ -1,1 +1,41 @@
-<!DOCTYPE html><html lang="sv"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bekräfta | BILHK</title></head><body><p>Denna version använder vanlig e-post/lösenord-inloggning. Gå till <a href="login.html">login.html</a>.</p><script>location.href='login.html';</script></body></html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأكيد تسجيل الدخول | HK-Lens</title>
+</head>
+<body>
+    <div style="text-align: center; margin-top: 50px;">
+        <h2>جاري التحقق من الرابط...</h2>
+        <p>يرجى الانتظار للحظات ليتم تحويلك إلى لوحة التحكم.</p>
+    </div>
+
+    <script type="module">
+        import { auth } from "./firebase-config.js";
+        import { isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // التحقق من صحة الرابط
+        if (isSignInWithEmailLink(auth, window.location.href)) {
+            let email = window.localStorage.getItem('emailForSignIn');
+            
+            // إذا لم يتوفر الإيميل في الذاكرة (مثلاً فتح الرابط في متصفح آخر)
+            if (!email) {
+                email = window.prompt('يرجى إدخال بريدك الإلكتروني للتأكيد:');
+            }
+
+            signInWithEmailLink(auth, email, window.location.href)
+                .then((result) => {
+                    // إزالة الإيميل من الذاكرة المحلية بعد النجاح
+                    window.localStorage.removeItem('emailForSignIn');
+                    // التوجه إلى صفحة لوحة التحكم (dashboard.html) الموجودة في ملفاتك
+                    window.location.href = "dashboard.html";
+                })
+                .catch((error) => {
+                    console.error("خطأ في التأكيد:", error.message);
+                    alert("عذراً، الرابط غير صالح أو قديم.");
+                });
+        }
+    </script>
+</body>
+</html>

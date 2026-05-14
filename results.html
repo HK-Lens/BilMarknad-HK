@@ -1,1 +1,67 @@
-<!DOCTYPE html><html lang="sv"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Sökresultat | BILHK</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><style>:root{--primary:#f58220;--dark:#0f172a;--bg:#f8fafc;--border:#e2e8f0;--danger:#ef4444}*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,sans-serif}body{background:var(--bg);color:var(--dark)}header{background:white;padding:15px 6%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0}.logo{text-decoration:none;font-size:26px;font-weight:900;color:var(--dark)}.logo span{color:var(--primary)}.container{max-width:1200px;margin:35px auto;padding:0 20px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}.card{background:white;border:1px solid var(--border);border-radius:20px;overflow:hidden;cursor:pointer;position:relative;transition:.2s}.card:hover{transform:translateY(-4px);box-shadow:0 10px 20px rgba(0,0,0,.06)}.badge{position:absolute;top:12px;left:12px;background:var(--danger);color:white;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:900}.info{padding:18px}.price{font-size:22px;color:var(--primary);font-weight:900}.meta{color:#64748b;font-size:13px;margin-top:7px}.pages{display:flex;gap:8px;justify-content:center;margin:30px 0;flex-wrap:wrap}.page{border:1px solid var(--border);background:white;border-radius:10px;padding:10px 14px;font-weight:900;cursor:pointer}.page.active{background:var(--primary);color:white;border-color:var(--primary)}footer{background:white;border-top:1px solid var(--border);padding:34px 20px;text-align:center;color:#94a3b8;font-size:13px;margin-top:40px}.footer-links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}.footer-links a{font-weight:900;color:#64748b;text-decoration:none}</style></head><body><header><a class="logo" href="index.html">BIL<span>HK</span></a><div style="display:flex;gap:16px"><a href="filter.html" style="text-decoration:none;font-weight:900;color:var(--dark)">Ändra sökning</a><a href="dashboard.html" style="text-decoration:none;font-weight:900;color:var(--primary)">Min sida</a></div></header><main class="container"><h1 id="count" style="font-size:28px;font-weight:900;margin-bottom:24px">Söker...</h1><div id="grid" class="grid"></div><div id="pages" class="pages"></div></main><footer><div class="footer-links"><a href="terms.html">Användarvillkor</a><a href="terms.html#disclaimer">Ansvarsfriskrivning</a></div><div>BILHK är endast en annonsplattform. Vi ansvarar inte för annonser, betalningar, affärer eller tvister.</div></footer><script type="module">import{db}from'./firebase-config.js';import{collection,getDocs}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";const p=new URLSearchParams(location.search),per=12;let cars=[],page=1;const val=k=>p.get(k);const num=k=>p.get(k)?Number(p.get(k)):null;const esc=s=>String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');const ok=(c)=>{if(c.active===false)return false;if(val('brand')&&c.brand!==val('brand'))return false;if(val('model')&&!String(c.model||'').toLowerCase().includes(val('model').toLowerCase()))return false;if(num('minP')&&Number(c.price)<num('minP'))return false;if(num('maxP')&&Number(c.price)>num('maxP'))return false;if(num('yFrom')&&Number(c.year)<num('yFrom'))return false;if(num('yTo')&&Number(c.year)>num('yTo'))return false;if(num('milFrom')&&Number(c.mileage||c.mil)<num('milFrom'))return false;if(num('milTo')&&Number(c.mileage||c.mil)>num('milTo'))return false;if(val('fuel')&&(c.fuel||c.fuelType)!==val('fuel'))return false;if(val('gear')&&(c.gear||c.transmission)!==val('gear'))return false;if(val('body')&&c.karosseri!==val('body'))return false;if(val('drive')&&c.drive!==val('drive'))return false;if(num('minHp')&&Number(c.hp||0)<num('minHp'))return false;if(val('color')&&!String(c.color||'').toLowerCase().includes(val('color').toLowerCase()))return false;if(num('seats')&&Number(c.seats)!==num('seats'))return false;if(num('doors')&&Number(c.doors)!==num('doors'))return false;if(val('feats')){const need=val('feats').split(',');const have=c.features||[];if(!need.every(f=>have.includes(f)))return false;}return true;};function render(){count.textContent=`${cars.length} bilar hittades`;grid.innerHTML='';const start=(page-1)*per;const slice=cars.slice(start,start+per);if(!slice.length){grid.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#64748b;padding:45px">Inga bilar matchade din sökning.</p>';}slice.forEach(c=>{const sold=c.status==='sold';grid.insertAdjacentHTML('beforeend',`<article class="card" onclick="location.href='details.html?id=${c.id}'">${sold?'<div class="badge">SÅLD</div>':''}<img src="${esc(c.images?.[0]||'placeholder.jpg')}" style="width:100%;height:200px;object-fit:cover;${sold?'opacity:.6':''}"><div class="info" style="${sold?'opacity:.75':''}"><div class="price">${Number(c.price||0).toLocaleString('sv-SE')} kr</div><h3>${esc(c.brand)} ${esc(c.model)}</h3><div class="meta">${esc(c.year)} | ${esc(c.mileage||c.mil)} mil | ${esc(c.fuel||c.fuelType)}</div><div class="meta">Säljare: ${esc(c.sellerDisplayName||c.sellerName||'BILHK-användare')}</div></div></article>`);});const total=Math.ceil(cars.length/per);pages.innerHTML='';if(total>1){for(let i=1;i<=total;i++)pages.insertAdjacentHTML('beforeend',`<button class="page ${i===page?'active':''}" data-p="${i}">${i}</button>`);document.querySelectorAll('.page').forEach(b=>b.onclick=()=>{page=Number(b.dataset.p);render();scrollTo({top:0,behavior:'smooth'});});}}async function load(){try{const snap=await getDocs(collection(db,'cars'));cars=snap.docs.map(d=>({id:d.id,...d.data()})).filter(ok).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));render();}catch(e){console.error(e);count.textContent='Ett fel uppstod';grid.innerHTML='<p>Kunde inte ladda resultat.</p>';}}load();</script></body></html>
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Sökresultat | BILHK</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; padding: 20px; }
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: auto; }
+        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; }
+        .no-results { text-align: center; padding: 100px; grid-column: 1/-1; }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center; margin-bottom:30px;">Hittade fordon</h2>
+    <div id="resultsGrid" class="results-grid"></div>
+
+<script type="module">
+    import { db } from './firebase-config.js';
+    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const grid = document.getElementById('resultsGrid');
+
+    async function loadResults() {
+        grid.innerHTML = "<p class='no-results'>Söker efter matchningar...</p>";
+        
+        try {
+            const snapshot = await getDocs(collection(db, "cars"));
+            grid.innerHTML = "";
+            let foundCount = 0;
+
+            snapshot.forEach(doc => {
+                const car = doc.data();
+                
+                // 💡 منطق الفلترة المطابق لصفحة البيع
+                const matchesBrand = urlParams.get('brand') === 'all' || !urlParams.get('brand') || car.brand === urlParams.get('brand');
+                const matchesKar = urlParams.get('kar') === 'all' || car.karosseri === urlParams.get('kar');
+                const matchesFuel = urlParams.get('fuel') === 'all' || !urlParams.get('fuel') || car.fuel === urlParams.get('fuel');
+                
+                // فلترة السعر
+                const price = Number(car.price);
+                const minP = Number(urlParams.get('minP')) || 0;
+                const maxP = Number(urlParams.get('maxP')) || Infinity;
+
+                if (matchesBrand && matchesKar && matchesFuel && price >= minP && price <= maxP) {
+                    foundCount++;
+                    grid.innerHTML += `
+                        <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
+                            <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:200px; object-fit:cover;">
+                            <div style="padding:15px;">
+                                <h3 style="color:#f58220;">${price.toLocaleString()} kr</h3>
+                                <p><strong>${car.brand} ${car.model}</strong></p>
+                                <p style="font-size:12px; color:#64748b;">${car.year} | ${car.mileage} mil | ${car.fuel}</p>
+                            </div>
+                        </div>`;
+                }
+            });
+
+            if (foundCount === 0) grid.innerHTML = "<div class='no-results'>Inga fordon matchade din sökning. Prova bredare filter!</div>";
+        } catch (err) { console.error(err); }
+    }
+
+    loadResults();
+</script>
+</body>
+</html>

@@ -1,1 +1,172 @@
-<!DOCTYPE html><html lang="sv"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Min sida | BILHK</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script><style>:root{--primary:#f58220;--dark:#0f172a;--bg:#f8fafc;--border:#e2e8f0;--danger:#ef4444;--gray:#64748b}*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,sans-serif}body{background:var(--bg);color:var(--dark)}header{background:white;padding:15px 6%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0}.logo{text-decoration:none;font-size:26px;font-weight:900;color:var(--dark)}.logo span{color:var(--primary)}.layout{max-width:1200px;margin:35px auto;padding:0 20px;display:grid;grid-template-columns:250px 1fr;gap:24px}.side,.card{background:white;border:1px solid var(--border);border-radius:22px;padding:22px}.tab{display:block;width:100%;padding:13px;border:0;background:#fff;text-align:left;border-radius:12px;font-weight:900;color:#64748b;cursor:pointer;margin-bottom:7px}.tab.active{background:var(--dark);color:white}.section{display:none}.section.active{display:block}.ad,.chat,.saved{display:grid;grid-template-columns:130px 1fr auto;gap:15px;align-items:center;background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px}.ad img,.chat img,.saved img{width:130px;height:90px;object-fit:cover;border-radius:12px}.btn{padding:10px 13px;border:0;border-radius:10px;font-weight:900;cursor:pointer;text-decoration:none;display:inline-block}.edit{background:var(--dark);color:white}.del{background:#fee2e2;color:#ef4444}.sold{background:#dcfce7;color:#15803d}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.input{width:100%;padding:12px;border:1px solid var(--border);border-radius:11px;background:#f8fafc;font-weight:700;margin-bottom:12px}.messageBox{height:420px;overflow:auto;border:1px solid var(--border);border-radius:14px;padding:14px;background:#fafafa}.bubble{max-width:75%;padding:10px 14px;border-radius:15px;margin:8px 0;background:white;border:1px solid var(--border)}.mine{margin-left:auto;background:var(--primary);color:white}footer{background:white;border-top:1px solid var(--border);padding:34px 20px;text-align:center;color:#94a3b8;font-size:13px;margin-top:40px}.footer-links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}.footer-links a{font-weight:900;color:#64748b;text-decoration:none}@media(max-width:850px){.layout{grid-template-columns:1fr}.ad,.chat,.saved{grid-template-columns:1fr}.ad img,.chat img,.saved img{width:100%;height:180px}}</style></head><body><header><a href="index.html" class="logo">BIL<span>HK</span></a><div><a href="sell.html" style="font-weight:900;color:var(--primary);text-decoration:none;margin-right:15px">Sälj bil</a><button id="logout" class="btn del">Logga ut</button></div></header><main class="layout"><aside class="side"><button class="tab active" data-tab="overview">Mina annonser</button><button class="tab" data-tab="saved">Favoriter</button><button class="tab" data-tab="messages">Meddelanden</button><button class="tab" data-tab="profile">Profil</button></aside><section><div id="overview" class="section active card"><h2>Mina annonser</h2><div id="ads"></div></div><div id="saved" class="section card"><h2>Sparade bilar</h2><div id="savedList"></div></div><div id="messages" class="section card"><h2>Meddelanden</h2><div style="display:grid;grid-template-columns:300px 1fr;gap:15px"><div id="chatList"></div><div><h3 id="chatTitle">Välj chatt</h3><div id="msgs" class="messageBox"></div><input id="msgInput" class="input" placeholder="Skriv meddelande" disabled><button id="send" class="btn edit" disabled>Skicka</button></div></div></div><div id="profile" class="section card"><h2>Profil</h2><div class="grid"><input id="name" class="input" placeholder="Namn"><input id="companyName" class="input" placeholder="Företagsnamn"><input id="phone" class="input" placeholder="Telefon"><input id="address" class="input" placeholder="Adress"><input id="website" class="input" placeholder="Webbplats"><input id="logoUrl" class="input" placeholder="Logo URL"></div><label><input type="checkbox" id="profilePublic"> Offentlig säljarprofil</label><br><label><input type="checkbox" id="showPhone"> Visa telefon</label> <label><input type="checkbox" id="showEmail"> Visa e-post</label> <label><input type="checkbox" id="showAddress"> Visa adress</label> <label><input type="checkbox" id="showWebsite"> Visa webbplats</label><br><button id="saveProfile" class="btn edit" style="margin-top:15px">Spara profil</button></div></section></main><footer><div class="footer-links"><a href="terms.html">Användarvillkor</a><a href="terms.html#disclaimer">Ansvarsfriskrivning</a></div><div>BILHK är endast en annonsplattform. Vi ansvarar inte för annonser, betalningar, affärer eller tvister.</div></footer><script type="module">import{auth,db}from'./firebase-config.js';import{onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";import{collection,query,where,getDocs,doc,getDoc,updateDoc,deleteDoc,writeBatch,arrayRemove,onSnapshot,orderBy,addDoc,serverTimestamp,setDoc}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";let user=null,activeChat=null,msgUnsub=null;const esc=s=>String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));function switchTab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelector(`[data-tab="${id}"]`).classList.add('active');document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');history.replaceState(null,'',`dashboard.html?tab=${id}`);}onAuthStateChanged(auth,async u=>{if(!u){location.href='login.html';return;}user=u;const start=new URLSearchParams(location.search).get('tab');if(start)switchTab(start);loadAds();loadSaved();loadProfile();loadChats();});logout.onclick=()=>signOut(auth).then(()=>location.href='index.html');async function loadAds(){const s=await getDocs(query(collection(db,'cars'),where('sellerId','==',user.uid)));ads.innerHTML=s.empty?'<p>Du har inga annonser.</p>':'';s.forEach(d=>{const c=d.data();ads.insertAdjacentHTML('beforeend',`<div class="ad"><img src="${esc(c.images?.[0]||'placeholder.jpg')}"><div><b>${esc(c.brand)} ${esc(c.model)}</b><p>${Number(c.price||0).toLocaleString('sv-SE')} kr | ${esc(c.status||'active')}</p><small>Visningar: ${c.views||0} | Sparade: ${c.saves||0}</small></div><div><a class="btn edit" href="edit-car.html?id=${d.id}">Redigera</a> <button class="btn sold" onclick="markSold('${d.id}')">Såld</button> <button class="btn del" onclick="deleteAd('${d.id}')">Radera</button></div></div>`);});}window.markSold=async id=>{await updateDoc(doc(db,'cars',id),{status:'sold',soldAt:serverTimestamp()});loadAds();};window.deleteAd=async id=>{const ok=await Swal.fire({title:'Radera annons?',text:'Annons, chattar och favoriter tas bort.',icon:'warning',showCancelButton:true,confirmButtonText:'Radera'});if(!ok.isConfirmed)return;const batch=writeBatch(db);const chats=await getDocs(query(collection(db,'chats'),where('carId','==',id)));for(const ch of chats.docs){const ms=await getDocs(collection(db,`chats/${ch.id}/messages`));ms.forEach(m=>batch.delete(m.ref));batch.delete(ch.ref);}const favs=await getDocs(query(collection(db,'users'),where('savedCars','array-contains',id)));favs.forEach(u=>batch.update(u.ref,{savedCars:arrayRemove(id)}));batch.delete(doc(db,'cars',id));await batch.commit();loadAds();};async function loadSaved(){const u=await getDoc(doc(db,'users',user.uid));const ids=u.data()?.savedCars||[];savedList.innerHTML=ids.length?'':'<p>Inga favoriter.</p>';for(const id of ids){const c=await getDoc(doc(db,'cars',id));if(c.exists())savedList.insertAdjacentHTML('beforeend',`<div class="saved"><img src="${esc(c.data().images?.[0]||'placeholder.jpg')}"><div><b>${esc(c.data().brand)} ${esc(c.data().model)}</b><p>${Number(c.data().price||0).toLocaleString('sv-SE')} kr</p></div><a class="btn edit" href="details.html?id=${id}">Visa</a></div>`);}}async function loadProfile(){const u=await getDoc(doc(db,'users',user.uid));const x=u.data()||{};name.value=x.name||'';companyName.value=x.companyName||'';phone.value=x.phone||'';address.value=x.address||'';website.value=x.website||'';logoUrl.value=x.logoUrl||'';profilePublic.checked=x.profilePublic!==false;showPhone.checked=!!x.showPhone;showEmail.checked=!!x.showEmail;showAddress.checked=!!x.showAddress;showWebsite.checked=!!x.showWebsite;}saveProfile.onclick=async()=>{await setDoc(doc(db,'users',user.uid),{name:name.value,companyName:companyName.value,phone:phone.value,address:address.value,website:website.value,logoUrl:logoUrl.value,profilePublic:profilePublic.checked,showPhone:showPhone.checked,showEmail:showEmail.checked,showAddress:showAddress.checked,showWebsite:showWebsite.checked,lastActiveAt:serverTimestamp()},{merge:true});Swal.fire('Sparat','Profilen uppdaterades.','success');};function loadChats(){const q=query(collection(db,'chats'),where('participants','array-contains',user.uid),orderBy('updatedAt','desc'));onSnapshot(q,s=>{chatList.innerHTML='';s.forEach(d=>{const c=d.data();if((c.hiddenFor||[]).includes(user.uid))return;chatList.insertAdjacentHTML('beforeend',`<div class="chat" onclick="openChat('${d.id}')"><img src="${esc(c.carImage||'placeholder.jpg')}"><div><b>${esc(c.carTitle||'Annons')}</b><p>${esc(c.buyerId===user.uid?c.sellerName:c.buyerName)}</p><small>${esc(c.lastMessage||'')}</small></div><button class="btn del" onclick="hideChat(event,'${d.id}')">Dölj</button></div>`);});});}window.openChat=id=>{activeChat=id;if(msgUnsub)msgUnsub();msgInput.disabled=false;send.disabled=false;msgUnsub=onSnapshot(query(collection(db,`chats/${id}/messages`),orderBy('createdAt','asc')),s=>{msgs.innerHTML='';s.forEach(d=>{const m=d.data();msgs.insertAdjacentHTML('beforeend',`<div class="bubble ${m.senderId===user.uid?'mine':''}"><b>${esc(m.senderName||'BILHK-användare')}</b><br>${esc(m.text)}</div>`);});msgs.scrollTop=msgs.scrollHeight;});};send.onclick=async()=>{const t=msgInput.value.trim();if(!t||!activeChat)return;const me=(await getDoc(doc(db,'users',user.uid))).data()||{};await addDoc(collection(db,`chats/${activeChat}/messages`),{text:t,senderId:user.uid,senderName:me.companyName||me.name||'BILHK-användare',createdAt:serverTimestamp()});await updateDoc(doc(db,'chats',activeChat),{lastMessage:t,updatedAt:serverTimestamp(),hiddenFor:arrayRemove(user.uid)});msgInput.value='';};window.hideChat=async(e,id)=>{e.stopPropagation();const c=await getDoc(doc(db,'chats',id));const hidden=[...(c.data().hiddenFor||[]),user.uid];if(hidden.length>=2){const batch=writeBatch(db);const ms=await getDocs(collection(db,`chats/${id}/messages`));ms.forEach(m=>batch.delete(m.ref));batch.delete(doc(db,'chats',id));await batch.commit();}else await updateDoc(doc(db,'chats',id),{hiddenFor:hidden});};</script></body></html>
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | BILHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--dark); }
+
+        /* Navigation Bar */
+        nav { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: var(--dark); }
+        .logo span { color: var(--primary); }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; margin-left: 20px; font-size: 14px; }
+        .logout-btn { color: #ef4444 !important; cursor: pointer; }
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+
+        /* Welcome Header */
+        .welcome-section { margin-bottom: 30px; }
+        .welcome-section h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
+        .welcome-section p { color: #64748b; }
+
+        /* Profile Info Card */
+        .card { background: white; border-radius: 20px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 30px; }
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .info-item label { display: block; font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
+        .info-item span { font-size: 16px; font-weight: 600; color: var(--dark); }
+        .badge { background: #fff4eb; color: var(--primary); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-box { background: white; padding: 20px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
+        .stat-box h3 { font-size: 24px; font-weight: 800; color: var(--primary); }
+        .stat-box p { font-size: 13px; color: #64748b; font-weight: 600; }
+
+        /* Action Buttons */
+        .actions { display: flex; gap: 15px; margin-bottom: 30px; }
+        .btn { padding: 15px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; transition: 0.3s; text-decoration: none; font-size: 14px; text-align: center; }
+        .btn-add { background: var(--primary); color: white; flex: 2; }
+        .btn-add:hover { background: #e07210; transform: translateY(-2px); }
+        .btn-outline { background: white; color: var(--dark); border: 1px solid var(--border); flex: 1; }
+        .btn-outline:hover { background: #f1f5f9; }
+
+        /* Listings Placeholder */
+        .listings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .empty-state { text-align: center; padding: 60px 20px; background: #f1f5f9; border-radius: 20px; border: 2px dashed #cbd5e1; color: #64748b; }
+
+        #businessDetails { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <div class="nav-links">
+        <a href="index.html">Hem</a>
+        <a id="logoutBtn" class="logout-btn">Logga ut</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="welcome-section">
+        <h1 id="welcomeUser">Hej, ...</h1>
+        <p>Här kan du hantera dina annonser och se din profil.</p>
+    </div>
+
+    <div class="card">
+        <div class="profile-grid">
+            <div class="info-item">
+                <label>Kontotyp</label>
+                <span id="displayUserType" class="badge">Laddar...</span>
+            </div>
+            <div class="info-item">
+                <label>E-post</label>
+                <span id="displayEmail">...</span>
+            </div>
+        </div>
+
+        <div id="businessDetails" class="profile-grid">
+            <div class="info-item">
+                <label>Organisationsnummer</label>
+                <span id="displayTaxId">...</span>
+            </div>
+            <div class="info-item">
+                <label>Adress</label>
+                <span id="displayAddress">...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <h3 id="carCount">0</h3>
+            <p>Aktiva annonser</p>
+        </div>
+        <div class="stat-box">
+            <h3>0</h3>
+            <p>Visningar</p>
+        </div>
+        <div class="stat-box">
+            <h3>0</h3>
+            <p>Meddelanden</p>
+        </div>
+    </div>
+
+    <div class="actions">
+        <a href="add-car.html" class="btn btn-add">+ Skapa ny annons</a>
+        <a href="edit-profile.html" class="btn btn-outline">Redigera profil</a>
+    </div>
+
+    <div class="listings-header">
+        <h2>Dina annonser</h2>
+    </div>
+    <div id="listingsContainer" class="empty-state">
+        <p>Du har inga aktiva annonser än. Klicka på knappen ovan för att lägga till din första bil!</p>
+    </div>
+</div>
+
+<script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // 1. مراقبة حالة تسجيل الدخول
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            // المستخدم مسجل دخول، جلب بياناته من Firestore
+            await loadUserProfile(user);
+        } else {
+            // غير مسجل دخول، توجيهه لصفحة الدخول
+            window.location.href = "login.html";
+        }
+    });
+
+    async function loadUserProfile(user) {
+        try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+                const data = userDoc.data();
+                
+                // تحديث الواجهة
+                document.getElementById('welcomeUser').innerText = `Hej, ${data.name || 'Användare'}!`;
+                document.getElementById('displayEmail').innerText = user.email;
+                document.getElementById('displayUserType').innerText = data.userType === 'business' ? 'Företag' : 'Privatperson';
+
+                // إظهار تفاصيل الشركة إذا كان الحساب تجارياً
+                if (data.userType === 'business') {
+                    document.getElementById('businessDetails').style.display = 'grid';
+                    document.getElementById('displayTaxId').innerText = data.taxId || 'Ej angivet';
+                    document.getElementById('displayAddress').innerText = data.address || 'Ej angivet';
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    }
+
+    // 2. تسجيل الخروج
+    document.getElementById('logoutBtn').onclick = async () => {
+        if (confirm("Är du säker på att du vill logga ut?")) {
+            await signOut(auth);
+            window.location.href = "login.html";
+        }
+    };
+</script>
+
+</body>
+</html>

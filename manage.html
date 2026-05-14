@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Hantera Annonser | BilMarknad-HK</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
+        .ad-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .ad-info img { width: 100px; height: 70px; object-fit: cover; border-radius: 5px; margin-right: 15px; }
+        .btn-delete { background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+        .btn-edit { background: #ffc107; color: black; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-right: 5px; }
+    </style>
+</head>
+<body>
+
+    <h2>Mina Annonser (إدارة إعلاناتي)</h2>
+    <div id="adsList">Laddar annonser...</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import firebaseConfig from './firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadAds() {
+        const querySnapshot = await getDocs(collection(db, "cars"));
+        const adsList = document.getElementById('adsList');
+        adsList.innerHTML = "";
+
+        querySnapshot.forEach((adDoc) => {
+            const data = adDoc.data();
+            const adId = adDoc.id;
+
+            const div = document.createElement('div');
+            div.className = 'ad-card';
+            div.innerHTML = `
+                <div class="ad-info" style="display: flex; align-items: center;">
+                    <img src="${data.images[0] || 'placeholder.jpg'}" alt="car">
+                    <div>
+                        <strong>${data.brand} (${data.regNr})</strong><br>
+                        <span>Pris: ${data.price} SEK</span>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn-edit" onclick="updatePrice('${adId}')">Ändra Pris</button>
+                    <button class="btn-delete" onclick="deleteAd('${adId}')">Radera</button>
+                </div>
+            `;
+            adsList.appendChild(div);
+        });
+    }
+
+    // وظيفة الحذف
+    window.deleteAd = async (id) => {
+        if(confirm("Är du säker på att du vill radera annonsen?")) {
+            await deleteDoc(doc(db, "cars", id));
+            alert("Annonsen raderades!");
+            loadAds(); // إعادة تحميل القائمة
+        }
+    };
+
+    // وظيفة تعديل السعر
+    window.updatePrice = async (id) => {
+        const newPrice = prompt("Ange nytt pris (أدخل السعر الجديد):");
+        if (newPrice) {
+            const adRef = doc(db, "cars", id);
+            await updateDoc(adRef, { price: newPrice });
+            alert("Priset har uppdaterats!");
+            loadAds();
+        }
+    };
+
+    loadAds();
+</script>
+</body>
+</html>
