@@ -2,77 +2,1572 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <title>Hantera Annonser | BilMarknad-HK</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hantera annonser | BILHK</title>
+
+    <meta name="description" content="Hantera dina bilannonser på BILHK. Redigera pris, öppna annons, pausa eller radera dina egna annonser.">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
-        .ad-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .ad-info img { width: 100px; height: 70px; object-fit: cover; border-radius: 5px; margin-right: 15px; }
-        .btn-delete { background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
-        .btn-edit { background: #ffc107; color: black; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-right: 5px; }
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e67312;
+            --primary-soft: rgba(245, 130, 32, 0.12);
+
+            --dark: #0f172a;
+            --dark-soft: #1e293b;
+
+            --text: #0f172a;
+            --muted: #64748b;
+            --muted-light: #94a3b8;
+
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-soft: #f1f5f9;
+
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --success: #16a34a;
+            --success-soft: rgba(22, 163, 74, 0.10);
+
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --danger-soft: rgba(220, 38, 38, 0.10);
+
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.13);
+
+            --info: #2563eb;
+            --info-soft: rgba(37, 99, 235, 0.10);
+
+            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
+            --shadow-lg: 0 28px 80px rgba(15, 23, 42, 0.16);
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 28px;
+            --radius-full: 999px;
+
+            --max-width: 1180px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 10% 8%, rgba(245, 130, 32, 0.12), transparent 30%),
+                radial-gradient(circle at 90% 4%, rgba(15, 23, 42, 0.08), transparent 32%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.94);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(18px);
+        }
+
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 17px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+            color: var(--dark);
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary), #ffb15c);
+            color: white;
+            box-shadow: 0 12px 28px rgba(245, 130, 32, 0.34);
+            font-size: 18px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: var(--radius-full);
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 850;
+            transition: 0.25s ease;
+            border: 1px solid transparent;
+            background: transparent;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-soft);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 24px rgba(245, 130, 32, 0.26);
+        }
+
+        .nav-btn.primary:hover {
+            background: var(--primary-hover);
+            color: white;
+        }
+
+        .page-shell {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 34px 24px 80px;
+        }
+
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.96)),
+                radial-gradient(circle at top left, rgba(245, 130, 32, 0.35), transparent 35%);
+            color: white;
+            border-radius: 34px;
+            padding: 36px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 28px;
+        }
+
+        .hero-card::before {
+            content: "";
+            position: absolute;
+            right: -120px;
+            top: -140px;
+            width: 340px;
+            height: 340px;
+            border-radius: 999px;
+            background: rgba(245, 130, 32, 0.16);
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            left: -150px;
+            bottom: -190px;
+            width: 360px;
+            height: 360px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: end;
+            gap: 24px;
+        }
+
+        .hero-badge {
+            width: fit-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 14px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+
+        .hero-badge i {
+            color: var(--primary);
+        }
+
+        .hero-card h1 {
+            font-size: clamp(30px, 4vw, 48px);
+            line-height: 1.05;
+            font-weight: 900;
+            letter-spacing: -0.055em;
+            margin-bottom: 12px;
+        }
+
+        .hero-card p {
+            max-width: 760px;
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.75;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 26px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            flex: 0 0 auto;
+            font-size: 18px;
+        }
+
+        .stat-card strong {
+            display: block;
+            color: var(--dark);
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+        }
+
+        .stat-card span {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .toolbar {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 26px;
+            padding: 18px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 22px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto auto;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-light);
+            pointer-events: none;
+        }
+
+        .search-box input {
+            width: 100%;
+            min-height: 50px;
+            padding: 12px 14px 12px 42px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: white;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 750;
+            outline: none;
+            transition: 0.25s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.12);
+        }
+
+        .toolbar-btn {
+            min-height: 50px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: white;
+            color: var(--dark);
+            padding: 12px 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            transition: 0.25s ease;
+        }
+
+        .toolbar-btn:hover {
+            border-color: rgba(245, 130, 32, 0.45);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .toolbar-btn.active {
+            background: var(--dark);
+            color: white;
+            border-color: var(--dark);
+        }
+
+        .ads-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .ad-card {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid var(--border);
+            border-radius: 26px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            display: grid;
+            grid-template-columns: 210px minmax(0, 1fr) auto;
+            gap: 20px;
+            align-items: stretch;
+            transition: 0.25s ease;
+        }
+
+        .ad-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(245, 130, 32, 0.32);
+        }
+
+        .ad-image-wrap {
+            position: relative;
+            min-height: 160px;
+            background: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .ad-image-wrap img {
+            width: 100%;
+            height: 100%;
+            min-height: 160px;
+            object-fit: cover;
+            transition: 0.35s ease;
+        }
+
+        .ad-card:hover .ad-image-wrap img {
+            transform: scale(1.04);
+        }
+
+        .status-pill {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            border-radius: var(--radius-full);
+            color: white;
+            font-size: 11px;
+            font-weight: 900;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-pill.active {
+            background: rgba(22, 163, 74, 0.88);
+        }
+
+        .status-pill.paused {
+            background: rgba(245, 158, 11, 0.90);
+        }
+
+        .ad-main {
+            min-width: 0;
+            padding: 22px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .ad-title-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+
+        .ad-title {
+            color: var(--dark);
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: -0.035em;
+            line-height: 1.25;
+        }
+
+        .ad-subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .price-text {
+            color: var(--primary);
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 13px;
+        }
+
+        .meta-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .meta-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            border-radius: 13px;
+            background: var(--surface-soft);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 850;
+        }
+
+        .ad-actions {
+            padding: 18px;
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 9px;
+            min-width: 180px;
+        }
+
+        .action-btn {
+            min-height: 42px;
+            border: none;
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 900;
+            transition: 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .action-btn.view {
+            background: var(--info-soft);
+            color: var(--info);
+        }
+
+        .action-btn.edit {
+            background: var(--primary-soft);
+            color: var(--primary-hover);
+        }
+
+        .action-btn.price {
+            background: var(--surface-soft);
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+
+        .action-btn.toggle {
+            background: var(--warning-soft);
+            color: #92400e;
+        }
+
+        .action-btn.delete {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .action-btn.delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .state-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 44px 24px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .state-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 18px;
+            border-radius: 24px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 28px;
+        }
+
+        .state-card h3 {
+            color: var(--dark);
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.035em;
+            margin-bottom: 8px;
+        }
+
+        .state-card p {
+            max-width: 560px;
+            margin: 0 auto 20px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+            font-weight: 650;
+        }
+
+        .state-card .nav-btn {
+            margin: 0 auto;
+        }
+
+        @media (max-width: 980px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            .ad-card {
+                grid-template-columns: 170px minmax(0, 1fr);
+            }
+
+            .ad-actions {
+                grid-column: 1 / -1;
+                border-left: none;
+                border-top: 1px solid var(--border);
+                display: grid;
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 720px) {
+            .header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 18px;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 3px;
+            }
+
+            .page-shell {
+                padding: 24px 18px 70px;
+            }
+
+            .hero-card {
+                padding: 28px 22px;
+                border-radius: 28px;
+            }
+
+            .ad-card {
+                grid-template-columns: 1fr;
+            }
+
+            .ad-image-wrap img {
+                height: 220px;
+            }
+
+            .ad-main {
+                padding: 0 18px 18px;
+            }
+
+            .ad-actions {
+                grid-template-columns: 1fr 1fr;
+                padding: 14px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .logo {
+                font-size: 1.55rem;
+            }
+
+            .logo-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .ad-actions {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-    <h2>Mina Annonser (إدارة إعلاناتي)</h2>
-    <div id="adsList">Laddar annonser...</div>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo" aria-label="Gå till startsidan">
+                <span class="logo-icon">
+                    <i class="fa-solid fa-car-side"></i>
+                </span>
+                BIL<span>HK</span>
+            </a>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import firebaseConfig from './firebase-config.js';
+            <nav class="header-actions" aria-label="Sidmeny">
+                <a href="my-account.html" class="nav-btn">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Mitt konto
+                </a>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+                <a href="index.html" class="nav-btn">
+                    <i class="fa-solid fa-house"></i>
+                    Startsida
+                </a>
 
-    async function loadAds() {
-        const querySnapshot = await getDocs(collection(db, "cars"));
-        const adsList = document.getElementById('adsList');
-        adsList.innerHTML = "";
+                <a href="add-car.html" class="nav-btn primary">
+                    <i class="fa-solid fa-plus"></i>
+                    Ny annons
+                </a>
+            </nav>
+        </div>
+    </header>
 
-        querySnapshot.forEach((adDoc) => {
-            const data = adDoc.data();
-            const adId = adDoc.id;
+    <main class="page-shell">
 
-            const div = document.createElement('div');
-            div.className = 'ad-card';
-            div.innerHTML = `
-                <div class="ad-info" style="display: flex; align-items: center;">
-                    <img src="${data.images[0] || 'placeholder.jpg'}" alt="car">
-                    <div>
-                        <strong>${data.brand} (${data.regNr})</strong><br>
-                        <span>Pris: ${data.price} SEK</span>
+        <section class="hero-card">
+            <div class="hero-content">
+                <div>
+                    <div class="hero-badge">
+                        <i class="fa-solid fa-list-check"></i>
+                        Mina annonser
                     </div>
+
+                    <h1>Hantera dina bilannonser</h1>
+
+                    <p>
+                        Här kan du se, öppna, redigera, pausa och radera dina egna annonser.
+                        Endast annonser som tillhör ditt inloggade konto visas på denna sida.
+                    </p>
+                </div>
+
+                <a href="add-car.html" class="nav-btn primary">
+                    <i class="fa-solid fa-plus"></i>
+                    Publicera ny annons
+                </a>
+            </div>
+        </section>
+
+        <section class="stats-grid" aria-label="Annonsstatistik">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-car"></i>
                 </div>
                 <div>
-                    <button class="btn-edit" onclick="updatePrice('${adId}')">Ändra Pris</button>
-                    <button class="btn-delete" onclick="deleteAd('${adId}')">Radera</button>
+                    <strong id="totalAdsCount">0</strong>
+                    <span>Totalt antal annonser</span>
                 </div>
-            `;
-            adsList.appendChild(div);
-        });
-    }
+            </div>
 
-    // وظيفة الحذف
-    window.deleteAd = async (id) => {
-        if(confirm("Är du säker på att du vill radera annonsen?")) {
-            await deleteDoc(doc(db, "cars", id));
-            alert("Annonsen raderades!");
-            loadAds(); // إعادة تحميل القائمة
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <strong id="activeAdsCount">0</strong>
+                    <span>Aktiva annonser</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-circle-pause"></i>
+                </div>
+                <div>
+                    <strong id="pausedAdsCount">0</strong>
+                    <span>Pausade annonser</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="toolbar" aria-label="Verktyg">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Sök i dina annonser efter märke, modell eller registreringsnummer..."
+                    autocomplete="off"
+                    maxlength="120"
+                >
+            </div>
+
+            <button type="button" class="toolbar-btn" id="showActiveOnlyBtn">
+                <i class="fa-solid fa-filter"></i>
+                Visa aktiva
+            </button>
+
+            <button type="button" class="toolbar-btn" id="refreshBtn">
+                <i class="fa-solid fa-rotate-right"></i>
+                Uppdatera
+            </button>
+        </section>
+
+        <section class="ads-list" id="adsList" aria-label="Lista över mina annonser"></section>
+
+    </main>
+
+    <script type="module">
+        import {
+            auth,
+            db
+        } from "./firebase-config.js";
+
+        import {
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        import {
+            collection,
+            query,
+            where,
+            orderBy,
+            getDocs,
+            doc,
+            getDoc,
+            updateDoc,
+            deleteDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        /**
+         * ============================================================
+         * BILHK - manage.html
+         * ------------------------------------------------------------
+         * Secure management page for user's own car advertisements.
+         *
+         * Security decisions:
+         * 1. Requires authenticated user.
+         * 2. Reads only cars where sellerId == currentUser.uid.
+         * 3. Re-checks ownership before update/delete.
+         * 4. Avoids innerHTML for Firestore data.
+         * 5. Uses generic user-facing error messages.
+         *
+         * Important:
+         * Client-side checks improve UX, but real protection must be
+         * enforced with Firestore Security Rules.
+         * ============================================================
+         */
+
+        const MANAGE_CONFIG = {
+            ROUTES: {
+                LOGIN: "login.html",
+                ACCOUNT: "my-account.html",
+                ADD_CAR: "add-car.html",
+                EDIT_CAR: "edit-car.html",
+                DETAILS: "details.html",
+                HOME: "index.html"
+            },
+
+            COLLECTIONS: {
+                CARS: "cars"
+            },
+
+            DEFAULTS: {
+                PLACEHOLDER_IMAGE: "placeholder.jpg"
+            },
+
+            LIMITS: {
+                MIN_PRICE: 0,
+                MAX_PRICE: 100000000,
+                SEARCH_MAX_LENGTH: 120
+            },
+
+            MESSAGES: {
+                AUTH_REQUIRED:
+                    "Du måste logga in för att hantera annonser.",
+
+                LOAD_ERROR:
+                    "Kunde inte ladda dina annonser just nu. Kontrollera internetanslutningen och försök igen.",
+
+                NOT_OWNER:
+                    "Du kan bara ändra annonser som tillhör ditt eget konto.",
+
+                PRICE_INVALID:
+                    "Ange ett giltigt pris mellan 0 och 100 000 000 kr.",
+
+                UPDATE_SUCCESS:
+                    "Annonsen har uppdaterats.",
+
+                DELETE_SUCCESS:
+                    "Annonsen har raderats.",
+
+                DELETE_ERROR:
+                    "Annonsen kunde inte raderas just nu.",
+
+                UPDATE_ERROR:
+                    "Annonsen kunde inte uppdateras just nu."
+            }
+        };
+
+        const state = {
+            currentUser: null,
+            ads: [],
+            filteredAds: [],
+            isLoading: false,
+            showActiveOnly: false,
+            searchText: ""
+        };
+
+        const elements = {
+            adsList: document.getElementById("adsList"),
+
+            totalAdsCount: document.getElementById("totalAdsCount"),
+            activeAdsCount: document.getElementById("activeAdsCount"),
+            pausedAdsCount: document.getElementById("pausedAdsCount"),
+
+            searchInput: document.getElementById("searchInput"),
+            showActiveOnlyBtn: document.getElementById("showActiveOnlyBtn"),
+            refreshBtn: document.getElementById("refreshBtn")
+        };
+
+        initializeManagePage();
+
+        function initializeManagePage() {
+            attachGlobalErrorHandlers();
+            attachEventListeners();
+            observeAuthState();
         }
-    };
 
-    // وظيفة تعديل السعر
-    window.updatePrice = async (id) => {
-        const newPrice = prompt("Ange nytt pris (أدخل السعر الجديد):");
-        if (newPrice) {
-            const adRef = doc(db, "cars", id);
-            await updateDoc(adRef, { price: newPrice });
-            alert("Priset har uppdaterats!");
-            loadAds();
+        function attachEventListeners() {
+            elements.searchInput.addEventListener("input", () => {
+                state.searchText = normalizeText(elements.searchInput.value, MANAGE_CONFIG.LIMITS.SEARCH_MAX_LENGTH);
+                applyLocalFiltersAndRender();
+            });
+
+            elements.showActiveOnlyBtn.addEventListener("click", () => {
+                state.showActiveOnly = !state.showActiveOnly;
+                elements.showActiveOnlyBtn.classList.toggle("active", state.showActiveOnly);
+                applyLocalFiltersAndRender();
+            });
+
+            elements.refreshBtn.addEventListener("click", () => {
+                loadUserAds();
+            });
         }
-    };
 
-    loadAds();
-</script>
+        function observeAuthState() {
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    await Swal.fire({
+                        icon: "info",
+                        title: "Inloggning krävs",
+                        text: MANAGE_CONFIG.MESSAGES.AUTH_REQUIRED,
+                        confirmButtonColor: "#f58220",
+                        confirmButtonText: "Logga in"
+                    });
+
+                    window.location.href = MANAGE_CONFIG.ROUTES.LOGIN;
+                    return;
+                }
+
+                state.currentUser = user;
+                await loadUserAds();
+            });
+        }
+
+        async function loadUserAds() {
+            if (!state.currentUser || state.isLoading) {
+                return;
+            }
+
+            state.isLoading = true;
+            showLoadingState();
+
+            try {
+                const adsQuery = query(
+                    collection(db, MANAGE_CONFIG.COLLECTIONS.CARS),
+                    where("sellerId", "==", state.currentUser.uid),
+                    orderBy("createdAt", "desc")
+                );
+
+                const snapshot = await getDocs(adsQuery);
+
+                state.ads = snapshot.docs.map((documentSnapshot) => {
+                    return {
+                        id: documentSnapshot.id,
+                        ...documentSnapshot.data()
+                    };
+                });
+
+                applyLocalFiltersAndRender();
+            } catch (error) {
+                console.error("[BILHK] Could not load user ads:", error);
+                showErrorState(MANAGE_CONFIG.MESSAGES.LOAD_ERROR);
+            } finally {
+                state.isLoading = false;
+            }
+        }
+
+        function applyLocalFiltersAndRender() {
+            let ads = Array.isArray(state.ads) ? [...state.ads] : [];
+
+            if (state.showActiveOnly) {
+                ads = ads.filter((ad) => isAdActive(ad));
+            }
+
+            if (state.searchText) {
+                const search = state.searchText.toLowerCase();
+
+                ads = ads.filter((ad) => {
+                    const combined = [
+                        ad.brand,
+                        ad.model,
+                        ad.regNo,
+                        ad.regNr,
+                        ad.registrationNumber,
+                        ad.year,
+                        ad.price
+                    ].map((value) => normalizeText(value).toLowerCase()).join(" ");
+
+                    return combined.includes(search);
+                });
+            }
+
+            state.filteredAds = ads;
+
+            updateStats();
+            renderAds(state.filteredAds);
+        }
+
+        function updateStats() {
+            const total = state.ads.length;
+            const active = state.ads.filter((ad) => isAdActive(ad)).length;
+            const paused = total - active;
+
+            elements.totalAdsCount.textContent = String(total);
+            elements.activeAdsCount.textContent = String(active);
+            elements.pausedAdsCount.textContent = String(paused);
+        }
+
+        function renderAds(ads) {
+            clearElement(elements.adsList);
+
+            if (!Array.isArray(ads) || ads.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            ads.forEach((ad) => {
+                elements.adsList.appendChild(createAdCard(ad));
+            });
+        }
+
+        function createAdCard(ad) {
+            const card = document.createElement("article");
+            card.className = "ad-card";
+
+            const imageWrap = document.createElement("div");
+            imageWrap.className = "ad-image-wrap";
+
+            const image = document.createElement("img");
+            image.src = getPrimaryImage(ad);
+            image.alt = `${safeDisplay(ad.brand)} ${safeDisplay(ad.model)}`;
+            image.loading = "lazy";
+            image.referrerPolicy = "no-referrer";
+
+            image.addEventListener("error", () => {
+                image.src = MANAGE_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE;
+            });
+
+            const status = document.createElement("span");
+            status.className = isAdActive(ad) ? "status-pill active" : "status-pill paused";
+            status.appendChild(createIcon(isAdActive(ad) ? "fa-solid fa-circle-check" : "fa-solid fa-circle-pause"));
+            status.appendChild(document.createTextNode(isAdActive(ad) ? "Aktiv" : "Pausad"));
+
+            imageWrap.appendChild(image);
+            imageWrap.appendChild(status);
+
+            const main = document.createElement("div");
+            main.className = "ad-main";
+
+            const titleRow = document.createElement("div");
+            titleRow.className = "ad-title-row";
+
+            const title = document.createElement("h2");
+            title.className = "ad-title";
+            title.textContent = buildAdTitle(ad);
+
+            titleRow.appendChild(title);
+
+            const subtitle = document.createElement("p");
+            subtitle.className = "ad-subtitle";
+            subtitle.textContent = buildAdSubtitle(ad);
+
+            const price = document.createElement("div");
+            price.className = "price-text";
+            price.textContent = formatPrice(ad.price);
+
+            const meta = document.createElement("div");
+            meta.className = "meta-grid";
+
+            meta.appendChild(createMetaPill("fa-solid fa-calendar", ad.year ? String(ad.year) : "-"));
+            meta.appendChild(createMetaPill("fa-solid fa-road", ad.mileage ? `${formatNumber(ad.mileage)} mil` : "-"));
+            meta.appendChild(createMetaPill("fa-solid fa-gas-pump", safeDisplay(ad.fuelType || ad.fuel || "-")));
+            meta.appendChild(createMetaPill("fa-solid fa-gears", safeDisplay(ad.transmission || ad.gearbox || "-")));
+
+            main.appendChild(titleRow);
+            main.appendChild(subtitle);
+            main.appendChild(price);
+            main.appendChild(meta);
+
+            const actions = document.createElement("div");
+            actions.className = "ad-actions";
+
+            actions.appendChild(createActionButton("view", "fa-solid fa-eye", "Visa", () => openDetails(ad.id)));
+            actions.appendChild(createActionButton("edit", "fa-solid fa-pen-to-square", "Redigera", () => openEdit(ad.id)));
+            actions.appendChild(createActionButton("price", "fa-solid fa-tag", "Ändra pris", () => promptPriceUpdate(ad)));
+            actions.appendChild(createActionButton("toggle", isAdActive(ad) ? "fa-solid fa-pause" : "fa-solid fa-play", isAdActive(ad) ? "Pausa" : "Aktivera", () => toggleAdStatus(ad)));
+            actions.appendChild(createActionButton("delete", "fa-solid fa-trash", "Radera", () => confirmDeleteAd(ad)));
+
+            card.appendChild(imageWrap);
+            card.appendChild(main);
+            card.appendChild(actions);
+
+            return card;
+        }
+
+        function createActionButton(type, iconClass, label, handler) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = `action-btn ${type}`;
+            button.appendChild(createIcon(iconClass));
+            button.appendChild(document.createTextNode(label));
+            button.addEventListener("click", handler);
+            return button;
+        }
+
+        function createMetaPill(iconClass, text) {
+            const pill = document.createElement("span");
+            pill.className = "meta-pill";
+            pill.appendChild(createIcon(iconClass));
+            pill.appendChild(document.createTextNode(String(text)));
+            return pill;
+        }
+
+        async function promptPriceUpdate(ad) {
+            const ownership = await verifyOwnership(ad.id);
+
+            if (!ownership.allowed) {
+                showNotOwnerWarning();
+                return;
+            }
+
+            const currentPrice = Number(ad.price);
+
+            const result = await Swal.fire({
+                title: "Ändra pris",
+                input: "number",
+                inputLabel: "Ange nytt pris i kronor",
+                inputValue: Number.isFinite(currentPrice) ? String(currentPrice) : "",
+                inputAttributes: {
+                    min: String(MANAGE_CONFIG.LIMITS.MIN_PRICE),
+                    max: String(MANAGE_CONFIG.LIMITS.MAX_PRICE),
+                    step: "1",
+                    inputmode: "numeric"
+                },
+                showCancelButton: true,
+                confirmButtonText: "Spara pris",
+                cancelButtonText: "Avbryt",
+                confirmButtonColor: "#f58220",
+                cancelButtonColor: "#64748b",
+                preConfirm: (value) => {
+                    const parsed = Number(value);
+
+                    if (!isValidPrice(parsed)) {
+                        Swal.showValidationMessage(MANAGE_CONFIG.MESSAGES.PRICE_INVALID);
+                        return false;
+                    }
+
+                    return Math.floor(parsed);
+                }
+            });
+
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            await updateAd(ad.id, {
+                price: result.value,
+                updatedAt: serverTimestamp()
+            });
+        }
+
+        async function toggleAdStatus(ad) {
+            const ownership = await verifyOwnership(ad.id);
+
+            if (!ownership.allowed) {
+                showNotOwnerWarning();
+                return;
+            }
+
+            const nextStatus = !isAdActive(ad);
+
+            const result = await Swal.fire({
+                icon: "question",
+                title: nextStatus ? "Aktivera annons?" : "Pausa annons?",
+                text: nextStatus
+                    ? "Annonsen blir synlig som aktiv igen."
+                    : "Annonsen markeras som pausad.",
+                showCancelButton: true,
+                confirmButtonText: nextStatus ? "Aktivera" : "Pausa",
+                cancelButtonText: "Avbryt",
+                confirmButtonColor: "#f58220",
+                cancelButtonColor: "#64748b"
+            });
+
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            await updateAd(ad.id, {
+                active: nextStatus,
+                updatedAt: serverTimestamp()
+            });
+        }
+
+        async function updateAd(adId, payload) {
+            try {
+                await updateDoc(doc(db, MANAGE_CONFIG.COLLECTIONS.CARS, adId), payload);
+
+                await Swal.fire({
+                    icon: "success",
+                    title: "Sparat",
+                    text: MANAGE_CONFIG.MESSAGES.UPDATE_SUCCESS,
+                    confirmButtonColor: "#f58220"
+                });
+
+                await loadUserAds();
+            } catch (error) {
+                console.error("[BILHK] Could not update ad:", error);
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Fel",
+                    text: MANAGE_CONFIG.MESSAGES.UPDATE_ERROR,
+                    confirmButtonColor: "#f58220"
+                });
+            }
+        }
+
+        async function confirmDeleteAd(ad) {
+            const ownership = await verifyOwnership(ad.id);
+
+            if (!ownership.allowed) {
+                showNotOwnerWarning();
+                return;
+            }
+
+            const result = await Swal.fire({
+                icon: "warning",
+                title: "Radera annons?",
+                text: "Detta tar bort annonsen från databasen. Åtgärden kan inte ångras.",
+                showCancelButton: true,
+                confirmButtonText: "Ja, radera",
+                cancelButtonText: "Avbryt",
+                confirmButtonColor: "#dc2626",
+                cancelButtonColor: "#64748b"
+            });
+
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, MANAGE_CONFIG.COLLECTIONS.CARS, ad.id));
+
+                await Swal.fire({
+                    icon: "success",
+                    title: "Raderad",
+                    text: MANAGE_CONFIG.MESSAGES.DELETE_SUCCESS,
+                    confirmButtonColor: "#f58220"
+                });
+
+                await loadUserAds();
+            } catch (error) {
+                console.error("[BILHK] Could not delete ad:", error);
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Fel",
+                    text: MANAGE_CONFIG.MESSAGES.DELETE_ERROR,
+                    confirmButtonColor: "#f58220"
+                });
+            }
+        }
+
+        async function verifyOwnership(adId) {
+            if (!state.currentUser || !adId) {
+                return {
+                    allowed: false,
+                    data: null
+                };
+            }
+
+            try {
+                const adRef = doc(db, MANAGE_CONFIG.COLLECTIONS.CARS, adId);
+                const snapshot = await getDoc(adRef);
+
+                if (!snapshot.exists()) {
+                    return {
+                        allowed: false,
+                        data: null
+                    };
+                }
+
+                const data = snapshot.data();
+
+                return {
+                    allowed: data.sellerId === state.currentUser.uid,
+                    data
+                };
+            } catch (error) {
+                console.error("[BILHK] Ownership verification failed:", error);
+
+                return {
+                    allowed: false,
+                    data: null
+                };
+            }
+        }
+
+        function showNotOwnerWarning() {
+            Swal.fire({
+                icon: "error",
+                title: "Åtkomst nekad",
+                text: MANAGE_CONFIG.MESSAGES.NOT_OWNER,
+                confirmButtonColor: "#f58220"
+            });
+        }
+
+        function openDetails(adId) {
+            const safeId = encodeURIComponent(String(adId || ""));
+
+            if (!safeId) {
+                return;
+            }
+
+            window.location.href = `${MANAGE_CONFIG.ROUTES.DETAILS}?id=${safeId}`;
+        }
+
+        function openEdit(adId) {
+            const safeId = encodeURIComponent(String(adId || ""));
+
+            if (!safeId) {
+                return;
+            }
+
+            window.location.href = `${MANAGE_CONFIG.ROUTES.EDIT_CAR}?id=${safeId}`;
+        }
+
+        function showLoadingState() {
+            clearElement(elements.adsList);
+
+            const card = createStateCard(
+                "fa-solid fa-circle-notch fa-spin",
+                "Laddar dina annonser...",
+                "Vi hämtar annonser som tillhör ditt konto."
+            );
+
+            elements.adsList.appendChild(card);
+        }
+
+        function showEmptyState() {
+            clearElement(elements.adsList);
+
+            const message = state.searchText || state.showActiveOnly
+                ? "Inga annonser matchar det valda filtret."
+                : "Du har inte publicerat några annonser ännu.";
+
+            const card = createStateCard(
+                "fa-solid fa-car-side",
+                "Inga annonser hittades",
+                message
+            );
+
+            const addLink = document.createElement("a");
+            addLink.href = MANAGE_CONFIG.ROUTES.ADD_CAR;
+            addLink.className = "nav-btn primary";
+            addLink.appendChild(createIcon("fa-solid fa-plus"));
+            addLink.appendChild(document.createTextNode("Publicera ny annons"));
+
+            card.appendChild(addLink);
+            elements.adsList.appendChild(card);
+        }
+
+        function showErrorState(message) {
+            clearElement(elements.adsList);
+
+            const card = createStateCard(
+                "fa-solid fa-triangle-exclamation",
+                "Något gick fel",
+                message
+            );
+
+            elements.adsList.appendChild(card);
+        }
+
+        function createStateCard(iconClass, titleText, messageText) {
+            const card = document.createElement("div");
+            card.className = "state-card";
+
+            const iconWrap = document.createElement("div");
+            iconWrap.className = "state-icon";
+            iconWrap.appendChild(createIcon(iconClass));
+
+            const title = document.createElement("h3");
+            title.textContent = titleText;
+
+            const message = document.createElement("p");
+            message.textContent = messageText;
+
+            card.appendChild(iconWrap);
+            card.appendChild(title);
+            card.appendChild(message);
+
+            return card;
+        }
+
+        function buildAdTitle(ad) {
+            const brand = safeDisplay(ad.brand);
+            const model = safeDisplay(ad.model);
+
+            const title = `${brand} ${model}`.trim();
+
+            return title || "Okänt fordon";
+        }
+
+        function buildAdSubtitle(ad) {
+            const parts = [];
+
+            const reg = safeDisplay(ad.regNo || ad.regNr || ad.registrationNumber);
+
+            if (reg) {
+                parts.push(`Reg.nr: ${reg.toUpperCase()}`);
+            }
+
+            if (ad.createdAt && typeof ad.createdAt.toDate === "function") {
+                parts.push(`Publicerad: ${formatDate(ad.createdAt.toDate())}`);
+            }
+
+            return parts.length ? parts.join(" • ") : "Annonsinformation";
+        }
+
+        function isAdActive(ad) {
+            return ad.active !== false;
+        }
+
+        function isValidPrice(value) {
+            return Number.isFinite(value) &&
+                value >= MANAGE_CONFIG.LIMITS.MIN_PRICE &&
+                value <= MANAGE_CONFIG.LIMITS.MAX_PRICE;
+        }
+
+        function getPrimaryImage(ad) {
+            if (Array.isArray(ad.images) && ad.images.length > 0 && isSafeImageURL(ad.images[0])) {
+                return ad.images[0];
+            }
+
+            if (typeof ad.image === "string" && isSafeImageURL(ad.image)) {
+                return ad.image;
+            }
+
+            return MANAGE_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE;
+        }
+
+        function isSafeImageURL(value) {
+            const url = String(value || "").trim();
+
+            if (!url) {
+                return false;
+            }
+
+            if (url.startsWith("javascript:")) {
+                return false;
+            }
+
+            if (url.startsWith("data:text/html")) {
+                return false;
+            }
+
+            return true;
+        }
+
+        function safeDisplay(value) {
+            return normalizeText(value, 140);
+        }
+
+        function normalizeText(value, maxLength = 160) {
+            return String(value ?? "")
+                .replace(/\s+/g, " ")
+                .trim()
+                .slice(0, maxLength);
+        }
+
+        function formatPrice(value) {
+            const number = Number(value);
+
+            if (!Number.isFinite(number) || number < 0) {
+                return "Pris saknas";
+            }
+
+            return `${number.toLocaleString("sv-SE")} kr`;
+        }
+
+        function formatNumber(value) {
+            const number = Number(value);
+
+            if (!Number.isFinite(number)) {
+                return "";
+            }
+
+            return number.toLocaleString("sv-SE");
+        }
+
+        function formatDate(date) {
+            try {
+                return new Intl.DateTimeFormat("sv-SE", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit"
+                }).format(date);
+            } catch {
+                return "";
+            }
+        }
+
+        function createIcon(className) {
+            const icon = document.createElement("i");
+            icon.className = className;
+            return icon;
+        }
+
+        function clearElement(element) {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+
+        function attachGlobalErrorHandlers() {
+            window.addEventListener("unhandledrejection", (event) => {
+                console.error("[BILHK] Unhandled promise rejection:", event.reason);
+            });
+
+            window.addEventListener("error", (event) => {
+                console.error("[BILHK] Global manage page error:", event.error || event.message);
+            });
+        }
+    </script>
+
 </body>
 </html>
