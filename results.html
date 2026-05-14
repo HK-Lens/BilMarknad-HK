@@ -156,6 +156,7 @@
             color: inherit;
             display: flex;
             flex-direction: column;
+            cursor: pointer;
         }
         .car-pro-card:hover { transform: translateY(-12px); box-shadow: var(--shadow); border-color: var(--primary); }
 
@@ -255,7 +256,7 @@
                 <option value="price_desc">Pris: Högt till lågt</option>
                 <option value="mil_asc">Miltal: Lägst först</option>
             </select>
-            <button class="view-toggle-btn active" id="btnGrid"><i class="fa-solid fa-grid-2"></i></button>
+            <button class="view-toggle-btn active" id="btnGrid"><i class="fa-solid fa-grid"></i></button>
             <button class="view-toggle-btn" id="btnList"><i class="fa-solid fa-list-ul"></i></button>
         </div>
     </header>
@@ -305,6 +306,7 @@
 
         <main>
             <div class="results-grid" id="mainResultsGrid">
+                <!-- Skeletons load here -->
                 <div class="skeleton-box"></div>
                 <div class="skeleton-box"></div>
                 <div class="skeleton-box"></div>
@@ -314,7 +316,7 @@
 
     <script type="module">
         import { auth, db } from './firebase-config.js';
-        import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import carData from './cars-data.js';
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -323,14 +325,17 @@
         // --- 1. تهيئة واجهة المستخدم ---
         function initUI() {
             const sideBrand = document.getElementById('sideFilterBrand');
-            Object.keys(carData).sort().forEach(b => {
-                const opt = document.createElement('option');
-                opt.value = b;
-                opt.textContent = b;
-                sideBrand.appendChild(opt);
-            });
+            // إضافة الماركات من ملف carData
+            if (carData) {
+                Object.keys(carData).sort().forEach(b => {
+                    const opt = document.createElement('option');
+                    opt.value = b;
+                    opt.textContent = b;
+                    sideBrand.appendChild(opt);
+                });
+            }
 
-            // مزامنة الحقول مع الروابط الحالية
+            // مزامنة الحقول مع روابط البحث الحالية (URL)
             sideBrand.value = urlParams.get('brand') || 'all';
             document.getElementById('sideFilterFuel').value = urlParams.get('fuel') || 'all';
             document.getElementById('sideMinPrice').value = urlParams.get('minP') || '';
@@ -339,11 +344,10 @@
             document.getElementById('sideMaxMil').value = urlParams.get('maxM') || '';
         }
 
-        // --- 2. محرك جلب البيانات الذكي ---
+        // --- 2. جلب البيانات من Firestore ---
         async function runSearchEngine() {
             const grid = document.getElementById('mainResultsGrid');
             
-            // قراءة المعايير من الروابط
             const brand = urlParams.get('brand');
             const fuel = urlParams.get('fuel');
             const minP = Number(urlParams.get('minP')) || 0;
@@ -352,7 +356,7 @@
             const maxM = Number(urlParams.get('maxM')) || 999999;
 
             try {
-                // جلب السيارات "النشطة" فقط (يتوافق مع الـ Rules)
+                // جلب السيارات التي حالتها نشطة (active)
                 const q = query(collection(db, "cars"), where("status", "==", "active"));
                 const snap = await getDocs(q);
                 
@@ -361,7 +365,7 @@
                     const data = doc.data();
                     const car = { id: doc.id, ...data };
 
-                    // الفلترة المنطقية العميقة (Hybrid Filtering)
+                    // تطبيق الفلترة المنطقية في المتصفح (Hybrid Filtering)
                     const brandMatch = !brand || brand === 'all' || car.brand === brand;
                     const fuelMatch = !fuel || fuel === 'all' || car.fuel === fuel;
                     const priceMatch = Number(car.price) >= minP && Number(car.price) <= maxP;
@@ -379,18 +383,18 @@
             }
         }
 
-        // --- 3. نظام المعالجة والفرز النهائي ---
+        // --- 3. عرض النتائج والفرز ---
         function processAndRender() {
             const sortVal = document.getElementById('sortMechanism').value;
             const grid = document.getElementById('mainResultsGrid');
             const counter = document.getElementById('totalFoundLabel');
 
-            // منطق الفرز
+            // منطق الفرز (Sorting)
             carsCache.sort((a, b) => {
                 if (sortVal === 'price_asc') return a.price - b.price;
                 if (sortVal === 'price_desc') return b.price - a.price;
                 if (sortVal === 'mil_asc') return a.mileage - b.mileage;
-                return b.createdAt - a.createdAt; // newest
+                return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0); // newest
             });
 
             grid.innerHTML = "";
@@ -406,10 +410,12 @@
                 return;
             }
 
+            // توليد الـ HTML لكل سيارة
             carsCache.forEach(car => {
                 const p = Number(car.price).toLocaleString('sv-SE');
                 const thumb = (car.images && car.images.length > 0) ? car.images[0] : 'assets/placeholder.jpg';
                 
+                // الرابط هنا هو التعديل الأساسي: href="details.html?id=${car.id}"
                 grid.innerHTML += `
                     <a href="details.html?id=${car.id}" class="car-pro-card">
                         <div class="img-container">
@@ -433,7 +439,7 @@
             });
         }
 
-        // --- 4. معالجة الأحداث ---
+        // --- 4. التحكم في العرض (Grid vs List) وأزرار التحديث ---
         document.getElementById('btnGrid').onclick = () => {
             document.getElementById('mainResultsGrid').classList.remove('list-view');
             document.getElementById('btnGrid').classList.add('active');
@@ -467,7 +473,7 @@
 
         document.getElementById('sortMechanism').onchange = processAndRender;
 
-        // بدء التشغيل
+        // تنفيذ الدوال عند تحميل الصفحة
         initUI();
         runSearchEngine();
     </script>
