@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sökresultat | BILHK</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e07210;
+            --dark: #0f172a;
+            --muted: #64748b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --blue: #2563eb;
+            --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+            --soft-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--light); color: var(--dark); min-height: 100vh; }
+
+        .dev-banner {
+            background: linear-gradient(90deg, #ef4444, #b91c1c, #ef4444);
+            color: white;
+            padding: 10px 6%;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo { color: var(--dark); text-decoration: none; font-size: 28px; font-weight: 900; letter-spacing: -0.05em; }
+        .logo span { color: var(--primary); }
+
+        .nav-links { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .nav-links a, .nav-pill {
+            text-decoration: none;
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 800;
+            padding: 10px 14px;
+            border-radius: 999px;
+            transition: .25s ease;
+            border: 1px solid transparent;
+            background: transparent;
+            cursor: pointer;
+        }
+        .nav-links a:hover, .nav-pill:hover { color: var(--primary); background: #fff7ed; border-color: #fed7aa; }
+        .btn-sell { background: var(--primary) !important; color: white !important; box-shadow: 0 8px 18px rgba(245,130,32,.28); }
+        .btn-sell:hover { background: var(--primary-hover) !important; color: white !important; }
+
+        .hero {
+            background:
+                radial-gradient(circle at 10% 10%, rgba(245,130,32,.32), transparent 30%),
+                radial-gradient(circle at 90% 0%, rgba(37,99,235,.22), transparent 35%),
+                linear-gradient(135deg, #0f172a 0%, #1e293b 70%, #111827 100%);
+            color: white;
+            padding: 44px 6% 90px;
+        }
+        .hero-inner { max-width: 1250px; margin: 0 auto; display: grid; grid-template-columns: 1.35fr .65fr; gap: 28px; align-items: end; }
+        .eyebrow { color: #fed7aa; font-weight: 900; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 12px; }
+        .hero h1 { font-size: clamp(32px, 5vw, 58px); line-height: 1; letter-spacing: -0.06em; font-weight: 900; margin-bottom: 16px; }
+        .hero p { color: #cbd5e1; font-size: 16px; max-width: 720px; line-height: 1.75; }
+        .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .hero-stat { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 22px; padding: 18px; backdrop-filter: blur(12px); }
+        .hero-stat strong { display: block; color: white; font-size: 28px; font-weight: 900; }
+        .hero-stat span { color: #cbd5e1; font-size: 12px; font-weight: 700; }
+
+        .shell { max-width: 1250px; margin: -56px auto 0; padding: 0 20px 70px; }
+        .control-panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            padding: 22px;
+            margin-bottom: 24px;
+        }
+
+        .summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+        .summary-card { border-radius: 20px; background: #f8fafc; border: 1px solid var(--border); padding: 16px; }
+        .summary-card span { color: var(--muted); font-size: 11px; text-transform: uppercase; font-weight: 900; display: block; margin-bottom: 6px; }
+        .summary-card strong { font-size: 19px; font-weight: 900; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .filter-toolbar { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr) auto; gap: 12px; align-items: end; }
+        .field label { display: block; font-size: 11px; color: var(--muted); font-weight: 900; text-transform: uppercase; margin: 0 0 7px 2px; }
+        input, select {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: #f8fafc;
+            color: var(--dark);
+            padding: 14px 14px;
+            border-radius: 15px;
+            outline: none;
+            font-size: 14px;
+            font-weight: 700;
+            transition: .2s ease;
+        }
+        input:focus, select:focus { background: white; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(245,130,32,.12); }
+
+        .btn {
+            border: none;
+            border-radius: 15px;
+            padding: 14px 18px;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: .25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 8px 18px rgba(245,130,32,.26); }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-dark { background: var(--dark); color: white; }
+        .btn-dark:hover { background: #1e293b; transform: translateY(-1px); }
+        .btn-light { background: #f1f5f9; color: var(--dark); border: 1px solid var(--border); }
+        .btn-light:hover { background: white; color: var(--primary); }
+        .btn-danger { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        .btn-danger:hover { background: #fecaca; }
+
+        .active-filter-bar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-top: 1px solid var(--border);
+            padding-top: 16px;
+            margin-top: 16px;
+        }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border-radius: 999px;
+            background: #fff7ed;
+            color: #9a3412;
+            border: 1px solid #fed7aa;
+            font-size: 12px;
+            font-weight: 900;
+        }
+        .chip.empty { background: #f1f5f9; color: var(--muted); border-color: var(--border); }
+
+        .content-layout { display: grid; grid-template-columns: 285px 1fr; gap: 24px; align-items: start; }
+        .side-panel { position: sticky; top: 98px; background: white; border: 1px solid var(--border); border-radius: 28px; padding: 18px; box-shadow: var(--soft-shadow); }
+        .side-panel h3 { font-size: 16px; font-weight: 900; margin-bottom: 14px; }
+        .side-group { margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 18px; }
+        .side-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+        .range-label { color: var(--muted); font-size: 11px; font-weight: 900; margin-bottom: 7px; display: block; text-transform: uppercase; }
+        .toggle-list { display: grid; gap: 8px; }
+        .toggle-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; background: #f8fafc; border: 1px solid var(--border); border-radius: 14px; font-size: 12px; font-weight: 800; color: var(--dark); }
+        .toggle-item input { width: auto; accent-color: var(--primary); }
+
+        .results-main { min-width: 0; }
+        .results-head { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 18px; }
+        .results-head h2 { font-size: 26px; font-weight: 900; letter-spacing: -0.04em; }
+        .view-actions { display: flex; align-items: center; gap: 10px; }
+        .view-btn { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--border); background: white; color: var(--muted); cursor: pointer; font-size: 16px; }
+        .view-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; }
+        .results-grid.list-view { grid-template-columns: 1fr; }
+
+        .car-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 26px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(15,23,42,.04);
+            transition: .25s ease;
+            position: relative;
+        }
+        .car-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: #fed7aa; }
+        .image-wrap { height: 210px; background: #e2e8f0; position: relative; overflow: hidden; }
+        .image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: .4s ease; }
+        .car-card:hover .image-wrap img { transform: scale(1.04); }
+        .badge-row { position: absolute; top: 13px; left: 13px; right: 13px; display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+        .status-badge, .photo-badge {
+            background: rgba(15,23,42,.84);
+            color: white;
+            padding: 8px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 900;
+            backdrop-filter: blur(10px);
+        }
+        .status-badge.active { background: rgba(22,163,74,.88); }
+        .status-badge.inactive { background: rgba(239,68,68,.88); }
+
+        .card-body { padding: 19px; }
+        .price { color: var(--primary); font-size: 24px; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 6px; }
+        .title { font-size: 17px; font-weight: 900; margin-bottom: 8px; line-height: 1.35; }
+        .meta { color: var(--muted); font-size: 12px; font-weight: 700; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .spec-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 12px 0; }
+        .spec-pill { background: #f8fafc; border: 1px solid var(--border); border-radius: 13px; padding: 10px; font-size: 11px; font-weight: 800; color: var(--muted); }
+        .spec-pill strong { display: block; color: var(--dark); font-size: 13px; margin-top: 2px; }
+        .features { display: flex; flex-wrap: wrap; gap: 6px; min-height: 24px; }
+        .feature { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 999px; padding: 6px 9px; font-size: 10px; font-weight: 900; }
+        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 15px; }
+
+        .results-grid.list-view .car-card { display: grid; grid-template-columns: 310px 1fr; }
+        .results-grid.list-view .image-wrap { height: 100%; min-height: 235px; }
+        .results-grid.list-view .card-body { display: grid; align-content: center; }
+        .results-grid.list-view .spec-row { grid-template-columns: repeat(4, 1fr); }
+        .results-grid.list-view .card-actions { grid-template-columns: 180px 180px; }
+
+        .empty-state, .loading-state, .error-state {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 70px 30px;
+            text-align: center;
+            box-shadow: var(--soft-shadow);
+        }
+        .empty-state i, .loading-state i, .error-state i { font-size: 56px; margin-bottom: 18px; color: var(--primary); }
+        .empty-state h3, .loading-state h3, .error-state h3 { font-size: 26px; font-weight: 900; margin-bottom: 10px; }
+        .empty-state p, .loading-state p, .error-state p { color: var(--muted); max-width: 570px; margin: 0 auto 22px; line-height: 1.7; }
+
+        .safety-section {
+            margin-top: 36px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 26px;
+            box-shadow: var(--soft-shadow);
+            display: grid;
+            grid-template-columns: .8fr 1.2fr;
+            gap: 22px;
+            align-items: center;
+        }
+        .safety-section h3 { font-size: 24px; font-weight: 900; margin-bottom: 10px; }
+        .safety-section p { color: var(--muted); line-height: 1.8; font-size: 14px; }
+        .safety-list { display: grid; gap: 10px; }
+        .safety-item { background: #f8fafc; border: 1px solid var(--border); border-radius: 17px; padding: 14px; display: flex; gap: 12px; align-items: flex-start; color: #334155; font-size: 13px; font-weight: 700; }
+        .safety-item i { color: var(--primary); margin-top: 2px; }
+
+        footer { background: #0f172a; color: #94a3b8; padding: 34px 6%; margin-top: 30px; }
+        .footer-inner { max-width: 1250px; margin: 0 auto; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: center; }
+        footer a { color: #fed7aa; text-decoration: none; font-weight: 800; }
+
+        @media (max-width: 1100px) {
+            .hero-inner { grid-template-columns: 1fr; }
+            .content-layout { grid-template-columns: 1fr; }
+            .side-panel { position: static; }
+            .summary-row { grid-template-columns: repeat(2, 1fr); }
+            .filter-toolbar { grid-template-columns: 1fr 1fr; }
+            .filter-toolbar .btn { min-height: 48px; }
+        }
+
+        @media (max-width: 720px) {
+            header { padding: 14px 18px; align-items: flex-start; flex-direction: column; }
+            .nav-links { width: 100%; }
+            .nav-links a, .nav-pill { flex: 1; text-align: center; font-size: 12px; padding: 9px; }
+            .hero { padding: 34px 20px 80px; }
+            .hero-stats { grid-template-columns: 1fr; }
+            .shell { padding: 0 14px 50px; }
+            .control-panel { border-radius: 22px; padding: 16px; }
+            .summary-row, .filter-toolbar, .mini-grid, .safety-section { grid-template-columns: 1fr; }
+            .results-head { flex-direction: column; align-items: flex-start; }
+            .results-grid.list-view .car-card { display: block; }
+            .results-grid.list-view .image-wrap { height: 210px; min-height: auto; }
+            .results-grid.list-view .spec-row { grid-template-columns: 1fr 1fr; }
+            .results-grid.list-view .card-actions { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="dev-banner">Sidan är under uppbyggnad - Kontrollera alltid fordonets historik innan köp</div>
+
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <nav class="nav-links">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Hem</a>
+        <a href="filter.html"><i class="fa-solid fa-sliders"></i> Djup sökning</a>
+        <a href="sell.html" class="btn-sell"><i class="fa-solid fa-circle-plus"></i> Sälj bil</a>
+        <span id="authLinks"></span>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-inner">
+        <div>
+            <div class="eyebrow">Sökresultat</div>
+            <h1 id="heroTitle">Hitta rätt bil med smart filtrering</h1>
+            <p id="heroSubtitle">Resultaten filtreras utifrån dina val och sorteras direkt i webbläsaren för att undvika onödiga Firestore-indexproblem under utvecklingsfasen.</p>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat"><strong id="statVisible">0</strong><span>Visade fordon</span></div>
+            <div class="hero-stat"><strong id="statTotal">0</strong><span>Totalt lästa annonser</span></div>
+        </div>
+    </div>
+</section>
+
+<main class="shell">
+    <section class="control-panel">
+        <div class="summary-row">
+            <div class="summary-card"><span>Budget</span><strong id="sumBudget">Alla priser</strong></div>
+            <div class="summary-card"><span>Fordon</span><strong id="sumVehicle">Alla bilar</strong></div>
+            <div class="summary-card"><span>Drivmedel</span><strong id="sumFuel">Alla</strong></div>
+            <div class="summary-card"><span>Utrustning</span><strong id="sumTechs">Inga krav</strong></div>
+        </div>
+
+        <div class="filter-toolbar">
+            <div class="field">
+                <label>Fritext</label>
+                <input type="text" id="quickText" placeholder="Sök märke, modell, beskrivning, reg-nr...">
+            </div>
+            <div class="field">
+                <label>Märke</label>
+                <select id="brandSelect"><option value="all">Alla märken</option></select>
+            </div>
+            <div class="field">
+                <label>Modell</label>
+                <select id="modelSelect"><option value="all">Alla modeller</option></select>
+            </div>
+            <div class="field">
+                <label>Sortering</label>
+                <select id="sortSelect">
+                    <option value="newest">Nyast först</option>
+                    <option value="price_asc">Lägsta pris</option>
+                    <option value="price_desc">Högsta pris</option>
+                    <option value="year_desc">Nyaste årsmodell</option>
+                    <option value="year_asc">Äldsta årsmodell</option>
+                    <option value="mileage_asc">Minst mil</option>
+                    <option value="mileage_desc">Mest mil</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" id="applyLocalBtn"><i class="fa-solid fa-magnifying-glass"></i> Uppdatera</button>
+        </div>
+
+        <div class="active-filter-bar" id="activeFilterBar"></div>
+    </section>
+
+    <section class="content-layout">
+        <aside class="side-panel">
+            <h3><i class="fa-solid fa-filter"></i> Finjustera sökning</h3>
+
+            <div class="side-group">
+                <label class="range-label">Prisintervall</label>
+                <div class="mini-grid">
+                    <input type="number" id="minP" placeholder="Från kr">
+                    <input type="number" id="maxP" placeholder="Till kr">
+                </div>
+            </div>
+
+            <div class="side-group">
+                <label class="range-label">Miltal</label>
+                <div class="mini-grid">
+                    <input type="number" id="minMil" placeholder="Min mil">
+                    <input type="number" id="maxMil" placeholder="Max mil">
+                </div>
+            </div>
+
+            <div class="side-group">
+                <label class="range-label">Årsmodell</label>
+                <div class="mini-grid">
+                    <input type="number" id="minY" placeholder="Från år">
+                    <input type="number" id="maxY" placeholder="Till år">
+                </div>
+            </div>
+
+            <div class="side-group">
+                <label class="range-label">Teknik & ekonomi</label>
+                <div class="mini-grid">
+                    <input type="number" id="minHp" placeholder="Min hk">
+                    <input type="number" id="maxTax" placeholder="Max skatt">
+                    <input type="number" id="maxOwners" placeholder="Max ägare">
+                    <input type="date" id="besiktning" title="Besiktigad till">
+                </div>
+            </div>
+
+            <div class="side-group">
+                <label class="range-label">Karosseri</label>
+                <select id="karSelect">
+                    <option value="all">Alla karosser</option>
+                    <option value="Sedan">Sedan</option>
+                    <option value="SUV">SUV</option>
+                    <option value="Kombi">Kombi</option>
+                    <option value="Van">Van</option>
+                    <option value="Cab">Cab</option>
+                    <option value="Småbil">Småbil</option>
+                </select>
+            </div>
+
+            <div class="side-group">
+                <label class="range-label">Drivlina</label>
+                <div style="display:grid; gap:9px;">
+                    <select id="fuelSelect">
+                        <option value="all">Alla drivmedel</option>
+                        <option value="Bensin">Bensin</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="El">El</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                    <select id="gearSelect">
+                        <option value="all">Alla växellådor</option>
+                        <option value="Automat">Automat</option>
+                        <option value="Manuell">Manuell</option>
+                    </select>
+                    <select id="driveSelect">
+                        <option value="all">Alla drivningar</option>
+                        <option value="FWD">FWD</option>
+                        <option value="RWD">RWD</option>
+                        <option value="AWD">AWD/4WD</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="side-group">
+                <label class="range-label">Annonsstatus</label>
+                <select id="activeSelect">
+                    <option value="all">Alla annonser</option>
+                    <option value="true">Endast aktiva</option>
+                    <option value="false">Endast inaktiva</option>
+                </select>
+            </div>
+
+            <div class="side-group">
+                <label class="range-label">Utrustning</label>
+                <div class="toggle-list" id="techList"></div>
+            </div>
+
+            <div style="display:grid; gap:10px;">
+                <button class="btn btn-primary" id="sideApplyBtn"><i class="fa-solid fa-check"></i> Tillämpa filter</button>
+                <button class="btn btn-light" id="saveSearchBtn"><i class="fa-solid fa-bookmark"></i> Spara sökning</button>
+                <button class="btn btn-danger" id="resetBtn"><i class="fa-solid fa-rotate-left"></i> Rensa filter</button>
+            </div>
+        </aside>
+
+        <section class="results-main">
+            <div class="results-head">
+                <h2 id="resultTitle">Laddar annonser...</h2>
+                <div class="view-actions">
+                    <button class="view-btn active" id="gridViewBtn" title="Rutnät"><i class="fa-solid fa-grip"></i></button>
+                    <button class="view-btn" id="listViewBtn" title="Lista"><i class="fa-solid fa-list"></i></button>
+                </div>
+            </div>
+
+            <div id="resultsGrid" class="results-grid">
+                <div class="loading-state" style="grid-column: 1/-1;">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <h3>Hämtar annonser</h3>
+                    <p>Vi laddar fordon från databasen och kontrollerar dina filter.</p>
+                </div>
+            </div>
+
+            <section class="safety-section">
+                <div>
+                    <h3>Tryggare bilaffär</h3>
+                    <p>BILHK visar annonser, men köpbeslutet ligger alltid hos köpare och säljare. Kontrollera alltid uppgifter innan betalning eller överlåtelse.</p>
+                </div>
+                <div class="safety-list">
+                    <div class="safety-item"><i class="fa-solid fa-circle-check"></i><span>Kontrollera registreringsnummer, servicebok och mätarställning.</span></div>
+                    <div class="safety-item"><i class="fa-solid fa-shield-halved"></i><span>Undvik förskottsbetalning och använd säkra betalningsmetoder.</span></div>
+                    <div class="safety-item"><i class="fa-solid fa-handshake"></i><span>Träffas på en trygg plats och skriv alltid ett tydligt köpeavtal.</span></div>
+                </div>
+            </section>
+        </section>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <div><strong>BILHK</strong> © 2026 — öppen marknadsplats för fordonsannonser.</div>
+        <div><a href="terms.html">Användarvillkor</a> · <a href="filter.html">Djup sökning</a> · <a href="sell.html">Publicera annons</a></div>
+    </div>
+</footer>
+
+<script type="module">
+    import { db, auth } from './firebase-config.js';
+    import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { carData } from './cars-data.js';
+
+    const FALLBACK_IMAGE = 'placeholder.jpg';
+    const techOptions = [
+        ['ABS', 'ABS/EBD/ESP'], ['ACC', 'Adaptiv farthållare'], ['AEB', 'Autobroms'],
+        ['LKA', 'Filassistans'], ['BSM', 'Döda vinkel-varnare'], ['TPMS', 'TPMS'],
+        ['Trötthet', 'Trötthetsvarnare'], ['HSA', 'Hill Start Assist'], ['HUD', 'HUD'],
+        ['360Cam', '360° Kamera'], ['Matrix', 'Matrix LED'], ['CarPlay', 'Apple/Android'],
+        ['Dragkrok', 'Dragkrok'], ['Panoramic', 'Panoramaglastak'], ['Skinn', 'Skinnklädsel'],
+        ['Vinterhjul', 'Vinterhjul'], ['Service', 'Full servicehistorik'], ['Navi', 'Navigation']
+    ];
+
+    let allCars = [];
+    let filteredCars = [];
+    let selectedTechs = [];
+    let currentParams = new URLSearchParams(window.location.search);
+
+    const $ = (id) => document.getElementById(id);
+    const safeString = (value) => (value ?? '').toString().trim();
+    const numberOrNull = (value) => {
+        const n = Number(value);
+        return Number.isFinite(n) ? n : null;
+    };
+    const fieldNumber = (car, keys, fallback = 0) => {
+        for (const key of keys) {
+            if (car[key] !== undefined && car[key] !== null && car[key] !== '') {
+                const n = Number(car[key]);
+                if (Number.isFinite(n)) return n;
+            }
+        }
+        return fallback;
+    };
+    const firstValue = (car, keys, fallback = '-') => {
+        for (const key of keys) {
+            if (car[key] !== undefined && car[key] !== null && car[key] !== '') return car[key];
+        }
+        return fallback;
+    };
+    const getFuel = (car) => safeString(firstValue(car, ['fuel', 'fuelType'], ''));
+    const getBody = (car) => safeString(firstValue(car, ['karosseri', 'bodyType', 'body'], ''));
+    const getGear = (car) => safeString(firstValue(car, ['transmission', 'gearbox', 'gear'], ''));
+    const getDrive = (car) => safeString(firstValue(car, ['drive', 'drivning'], ''));
+    const getFeatures = (car) => Array.isArray(car.features) ? car.features : (Array.isArray(car.techs) ? car.techs : []);
+    const getImage = (car) => Array.isArray(car.images) && car.images.length > 0 ? car.images[0] : FALLBACK_IMAGE;
+    const formatPrice = (value) => {
+        const n = Number(value);
+        return Number.isFinite(n) && n > 0 ? `${n.toLocaleString('sv-SE')} kr` : 'Pris saknas';
+    };
+    const formatDate = (value) => {
+        if (!value) return '-';
+        if (typeof value.toDate === 'function') return value.toDate().toLocaleDateString('sv-SE');
+        const d = new Date(value);
+        return Number.isNaN(d.getTime()) ? '-' : d.toLocaleDateString('sv-SE');
+    };
+
+    function populateStaticControls() {
+        Object.keys(carData).sort().forEach(brand => {
+            $('brandSelect').innerHTML += `<option value="${brand}">${brand}</option>`;
+        });
+
+        $('brandSelect').addEventListener('change', () => updateModels($('brandSelect').value));
+
+        $('techList').innerHTML = techOptions.map(([value, label]) => `
+            <label class="toggle-item">
+                <span>${label}</span>
+                <input type="checkbox" value="${value}" class="tech-checkbox">
+            </label>
+        `).join('');
+
+        document.querySelectorAll('.tech-checkbox').forEach(cb => {
+            cb.addEventListener('change', () => {
+                selectedTechs = Array.from(document.querySelectorAll('.tech-checkbox:checked')).map(item => item.value);
+                applyFilters(true);
+            });
+        });
+    }
+
+    function updateModels(brand, selectedModel = 'all') {
+        $('modelSelect').innerHTML = '<option value="all">Alla modeller</option>';
+        if (brand && brand !== 'all' && carData[brand]) {
+            carData[brand].sort().forEach(model => {
+                $('modelSelect').innerHTML += `<option value="${model}">${model}</option>`;
+            });
+        }
+        $('modelSelect').value = selectedModel || 'all';
+    }
+
+    function setValueFromParam(id, names, fallback = '') {
+        const keys = Array.isArray(names) ? names : [names];
+        const match = keys.find(k => currentParams.has(k));
+        if ($(id)) $(id).value = match ? currentParams.get(match) : fallback;
+    }
+
+    function loadParamsIntoControls() {
+        setValueFromParam('quickText', ['text', 'q', 'search'], '');
+        setValueFromParam('brandSelect', 'brand', 'all');
+        updateModels($('brandSelect').value, currentParams.get('model') || 'all');
+        setValueFromParam('karSelect', 'kar', 'all');
+        setValueFromParam('fuelSelect', 'fuel', 'all');
+        setValueFromParam('gearSelect', 'gear', 'all');
+        setValueFromParam('driveSelect', 'drive', 'all');
+        setValueFromParam('sortSelect', 'sort', 'newest');
+        setValueFromParam('activeSelect', 'active', 'all');
+        setValueFromParam('minP', 'minP', '');
+        setValueFromParam('maxP', 'maxP', '');
+        setValueFromParam('minMil', ['minMil', 'minM'], '');
+        setValueFromParam('maxMil', ['maxMil', 'maxM'], '');
+        setValueFromParam('minY', ['minY', 'minYear'], '');
+        setValueFromParam('maxY', ['maxY', 'maxYear'], '');
+        setValueFromParam('minHp', ['hp', 'minHp'], '');
+        setValueFromParam('maxTax', ['tax', 'maxTax'], '');
+        setValueFromParam('maxOwners', ['owners', 'maxOwners'], '');
+        setValueFromParam('besiktning', ['bes', 'besiktning'], '');
+
+        selectedTechs = safeString(currentParams.get('techs')).split(',').map(s => s.trim()).filter(Boolean);
+        document.querySelectorAll('.tech-checkbox').forEach(cb => cb.checked = selectedTechs.includes(cb.value));
+    }
+
+    function currentFilterObject() {
+        return {
+            text: $('quickText').value.trim().toLowerCase(),
+            brand: $('brandSelect').value,
+            model: $('modelSelect').value,
+            kar: $('karSelect').value,
+            fuel: $('fuelSelect').value,
+            gear: $('gearSelect').value,
+            drive: $('driveSelect').value,
+            sort: $('sortSelect').value,
+            active: $('activeSelect').value,
+            minP: numberOrNull($('minP').value),
+            maxP: numberOrNull($('maxP').value),
+            minMil: numberOrNull($('minMil').value),
+            maxMil: numberOrNull($('maxMil').value),
+            minY: numberOrNull($('minY').value),
+            maxY: numberOrNull($('maxY').value),
+            minHp: numberOrNull($('minHp').value),
+            maxTax: numberOrNull($('maxTax').value),
+            maxOwners: numberOrNull($('maxOwners').value),
+            bes: $('besiktning').value,
+            techs: [...selectedTechs]
+        };
+    }
+
+    function validateFilters(f) {
+        if (f.minP !== null && f.maxP !== null && f.minP > f.maxP) return 'Pris från kan inte vara högre än pris till.';
+        if (f.minMil !== null && f.maxMil !== null && f.minMil > f.maxMil) return 'Min mil kan inte vara högre än max mil.';
+        if (f.minY !== null && f.maxY !== null && f.minY > f.maxY) return 'Äldsta årsmodell kan inte vara nyare än nyaste årsmodell.';
+        return null;
+    }
+
+    function carMatches(car, f) {
+        const brand = safeString(car.brand);
+        const model = safeString(car.model);
+        const description = safeString(car.description).toLowerCase();
+        const regNo = safeString(firstValue(car, ['regNo', 'regNr', 'registration'], '')).toLowerCase();
+        const price = fieldNumber(car, ['price'], 0);
+        const year = fieldNumber(car, ['year'], 0);
+        const mileage = fieldNumber(car, ['mileage', 'mil'], 0);
+        const hp = fieldNumber(car, ['hp', 'horsepower'], 0);
+        const tax = fieldNumber(car, ['tax'], 0);
+        const owners = fieldNumber(car, ['owners'], 0);
+        const fuel = getFuel(car);
+        const body = getBody(car);
+        const gear = getGear(car);
+        const drive = getDrive(car);
+        const features = getFeatures(car);
+        const active = car.active !== false;
+
+        const textBlob = `${brand} ${model} ${description} ${regNo} ${fuel} ${body} ${gear} ${drive}`.toLowerCase();
+        if (f.text && !textBlob.includes(f.text)) return false;
+        if (f.brand && f.brand !== 'all' && brand !== f.brand) return false;
+        if (f.model && f.model !== 'all' && model !== f.model) return false;
+        if (f.kar && f.kar !== 'all' && body !== f.kar) return false;
+        if (f.fuel && f.fuel !== 'all' && fuel !== f.fuel) return false;
+        if (f.gear && f.gear !== 'all' && gear !== f.gear) return false;
+        if (f.drive && f.drive !== 'all' && drive !== f.drive) return false;
+        if (f.active === 'true' && !active) return false;
+        if (f.active === 'false' && active) return false;
+        if (f.minP !== null && price < f.minP) return false;
+        if (f.maxP !== null && price > f.maxP) return false;
+        if (f.minMil !== null && mileage < f.minMil) return false;
+        if (f.maxMil !== null && mileage > f.maxMil) return false;
+        if (f.minY !== null && year < f.minY) return false;
+        if (f.maxY !== null && year > f.maxY) return false;
+        if (f.minHp !== null && hp < f.minHp) return false;
+        if (f.maxTax !== null && tax > f.maxTax) return false;
+        if (f.maxOwners !== null && owners > f.maxOwners) return false;
+        if (f.bes && safeString(firstValue(car, ['besiktning'], '')) && safeString(car.besiktning) < f.bes) return false;
+        if (f.techs.length > 0 && !f.techs.every(t => features.includes(t))) return false;
+        return true;
+    }
+
+    function sortCars(data, sortKey) {
+        const copy = [...data];
+        const createdTime = (car) => firstValue(car, ['createdAt'], null)?.toDate?.()?.getTime?.() || 0;
+        copy.sort((a, b) => {
+            if (sortKey === 'price_asc') return fieldNumber(a, ['price'], Infinity) - fieldNumber(b, ['price'], Infinity);
+            if (sortKey === 'price_desc') return fieldNumber(b, ['price'], 0) - fieldNumber(a, ['price'], 0);
+            if (sortKey === 'year_desc') return fieldNumber(b, ['year'], 0) - fieldNumber(a, ['year'], 0);
+            if (sortKey === 'year_asc') return fieldNumber(a, ['year'], Infinity) - fieldNumber(b, ['year'], Infinity);
+            if (sortKey === 'mileage_asc') return fieldNumber(a, ['mileage', 'mil'], Infinity) - fieldNumber(b, ['mileage', 'mil'], Infinity);
+            if (sortKey === 'mileage_desc') return fieldNumber(b, ['mileage', 'mil'], 0) - fieldNumber(a, ['mileage', 'mil'], 0);
+            return createdTime(b) - createdTime(a);
+        });
+        return copy;
+    }
+
+    function updateSummary(f) {
+        $('sumBudget').textContent = f.minP || f.maxP ? `${f.minP ? f.minP.toLocaleString('sv-SE') : 0} - ${f.maxP ? f.maxP.toLocaleString('sv-SE') : '∞'} kr` : 'Alla priser';
+        $('sumVehicle').textContent = [f.brand !== 'all' ? f.brand : '', f.model !== 'all' ? f.model : '', f.kar !== 'all' ? f.kar : ''].filter(Boolean).join(' / ') || 'Alla bilar';
+        $('sumFuel').textContent = f.fuel !== 'all' ? f.fuel : 'Alla';
+        $('sumTechs').textContent = f.techs.length ? `${f.techs.length} valda krav` : 'Inga krav';
+        $('statVisible').textContent = filteredCars.length.toLocaleString('sv-SE');
+        $('statTotal').textContent = allCars.length.toLocaleString('sv-SE');
+        $('heroTitle').textContent = filteredCars.length ? `${filteredCars.length} fordon matchar din sökning` : 'Inga fordon matchade sökningen';
+        $('resultTitle').textContent = filteredCars.length ? `Hittade ${filteredCars.length} fordon` : 'Inga fordon hittades';
+    }
+
+    function updateFilterChips(f) {
+        const chips = [];
+        if (f.text) chips.push(['Text', f.text]);
+        if (f.brand !== 'all') chips.push(['Märke', f.brand]);
+        if (f.model !== 'all') chips.push(['Modell', f.model]);
+        if (f.kar !== 'all') chips.push(['Karosseri', f.kar]);
+        if (f.fuel !== 'all') chips.push(['Drivmedel', f.fuel]);
+        if (f.gear !== 'all') chips.push(['Växellåda', f.gear]);
+        if (f.drive !== 'all') chips.push(['Drivning', f.drive]);
+        if (f.minP !== null || f.maxP !== null) chips.push(['Pris', `${f.minP ?? 0} - ${f.maxP ?? '∞'} kr`]);
+        if (f.minMil !== null || f.maxMil !== null) chips.push(['Miltal', `${f.minMil ?? 0} - ${f.maxMil ?? '∞'} mil`]);
+        if (f.minY !== null || f.maxY !== null) chips.push(['År', `${f.minY ?? '-'} - ${f.maxY ?? '-'}`]);
+        if (f.minHp !== null) chips.push(['Hk', `min ${f.minHp}`]);
+        if (f.maxTax !== null) chips.push(['Skatt', `max ${f.maxTax} kr`]);
+        if (f.maxOwners !== null) chips.push(['Ägare', `max ${f.maxOwners}`]);
+        if (f.bes) chips.push(['Besiktigad', f.bes]);
+        if (f.techs.length) chips.push(['Utrustning', f.techs.join(', ')]);
+
+        $('activeFilterBar').innerHTML = chips.length
+            ? chips.map(([label, value]) => `<span class="chip"><i class="fa-solid fa-check"></i>${label}: ${value}</span>`).join('')
+            : '<span class="chip empty"><i class="fa-solid fa-circle-info"></i>Inga aktiva filter - visar alla tillgängliga annonser</span>';
+    }
+
+    function buildUrlFromFilters(f) {
+        const params = new URLSearchParams();
+        if (f.text) params.set('text', f.text);
+        if (f.brand && f.brand !== 'all') params.set('brand', f.brand); else params.set('brand', 'all');
+        if (f.model && f.model !== 'all') params.set('model', f.model); else params.set('model', 'all');
+        if (f.kar && f.kar !== 'all') params.set('kar', f.kar); else params.set('kar', 'all');
+        if (f.fuel && f.fuel !== 'all') params.set('fuel', f.fuel); else params.set('fuel', 'all');
+        if (f.gear && f.gear !== 'all') params.set('gear', f.gear); else params.set('gear', 'all');
+        if (f.drive && f.drive !== 'all') params.set('drive', f.drive); else params.set('drive', 'all');
+        if (f.sort && f.sort !== 'newest') params.set('sort', f.sort);
+        if (f.active && f.active !== 'all') params.set('active', f.active);
+        if (f.minP !== null) params.set('minP', f.minP);
+        if (f.maxP !== null) params.set('maxP', f.maxP);
+        if (f.minMil !== null) params.set('minMil', f.minMil);
+        if (f.maxMil !== null) params.set('maxMil', f.maxMil);
+        if (f.minY !== null) params.set('minY', f.minY);
+        if (f.maxY !== null) params.set('maxY', f.maxY);
+        if (f.minHp !== null) params.set('hp', f.minHp);
+        if (f.maxTax !== null) params.set('tax', f.maxTax);
+        if (f.maxOwners !== null) params.set('owners', f.maxOwners);
+        if (f.bes) params.set('bes', f.bes);
+        if (f.techs.length) params.set('techs', f.techs.join(','));
+        return params;
+    }
+
+    function renderResults() {
+        const grid = $('resultsGrid');
+        if (!filteredCars.length) {
+            grid.innerHTML = `
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <i class="fa-solid fa-car-burst"></i>
+                    <h3>Inga fordon matchade</h3>
+                    <p>Prova att ta bort några filter, höja maxpris, eller söka utan utrustningskrav.</p>
+                    <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-primary" onclick="location.href='filter.html'"><i class="fa-solid fa-sliders"></i> Ändra i djup sökning</button>
+                        <button class="btn btn-light" id="emptyResetBtn"><i class="fa-solid fa-rotate-left"></i> Rensa allt</button>
+                    </div>
+                </div>`;
+            setTimeout(() => $('emptyResetBtn')?.addEventListener('click', resetFilters), 0);
+            return;
+        }
+
+        grid.innerHTML = filteredCars.map(car => {
+            const fuel = getFuel(car) || '-';
+            const body = getBody(car) || '-';
+            const gear = getGear(car) || '-';
+            const drive = getDrive(car) || '-';
+            const price = fieldNumber(car, ['price'], 0);
+            const year = fieldNumber(car, ['year'], 0) || '-';
+            const mileage = fieldNumber(car, ['mileage', 'mil'], 0);
+            const hp = fieldNumber(car, ['hp', 'horsepower'], 0);
+            const tax = fieldNumber(car, ['tax'], 0);
+            const owners = fieldNumber(car, ['owners'], 0);
+            const active = car.active !== false;
+            const features = getFeatures(car).slice(0, 4);
+            const created = formatDate(firstValue(car, ['createdAt'], null));
+            const imageCount = Array.isArray(car.images) ? car.images.length : 0;
+            const title = `${safeString(car.brand) || 'Okänt märke'} ${safeString(car.model) || ''}`.trim();
+
+            return `
+                <article class="car-card" onclick="window.location.href='details.html?id=${car.id}'">
+                    <div class="image-wrap">
+                        <img src="${getImage(car)}" alt="${title}" loading="lazy" onerror="this.src='${FALLBACK_IMAGE}'">
+                        <div class="badge-row">
+                            <span class="status-badge ${active ? 'active' : 'inactive'}">${active ? 'Aktiv' : 'Inaktiv'}</span>
+                            <span class="photo-badge"><i class="fa-solid fa-camera"></i> ${imageCount}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="price">${formatPrice(price)}</div>
+                        <div class="title">${title}</div>
+                        <div class="meta">
+                            <span><i class="fa-regular fa-calendar"></i> ${year}</span>
+                            <span><i class="fa-solid fa-road"></i> ${mileage.toLocaleString('sv-SE')} mil</span>
+                            <span><i class="fa-regular fa-clock"></i> ${created}</span>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-pill">Drivmedel<strong>${fuel}</strong></div>
+                            <div class="spec-pill">Växellåda<strong>${gear}</strong></div>
+                            <div class="spec-pill">Karosseri<strong>${body}</strong></div>
+                            <div class="spec-pill">Drivning<strong>${drive}</strong></div>
+                            <div class="spec-pill">Hästkrafter<strong>${hp ? hp + ' hk' : '-'}</strong></div>
+                            <div class="spec-pill">Årsskatt<strong>${tax ? tax + ' kr' : '-'}</strong></div>
+                            <div class="spec-pill">Ägare<strong>${owners || '-'}</strong></div>
+                            <div class="spec-pill">Besiktigad<strong>${safeString(car.besiktning) || '-'}</strong></div>
+                        </div>
+                        <div class="features">
+                            ${features.length ? features.map(f => `<span class="feature">${f}</span>`).join('') : '<span class="feature">Utrustning ej angiven</span>'}
+                        </div>
+                        <div class="card-actions" onclick="event.stopPropagation();">
+                            <a class="btn btn-dark" href="details.html?id=${car.id}"><i class="fa-solid fa-eye"></i> Visa</a>
+                            <a class="btn btn-primary" href="messages.html?sellerId=${car.sellerId || ''}&carId=${car.id}&title=${encodeURIComponent(title)}"><i class="fa-solid fa-comments"></i> Kontakta</a>
+                        </div>
+                    </div>
+                </article>`;
+        }).join('');
+    }
+
+    function applyFilters(updateUrl = false) {
+        const f = currentFilterObject();
+        const error = validateFilters(f);
+        if (error) { alert(error); return; }
+
+        filteredCars = sortCars(allCars.filter(car => carMatches(car, f)), f.sort);
+        updateSummary(f);
+        updateFilterChips(f);
+        renderResults();
+
+        if (updateUrl) {
+            const params = buildUrlFromFilters(f);
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.history.replaceState({}, '', newUrl);
+        }
+    }
+
+    function resetFilters() {
+        window.location.href = 'results.html';
+    }
+
+    async function fetchCars() {
+        try {
+            const snap = await getDocs(query(collection(db, 'cars'), orderBy('createdAt', 'desc')));
+            allCars = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            applyFilters(false);
+        } catch (error) {
+            console.error(error);
+            $('resultsGrid').innerHTML = `
+                <div class="error-state" style="grid-column: 1/-1;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <h3>Kunde inte hämta annonser</h3>
+                    <p>${error.message || 'Kontrollera Firebase-reglerna eller internetanslutningen.'}</p>
+                    <button class="btn btn-primary" onclick="location.reload()"><i class="fa-solid fa-rotate"></i> Försök igen</button>
+                </div>`;
+            $('resultTitle').textContent = 'Fel vid laddning';
+        }
+    }
+
+    function setupEvents() {
+        ['quickText', 'sortSelect', 'brandSelect', 'modelSelect', 'karSelect', 'fuelSelect', 'gearSelect', 'driveSelect', 'activeSelect'].forEach(id => {
+            $(id).addEventListener('change', () => applyFilters(true));
+        });
+        ['minP', 'maxP', 'minMil', 'maxMil', 'minY', 'maxY', 'minHp', 'maxTax', 'maxOwners', 'besiktning'].forEach(id => {
+            $(id).addEventListener('input', debounce(() => applyFilters(true), 350));
+        });
+        $('quickText').addEventListener('input', debounce(() => applyFilters(true), 350));
+        $('applyLocalBtn').addEventListener('click', () => applyFilters(true));
+        $('sideApplyBtn').addEventListener('click', () => applyFilters(true));
+        $('resetBtn').addEventListener('click', resetFilters);
+        $('saveSearchBtn').addEventListener('click', () => {
+            localStorage.setItem('bilhk_saved_search', window.location.href);
+            alert('Sökningen har sparats i denna webbläsare.');
+        });
+        $('gridViewBtn').addEventListener('click', () => setView('grid'));
+        $('listViewBtn').addEventListener('click', () => setView('list'));
+    }
+
+    function setView(mode) {
+        $('resultsGrid').classList.toggle('list-view', mode === 'list');
+        $('gridViewBtn').classList.toggle('active', mode === 'grid');
+        $('listViewBtn').classList.toggle('active', mode === 'list');
+        localStorage.setItem('bilhk_results_view', mode);
+    }
+
+    function debounce(fn, delay) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
+        };
+    }
+
+    onAuthStateChanged(auth, user => {
+        const area = $('authLinks');
+        if (user) {
+            area.innerHTML = `
+                <a href="my-account.html"><i class="fa-solid fa-circle-user"></i> Mitt konto</a>
+                <button class="nav-pill" id="logoutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logga ut</button>`;
+            setTimeout(() => $('logoutBtn')?.addEventListener('click', async () => { await signOut(auth); location.reload(); }), 0);
+        } else {
+            area.innerHTML = `<a href="login.html"><i class="fa-solid fa-right-to-bracket"></i> Logga in</a>`;
+        }
+    });
+
+    populateStaticControls();
+    loadParamsIntoControls();
+    setupEvents();
+    setView(localStorage.getItem('bilhk_results_view') || 'grid');
+    fetchCars();
+</script>
+</body>
+</html>
