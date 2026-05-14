@@ -2,144 +2,1665 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifierar... | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <title>Verifierar inloggning | BILHK</title>
+
+    <meta name="description" content="Bekräftar inloggningslänk för BILHK.">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .confirm-card { background: white; width: 100%; max-width: 500px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); text-align: center; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .form-group { text-align: left; margin-bottom: 15px; display: none; } /* مخفي افتراضياً ويظهر للشركات الجديدة */
-        label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; background: #f9fafb; }
-        .btn-finish { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; display: none; }
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e67312;
+            --primary-soft: rgba(245, 130, 32, 0.12);
+
+            --dark: #0f172a;
+            --dark-soft: #1e293b;
+
+            --text: #0f172a;
+            --muted: #64748b;
+            --muted-light: #94a3b8;
+
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-soft: #f1f5f9;
+
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --success: #16a34a;
+            --success-soft: rgba(22, 163, 74, 0.10);
+
+            --danger: #dc2626;
+            --danger-soft: rgba(220, 38, 38, 0.10);
+
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.13);
+
+            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.12);
+            --shadow-lg: 0 30px 80px rgba(15, 23, 42, 0.18);
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 30px;
+            --radius-full: 999px;
+
+            --max-width: 1120px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at 12% 14%, rgba(245, 130, 32, 0.16), transparent 30%),
+                radial-gradient(circle at 88% 8%, rgba(15, 23, 42, 0.12), transparent 31%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        .top-bar {
+            width: 100%;
+            background: linear-gradient(90deg, var(--dark) 0%, var(--dark-soft) 65%, #2b1d12 100%);
+            color: white;
+            padding: 11px 24px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .top-bar i {
+            color: var(--primary);
+        }
+
+        .site-header {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 17px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 22px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--dark);
+            letter-spacing: -0.06em;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary) 0%, #ffb15c 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(245, 130, 32, 0.35);
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .header-link {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: var(--radius-full);
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 850;
+            transition: 0.25s ease;
+        }
+
+        .header-link:hover {
+            background: var(--primary-soft);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        main {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 54px 24px 72px;
+        }
+
+        .confirm-layout {
+            width: 100%;
+            max-width: var(--max-width);
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 420px;
+            gap: 28px;
+            align-items: stretch;
+        }
+
+        .hero-panel,
+        .confirm-card {
+            background: rgba(255, 255, 255, 0.90);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(16px);
+            overflow: hidden;
+        }
+
+        .hero-panel {
+            position: relative;
+            padding: 34px;
+            min-height: 560px;
+            background:
+                linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.94)),
+                radial-gradient(circle at top right, rgba(245, 130, 32, 0.35), transparent 35%);
+            color: white;
+        }
+
+        .hero-panel::before {
+            content: "";
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            right: -160px;
+            top: -160px;
+            border-radius: 50%;
+            background: rgba(245, 130, 32, 0.14);
+        }
+
+        .hero-panel::after {
+            content: "";
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            left: -110px;
+            bottom: -120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 34px;
+        }
+
+        .eyebrow {
+            width: fit-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 14px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 22px;
+        }
+
+        .eyebrow i {
+            color: var(--primary);
+        }
+
+        .hero-panel h1 {
+            max-width: 680px;
+            font-size: clamp(34px, 5vw, 58px);
+            line-height: 1.05;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            margin-bottom: 18px;
+        }
+
+        .hero-panel p {
+            max-width: 620px;
+            color: #cbd5e1;
+            font-size: 16px;
+            line-height: 1.8;
+            font-weight: 550;
+        }
+
+        .security-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 13px;
+        }
+
+        .security-item {
+            padding: 15px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .security-item i {
+            width: 34px;
+            height: 34px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            color: var(--primary);
+            background: rgba(245, 130, 32, 0.14);
+            margin-bottom: 11px;
+        }
+
+        .security-item strong {
+            display: block;
+            color: white;
+            font-size: 13px;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .security-item span {
+            display: block;
+            color: #cbd5e1;
+            font-size: 12px;
+            font-weight: 650;
+            line-height: 1.55;
+        }
+
+        .confirm-card {
+            padding: 30px;
+            min-height: 560px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .status-icon {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 18px;
+            border-radius: 26px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 30px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .status-icon.success {
+            background: var(--success-soft);
+            color: var(--success);
+        }
+
+        .status-icon.error {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .status-icon.warning {
+            background: var(--warning-soft);
+            color: var(--warning);
+        }
+
+        .loader {
+            width: 42px;
+            height: 42px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .status-title {
+            color: var(--dark);
+            text-align: center;
+            font-size: 25px;
+            line-height: 1.2;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 11px;
+        }
+
+        .status-text {
+            color: var(--muted);
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.75;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .status-box {
+            padding: 14px;
+            border-radius: 18px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.65;
+            margin-bottom: 20px;
+        }
+
+        .status-box i {
+            color: var(--primary);
+            margin-right: 7px;
+        }
+
+        .company-fields {
+            display: none;
+            margin-top: 8px;
+        }
+
+        .company-fields.active {
+            display: block;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 7px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        label .hint {
+            color: var(--muted-light);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-light);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        input {
+            width: 100%;
+            min-height: 48px;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            background: white;
+            color: var(--dark);
+            padding: 12px 14px 12px 40px;
+            font-size: 14px;
+            font-weight: 700;
+            outline: none;
+            transition: 0.25s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.12);
+        }
+
+        input:disabled {
+            background: #e2e8f0;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .field-error {
+            display: none;
+            margin-top: 7px;
+            color: var(--danger);
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1.45;
+        }
+
+        .form-group.invalid input {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.10);
+        }
+
+        .form-group.invalid .field-error {
+            display: block;
+        }
+
+        .btn-row {
+            display: grid;
+            gap: 11px;
+            margin-top: 18px;
+        }
+
+        .btn {
+            width: 100%;
+            min-height: 52px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+            border-radius: 17px;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.25s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 14px 28px rgba(245, 130, 32, 0.28);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            color: var(--primary-hover);
+            border-color: rgba(245, 130, 32, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger-soft {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .btn-danger-soft:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .footer {
+            background: var(--dark);
+            color: #94a3b8;
+            border-top: 1px solid #1e293b;
+            padding: 30px 24px;
+        }
+
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .footer-brand strong {
+            display: block;
+            color: white;
+            font-size: 14px;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .footer-brand span {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .footer-links a {
+            font-size: 12px;
+            font-weight: 800;
+            transition: 0.25s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 960px) {
+            main {
+                align-items: flex-start;
+            }
+
+            .confirm-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-panel {
+                min-height: auto;
+            }
+
+            .confirm-card {
+                min-height: auto;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .top-bar {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+
+            .header-inner {
+                padding: 14px 18px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                padding-bottom: 2px;
+            }
+
+            .header-link {
+                white-space: nowrap;
+                font-size: 13px;
+                padding: 9px 13px;
+            }
+
+            main {
+                padding: 34px 18px 56px;
+            }
+
+            .hero-panel,
+            .confirm-card {
+                border-radius: 24px;
+            }
+
+            .hero-panel {
+                padding: 24px;
+            }
+
+            .confirm-card {
+                padding: 24px;
+            }
+
+            .security-list {
+                grid-template-columns: 1fr;
+            }
+
+            .status-title {
+                font-size: 22px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .logo {
+                font-size: 1.55rem;
+            }
+
+            .logo-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 13px;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<div class="confirm-card" id="statusCard">
-    <h2 id="statusTitle">Verifierar din länk...</h2>
-    <div class="loader" id="loader"></div>
-    <p id="statusText">Vänligen vänta medan vi bekräftar din inloggning.</p>
-
-    <div id="companyFields">
-        <div class="form-group"><label>Företagsnamn</label><input type="text" id="compName"></div>
-        <div class="form-group"><label>Organisationsnummer</label><input type="text" id="taxId" placeholder="XXXXXX-XXXX"></div>
-        <div class="form-group"><label>Företagsadress</label><input type="text" id="address"></div>
-        <button class="btn-finish" id="finishBtn">Slutför registrering</button>
+    <div class="top-bar">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Säker verifiering av din inloggningslänk.</span>
     </div>
-</div>
 
-<script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo" aria-label="Gå till startsidan">
+                <span class="logo-icon">
+                    <i class="fa-solid fa-car-side"></i>
+                </span>
+                BIL<span>HK</span>
+            </a>
 
-    async function handleConfirmation() {
-        if (isSignInWithEmailLink(auth, window.location.href)) {
-            let email = window.localStorage.getItem('emailForSignIn');
-            const userType = window.localStorage.getItem('userTypePreference') || 'Privat';
+            <nav class="header-actions" aria-label="Sidnavigering">
+                <a href="index.html" class="header-link">
+                    <i class="fa-solid fa-house"></i>
+                    Hem
+                </a>
+
+                <a href="results.html" class="header-link">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Sök bilar
+                </a>
+
+                <a href="login.html" class="header-link">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    Logga in
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="confirm-layout">
+
+            <aside class="hero-panel">
+                <div class="hero-content">
+                    <div>
+                        <div class="eyebrow">
+                            <i class="fa-solid fa-envelope-circle-check"></i>
+                            Email link authentication
+                        </div>
+
+                        <h1>Vi bekräftar din inloggning på ett säkert sätt.</h1>
+
+                        <p>
+                            Den här sidan kontrollerar länken från din e-post, loggar in dig och skapar din profil om det är första gången du använder BILHK.
+                        </p>
+                    </div>
+
+                    <div class="security-list">
+                        <div class="security-item">
+                            <i class="fa-solid fa-link"></i>
+                            <strong>Länkvalidering</strong>
+                            <span>Endast giltiga inloggningslänkar behandlas.</span>
+                        </div>
+
+                        <div class="security-item">
+                            <i class="fa-solid fa-user-shield"></i>
+                            <strong>Profilkontroll</strong>
+                            <span>Vi kontrollerar om användaren redan finns.</span>
+                        </div>
+
+                        <div class="security-item">
+                            <i class="fa-solid fa-building-shield"></i>
+                            <strong>Företagsprofil</strong>
+                            <span>Företagsuppgifter valideras innan de sparas.</span>
+                        </div>
+
+                        <div class="security-item">
+                            <i class="fa-solid fa-database"></i>
+                            <strong>Säker lagring</strong>
+                            <span>Profilen sparas strukturerat i Firestore.</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="confirm-card" id="statusCard" aria-live="polite">
+
+                <div class="status-icon" id="statusIcon">
+                    <div class="loader" id="loader" aria-label="Laddar"></div>
+                    <i class="fa-solid fa-shield-check hidden" id="statusIconSymbol"></i>
+                </div>
+
+                <h2 class="status-title" id="statusTitle">Verifierar din länk...</h2>
+
+                <p class="status-text" id="statusText">
+                    Vänligen vänta medan vi bekräftar din inloggning.
+                </p>
+
+                <div class="status-box" id="statusBox">
+                    <i class="fa-solid fa-circle-info"></i>
+                    Stäng inte sidan innan verifieringen är klar.
+                </div>
+
+                <form id="companyForm" class="company-fields" novalidate>
+                    <div class="form-group" data-field-group="companyName">
+                        <label for="compName">
+                            Företagsnamn
+                            <span class="hint">Obligatoriskt</span>
+                        </label>
+
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-building"></i>
+                            <input
+                                type="text"
+                                id="compName"
+                                autocomplete="organization"
+                                maxlength="120"
+                                placeholder="Ex. BILHK AB"
+                            >
+                        </div>
+
+                        <div class="field-error" id="companyNameError">Ange ett giltigt företagsnamn.</div>
+                    </div>
+
+                    <div class="form-group" data-field-group="taxId">
+                        <label for="taxId">
+                            Organisationsnummer
+                            <span class="hint">XXXXXX-XXXX</span>
+                        </label>
+
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-id-card"></i>
+                            <input
+                                type="text"
+                                id="taxId"
+                                autocomplete="off"
+                                maxlength="20"
+                                placeholder="XXXXXX-XXXX"
+                            >
+                        </div>
+
+                        <div class="field-error" id="taxIdError">Ange organisationsnummer i korrekt format.</div>
+                    </div>
+
+                    <div class="form-group" data-field-group="address">
+                        <label for="address">
+                            Företagsadress
+                            <span class="hint">Rekommenderas</span>
+                        </label>
+
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <input
+                                type="text"
+                                id="address"
+                                autocomplete="street-address"
+                                maxlength="180"
+                                placeholder="Ex. Storgatan 1, 111 22 Stockholm"
+                            >
+                        </div>
+
+                        <div class="field-error" id="addressError">Adressen är för lång eller ogiltig.</div>
+                    </div>
+
+                    <div class="btn-row">
+                        <button type="submit" class="btn btn-primary" id="finishBtn">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Slutför registrering
+                        </button>
+
+                        <button type="button" class="btn btn-danger-soft" id="cancelCompanyBtn">
+                            <i class="fa-solid fa-xmark"></i>
+                            Avbryt
+                        </button>
+                    </div>
+                </form>
+
+                <div class="btn-row" id="fallbackActions">
+                    <a href="login.html" class="btn btn-primary">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                        Till inloggning
+                    </a>
+
+                    <a href="index.html" class="btn btn-secondary">
+                        <i class="fa-solid fa-house"></i>
+                        Till startsidan
+                    </a>
+                </div>
+
+            </section>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <strong>BILHK</strong>
+                <span>&copy; 2026 BILHK. En öppen marknadsplats för bilannonser.</span>
+            </div>
+
+            <div class="footer-links">
+                <a href="index.html">Hem</a>
+                <a href="results.html">Annonser</a>
+                <a href="login.html">Logga in</a>
+                <a href="terms.html">Villkor</a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { auth, db } from "./firebase-config.js";
+
+        import {
+            isSignInWithEmailLink,
+            signInWithEmailLink
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        import {
+            doc,
+            getDoc,
+            setDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        /**
+         * ============================================================
+         * BILHK - confirm.html
+         * ------------------------------------------------------------
+         * صفحة إكمال تسجيل الدخول عبر رابط البريد الإلكتروني.
+         *
+         * أهداف الإصلاح:
+         * 1. التحقق من أن الرابط صالح لتسجيل الدخول.
+         * 2. طلب البريد عند عدم توفره في localStorage.
+         * 3. إنشاء ملف مستخدم جديد فقط عند الحاجة.
+         * 4. التحقق من بيانات الشركة قبل حفظها.
+         * 5. عدم استخدام innerHTML مع بيانات المستخدم.
+         * 6. منع الضغط المتكرر أثناء الحفظ.
+         * 7. تنظيف localStorage بعد النجاح.
+         * ============================================================
+         */
+
+        const CONFIRM_CONFIG = {
+            STORAGE_KEYS: {
+                EMAIL_FOR_SIGN_IN: "emailForSignIn",
+                USER_TYPE_PREFERENCE: "userTypePreference"
+            },
+
+            USER_TYPES: {
+                PRIVATE: "Privat",
+                COMPANY: "Foretag"
+            },
+
+            ROUTES: {
+                HOME: "index.html",
+                LOGIN: "login.html",
+                ACCOUNT: "my-account.html"
+            },
+
+            COLLECTIONS: {
+                USERS: "users"
+            },
+
+            LIMITS: {
+                EMAIL_MAX_LENGTH: 254,
+                COMPANY_NAME_MIN_LENGTH: 2,
+                COMPANY_NAME_MAX_LENGTH: 120,
+                TAX_ID_MIN_LENGTH: 10,
+                TAX_ID_MAX_LENGTH: 20,
+                ADDRESS_MAX_LENGTH: 180
+            }
+        };
+
+        const state = {
+            isProcessing: false,
+            isCompanyFormVisible: false,
+            signedInUser: null,
+            signedInEmail: ""
+        };
+
+        const elements = {
+            statusCard: document.getElementById("statusCard"),
+            statusIcon: document.getElementById("statusIcon"),
+            loader: document.getElementById("loader"),
+            statusIconSymbol: document.getElementById("statusIconSymbol"),
+            statusTitle: document.getElementById("statusTitle"),
+            statusText: document.getElementById("statusText"),
+            statusBox: document.getElementById("statusBox"),
+
+            companyForm: document.getElementById("companyForm"),
+            compName: document.getElementById("compName"),
+            taxId: document.getElementById("taxId"),
+            address: document.getElementById("address"),
+            finishBtn: document.getElementById("finishBtn"),
+            cancelCompanyBtn: document.getElementById("cancelCompanyBtn"),
+
+            fallbackActions: document.getElementById("fallbackActions")
+        };
+
+        initializeConfirmationPage();
+
+        function initializeConfirmationPage() {
+            elements.fallbackActions.classList.add("hidden");
+
+            attachEventListeners();
+
+            handleConfirmation();
+        }
+
+        function attachEventListeners() {
+            elements.companyForm.addEventListener("submit", handleCompanyFormSubmit);
+
+            elements.cancelCompanyBtn.addEventListener("click", () => {
+                clearLocalSignInState();
+                window.location.href = CONFIRM_CONFIG.ROUTES.LOGIN;
+            });
+
+            [elements.compName, elements.taxId, elements.address].forEach((input) => {
+                input.addEventListener("input", () => {
+                    clearFieldError(inputToFieldId(input));
+                });
+            });
+
+            window.addEventListener("unhandledrejection", (event) => {
+                console.error("Unhandled promise rejection:", event.reason);
+            });
+
+            window.addEventListener("error", (event) => {
+                console.error("Global error:", event.error || event.message);
+            });
+        }
+
+        async function handleConfirmation() {
+            setProcessing(true);
+
+            try {
+                const currentUrl = window.location.href;
+
+                if (!isSignInWithEmailLink(auth, currentUrl)) {
+                    showInvalidLinkState();
+                    return;
+                }
+
+                const email = await resolveEmailForSignIn();
+
+                if (!email) {
+                    showInvalidLinkState("E-postadress saknas", "Vi kunde inte bekräfta vilken e-postadress som ska användas.");
+                    return;
+                }
+
+                if (!isValidEmail(email)) {
+                    showInvalidLinkState("Ogiltig e-postadress", "E-postadressen verkar inte vara giltig.");
+                    return;
+                }
+
+                updateStatus({
+                    type: "loading",
+                    title: "Loggar in...",
+                    text: "Länken är giltig. Vi slutför nu inloggningen.",
+                    boxText: "Detta kan ta några sekunder."
+                });
+
+                const result = await signInWithEmailLink(auth, email, currentUrl);
+                const user = result.user;
+
+                state.signedInUser = user;
+                state.signedInEmail = email;
+
+                const userType = getStoredUserTypePreference();
+
+                updateStatus({
+                    type: "loading",
+                    title: "Kontrollerar profil...",
+                    text: "Vi kontrollerar om din profil redan finns.",
+                    boxText: "Om det är första gången du loggar in skapas en ny profil."
+                });
+
+                const userRef = doc(db, CONFIRM_CONFIG.COLLECTIONS.USERS, user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    await updateExistingUserLoginData(user.uid, email);
+                    finalizeLogin();
+                    return;
+                }
+
+                if (userType === CONFIRM_CONFIG.USER_TYPES.COMPANY) {
+                    showCompanyForm();
+                    return;
+                }
+
+                await createPrivateUserProfile(user, email);
+                finalizeLogin();
+            } catch (error) {
+                console.error("Email link confirmation error:", error);
+
+                showErrorState({
+                    title: "Länken kunde inte användas",
+                    text: getFriendlyAuthErrorMessage(error),
+                    boxText: "Begär en ny inloggningslänk och försök igen."
+                });
+            } finally {
+                setProcessing(false);
+            }
+        }
+
+        async function resolveEmailForSignIn() {
+            const storedEmail = normalizeEmail(
+                window.localStorage.getItem(CONFIRM_CONFIG.STORAGE_KEYS.EMAIL_FOR_SIGN_IN)
+            );
+
+            if (storedEmail) {
+                return storedEmail;
+            }
+
+            const promptResult = await Swal.fire({
+                title: "Bekräfta din e-post",
+                input: "email",
+                inputLabel: "Skriv in samma e-postadress som du använde vid inloggning.",
+                inputPlaceholder: "namn@example.com",
+                confirmButtonText: "Fortsätt",
+                showCancelButton: true,
+                cancelButtonText: "Avbryt",
+                confirmButtonColor: "#f58220",
+                cancelButtonColor: "#0f172a",
+                inputValidator: (value) => {
+                    const email = normalizeEmail(value);
+
+                    if (!email) {
+                        return "Skriv in din e-postadress.";
+                    }
+
+                    if (!isValidEmail(email)) {
+                        return "E-postadressen är inte giltig.";
+                    }
+
+                    return null;
+                }
+            });
+
+            if (!promptResult.isConfirmed) {
+                return "";
+            }
+
+            return normalizeEmail(promptResult.value);
+        }
+
+        function getStoredUserTypePreference() {
+            const rawValue = normalizeText(
+                window.localStorage.getItem(CONFIRM_CONFIG.STORAGE_KEYS.USER_TYPE_PREFERENCE)
+            );
+
+            if (rawValue === CONFIRM_CONFIG.USER_TYPES.COMPANY) {
+                return CONFIRM_CONFIG.USER_TYPES.COMPANY;
+            }
+
+            return CONFIRM_CONFIG.USER_TYPES.PRIVATE;
+        }
+
+        async function createPrivateUserProfile(user, email) {
+            const profileData = {
+                uid: user.uid,
+                email,
+                emailLower: email.toLowerCase(),
+                userType: CONFIRM_CONFIG.USER_TYPES.PRIVATE,
+                displayName: normalizeText(user.displayName),
+                photoURL: normalizeSafeURL(user.photoURL),
+                provider: "emailLink",
+                accountStatus: "active",
+                role: "user",
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
+                lastLoginAt: serverTimestamp()
+            };
+
+            await saveUserToDB(user.uid, profileData, { merge: true });
+        }
+
+        async function updateExistingUserLoginData(uid, email) {
+            const updateData = {
+                email,
+                emailLower: email.toLowerCase(),
+                lastLoginAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            };
+
+            await saveUserToDB(uid, updateData, { merge: true });
+        }
+
+        function showCompanyForm() {
+            state.isCompanyFormVisible = true;
+
+            updateStatus({
+                type: "warning",
+                title: "Slutför företagsprofil",
+                text: "Fyll i företagsuppgifter för att skapa ett företagskonto.",
+                boxText: "Kontrollera att företagsnamn och organisationsnummer är korrekt innan du sparar."
+            });
+
+            elements.companyForm.classList.add("active");
+            elements.fallbackActions.classList.add("hidden");
+
+            elements.compName.focus();
+        }
+
+        async function handleCompanyFormSubmit(event) {
+            event.preventDefault();
+
+            if (state.isProcessing) {
+                return;
+            }
+
+            clearAllFieldErrors();
+
+            const validation = validateCompanyForm();
+
+            if (!validation.valid) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Kontrollera uppgifterna",
+                    html: buildSafeErrorList(validation.messages),
+                    confirmButtonColor: "#f58220"
+                });
+
+                scrollToFirstInvalidField();
+                return;
+            }
+
+            const confirmation = await Swal.fire({
+                icon: "question",
+                title: "Spara företagsprofil?",
+                text: "Kontrollera att uppgifterna stämmer innan du fortsätter.",
+                showCancelButton: true,
+                confirmButtonText: "Ja, spara",
+                cancelButtonText: "Granska igen",
+                confirmButtonColor: "#f58220",
+                cancelButtonColor: "#0f172a"
+            });
+
+            if (!confirmation.isConfirmed) {
+                return;
+            }
+
+            await saveCompanyProfile();
+        }
+
+        function validateCompanyForm() {
+            const messages = [];
+
+            const companyName = normalizeText(elements.compName.value);
+            const taxId = normalizeOrganizationNumber(elements.taxId.value);
+            const address = normalizeText(elements.address.value);
+
+            if (!state.signedInUser) {
+                messages.push("Användaren kunde inte bekräftas. Logga in igen.");
+            }
+
+            if (
+                companyName.length < CONFIRM_CONFIG.LIMITS.COMPANY_NAME_MIN_LENGTH ||
+                companyName.length > CONFIRM_CONFIG.LIMITS.COMPANY_NAME_MAX_LENGTH
+            ) {
+                setFieldError("companyName", "Ange ett giltigt företagsnamn.");
+                messages.push("Företagsnamn saknas eller är för långt.");
+            }
+
+            if (!isValidOrganizationNumber(taxId)) {
+                setFieldError("taxId", "Ange organisationsnummer i formatet XXXXXX-XXXX.");
+                messages.push("Organisationsnummer är ogiltigt.");
+            }
+
+            if (address.length > CONFIRM_CONFIG.LIMITS.ADDRESS_MAX_LENGTH) {
+                setFieldError("address", "Adressen är för lång.");
+                messages.push("Adressen är för lång.");
+            }
+
+            return {
+                valid: messages.length === 0,
+                messages
+            };
+        }
+
+        async function saveCompanyProfile() {
+            setProcessing(true);
+
+            try {
+                updateStatus({
+                    type: "loading",
+                    title: "Sparar företagsprofil...",
+                    text: "Vänta medan vi sparar dina uppgifter.",
+                    boxText: "Stäng inte sidan under tiden."
+                });
+
+                const user = state.signedInUser;
+                const email = state.signedInEmail;
+
+                if (!user || !email) {
+                    throw new Error("Användaren kunde inte bekräftas.");
+                }
+
+                const companyData = {
+                    uid: user.uid,
+                    email,
+                    emailLower: email.toLowerCase(),
+                    userType: CONFIRM_CONFIG.USER_TYPES.COMPANY,
+
+                    companyName: normalizeText(elements.compName.value),
+                    companyNameLower: normalizeText(elements.compName.value).toLowerCase(),
+                    taxId: normalizeOrganizationNumber(elements.taxId.value),
+                    address: normalizeText(elements.address.value),
+
+                    displayName: normalizeText(user.displayName),
+                    photoURL: normalizeSafeURL(user.photoURL),
+
+                    provider: "emailLink",
+                    accountStatus: "active",
+                    role: "user",
+
+                    companyVerificationStatus: "pending",
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp(),
+                    lastLoginAt: serverTimestamp()
+                };
+
+                await saveUserToDB(user.uid, companyData, { merge: true });
+
+                finalizeLogin();
+            } catch (error) {
+                console.error("Could not save company profile:", error);
+
+                showErrorState({
+                    title: "Kunde inte spara profil",
+                    text: error.message || "Ett oväntat fel uppstod när profilen skulle sparas.",
+                    boxText: "Försök igen eller logga in på nytt."
+                });
+
+                elements.companyForm.classList.add("active");
+            } finally {
+                setProcessing(false);
+            }
+        }
+
+        async function saveUserToDB(uid, data, options = {}) {
+            if (!uid || typeof uid !== "string") {
+                throw new Error("Ogiltigt användar-ID.");
+            }
+
+            const cleanData = removeUndefinedValues(data);
+
+            await setDoc(
+                doc(db, CONFIRM_CONFIG.COLLECTIONS.USERS, uid),
+                cleanData,
+                {
+                    merge: options.merge !== false
+                }
+            );
+        }
+
+        function finalizeLogin() {
+            clearLocalSignInState();
+
+            updateStatus({
+                type: "success",
+                title: "Inloggad!",
+                text: "Din inloggning är klar. Du skickas vidare till startsidan.",
+                boxText: "Välkommen till BILHK."
+            });
+
+            elements.companyForm.classList.remove("active");
+            elements.fallbackActions.classList.add("hidden");
+
+            Swal.fire({
+                title: "Inloggad!",
+                icon: "success",
+                timer: 1400,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = CONFIRM_CONFIG.ROUTES.HOME;
+            });
+        }
+
+        function showInvalidLinkState(title = "Ogiltig länk", text = "Den här sidan öppnades utan en giltig inloggningslänk.") {
+            showErrorState({
+                title,
+                text,
+                boxText: "Gå tillbaka till inloggningssidan och begär en ny länk."
+            });
+        }
+
+        function showErrorState({ title, text, boxText }) {
+            updateStatus({
+                type: "error",
+                title,
+                text,
+                boxText
+            });
+
+            elements.companyForm.classList.remove("active");
+            elements.fallbackActions.classList.remove("hidden");
+        }
+
+        function updateStatus({ type, title, text, boxText }) {
+            elements.statusTitle.textContent = title || "";
+            elements.statusText.textContent = text || "";
+            elements.statusBox.textContent = "";
+
+            const infoIcon = document.createElement("i");
+            infoIcon.className = "fa-solid fa-circle-info";
+
+            const boxTextNode = document.createTextNode(` ${boxText || ""}`);
+
+            elements.statusBox.appendChild(infoIcon);
+            elements.statusBox.appendChild(boxTextNode);
+
+            elements.statusIcon.classList.remove("success", "error", "warning");
+
+            elements.loader.classList.add("hidden");
+            elements.statusIconSymbol.classList.remove("hidden");
+
+            if (type === "loading") {
+                elements.loader.classList.remove("hidden");
+                elements.statusIconSymbol.classList.add("hidden");
+                return;
+            }
+
+            if (type === "success") {
+                elements.statusIcon.classList.add("success");
+                elements.statusIconSymbol.className = "fa-solid fa-circle-check";
+                return;
+            }
+
+            if (type === "error") {
+                elements.statusIcon.classList.add("error");
+                elements.statusIconSymbol.className = "fa-solid fa-triangle-exclamation";
+                return;
+            }
+
+            if (type === "warning") {
+                elements.statusIcon.classList.add("warning");
+                elements.statusIconSymbol.className = "fa-solid fa-building-circle-check";
+                return;
+            }
+
+            elements.statusIconSymbol.className = "fa-solid fa-shield-check";
+        }
+
+        function setProcessing(isProcessing) {
+            state.isProcessing = isProcessing;
+
+            elements.finishBtn.disabled = isProcessing;
+            elements.cancelCompanyBtn.disabled = isProcessing;
+            elements.compName.disabled = isProcessing;
+            elements.taxId.disabled = isProcessing;
+            elements.address.disabled = isProcessing;
+
+            if (isProcessing) {
+                elements.finishBtn.textContent = "";
+                const spinner = document.createElement("i");
+                spinner.className = "fa-solid fa-spinner fa-spin";
+                const text = document.createTextNode(" Sparar...");
+                elements.finishBtn.appendChild(spinner);
+                elements.finishBtn.appendChild(text);
+            } else {
+                elements.finishBtn.textContent = "";
+                const icon = document.createElement("i");
+                icon.className = "fa-solid fa-circle-check";
+                const text = document.createTextNode(" Slutför registrering");
+                elements.finishBtn.appendChild(icon);
+                elements.finishBtn.appendChild(text);
+            }
+        }
+
+        function clearLocalSignInState() {
+            window.localStorage.removeItem(CONFIRM_CONFIG.STORAGE_KEYS.EMAIL_FOR_SIGN_IN);
+            window.localStorage.removeItem(CONFIRM_CONFIG.STORAGE_KEYS.USER_TYPE_PREFERENCE);
+        }
+
+        function normalizeText(value) {
+            return String(value ?? "")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        function normalizeEmail(value) {
+            return normalizeText(value)
+                .toLowerCase()
+                .slice(0, CONFIRM_CONFIG.LIMITS.EMAIL_MAX_LENGTH);
+        }
+
+        function isValidEmail(value) {
+            const email = normalizeEmail(value);
 
             if (!email) {
-                const { value: emailPrompt } = await Swal.fire({
-                    title: 'Bekräfta din e-post',
-                    input: 'email',
-                    inputLabel: 'Skriv in din e-postadress igen för att fortsätta',
-                    confirmButtonColor: '#f58220'
-                });
-                email = emailPrompt;
+                return false;
+            }
+
+            if (email.length > CONFIRM_CONFIG.LIMITS.EMAIL_MAX_LENGTH) {
+                return false;
+            }
+
+            return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+        }
+
+        function normalizeOrganizationNumber(value) {
+            const clean = normalizeText(value)
+                .replace(/[^\d-]/g, "");
+
+            const onlyDigits = clean.replace(/\D/g, "");
+
+            if (onlyDigits.length === 10) {
+                return `${onlyDigits.slice(0, 6)}-${onlyDigits.slice(6)}`;
+            }
+
+            return clean.slice(0, CONFIRM_CONFIG.LIMITS.TAX_ID_MAX_LENGTH);
+        }
+
+        function isValidOrganizationNumber(value) {
+            const normalized = normalizeOrganizationNumber(value);
+
+            if (
+                normalized.length < CONFIRM_CONFIG.LIMITS.TAX_ID_MIN_LENGTH ||
+                normalized.length > CONFIRM_CONFIG.LIMITS.TAX_ID_MAX_LENGTH
+            ) {
+                return false;
+            }
+
+            return /^\d{6}-\d{4}$/.test(normalized);
+        }
+
+        function normalizeSafeURL(value) {
+            const rawUrl = normalizeText(value);
+
+            if (!rawUrl) {
+                return "";
             }
 
             try {
-                const result = await signInWithEmailLink(auth, email, window.location.href);
-                const user = result.user;
+                const parsedUrl = new URL(rawUrl, window.location.origin);
 
-                // التحقق هل المستخدم موجود مسبقاً في Firestore
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-
-                if (!userDoc.exists()) {
-                    // إذا كان المستخدم جديداً واختار "شركة"
-                    if (userType === 'Foretag') {
-                        showCompanyForm(user, email);
-                    } else {
-                        // مستخدم شخصي جديد
-                        await saveUserToDB(user.uid, {
-                            uid: user.uid,
-                            email: email,
-                            userType: 'Privat',
-                            createdAt: serverTimestamp()
-                        });
-                    }
-                } else {
-                    // المستخدم موجود مسبقاً، توجه للرئيسية
-                    finalizeLogin();
+                if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+                    return "";
                 }
 
-            } catch (error) {
-                console.error(error);
-                Swal.fire('Fel', 'Länken är ogiltig eller har gått ut.', 'error');
+                return parsedUrl.href;
+            } catch {
+                return "";
             }
         }
-    }
 
-    function showCompanyForm(user, email) {
-        document.getElementById('statusTitle').innerText = "Slutför företagsprofil";
-        document.getElementById('statusText').innerText = "Vänligen fyll i dina företagsuppgifter.";
-        document.getElementById('loader').style.display = "none";
-        
-        // إظهار الخانات
-        const groups = document.querySelectorAll('.form-group');
-        groups.forEach(g => g.style.display = 'block');
-        const finishBtn = document.getElementById('finishBtn');
-        finishBtn.style.display = 'block';
+        function removeUndefinedValues(data) {
+            const cleanData = {};
 
-        finishBtn.onclick = async () => {
-            const companyData = {
-                uid: user.uid,
-                email: email,
-                userType: 'Foretag',
-                companyName: document.getElementById('compName').value,
-                taxId: document.getElementById('taxId').value,
-                address: document.getElementById('address').value,
-                createdAt: serverTimestamp()
+            Object.entries(data || {}).forEach(([key, value]) => {
+                if (value !== undefined) {
+                    cleanData[key] = value;
+                }
+            });
+
+            return cleanData;
+        }
+
+        function getFriendlyAuthErrorMessage(error) {
+            const code = error?.code || "";
+
+            const messages = {
+                "auth/invalid-action-code": "Länken är ogiltig eller har redan använts.",
+                "auth/expired-action-code": "Länken har gått ut. Begär en ny inloggningslänk.",
+                "auth/invalid-email": "E-postadressen är inte giltig.",
+                "auth/user-disabled": "Det här kontot är inaktiverat.",
+                "auth/network-request-failed": "Nätverksfel. Kontrollera internetanslutningen och försök igen."
             };
 
-            if (!companyData.companyName || !companyData.taxId) {
-                return Swal.fire('Obs', 'Fyll i företagsnamn och organisationsnummer.', 'warning');
+            return messages[code] || "Länken är ogiltig, har gått ut eller kunde inte verifieras.";
+        }
+
+        function inputToFieldId(input) {
+            if (input === elements.compName) {
+                return "companyName";
             }
 
-            await saveUserToDB(user.uid, companyData);
-        };
-    }
+            if (input === elements.taxId) {
+                return "taxId";
+            }
 
-    async function saveUserToDB(uid, data) {
-        try {
-            await setDoc(doc(db, "users", uid), data);
-            finalizeLogin();
-        } catch (e) {
-            Swal.fire('Fel', 'Kunde inte spara profil.', 'error');
+            if (input === elements.address) {
+                return "address";
+            }
+
+            return "";
         }
-    }
 
-    function finalizeLogin() {
-        window.localStorage.removeItem('emailForSignIn');
-        window.localStorage.removeItem('userTypePreference');
-        Swal.fire({
-            title: 'Inloggad!',
-            icon: 'success',
-            timer: 1500,
-            showConfirmButton: false
-        }).then(() => {
-            window.location.href = "index.html";
-        });
-    }
+        function setFieldError(fieldId, message) {
+            const group = document.querySelector(`[data-field-group="${fieldId}"]`);
+            const errorElement = document.getElementById(`${fieldId}Error`);
 
-    handleConfirmation();
-</script>
+            if (group) {
+                group.classList.add("invalid");
+            }
+
+            if (errorElement && message) {
+                errorElement.textContent = message;
+            }
+        }
+
+        function clearFieldError(fieldId) {
+            if (!fieldId) {
+                return;
+            }
+
+            const group = document.querySelector(`[data-field-group="${fieldId}"]`);
+
+            if (group) {
+                group.classList.remove("invalid");
+            }
+        }
+
+        function clearAllFieldErrors() {
+            document.querySelectorAll(".form-group.invalid").forEach((group) => {
+                group.classList.remove("invalid");
+            });
+        }
+
+        function scrollToFirstInvalidField() {
+            const firstInvalid = document.querySelector(".form-group.invalid");
+
+            if (!firstInvalid) {
+                return;
+            }
+
+            firstInvalid.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+
+        function buildSafeErrorList(messages) {
+            const safeItems = messages
+                .map((message) => `<li>${escapeHTML(message)}</li>`)
+                .join("");
+
+            return `
+                <ul style="text-align:left; margin:0; padding-left:20px; line-height:1.7;">
+                    ${safeItems}
+                </ul>
+            `;
+        }
+
+        function escapeHTML(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+    </script>
+
 </body>
 </html>
