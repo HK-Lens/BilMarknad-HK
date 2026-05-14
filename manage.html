@@ -1,354 +1,361 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="sv" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>Hantera Annonser | BilMarknad-HK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إدارة إعلاناتي | BILHK Ads Management</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        body {
-            font-family: sans-serif;
-            background: #f0f2f5;
-            padding: 20px;
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e07210;
+            --dark: #0f172a;
+            --dark-2: #1e293b;
+            --muted: #64748b;
+            --bg: #f8fafc;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --success: #10b981;
+            --danger: #ef4444;
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
         }
 
-        .ad-card {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--dark); line-height: 1.6; }
+
+        /* --- Navigation Architecture --- */
+        nav {
+            background: var(--white);
+            padding: 15px 6%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            gap: 15px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
+        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: var(--dark); }
+        .logo span { color: var(--primary); }
 
-        .ad-info img {
-            width: 100px;
-            height: 70px;
+        /* --- Main Layout --- */
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .page-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+
+        /* --- Stats Row --- */
+        .mgmt-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-box {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: var(--shadow-md);
+        }
+        .stat-box span { font-size: 24px; font-weight: 900; color: var(--primary); display: block; }
+        .stat-box label { font-size: 13px; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+
+        /* --- Ads List (The Deep Engine) --- */
+        .ads-list { display: flex; flex-direction: column; gap: 20px; }
+
+        .ad-row {
+            background: var(--white);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .ad-row:hover { transform: scale(1.01); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+
+        .ad-img {
+            width: 160px;
+            height: 110px;
+            border-radius: 16px;
             object-fit: cover;
-            border-radius: 5px;
-            margin-right: 15px;
+            background: #eee;
         }
 
-        .btn-delete {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+        .ad-info { flex: 1; }
+        .ad-info h3 { font-size: 19px; font-weight: 800; margin-bottom: 6px; }
+        .ad-info .ad-meta { font-size: 13px; color: var(--muted); font-weight: 500; }
+        .ad-info .ad-price { font-size: 20px; font-weight: 900; color: var(--primary); margin-top: 8px; }
 
-        .btn-edit {
-            background: #ffc107;
-            color: black;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 5px;
+        .ad-status {
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
         }
+        .status-active { background: #f0fdf4; color: var(--success); }
+        .status-sold { background: #fef2f2; color: var(--danger); }
 
-        .empty-state {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            text-align: center;
-            color: #666;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-        }
-
-        .top-bar {
+        /* --- Action Buttons --- */
+        .ad-actions { display: flex; gap: 10px; }
+        .btn-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--dark);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .back-btn {
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
             text-decoration: none;
-            background: #0f172a;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 6px;
         }
+        .btn-icon:hover { background: var(--dark); color: white; border-color: var(--dark); }
+        .btn-icon.btn-delete:hover { background: var(--danger); color: white; border-color: var(--danger); }
 
-        .loading {
+        /* --- Loading State --- */
+        #mainLoader {
             text-align: center;
-            padding: 20px;
-            color: #777;
+            padding: 100px 0;
+        }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .ad-row { flex-direction: column; text-align: center; padding: 25px; }
+            .ad-img { width: 100%; height: 180px; }
+            .ad-actions { width: 100%; justify-content: center; margin-top: 15px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <h2>Mina Annonser (إدارة إعلاناتي)</h2>
-        <a href="dashboard.html" class="back-btn">Till Dashboard</a>
-    </div>
+    <nav>
+        <a href="index.html" class="logo">BIL<span>HK</span></a>
+        <div id="userNav">
+            <a href="dashboard-fixed.html" class="btn-icon"><i class="fa-solid fa-house"></i></a>
+        </div>
+    </nav>
 
-    <div id="adsList" class="loading">
-        Laddar annonser...
-    </div>
+    <div class="container">
+        <header class="page-header">
+            <h1>إدارة إعلاناتي</h1>
+            <a href="sell.html" class="btn-icon" style="width: auto; padding: 0 20px; font-weight: 700; gap: 8px; border-radius: 14px; background: var(--primary); color: white; border: none;">
+                <i class="fa-solid fa-plus"></i> إضافة إعلان جديد
+            </a>
+        </header>
 
-<script type="module">
-
-    import { auth, db } from './firebase-config.js';
-
-    import {
-        onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-    import {
-        collection,
-        query,
-        where,
-        getDocs,
-        deleteDoc,
-        doc,
-        updateDoc,
-        getDoc
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    let currentUser = null;
-
-    // =========================
-    // التحقق من تسجيل الدخول
-    // =========================
-
-    onAuthStateChanged(auth, async (user) => {
-
-        if (!user) {
-            window.location.href = "login.html";
-            return;
-        }
-
-        currentUser = user;
-
-        await loadAds();
-
-    });
-
-    // =========================
-    // تحميل إعلانات المستخدم فقط
-    // =========================
-
-    async function loadAds() {
-
-        const adsList = document.getElementById('adsList');
-
-        adsList.innerHTML = `
-            <div class="loading">
-                Laddar annonser...
+        <div class="mgmt-stats">
+            <div class="stat-box">
+                <span id="totalAds">0</span>
+                <label>إجمالي الإعلانات</label>
             </div>
-        `;
+            <div class="stat-box">
+                <span id="activeAds">0</span>
+                <label>إعلانات نشطة</label>
+            </div>
+            <div class="stat-box">
+                <span id="soldAds">0</span>
+                <label>تم بيعها</label>
+            </div>
+        </div>
 
-        try {
+        <div id="mainLoader">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; color: var(--muted); font-weight: 600;">جاري تحميل بياناتك...</p>
+        </div>
 
-            const carsQuery = query(
-                collection(db, "cars"),
-                where("ownerId", "==", currentUser.uid)
+        <div id="adsContainer" class="ads-list">
+            </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { 
+            collection, 
+            query, 
+            where, 
+            orderBy, 
+            onSnapshot, 
+            doc, 
+            deleteDoc, 
+            updateDoc,
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        let currentUid = null;
+
+        // --- 1. التحقق من حالة المستخدم ومراقبة البيانات لحظياً ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUid = user.uid;
+                startAdsMonitor(user.uid);
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        /**
+         * مراقبة إعلانات المستخدم بشكل لحظي (Real-time)
+         */
+        function startAdsMonitor(uid) {
+            const q = query(
+                collection(db, "cars"), 
+                where("ownerId", "==", uid),
+                orderBy("createdAt", "desc")
             );
 
-            const querySnapshot = await getDocs(carsQuery);
+            onSnapshot(q, (snapshot) => {
+                const adsContainer = document.getElementById('adsContainer');
+                const loader = document.getElementById('mainLoader');
+                
+                loader.style.display = 'none';
+                adsContainer.innerHTML = '';
 
-            if (querySnapshot.empty) {
+                let total = 0, active = 0, sold = 0;
 
-                adsList.innerHTML = `
-                    <div class="empty-state">
-                        Du har inga annonser ännu.
-                    </div>
-                `;
+                if (snapshot.empty) {
+                    adsContainer.innerHTML = `
+                        <div style="text-align:center; padding:50px; background:white; border-radius:24px; border:1px dashed var(--border);">
+                            <i class="fa-solid fa-car-on" style="font-size:40px; color:var(--border); margin-bottom:15px;"></i>
+                            <p style="color:var(--muted); font-weight:700;">ليس لديك أي إعلانات حالياً.</p>
+                        </div>`;
+                }
 
-                return;
-            }
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    const id = doc.id;
+                    total++;
+                    if (data.status === 'sold') sold++; else active++;
 
-            adsList.innerHTML = "";
+                    renderAdRow(id, data);
+                });
 
-            querySnapshot.forEach((adDoc) => {
-
-                const data = adDoc.data();
-                const adId = adDoc.id;
-
-                const image =
-                    data.images?.[0] ||
-                    data.image ||
-                    "placeholder.jpg";
-
-                const brand = data.brand || "Okänd";
-                const regNr = data.regNr || data.model || "";
-                const price = data.price || 0;
-
-                const div = document.createElement('div');
-
-                div.className = 'ad-card';
-
-                div.innerHTML = `
-
-                    <div class="ad-info" style="display:flex; align-items:center;">
-
-                        <img src="${image}" alt="car">
-
-                        <div>
-                            <strong>${brand} ${regNr}</strong><br>
-                            <span>Pris: ${Number(price).toLocaleString()} SEK</span>
-                        </div>
-
-                    </div>
-
-                    <div>
-
-                        <button class="btn-edit" onclick="updatePrice('${adId}')">
-                            Ändra Pris
-                        </button>
-
-                        <button class="btn-delete" onclick="deleteAd('${adId}')">
-                            Radera
-                        </button>
-
-                    </div>
-
-                `;
-
-                adsList.appendChild(div);
-
+                // تحديث العدادات
+                document.getElementById('totalAds').innerText = total;
+                document.getElementById('activeAds').innerText = active;
+                document.getElementById('soldAds').innerText = sold;
             });
+        }
 
-        } catch (error) {
+        /**
+         * بناء صف الإعلان في القائمة
+         */
+        function renderAdRow(id, car) {
+            const container = document.getElementById('adsContainer');
+            const isSold = car.status === 'sold';
+            const price = Number(car.price).toLocaleString('sv-SE');
+            const img = (car.images && car.images.length > 0) ? car.images[0] : 'placeholder.jpg';
 
-            console.error(error);
+            const adHTML = `
+                <div class="ad-row">
+                    <img src="${img}" class="ad-img" alt="Car">
+                    <div class="ad-info">
+                        <h3>${car.brand} ${car.model}</h3>
+                        <div class="ad-meta">
+                            <span><i class="fa-regular fa-calendar"></i> ${car.year}</span> • 
+                            <span><i class="fa-solid fa-gauge"></i> ${car.mileage} mil</span>
+                        </div>
+                        <div class="ad-price">${price} kr</div>
+                    </div>
+                    
+                    <div class="ad-status ${isSold ? 'status-sold' : 'status-active'}">
+                        ${isSold ? 'SÅLD (تم البيع)' : 'Aktiv (نشط)'}
+                    </div>
 
-            adsList.innerHTML = `
-                <div class="empty-state">
-                    Ett fel uppstod vid hämtning av annonser.
+                    <div class="ad-actions">
+                        <button class="btn-icon" title="تغيير الحالة" onclick="toggleSoldStatus('${id}', ${isSold})">
+                            <i class="fa-solid ${isSold ? 'fa-rotate-left' : 'fa-check-double'}"></i>
+                        </button>
+                        <a href="edit-car.html?id=${id}" class="btn-icon" title="تعديل الإعلان">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <button class="btn-icon btn-delete" title="حذف الإعلان" onclick="deleteAd('${id}')">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
                 </div>
             `;
-
+            container.insertAdjacentHTML('beforeend', adHTML);
         }
 
-    }
+        // --- 2. العمليات البرمجية (Delete & Toggle) ---
 
-    // =========================
-    // حذف الإعلان
-    // =========================
-
-    window.deleteAd = async (id) => {
-
-        try {
-
-            const adRef = doc(db, "cars", id);
-
-            const adSnap = await getDoc(adRef);
-
-            if (!adSnap.exists()) {
-
-                alert("Annonsen finns inte.");
-                return;
-
-            }
-
-            const data = adSnap.data();
-
-            // حماية: فقط صاحب الإعلان
-            if (data.ownerId !== currentUser.uid) {
-
-                alert("Du har inte behörighet att radera denna annons.");
-                return;
-
-            }
-
-            const confirmed = confirm(
-                "Är du säker på att du vill radera annonsen?"
-            );
-
-            if (!confirmed) return;
-
-            await deleteDoc(adRef);
-
-            alert("Annonsen raderades!");
-
-            await loadAds();
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert("Fel vid radering av annons.");
-
-        }
-
-    };
-
-    // =========================
-    // تعديل السعر
-    // =========================
-
-    window.updatePrice = async (id) => {
-
-        try {
-
-            const adRef = doc(db, "cars", id);
-
-            const adSnap = await getDoc(adRef);
-
-            if (!adSnap.exists()) {
-
-                alert("Annonsen finns inte.");
-                return;
-
-            }
-
-            const data = adSnap.data();
-
-            // حماية: فقط صاحب الإعلان
-            if (data.ownerId !== currentUser.uid) {
-
-                alert("Du har inte behörighet att ändra denna annons.");
-                return;
-
-            }
-
-            const newPrice = prompt(
-                "Ange nytt pris (أدخل السعر الجديد):",
-                data.price || ""
-            );
-
-            if (
-                newPrice === null ||
-                newPrice.trim() === ""
-            ) {
-                return;
-            }
-
-            const numericPrice = Number(newPrice);
-
-            if (isNaN(numericPrice) || numericPrice <= 0) {
-
-                alert("Ogiltigt pris.");
-                return;
-
-            }
-
-            await updateDoc(adRef, {
-                price: numericPrice
+        /**
+         * حذف الإعلان مع تأكيد احترافي
+         */
+        window.deleteAd = async (id) => {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد من الحذف؟',
+                text: "لن تتمكن من استعادة هذا الإعلان بعد الحذف!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'نعم، احذف الآن',
+                cancelButtonText: 'إلغاء'
             });
 
-            alert("Priset har uppdaterats!");
+            if (result.isConfirmed) {
+                try {
+                    await deleteDoc(doc(db, "cars", id));
+                    Swal.fire('تم الحذف!', 'لقد تم إزالة الإعلان بنجاح.', 'success');
+                } catch (error) {
+                    Swal.fire('خطأ', 'حدثت مشكلة أثناء الحذف، حاول لاحقاً.', 'error');
+                }
+            }
+        };
 
-            await loadAds();
+        /**
+         * تبديل حالة الإعلان (نشط / مباع)
+         */
+        window.toggleSoldStatus = async (id, currentlySold) => {
+            const newStatus = currentlySold ? 'active' : 'sold';
+            const actionText = currentlySold ? 'إعادة الإعلان للحالة النشطة؟' : 'هل تم بيع هذه السيارة فعلاً؟';
 
-        } catch (error) {
+            const result = await Swal.fire({
+                title: 'تغيير حالة الإعلان',
+                text: actionText,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#f58220',
+                confirmButtonText: 'تحديث الحالة'
+            });
 
-            console.error(error);
+            if (result.isConfirmed) {
+                try {
+                    const adRef = doc(db, "cars", id);
+                    await updateDoc(adRef, { 
+                        status: newStatus,
+                        updatedAt: serverTimestamp() 
+                    });
+                    Swal.fire('تم التحديث!', `الإعلان الآن ${newStatus === 'sold' ? 'مباع' : 'نشط'}.`, 'success');
+                } catch (error) {
+                    Swal.fire('خطأ', 'فشل تحديث الحالة.', 'error');
+                }
+            }
+        };
 
-            alert("Fel vid uppdatering av pris.");
-
-        }
-
-    };
-
-</script>
-
+    </script>
 </body>
 </html>
