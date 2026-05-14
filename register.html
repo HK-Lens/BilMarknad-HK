@@ -2,333 +2,1687 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skapa konto | BilMarknad-HK</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <title>Skapa konto | BILHK</title>
+
+    <meta name="description" content="Skapa ett privat- eller företagskonto på BILHK för att köpa, sälja och spara bilar.">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
             --primary: #f58220;
-            --primary-hover: #e07210;
+            --primary-hover: #e67312;
+            --primary-soft: rgba(245, 130, 32, 0.12);
+
             --dark: #0f172a;
-            --light: #f8fafc;
+            --dark-soft: #1e293b;
+
+            --text: #0f172a;
+            --muted: #64748b;
+            --muted-light: #94a3b8;
+
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-soft: #f1f5f9;
+
             --border: #e2e8f0;
-            --white: #ffffff;
-            --danger: #ef4444;
-            --warning-bg: #fff7ed;
-            --warning-text: #9a3412;
+            --border-strong: #cbd5e1;
+
+            --success: #16a34a;
+            --success-soft: rgba(22, 163, 74, 0.10);
+
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --danger-soft: rgba(220, 38, 38, 0.10);
+
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.13);
+            --warning-text: #92400e;
+
+            --info: #2563eb;
+            --info-soft: rgba(37, 99, 235, 0.10);
+
+            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
+            --shadow-lg: 0 28px 80px rgba(15, 23, 42, 0.16);
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 28px;
+            --radius-full: 999px;
+
+            --max-width: 1180px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--light); display: flex; flex-direction: column; min-height: 100vh; }
-
-        /* --- Varningsbanner --- */
-        .dev-banner {
-            background: var(--danger);
-            color: white;
-            padding: 10px;
-            text-align: center;
-            font-weight: 800;
-            font-size: 13px;
-            animation: pulse-danger 2s infinite;
-        }
-        @keyframes pulse-danger { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
-
-        header { background: var(--white); padding: 15px 6%; border-bottom: 1px solid var(--border); text-align: center; }
-        .logo { font-size: 1.8rem; font-weight: 900; color: var(--dark); text-decoration: none; }
-        .logo span { color: var(--primary); }
-
-        .auth-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
-        .auth-card {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
-            width: 100%;
-            max-width: 550px;
-            border: 1px solid var(--border);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        h2 { text-align: center; margin-bottom: 25px; font-weight: 800; color: var(--dark); }
-
-        /* --- Account Type Toggle --- */
-        .account-tabs {
-            display: flex;
-            background: #f1f5f9;
-            border-radius: 50px;
-            padding: 5px;
-            margin-bottom: 25px;
+        html {
+            scroll-behavior: smooth;
         }
-        .tab-btn {
-            flex: 1;
-            border: none;
-            padding: 12px;
-            border-radius: 50px;
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 8% 5%, rgba(245, 130, 32, 0.14), transparent 34%),
+                radial-gradient(circle at 92% 3%, rgba(15, 23, 42, 0.08), transparent 34%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        button {
             cursor: pointer;
-            font-weight: 700;
-            font-size: 14px;
-            color: #64748b;
-            background: transparent;
-            transition: 0.3s;
         }
-        .tab-btn.active { background: var(--primary); color: white; }
 
-        /* --- Legal Disclaimer Box --- */
-        .disclaimer-box {
-            background: var(--warning-bg);
-            border: 1px solid #ffedd5;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
+        .dev-banner {
+            background: linear-gradient(90deg, #b91c1c, #dc2626, #b91c1c);
+            color: white;
+            padding: 11px 18px;
+            text-align: center;
+            font-weight: 900;
             font-size: 12px;
-            color: var(--warning-text);
-            line-height: 1.6;
+            letter-spacing: 0.02em;
+            position: relative;
+            z-index: 60;
         }
-        .disclaimer-box strong { display: block; margin-bottom: 5px; font-size: 13px; text-transform: uppercase; }
 
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .full-width { grid-column: 1 / -1; }
+        .site-header {
+            background: rgba(255, 255, 255, 0.94);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(18px);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
 
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 8px; }
-        
-        input, select {
-            width: 100%;
-            padding: 14px;
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+            color: var(--dark);
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary), #ffb15c);
+            color: white;
+            box-shadow: 0 12px 28px rgba(245, 130, 32, 0.34);
+            font-size: 18px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: var(--radius-full);
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 900;
+            transition: 0.25s ease;
             border: 1px solid var(--border);
-            border-radius: 12px;
-            background: #f1f5f9;
-            outline: none;
-            font-size: 15px;
-            transition: 0.3s;
+            background: white;
         }
-        input:focus { border-color: var(--primary); background: white; }
 
-        #businessFields { display: none; }
+        .nav-btn:hover {
+            border-color: rgba(245, 130, 32, 0.45);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
 
-        /* --- Terms & Checkbox --- */
-        .terms-container {
+        .page-shell {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 42px 24px 80px;
+            display: grid;
+            grid-template-columns: 0.92fr 1.08fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .intro-card {
+            position: sticky;
+            top: 96px;
+            overflow: hidden;
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.96)),
+                radial-gradient(circle at top left, rgba(245, 130, 32, 0.38), transparent 36%);
+            color: white;
+            border-radius: 34px;
+            padding: 38px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .intro-card::before {
+            content: "";
+            position: absolute;
+            right: -130px;
+            top: -130px;
+            width: 340px;
+            height: 340px;
+            border-radius: 999px;
+            background: rgba(245, 130, 32, 0.16);
+        }
+
+        .intro-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .intro-badge {
+            width: fit-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 14px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 18px;
+        }
+
+        .intro-badge i {
+            color: var(--primary);
+        }
+
+        .intro-card h1 {
+            font-size: clamp(32px, 4vw, 50px);
+            line-height: 1.05;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            margin-bottom: 16px;
+        }
+
+        .intro-card p {
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.8;
+            font-weight: 600;
+            margin-bottom: 22px;
+        }
+
+        .trust-list {
+            display: grid;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .trust-item {
             display: flex;
             align-items: flex-start;
             gap: 12px;
-            margin: 20px 0;
+            padding: 14px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+        }
+
+        .trust-item i {
+            color: var(--primary);
+            margin-top: 2px;
+        }
+
+        .trust-item strong {
+            display: block;
             font-size: 13px;
+            font-weight: 900;
+            margin-bottom: 3px;
+        }
+
+        .trust-item span {
+            color: #cbd5e1;
+            font-size: 12px;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.97);
+            border: 1px solid var(--border);
+            border-radius: 34px;
+            padding: 34px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .auth-header h2 {
+            color: var(--dark);
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: -0.055em;
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+            font-weight: 650;
+        }
+
+        .account-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            border: none;
+            min-height: 48px;
+            border-radius: 16px;
+            background: transparent;
+            color: var(--muted);
+            font-weight: 900;
+            font-size: 14px;
+            transition: 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-hover);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 24px rgba(245, 130, 32, 0.23);
+        }
+
+        .legal-box {
+            background: var(--warning-soft);
+            border: 1px solid rgba(245, 158, 11, 0.28);
+            color: var(--warning-text);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 18px;
+            line-height: 1.7;
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .legal-box strong {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #78350f;
+            font-size: 13px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 7px;
+        }
+
+        .legal-box a {
+            font-weight: 900;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .terms-container {
+            display: grid;
+            grid-template-columns: 22px minmax(0, 1fr);
+            gap: 12px;
+            align-items: flex-start;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 15px;
+            margin-bottom: 20px;
             color: #475569;
             cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.65;
         }
-        .terms-container input { width: 20px; height: 20px; margin-top: 2px; cursor: pointer; }
+
+        .terms-container input {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            min-width: 0;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .required-mark {
+            color: var(--danger);
+            font-weight: 900;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-light);
+            pointer-events: none;
+            font-size: 14px;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            min-height: 50px;
+            padding: 13px 14px 13px 42px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--surface-soft);
+            color: var(--dark);
+            outline: none;
+            font-size: 14px;
+            font-weight: 700;
+            transition: 0.25s ease;
+        }
+
+        .input-wrap input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.11);
+        }
+
+        .input-wrap input.invalid {
+            border-color: var(--danger);
+            background: #fff1f2;
+        }
+
+        .input-wrap input.valid {
+            border-color: rgba(22, 163, 74, 0.55);
+            background: #f0fdf4;
+        }
+
+        .field-help {
+            margin-top: 6px;
+            color: var(--muted-light);
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        .field-error {
+            display: none;
+            margin-top: 6px;
+            color: var(--danger);
+            font-size: 11px;
+            font-weight: 850;
+            line-height: 1.5;
+        }
+
+        .field-error.show {
+            display: block;
+        }
+
+        .business-panel {
+            grid-column: 1 / -1;
+            display: none;
+            padding: 18px;
+            border: 1px solid var(--border);
+            background: linear-gradient(180deg, #ffffff, #f8fafc);
+            border-radius: 22px;
+        }
+
+        .business-panel.active {
+            display: block;
+        }
+
+        .business-panel-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 900;
+            margin-bottom: 14px;
+        }
+
+        .business-panel-title i {
+            color: var(--primary);
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            background: var(--surface-soft);
+            border-radius: var(--radius-full);
+            height: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            background: #cbd5e1;
+            transition: 0.25s ease;
+        }
+
+        .password-strength-text {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 800;
+        }
 
         .btn-primary {
             width: 100%;
-            padding: 18px;
+            min-height: 54px;
+            border: none;
+            border-radius: 17px;
             background: var(--primary);
             color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
+            font-size: 15px;
+            font-weight: 900;
+            transition: 0.25s ease;
+            box-shadow: 0 14px 30px rgba(245, 130, 32, 0.26);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; }
-        .btn-primary:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            color: #f8fafc;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 24px 0;
+            color: var(--muted-light);
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
 
         .btn-google {
             width: 100%;
-            padding: 14px;
+            min-height: 52px;
+            border: 1px solid var(--border);
             background: white;
             color: var(--dark);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 15px;
+            border-radius: 17px;
+            font-size: 14px;
+            font-weight: 900;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
+            transition: 0.25s ease;
         }
-        .btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        .divider { margin: 25px 0; display: flex; align-items: center; color: #94a3b8; font-size: 13px; }
-        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
+        .btn-google:hover:not(:disabled) {
+            border-color: rgba(245, 130, 32, 0.45);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
 
-        .footer-link { text-align: center; margin-top: 25px; font-size: 14px; color: #64748b; }
-        .footer-link a { color: var(--primary); text-decoration: none; font-weight: 700; }
+        .btn-google:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .footer-link a {
+            color: var(--primary-hover);
+            font-weight: 900;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        @media (max-width: 980px) {
+            .page-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .intro-card {
+                position: relative;
+                top: auto;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .dev-banner {
+                font-size: 11px;
+                line-height: 1.5;
+            }
+
+            .header-inner {
+                padding: 15px 18px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 3px;
+            }
+
+            .page-shell {
+                padding: 26px 18px 70px;
+            }
+
+            .intro-card {
+                padding: 28px 22px;
+                border-radius: 28px;
+            }
+
+            .auth-card {
+                padding: 24px 18px;
+                border-radius: 28px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .account-tabs {
+                grid-template-columns: 1fr;
+                border-radius: 22px;
+            }
+
+            .tab-btn {
+                border-radius: 16px;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<div class="dev-banner">Webbplatsen är under uppbyggnad - All data behandlas enligt testvillkor</div>
+<div class="dev-banner">
+    Webbplatsen är under uppbyggnad - använd inte verkliga testbetalningar eller känsliga uppgifter i onödan
+</div>
 
-<header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo" aria-label="Gå till startsidan">
+            <span class="logo-icon">
+                <i class="fa-solid fa-car-side"></i>
+            </span>
+            BIL<span>HK</span>
+        </a>
+
+        <nav class="header-actions" aria-label="Registreringsmeny">
+            <a href="index.html" class="nav-btn">
+                <i class="fa-solid fa-house"></i>
+                Startsida
+            </a>
+
+            <a href="login.html" class="nav-btn">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Logga in
+            </a>
+
+            <a href="terms.html" class="nav-btn">
+                <i class="fa-solid fa-file-contract"></i>
+                Villkor
+            </a>
+        </nav>
+    </div>
 </header>
 
-<div class="auth-container">
-    <div class="auth-card">
-        <h2>Skapa ditt konto</h2>
+<main class="page-shell">
 
-        <div class="account-tabs">
-            <button type="button" id="tabPrivate" class="tab-btn active" onclick="window.switchTab('private')">Privatperson</button>
-            <button type="button" id="tabBusiness" class="tab-btn" onclick="window.switchTab('business')">Företag</button>
-        </div>
-
-        <div class="disclaimer-box">
-            <strong>Ansvarsfriskrivning & Juridisk information</strong>
-            BilMarknad-HK är en förmedlingsplattform. Vi tar inget ansvar för annonsernas riktighet, fordonets skick eller finansiella transaktioner. 
-            Vi avråder starkt från förskottsbetalningar. Genom att registrera dig bekräftar du att du har läst våra 
-            <a href="terms.html" style="color: inherit; font-weight: bold;">Användarvillkor</a> och förstår att vi friskriver oss från allt ansvar vid bedrägeriförsök eller felaktig information.
-        </div>
-
-        <label class="terms-container">
-            <input type="checkbox" id="legalCheck">
-            <span>Jag bekräftar att jag är över 18 år, accepterar ansvarsfriskrivningen och samtycker till behandling av mina personuppgifter enligt vår integritetspolicy (GDPR).</span>
-        </label>
-
-        <form id="regForm" class="form-grid">
-            <div class="form-group full-width">
-                <label id="nameLabel">Fullständigt namn</label>
-                <input type="text" id="fullName" placeholder="För- och efternamn" required>
+    <section class="intro-card">
+        <div class="intro-content">
+            <div class="intro-badge">
+                <i class="fa-solid fa-user-plus"></i>
+                Skapa konto
             </div>
 
-            <div id="businessFields" class="full-width">
+            <h1>Börja köpa och sälja bilar tryggare</h1>
+
+            <p>
+                Skapa ett privatkonto eller företagskonto för att publicera annonser, kontakta säljare,
+                hantera meddelanden och spara bilar du är intresserad av.
+            </p>
+
+            <div class="trust-list">
+                <div class="trust-item">
+                    <i class="fa-solid fa-envelope-circle-check"></i>
+                    <div>
+                        <strong>E-postverifiering</strong>
+                        <span>Konton med lösenord får verifieringsmail innan normal användning rekommenderas.</span>
+                    </div>
+                </div>
+
+                <div class="trust-item">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <div>
+                        <strong>Säkerhetsfokus</strong>
+                        <span>Formuläret validerar uppgifter innan de sparas och lagrar aldrig lösenord i Firestore.</span>
+                    </div>
+                </div>
+
+                <div class="trust-item">
+                    <i class="fa-solid fa-building"></i>
+                    <div>
+                        <strong>Privat eller företag</strong>
+                        <span>Företagskonton kräver extra företagsuppgifter innan registrering.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="auth-card" aria-label="Registreringsformulär">
+        <div class="auth-header">
+            <h2>Skapa ditt konto</h2>
+            <p>Välj kontotyp och fyll i uppgifterna. Alla obligatoriska fält måste vara korrekta.</p>
+        </div>
+
+        <div class="account-tabs" role="tablist" aria-label="Välj kontotyp">
+            <button type="button" id="tabPrivate" class="tab-btn active" role="tab" aria-selected="true">
+                <i class="fa-solid fa-user"></i>
+                Privatperson
+            </button>
+
+            <button type="button" id="tabBusiness" class="tab-btn" role="tab" aria-selected="false">
+                <i class="fa-solid fa-building"></i>
+                Företag
+            </button>
+        </div>
+
+        <div class="legal-box">
+            <strong>
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Ansvarsfriskrivning & juridisk information
+            </strong>
+            BILHK är en förmedlingsplattform. Vi kontrollerar inte automatiskt fordonets faktiska skick,
+            mätarställning, servicehistorik eller säljarens uppgifter. Betala aldrig i förskott utan säker kontroll.
+            Genom att registrera dig bekräftar du att du har läst våra
+            <a href="terms.html">Användarvillkor</a>.
+        </div>
+
+        <label class="terms-container" for="legalCheck">
+            <input type="checkbox" id="legalCheck">
+            <span>
+                Jag bekräftar att jag är över 18 år, accepterar ansvarsfriskrivningen och samtycker till behandling
+                av mina personuppgifter enligt BILHK:s villkor och integritetspolicy.
+            </span>
+        </label>
+
+        <form id="registerForm" class="form-grid" novalidate>
+
+            <div class="form-group full-width">
+                <label for="fullName">
+                    <span id="nameLabel">Fullständigt namn</span>
+                    <span class="required-mark">*</span>
+                </label>
+
+                <div class="input-wrap">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="fullName" autocomplete="name" placeholder="För- och efternamn" maxlength="90" required>
+                </div>
+
+                <div class="field-error" id="fullNameError"></div>
+            </div>
+
+            <div class="business-panel" id="businessPanel">
+                <div class="business-panel-title">
+                    <i class="fa-solid fa-building-shield"></i>
+                    Företagsuppgifter
+                </div>
+
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Organisationsnummer</label>
-                        <input type="text" id="taxId" placeholder="XXXXXX-XXXX">
+                        <label for="taxId">
+                            <span>Organisationsnummer</span>
+                            <span class="required-mark">*</span>
+                        </label>
+
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-id-card"></i>
+                            <input type="text" id="taxId" placeholder="XXXXXX-XXXX" maxlength="20" autocomplete="off">
+                        </div>
+
+                        <div class="field-help">Format exempel: 556677-8899</div>
+                        <div class="field-error" id="taxIdError"></div>
                     </div>
+
                     <div class="form-group">
-                        <label>Telefon (Växel)</label>
-                        <input type="tel" id="phone" placeholder="010-XXX XX XX">
+                        <label for="phone">
+                            <span>Telefon</span>
+                            <span class="required-mark">*</span>
+                        </label>
+
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-phone"></i>
+                            <input type="tel" id="phone" placeholder="010-123 45 67" maxlength="30" autocomplete="tel">
+                        </div>
+
+                        <div class="field-error" id="phoneError"></div>
                     </div>
+
                     <div class="form-group full-width">
-                        <label>Företagsadress</label>
-                        <input type="text" id="address" placeholder="Gata, Postnummer, Ort">
+                        <label for="address">
+                            <span>Företagsadress</span>
+                            <span class="required-mark">*</span>
+                        </label>
+
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <input type="text" id="address" placeholder="Gata, postnummer, ort" maxlength="160" autocomplete="street-address">
+                        </div>
+
+                        <div class="field-error" id="addressError"></div>
                     </div>
                 </div>
             </div>
 
             <div class="form-group full-width">
-                <label>E-postadress</label>
-                <input type="email" id="email" placeholder="namn@exempel.se" required>
+                <label for="email">
+                    <span>E-postadress</span>
+                    <span class="required-mark">*</span>
+                </label>
+
+                <div class="input-wrap">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="email" autocomplete="email" placeholder="namn@exempel.se" maxlength="120" required>
+                </div>
+
+                <div class="field-error" id="emailError"></div>
             </div>
 
             <div class="form-group">
-                <label>Lösenord</label>
-                <input type="password" id="pass" placeholder="Minst 8 tecken" required>
+                <label for="password">
+                    <span>Lösenord</span>
+                    <span class="required-mark">*</span>
+                </label>
+
+                <div class="input-wrap">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" autocomplete="new-password" placeholder="Minst 8 tecken" maxlength="80" required>
+                </div>
+
+                <div class="password-strength" aria-hidden="true">
+                    <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                </div>
+
+                <div class="password-strength-text" id="passwordStrengthText">Ange ett starkt lösenord.</div>
+                <div class="field-error" id="passwordError"></div>
             </div>
 
             <div class="form-group">
-                <label>Bekräfta lösenord</label>
-                <input type="password" id="confirmPass" placeholder="Upprepa lösenord" required>
+                <label for="confirmPassword">
+                    <span>Bekräfta lösenord</span>
+                    <span class="required-mark">*</span>
+                </label>
+
+                <div class="input-wrap">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="confirmPassword" autocomplete="new-password" placeholder="Upprepa lösenord" maxlength="80" required>
+                </div>
+
+                <div class="field-error" id="confirmPasswordError"></div>
             </div>
 
-            <button type="submit" class="btn-primary full-width" id="regBtn" disabled>Skapa konto</button>
+            <button type="submit" class="btn-primary full-width" id="registerBtn" disabled>
+                <i class="fa-solid fa-user-plus"></i>
+                Skapa konto
+            </button>
         </form>
 
-        <div class="divider"><span>eller registrera med</span></div>
+        <div class="divider">
+            <span>eller</span>
+        </div>
 
         <button type="button" class="btn-google" id="googleBtn" disabled>
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
-            Google-konto (Endast privat)
+            <img class="google-icon" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
+            Registrera med Google
         </button>
 
         <div class="footer-link">
             Har du redan ett konto? <a href="login.html">Logga in här</a>
         </div>
-    </div>
-</div>
+    </section>
+
+</main>
 
 <script type="module">
-    import { auth, db, googleProvider } from './firebase-config.js';
-    import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import {
+        auth,
+        db,
+        googleProvider
+    } from "./firebase-config.js";
 
-    const legalCheck = document.getElementById('legalCheck');
-    const regBtn = document.getElementById('regBtn');
-    const googleBtn = document.getElementById('googleBtn');
-    let accountType = 'private';
+    import {
+        createUserWithEmailAndPassword,
+        updateProfile,
+        sendEmailVerification,
+        signInWithPopup,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // 1. Logic for Terms Check (GDPR Compliance)
-    legalCheck.onchange = () => {
-        regBtn.disabled = !legalCheck.checked;
-        googleBtn.disabled = !legalCheck.checked;
+    import {
+        doc,
+        getDoc,
+        setDoc,
+        serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const REGISTER_CONFIG = {
+        ROUTES: {
+            LOGIN: "login.html",
+            HOME: "index.html",
+            TERMS: "terms.html"
+        },
+
+        COLLECTIONS: {
+            USERS: "users"
+        },
+
+        ACCOUNT_TYPES: {
+            PRIVATE: "private",
+            BUSINESS: "business"
+        },
+
+        LEGAL_VERSION: "BILHK-LEGAL-2026-01",
+
+        LIMITS: {
+            NAME_MIN: 2,
+            NAME_MAX: 90,
+            EMAIL_MAX: 120,
+            PASSWORD_MIN: 8,
+            PASSWORD_MAX: 80,
+            ADDRESS_MIN: 6,
+            ADDRESS_MAX: 160,
+            PHONE_MIN_DIGITS: 7,
+            PHONE_MAX_DIGITS: 15
+        }
     };
 
-    // 2. Tab Switching (Smart UI)
-    window.switchTab = (type) => {
-        accountType = type;
-        document.getElementById('tabPrivate').classList.toggle('active', type === 'private');
-        document.getElementById('tabBusiness').classList.toggle('active', type === 'business');
-        document.getElementById('businessFields').style.display = (type === 'business') ? 'block' : 'none';
-        document.getElementById('nameLabel').innerText = (type === 'business') ? 'Företagsnamn' : 'Fullständigt namn';
-        
-        // Google is usually for individuals in these platforms
-        googleBtn.style.display = (type === 'private') ? 'flex' : 'none';
+    const state = {
+        accountType: REGISTER_CONFIG.ACCOUNT_TYPES.PRIVATE,
+        isSubmitting: false
     };
 
-    // 3. Main Registration Logic
-    document.getElementById('regForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const pass = document.getElementById('pass').value;
-        const confirm = document.getElementById('confirmPass').value;
+    const elements = {
+        tabPrivate: document.getElementById("tabPrivate"),
+        tabBusiness: document.getElementById("tabBusiness"),
 
-        if (pass.length < 8) return alert("Lösenordet måste vara minst 8 tecken.");
-        if (pass !== confirm) return alert("Lösenorden matchar inte.");
+        legalCheck: document.getElementById("legalCheck"),
 
-        regBtn.disabled = true;
-        regBtn.innerText = "Behandlar...";
+        registerForm: document.getElementById("registerForm"),
+        registerBtn: document.getElementById("registerBtn"),
+        googleBtn: document.getElementById("googleBtn"),
 
-        try {
-            const userCred = await createUserWithEmailAndPassword(auth, document.getElementById('email').value, pass);
-            const user = userCred.user;
+        nameLabel: document.getElementById("nameLabel"),
+        businessPanel: document.getElementById("businessPanel"),
 
-            await updateProfile(user, { displayName: document.getElementById('fullName').value });
-            await sendEmailVerification(user);
+        fullName: document.getElementById("fullName"),
+        taxId: document.getElementById("taxId"),
+        phone: document.getElementById("phone"),
+        address: document.getElementById("address"),
+        email: document.getElementById("email"),
+        password: document.getElementById("password"),
+        confirmPassword: document.getElementById("confirmPassword"),
 
-            // Store specialized data in Firestore
-            await setDoc(doc(db, "users", user.uid), {
-                name: document.getElementById('fullName').value,
-                email: user.email,
-                userType: accountType,
-                taxId: accountType === 'business' ? document.getElementById('taxId').value : "",
-                address: accountType === 'business' ? document.getElementById('address').value : "",
-                phone: accountType === 'business' ? document.getElementById('phone').value : "",
-                createdAt: serverTimestamp(),
-                legalAccepted: true
+        passwordStrengthBar: document.getElementById("passwordStrengthBar"),
+        passwordStrengthText: document.getElementById("passwordStrengthText"),
+
+        errors: {
+            fullName: document.getElementById("fullNameError"),
+            taxId: document.getElementById("taxIdError"),
+            phone: document.getElementById("phoneError"),
+            address: document.getElementById("addressError"),
+            email: document.getElementById("emailError"),
+            password: document.getElementById("passwordError"),
+            confirmPassword: document.getElementById("confirmPasswordError")
+        }
+    };
+
+    initializeRegisterPage();
+
+    function initializeRegisterPage() {
+        attachGlobalErrorHandlers();
+        attachEventListeners();
+        setAccountType(REGISTER_CONFIG.ACCOUNT_TYPES.PRIVATE);
+        updateActionButtons();
+    }
+
+    function attachEventListeners() {
+        elements.tabPrivate.addEventListener("click", () => {
+            setAccountType(REGISTER_CONFIG.ACCOUNT_TYPES.PRIVATE);
+        });
+
+        elements.tabBusiness.addEventListener("click", () => {
+            setAccountType(REGISTER_CONFIG.ACCOUNT_TYPES.BUSINESS);
+        });
+
+        elements.legalCheck.addEventListener("change", updateActionButtons);
+
+        [
+            elements.fullName,
+            elements.taxId,
+            elements.phone,
+            elements.address,
+            elements.email,
+            elements.password,
+            elements.confirmPassword
+        ].forEach((input) => {
+            input.addEventListener("input", () => {
+                if (input === elements.password) {
+                    renderPasswordStrength();
+                }
+
+                validateFieldLive(input);
+                updateActionButtons();
             });
 
-            await signOut(auth);
-            alert("Kontot har skapats! Ett bekräftelsemail har skickats. Verifiera din e-post innan du loggar in.");
-            window.location.href = "login.html";
+            input.addEventListener("blur", () => {
+                validateFieldLive(input, true);
+            });
+        });
 
-        } catch (error) {
-            console.error(error);
-            alert("Ett fel uppstod: " + error.message);
-            regBtn.disabled = false;
-            regBtn.innerText = "Skapa konto";
+        elements.registerForm.addEventListener("submit", registerWithEmailPassword);
+        elements.googleBtn.addEventListener("click", registerWithGoogle);
+    }
+
+    function setAccountType(type) {
+        state.accountType = type;
+
+        const isPrivate = type === REGISTER_CONFIG.ACCOUNT_TYPES.PRIVATE;
+        const isBusiness = type === REGISTER_CONFIG.ACCOUNT_TYPES.BUSINESS;
+
+        elements.tabPrivate.classList.toggle("active", isPrivate);
+        elements.tabBusiness.classList.toggle("active", isBusiness);
+
+        elements.tabPrivate.setAttribute("aria-selected", String(isPrivate));
+        elements.tabBusiness.setAttribute("aria-selected", String(isBusiness));
+
+        elements.businessPanel.classList.toggle("active", isBusiness);
+        elements.nameLabel.textContent = isBusiness ? "Företagsnamn" : "Fullständigt namn";
+
+        elements.fullName.placeholder = isBusiness ? "Företagsnamn" : "För- och efternamn";
+
+        elements.taxId.required = isBusiness;
+        elements.phone.required = isBusiness;
+        elements.address.required = isBusiness;
+
+        elements.googleBtn.style.display = isPrivate ? "flex" : "none";
+
+        clearAllErrors();
+        updateActionButtons();
+    }
+
+    async function registerWithEmailPassword(event) {
+        event.preventDefault();
+
+        if (state.isSubmitting) {
+            return;
         }
-    };
 
-    // 4. Google Quick Register (Private only)
-    googleBtn.onclick = async () => {
+        const validation = validateForm();
+
+        if (!validation.valid) {
+            showFirstValidationError(validation.errors);
+            return;
+        }
+
+        state.isSubmitting = true;
+        setLoadingButton(elements.registerBtn, true, "Skapar konto...");
+
+        try {
+            const clean = getCleanFormData();
+
+            const userCredential = await createUserWithEmailAndPassword(auth, clean.email, clean.password);
+            const user = userCredential.user;
+
+            await updateProfile(user, {
+                displayName: clean.displayName
+            });
+
+            await setDoc(doc(db, REGISTER_CONFIG.COLLECTIONS.USERS, user.uid), buildUserProfilePayload(user.uid, clean, "email-password"));
+
+            await sendEmailVerification(user);
+
+            await signOut(auth);
+
+            await Swal.fire({
+                icon: "success",
+                title: "Kontot har skapats",
+                html: "Ett verifieringsmail har skickats. Kontrollera din inkorg innan du loggar in.",
+                confirmButtonColor: "#f58220",
+                confirmButtonText: "Gå till inloggning"
+            });
+
+            window.location.href = REGISTER_CONFIG.ROUTES.LOGIN;
+        } catch (error) {
+            console.error("[BILHK] Email registration failed:", error);
+            showFirebaseError(error);
+        } finally {
+            state.isSubmitting = false;
+            setLoadingButton(elements.registerBtn, false, "Skapa konto", "fa-solid fa-user-plus");
+            updateActionButtons();
+        }
+    }
+
+    async function registerWithGoogle() {
+        if (state.isSubmitting) {
+            return;
+        }
+
+        if (state.accountType !== REGISTER_CONFIG.ACCOUNT_TYPES.PRIVATE) {
+            Swal.fire({
+                icon: "info",
+                title: "Google endast för privatkonto",
+                text: "Företagskonton måste registreras med företagsuppgifter.",
+                confirmButtonColor: "#f58220"
+            });
+            return;
+        }
+
+        if (!elements.legalCheck.checked) {
+            Swal.fire({
+                icon: "warning",
+                title: "Villkor krävs",
+                text: "Du måste acceptera villkoren innan du registrerar dig.",
+                confirmButtonColor: "#f58220"
+            });
+            return;
+        }
+
+        state.isSubmitting = true;
+        setLoadingButton(elements.googleBtn, true, "Registrerar...");
+
         try {
             const result = await signInWithPopup(auth, googleProvider);
-            await setDoc(doc(db, "users", result.user.uid), {
-                name: result.user.displayName,
-                email: result.user.email,
-                userType: 'private',
-                createdAt: serverTimestamp(),
-                legalAccepted: true
-            }, { merge: true });
-            window.location.href = "index.html";
+            const user = result.user;
+
+            const userRef = doc(db, REGISTER_CONFIG.COLLECTIONS.USERS, user.uid);
+            const existing = await getDoc(userRef);
+
+            const payload = {
+                uid: user.uid,
+                name: safeText(user.displayName, REGISTER_CONFIG.LIMITS.NAME_MAX) || getEmailName(user.email),
+                email: safeEmail(user.email),
+                userType: REGISTER_CONFIG.ACCOUNT_TYPES.PRIVATE,
+                provider: "google",
+                emailVerified: Boolean(user.emailVerified),
+                legalAccepted: true,
+                legalAcceptedAt: serverTimestamp(),
+                legalVersion: REGISTER_CONFIG.LEGAL_VERSION,
+                accountUpdatedAt: serverTimestamp(),
+                accountCreatedFrom: "register.html"
+            };
+
+            if (!existing.exists()) {
+                payload.createdAt = serverTimestamp();
+                payload.active = true;
+                payload.role = "user";
+            }
+
+            await setDoc(userRef, payload, { merge: true });
+
+            await Swal.fire({
+                icon: "success",
+                title: "Välkommen!",
+                text: "Ditt konto är klart.",
+                timer: 1400,
+                showConfirmButton: false
+            });
+
+            window.location.href = REGISTER_CONFIG.ROUTES.HOME;
         } catch (error) {
-            alert("Kunde inte registrera med Google.");
+            console.error("[BILHK] Google registration failed:", error);
+
+            Swal.fire({
+                icon: "error",
+                title: "Google-registrering misslyckades",
+                text: "Kunde inte registrera med Google just nu.",
+                confirmButtonColor: "#f58220"
+            });
+        } finally {
+            state.isSubmitting = false;
+            setLoadingButton(elements.googleBtn, false, "Registrera med Google");
+            updateActionButtons();
         }
-    };
+    }
+
+    function buildUserProfilePayload(uid, clean, provider) {
+        const payload = {
+            uid: uid,
+            name: clean.displayName,
+            email: clean.email,
+            userType: state.accountType,
+            provider: provider,
+            active: true,
+            role: "user",
+
+            legalAccepted: true,
+            legalAcceptedAt: serverTimestamp(),
+            legalVersion: REGISTER_CONFIG.LEGAL_VERSION,
+
+            emailVerified: false,
+            createdAt: serverTimestamp(),
+            accountUpdatedAt: serverTimestamp(),
+            accountCreatedFrom: "register.html"
+        };
+
+        if (state.accountType === REGISTER_CONFIG.ACCOUNT_TYPES.BUSINESS) {
+            payload.companyName = clean.displayName;
+            payload.taxId = clean.taxId;
+            payload.phone = clean.phone;
+            payload.address = clean.address;
+            payload.businessVerified = false;
+        } else {
+            payload.companyName = "";
+            payload.taxId = "";
+            payload.phone = "";
+            payload.address = "";
+            payload.businessVerified = false;
+        }
+
+        return payload;
+    }
+
+    function validateForm() {
+        clearAllErrors();
+
+        const errors = [];
+        const data = getCleanFormData();
+
+        if (!elements.legalCheck.checked) {
+            errors.push({
+                field: "legal",
+                message: "Du måste acceptera villkoren innan registrering."
+            });
+        }
+
+        if (!data.displayName || data.displayName.length < REGISTER_CONFIG.LIMITS.NAME_MIN) {
+            setFieldError("fullName", state.accountType === "business" ? "Ange ett giltigt företagsnamn." : "Ange ditt fullständiga namn.");
+            errors.push({ field: "fullName", message: "Namn saknas eller är för kort." });
+        }
+
+        if (!isValidEmail(data.email)) {
+            setFieldError("email", "Ange en giltig e-postadress.");
+            errors.push({ field: "email", message: "E-postadressen är inte giltig." });
+        }
+
+        const passwordResult = validatePassword(data.password);
+
+        if (!passwordResult.valid) {
+            setFieldError("password", passwordResult.message);
+            errors.push({ field: "password", message: passwordResult.message });
+        }
+
+        if (data.password !== data.confirmPassword) {
+            setFieldError("confirmPassword", "Lösenorden matchar inte.");
+            errors.push({ field: "confirmPassword", message: "Lösenorden matchar inte." });
+        }
+
+        if (state.accountType === REGISTER_CONFIG.ACCOUNT_TYPES.BUSINESS) {
+            if (!isValidSwedishOrgNumber(data.taxId)) {
+                setFieldError("taxId", "Ange organisationsnummer i formatet XXXXXX-XXXX.");
+                errors.push({ field: "taxId", message: "Organisationsnummer är inte giltigt." });
+            }
+
+            if (!isValidPhone(data.phone)) {
+                setFieldError("phone", "Ange ett giltigt telefonnummer.");
+                errors.push({ field: "phone", message: "Telefonnummer är inte giltigt." });
+            }
+
+            if (!data.address || data.address.length < REGISTER_CONFIG.LIMITS.ADDRESS_MIN) {
+                setFieldError("address", "Ange företagets adress.");
+                errors.push({ field: "address", message: "Företagsadress saknas." });
+            }
+        }
+
+        return {
+            valid: errors.length === 0,
+            errors
+        };
+    }
+
+    function validateFieldLive(input, showErrors = false) {
+        const data = getCleanFormData();
+
+        if (input === elements.fullName) {
+            markInput(input, data.displayName.length >= REGISTER_CONFIG.LIMITS.NAME_MIN, showErrors, "fullName", "Namnet är för kort.");
+        }
+
+        if (input === elements.email) {
+            markInput(input, isValidEmail(data.email), showErrors, "email", "Ange en giltig e-postadress.");
+        }
+
+        if (input === elements.password) {
+            const result = validatePassword(data.password);
+            markInput(input, result.valid, showErrors, "password", result.message);
+        }
+
+        if (input === elements.confirmPassword) {
+            markInput(input, data.confirmPassword && data.password === data.confirmPassword, showErrors, "confirmPassword", "Lösenorden matchar inte.");
+        }
+
+        if (input === elements.taxId && state.accountType === REGISTER_CONFIG.ACCOUNT_TYPES.BUSINESS) {
+            markInput(input, isValidSwedishOrgNumber(data.taxId), showErrors, "taxId", "Format: XXXXXX-XXXX.");
+        }
+
+        if (input === elements.phone && state.accountType === REGISTER_CONFIG.ACCOUNT_TYPES.BUSINESS) {
+            markInput(input, isValidPhone(data.phone), showErrors, "phone", "Ange ett giltigt telefonnummer.");
+        }
+
+        if (input === elements.address && state.accountType === REGISTER_CONFIG.ACCOUNT_TYPES.BUSINESS) {
+            markInput(input, data.address.length >= REGISTER_CONFIG.LIMITS.ADDRESS_MIN, showErrors, "address", "Adressen är för kort.");
+        }
+    }
+
+    function markInput(input, valid, showErrors, errorKey, errorMessage) {
+        input.classList.toggle("valid", Boolean(input.value && valid));
+        input.classList.toggle("invalid", Boolean(input.value && !valid));
+
+        if (showErrors && input.value && !valid) {
+            setFieldError(errorKey, errorMessage);
+        } else if (valid) {
+            clearFieldError(errorKey);
+        }
+    }
+
+    function updateActionButtons() {
+        const accepted = elements.legalCheck.checked;
+        const disabled = !accepted || state.isSubmitting;
+
+        elements.registerBtn.disabled = disabled;
+        elements.googleBtn.disabled = disabled;
+    }
+
+    function getCleanFormData() {
+        const rawName = elements.fullName.value;
+        const rawEmail = elements.email.value;
+        const rawPassword = elements.password.value;
+        const rawConfirmPassword = elements.confirmPassword.value;
+        const rawTaxId = elements.taxId.value;
+        const rawPhone = elements.phone.value;
+        const rawAddress = elements.address.value;
+
+        return {
+            displayName: safeText(rawName, REGISTER_CONFIG.LIMITS.NAME_MAX),
+            email: safeEmail(rawEmail),
+            password: String(rawPassword || "").slice(0, REGISTER_CONFIG.LIMITS.PASSWORD_MAX),
+            confirmPassword: String(rawConfirmPassword || "").slice(0, REGISTER_CONFIG.LIMITS.PASSWORD_MAX),
+            taxId: normalizeOrgNumber(rawTaxId),
+            phone: safePhone(rawPhone),
+            address: safeText(rawAddress, REGISTER_CONFIG.LIMITS.ADDRESS_MAX)
+        };
+    }
+
+    function validatePassword(password) {
+        const value = String(password || "");
+
+        if (value.length < REGISTER_CONFIG.LIMITS.PASSWORD_MIN) {
+            return {
+                valid: false,
+                score: 0,
+                message: "Lösenordet måste vara minst 8 tecken."
+            };
+        }
+
+        let score = 0;
+
+        if (value.length >= 8) score++;
+        if (/[a-zåäö]/.test(value)) score++;
+        if (/[A-ZÅÄÖ]/.test(value)) score++;
+        if (/[0-9]/.test(value)) score++;
+        if (/[^A-Za-zÅÄÖåäö0-9]/.test(value)) score++;
+
+        if (score < 4) {
+            return {
+                valid: false,
+                score,
+                message: "Använd minst liten bokstav, stor bokstav och siffra."
+            };
+        }
+
+        return {
+            valid: true,
+            score,
+            message: "Lösenordet är tillräckligt starkt."
+        };
+    }
+
+    function renderPasswordStrength() {
+        const result = validatePassword(elements.password.value);
+        const score = Math.max(0, Math.min(result.score || 0, 5));
+        const percent = (score / 5) * 100;
+
+        elements.passwordStrengthBar.style.width = `${percent}%`;
+
+        if (score <= 2) {
+            elements.passwordStrengthBar.style.background = "#dc2626";
+            elements.passwordStrengthText.textContent = "Svagt lösenord.";
+            elements.passwordStrengthText.style.color = "#dc2626";
+        } else if (score === 3) {
+            elements.passwordStrengthBar.style.background = "#f59e0b";
+            elements.passwordStrengthText.textContent = "Medelstarkt lösenord.";
+            elements.passwordStrengthText.style.color = "#92400e";
+        } else {
+            elements.passwordStrengthBar.style.background = "#16a34a";
+            elements.passwordStrengthText.textContent = "Starkt lösenord.";
+            elements.passwordStrengthText.style.color = "#166534";
+        }
+    }
+
+    function showFirstValidationError(errors) {
+        const first = errors[0];
+
+        Swal.fire({
+            icon: "warning",
+            title: "Kontrollera uppgifterna",
+            text: first?.message || "Fyll i alla obligatoriska fält korrekt.",
+            confirmButtonColor: "#f58220"
+        });
+
+        const fieldMap = {
+            fullName: elements.fullName,
+            email: elements.email,
+            password: elements.password,
+            confirmPassword: elements.confirmPassword,
+            taxId: elements.taxId,
+            phone: elements.phone,
+            address: elements.address
+        };
+
+        if (first?.field && fieldMap[first.field]) {
+            fieldMap[first.field].focus();
+        }
+    }
+
+    function showFirebaseError(error) {
+        const code = error?.code || "";
+
+        let message = "Registreringen kunde inte slutföras just nu.";
+
+        if (code === "auth/email-already-in-use") {
+            message = "Den här e-postadressen används redan.";
+        } else if (code === "auth/invalid-email") {
+            message = "E-postadressen är inte giltig.";
+        } else if (code === "auth/weak-password") {
+            message = "Lösenordet är för svagt.";
+        } else if (code === "auth/network-request-failed") {
+            message = "Nätverksfel. Kontrollera internetanslutningen.";
+        }
+
+        Swal.fire({
+            icon: "error",
+            title: "Registrering misslyckades",
+            text: message,
+            confirmButtonColor: "#f58220"
+        });
+    }
+
+    function setFieldError(key, message) {
+        const target = elements.errors[key];
+
+        if (!target) {
+            return;
+        }
+
+        target.textContent = message;
+        target.classList.add("show");
+    }
+
+    function clearFieldError(key) {
+        const target = elements.errors[key];
+
+        if (!target) {
+            return;
+        }
+
+        target.textContent = "";
+        target.classList.remove("show");
+    }
+
+    function clearAllErrors() {
+        Object.keys(elements.errors).forEach(clearFieldError);
+
+        [
+            elements.fullName,
+            elements.taxId,
+            elements.phone,
+            elements.address,
+            elements.email,
+            elements.password,
+            elements.confirmPassword
+        ].forEach((input) => {
+            input.classList.remove("invalid");
+        });
+    }
+
+    function setLoadingButton(button, loading, text, iconClass = null) {
+        clearElement(button);
+
+        if (loading) {
+            const icon = document.createElement("i");
+            icon.className = "fa-solid fa-circle-notch fa-spin";
+            button.appendChild(icon);
+            button.appendChild(document.createTextNode(text));
+            button.disabled = true;
+            return;
+        }
+
+        if (iconClass) {
+            const icon = document.createElement("i");
+            icon.className = iconClass;
+            button.appendChild(icon);
+        } else if (button === elements.googleBtn) {
+            const img = document.createElement("img");
+            img.className = "google-icon";
+            img.src = "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
+            img.alt = "";
+            button.appendChild(img);
+        }
+
+        button.appendChild(document.createTextNode(text));
+    }
+
+    function safeText(value, maxLength = 160) {
+        return String(value ?? "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, maxLength);
+    }
+
+    function safeEmail(value) {
+        return String(value ?? "")
+            .trim()
+            .toLowerCase()
+            .slice(0, REGISTER_CONFIG.LIMITS.EMAIL_MAX);
+    }
+
+    function safePhone(value) {
+        return String(value ?? "")
+            .replace(/[^\d+\-\s()]/g, "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 30);
+    }
+
+    function normalizeOrgNumber(value) {
+        return String(value ?? "")
+            .replace(/[^\d-]/g, "")
+            .trim()
+            .slice(0, 20);
+    }
+
+    function isValidEmail(value) {
+        const email = safeEmail(value);
+
+        if (!email || email.length > REGISTER_CONFIG.LIMITS.EMAIL_MAX) {
+            return false;
+        }
+
+        return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+    }
+
+    function isValidPhone(value) {
+        const digits = String(value || "").replace(/\D/g, "");
+
+        return digits.length >= REGISTER_CONFIG.LIMITS.PHONE_MIN_DIGITS &&
+               digits.length <= REGISTER_CONFIG.LIMITS.PHONE_MAX_DIGITS;
+    }
+
+    function isValidSwedishOrgNumber(value) {
+        const normalized = normalizeOrgNumber(value);
+
+        return /^\d{6}-?\d{4}$/.test(normalized);
+    }
+
+    function getEmailName(email) {
+        const clean = safeEmail(email);
+
+        if (!clean || !clean.includes("@")) {
+            return "BILHK-användare";
+        }
+
+        return clean.split("@")[0];
+    }
+
+    function clearElement(element) {
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
+    }
+
+    function attachGlobalErrorHandlers() {
+        window.addEventListener("unhandledrejection", (event) => {
+            console.error("[BILHK] Unhandled promise rejection:", event.reason);
+        });
+
+        window.addEventListener("error", (event) => {
+            console.error("[BILHK] Register page error:", event.error || event.message);
+        });
+    }
 </script>
 
 </body>
