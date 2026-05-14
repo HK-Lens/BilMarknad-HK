@@ -3,567 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Professionell sökplattform för bilar - BILHK Automotive Search Engine">
-    <title>Sökresultat | BILHK Professional Search Engine</title>
-
-    <!-- Professional Architecture Assets -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Sökresultat | BILHK Professional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <style>
-        :root {
-            --primary: #f58220;
-            --primary-hover: #e07210;
-            --primary-soft: #fff5eb;
-            --dark: #0f172a;
-            --dark-2: #1e293b;
-            --muted: #64748b;
-            --bg: #f8fafc;
-            --white: #ffffff;
-            --border: #e2e8f0;
-            --success: #10b981;
-            --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            --radius-xl: 32px;
-            --radius-md: 14px;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; }
-        body { background-color: var(--bg); color: var(--dark); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-
-        /* --- Navigation Layer --- */
-        nav {
-            background: var(--white);
-            padding: 15px 6%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            backdrop-filter: blur(10px);
-        }
-        .logo { font-size: 26px; font-weight: 900; text-decoration: none; color: var(--dark); letter-spacing: -1.5px; }
-        .logo span { color: var(--primary); }
-
-        /* --- Control Interface --- */
-        .results-header {
-            background: var(--white);
-            padding: 30px 6%;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 25px;
-        }
-        .search-summary h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.8px; color: var(--dark); }
-        .search-summary p { font-size: 14px; color: var(--muted); font-weight: 600; margin-top: 5px; }
-
-        .view-controls { display: flex; gap: 15px; align-items: center; }
-        .sort-select {
-            padding: 12px 24px;
-            border-radius: var(--radius-md);
-            border: 1.5px solid var(--border);
-            background: var(--bg);
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-        .sort-select:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px var(--primary-soft); }
-
-        .layout-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius-md);
-            border: 1.5px solid var(--border);
-            background: var(--white);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--muted);
-            transition: var(--transition-smooth);
-        }
-        .layout-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
-        .layout-btn:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
-
-        /* --- Global Layout Architecture --- */
-        .main-layout {
-            max-width: 1440px;
-            margin: 40px auto;
-            padding: 0 5%;
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 40px;
-        }
-
-        /* --- Sidebar Engine --- */
-        .sidebar { position: sticky; top: 100px; height: fit-content; }
-        .filter-card {
-            background: var(--white);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--border);
-            padding: 30px;
-            box-shadow: var(--shadow-sm);
-        }
-        .filter-section { margin-bottom: 30px; }
-        .filter-section h4 { 
-            font-size: 12px; 
-            font-weight: 900; 
-            margin-bottom: 18px; 
-            text-transform: uppercase; 
-            color: var(--muted); 
-            letter-spacing: 1.2px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .filter-input {
-            width: 100%;
-            padding: 15px;
-            border-radius: var(--radius-md);
-            border: 1.5px solid var(--border);
-            background: var(--bg);
-            font-size: 14px;
-            font-weight: 700;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .filter-input:focus { border-color: var(--primary); background: white; }
-        .range-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        .apply-btn {
-            width: 100%;
-            padding: 18px;
-            background: var(--dark);
-            color: white;
-            border: none;
-            border-radius: 18px;
-            font-weight: 900;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
-        }
-        .apply-btn:hover { background: var(--primary); transform: translateY(-3px); box-shadow: 0 20px 25px -5px rgba(245, 130, 32, 0.3); }
-
-        /* --- Dynamic Grid Engine --- */
-        .results-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 30px;
-        }
-
-        /* --- Advanced Vehicle Card --- */
-        .car-card {
-            background: var(--white);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            transition: var(--transition-smooth);
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            height: 100%;
-        }
-        .car-card:hover { transform: translateY(-12px); box-shadow: var(--shadow-xl); border-color: var(--primary); }
-
-        .img-box { width: 100%; height: 240px; background: #e2e8f0; position: relative; overflow: hidden; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; transition: 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .car-card:hover .img-box img { transform: scale(1.1); }
-
-        .price-badge {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: var(--primary);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 18px;
-            font-weight: 900;
-            font-size: 22px;
-            box-shadow: 0 10px 25px rgba(245, 130, 32, 0.4);
-            z-index: 2;
-        }
-
-        .card-info { padding: 30px; flex-grow: 1; display: flex; flex-direction: column; }
-        .car-name { font-size: 22px; font-weight: 900; color: var(--dark); margin-bottom: 15px; letter-spacing: -0.5px; }
-        
-        .spec-container { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; }
-        .tag { 
-            background: var(--bg); 
-            padding: 8px 16px; 
-            border-radius: 12px; 
-            font-size: 13px; 
-            font-weight: 800; 
-            color: var(--muted); 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            border: 1px solid transparent;
-            transition: 0.3s;
-        }
-        .car-card:hover .tag { border-color: var(--border); color: var(--dark); }
-
-        .card-footer {
-            margin-top: auto;
-            padding-top: 25px;
-            border-top: 1px dotted var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--muted);
-        }
-
-        /* --- Professional List Mode --- */
-        .results-container.list-mode { grid-template-columns: 1fr; }
-        .results-container.list-mode .car-card { flex-direction: row; height: 260px; }
-        .results-container.list-mode .img-box { width: 400px; height: 100%; }
-
-        /* --- Skeleton Loaders --- */
-        .skeleton {
-            background: linear-gradient(90deg, #f1f5f9 25%, #f8fafc 50%, #f1f5f9 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.8s infinite linear;
-            border-radius: var(--radius-xl);
-            height: 450px;
-        }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-        /* --- High Definition Empty State --- */
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 100px 40px;
-            background: var(--white);
-            border-radius: 40px;
-            border: 2px dashed var(--border);
-        }
-        .empty-state i { font-size: 80px; color: var(--border); margin-bottom: 30px; display: block; }
-        .empty-state h2 { font-size: 32px; font-weight: 900; margin-bottom: 15px; color: var(--dark-2); }
-        .empty-state p { font-weight: 600; color: var(--muted); margin-bottom: 30px; }
-
-        @media (max-width: 1024px) {
-            .main-layout { grid-template-columns: 1fr; }
-            .sidebar { display: none; }
-            .results-header { padding: 20px 5%; }
-            .results-container { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-        }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; }
+        body { background: var(--bg); font-family: 'Inter', sans-serif; }
+        nav { background: var(--white); padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .main-layout { display: grid; grid-template-columns: 300px 1fr; gap: 40px; max-width: 1400px; margin: 40px auto; padding: 0 5%; }
+        .filter-card { background: var(--white); padding: 25px; border-radius: 24px; border: 1px solid var(--border); position: sticky; top: 20px; }
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        .car-card { background: var(--white); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; transition: 0.3s; text-decoration: none; color: inherit; }
+        .car-card:hover { transform: translateY(-10px); box-shadow: 0 20px 30px rgba(0,0,0,0.05); }
+        .img-box { height: 220px; background: #eee; position: relative; }
+        .price-tag { position: absolute; bottom: 15px; right: 15px; background: var(--primary); color: white; padding: 8px 18px; border-radius: 12px; font-weight: 900; }
+        .info { padding: 20px; }
+        .empty-state { text-align: center; padding: 100px 0; grid-column: 1/-1; }
     </style>
 </head>
 <body>
 
-    <nav>
-        <a href="index.html" class="logo">BIL<span>HK</span></a>
-        <div id="navAuthStatus"></div>
-    </nav>
+<nav><a href="index.html" style="font-weight:900; text-decoration:none; color:black; font-size:24px;">BIL<span>HK</span></a></nav>
 
-    <header class="results-header">
-        <div class="search-summary">
-            <h1 id="headerTitle">Hittade bilar</h1>
-            <p id="vehicleCounter">Identifierar fordon i systemet...</p>
+<div class="main-layout">
+    <aside>
+        <div class="filter-card">
+            <h3 style="margin-bottom:20px;">Filtrera</h3>
+            <label style="font-size:12px; font-weight:900;">MÄRKE</label>
+            <select id="fBrand" style="width:100%; padding:12px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd;"></select>
+            <button id="applyF" style="width:100%; padding:15px; background:var(--dark); color:white; border:none; border-radius:12px; font-weight:900; cursor:pointer;">Uppdatera</button>
         </div>
+    </aside>
 
-        <div class="view-controls">
-            <select id="masterSort" class="sort-select">
-                <option value="newest">Senaste inkomna</option>
-                <option value="price_asc">Pris: Lågt till högt</option>
-                <option value="price_desc">Pris: Högt till lågt</option>
-                <option value="mil_asc">Miltal: Lägst först</option>
-            </select>
-            <button class="layout-btn active" id="setGrid" title="Rutnätsvy"><i class="fa-solid fa-grid-2"></i></button>
-            <button class="layout-btn" id="setList" title="Listvy"><i class="fa-solid fa-list-ul"></i></button>
-        </div>
-    </header>
+    <main>
+        <div id="counter" style="margin-bottom:20px; font-weight:700;">Laddar annonser...</div>
+        <div class="results-grid" id="resultsGrid"></div>
+    </main>
+</div>
 
-    <div class="main-layout">
-        <aside class="sidebar">
-            <div class="filter-card">
-                <div class="filter-section">
-                    <h4>Märke <i class="fa-solid fa-car-side"></i></h4>
-                    <select id="filterBrand" class="filter-input">
-                        <option value="all">Alla märken</option>
-                    </select>
-                </div>
-                
-                <div class="filter-section">
-                    <h4>Drivmedel <i class="fa-solid fa-gas-pump"></i></h4>
-                    <select id="filterFuel" class="filter-input">
-                        <option value="all">Alla typer</option>
-                        <option value="Bensin">Bensin</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="El">Elbil</option>
-                        <option value="Hybrid">Hybrid</option>
-                    </select>
-                </div>
+<script type="module">
+    import { db } from './firebase-config.js';
+    import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import carData from './cars-data.js';
 
-                <div class="filter-section">
-                    <h4>Prisintervall (SEK) <i class="fa-solid fa-coins"></i></h4>
-                    <div class="range-grid">
-                        <input type="number" id="minPrice" class="filter-input" placeholder="Från">
-                        <input type="number" id="maxPrice" class="filter-input" placeholder="Till">
-                    </div>
-                </div>
+    const grid = document.getElementById('resultsGrid');
+    const params = new URLSearchParams(window.location.search);
 
-                <div class="filter-section">
-                    <h4>Miltal (Mil) <i class="fa-solid fa-gauge-high"></i></h4>
-                    <div class="range-grid">
-                        <input type="number" id="minMil" class="filter-input" placeholder="Min">
-                        <input type="number" id="maxMil" class="filter-input" placeholder="Max">
-                    </div>
-                </div>
+    async function init() {
+        // تعبئة الماركات
+        const brandSel = document.getElementById('fBrand');
+        Object.keys(carData).forEach(b => {
+            const o = document.createElement('option'); o.value = b; o.textContent = b;
+            brandSel.appendChild(o);
+        });
+        brandSel.value = params.get('brand') || 'all';
 
-                <button class="apply-btn" id="executeFilter">
-                    <i class="fa-solid fa-sliders-h"></i> Uppdatera resultat
-                </button>
-            </div>
-        </aside>
+        await fetchAds();
+    }
 
-        <main>
-            <div class="results-container" id="masterGrid">
-                <!-- Skeleton Layer -->
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
-            </div>
-        </main>
-    </div>
-
-    <script type="module">
-        /**
-         * BILHK Professional Results Engine v2.0
-         * Core Logic: High Performance Filtering & Rendering
-         */
-        import { auth, db } from './firebase-config.js';
-        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import carData from './cars-data.js';
-
-        const DOM = {
-            grid: document.getElementById('masterGrid'),
-            counter: document.getElementById('vehicleCounter'),
-            brandFilter: document.getElementById('filterBrand'),
-            fuelFilter: document.getElementById('filterFuel'),
-            sortSelect: document.getElementById('masterSort'),
-            executeBtn: document.getElementById('executeFilter')
-        };
-
-        const URL_ENGINE = new URLSearchParams(window.location.search);
-        let GLOBAL_STATE = {
-            rawVehicles: [],
-            filteredVehicles: [],
-            viewMode: 'grid'
-        };
-
-        /**
-         * Initialize User Interface Dynamics
-         */
-        function initializeEngine() {
-            // Populate Brands from carData Catalog
-            Object.keys(carData).sort().forEach(brand => {
-                const opt = document.createElement('option');
-                opt.value = brand;
-                opt.textContent = brand;
-                DOM.brandFilter.appendChild(opt);
-            });
-
-            // Synchronize State with URL Parameters
-            DOM.brandFilter.value = URL_ENGINE.get('brand') || 'all';
-            DOM.fuelFilter.value = URL_ENGINE.get('fuel') || 'all';
-            document.getElementById('minPrice').value = URL_ENGINE.get('minP') || '';
-            document.getElementById('maxPrice').value = URL_ENGINE.get('maxP') || '';
-            document.getElementById('minMil').value = URL_ENGINE.get('minM') || '';
-            document.getElementById('maxMil').value = URL_ENGINE.get('maxM') || '';
-
-            fetchVehiclesFromCloud();
-        }
-
-        /**
-         * Cloud Data Fetching Logic (Firebase Firestore)
-         */
-        async function fetchVehiclesFromCloud() {
-            try {
-                // Fetch only active listings to optimize bandwidth
-                const q = query(collection(db, "cars"), where("status", "==", "active"));
-                const snapshot = await getDocs(q);
-                
-                GLOBAL_STATE.rawVehicles = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-
-                applyComplexFiltering();
-            } catch (error) {
-                console.error("Critical System Failure:", error);
-                renderErrorState("Ett anslutningsfel uppstod. Kontrollera din internetanslutning.");
-            }
-        }
-
-        /**
-         * Multi-Dimensional Filtering Logic
-         */
-        function applyComplexFiltering() {
-            const criteria = {
-                brand: DOM.brandFilter.value,
-                fuel: DOM.fuelFilter.value,
-                minP: Number(document.getElementById('minPrice').value) || 0,
-                maxP: Number(document.getElementById('maxPrice').value) || Infinity,
-                minM: Number(document.getElementById('minMil').value) || 0,
-                maxM: Number(document.getElementById('maxMil').value) || Infinity
-            };
-
-            GLOBAL_STATE.filteredVehicles = GLOBAL_STATE.rawVehicles.filter(car => {
-                const matchesBrand = criteria.brand === 'all' || car.brand === criteria.brand;
-                const matchesFuel = criteria.fuel === 'all' || car.fuel === criteria.fuel;
-                const matchesPrice = Number(car.price) >= criteria.minP && Number(car.price) <= criteria.maxP;
-                const matchesMil = Number(car.mileage) >= criteria.minM && Number(car.mileage) <= criteria.maxM;
-
-                return matchesBrand && matchesFuel && matchesPrice && matchesMil;
-            });
-
-            applySortingLogic();
-        }
-
-        /**
-         * Real-time Sorting Algorithm
-         */
-        function applySortingLogic() {
-            const type = DOM.sortSelect.value;
+    async function fetchAds() {
+        grid.innerHTML = "Laddar...";
+        try {
+            // جلب الإعلانات النشطة فقط
+            const q = query(collection(db, "cars"), where("status", "==", "active"));
+            const snap = await getDocs(q);
             
-            GLOBAL_STATE.filteredVehicles.sort((a, b) => {
-                switch(type) {
-                    case 'price_asc': return a.price - b.price;
-                    case 'price_desc': return b.price - a.price;
-                    case 'mil_asc': return a.mileage - b.mileage;
-                    default: return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
-                }
+            let cars = [];
+            snap.forEach(doc => cars.push({ id: doc.id, ...doc.data() }));
+
+            // الفلترة البرمجية المعمقة
+            const brandF = params.get('brand');
+            const maxPF = Number(params.get('maxP')) || Infinity;
+
+            const filtered = cars.filter(c => {
+                const matchB = !brandF || brandF === 'all' || c.brand === brandF;
+                const matchP = Number(c.price) <= maxPF;
+                return matchB && matchP;
             });
 
-            renderDisplayLayer();
+            render(filtered);
+        } catch (e) {
+            console.error(e);
+            grid.innerHTML = "Ett fel uppstod.";
         }
+    }
 
-        /**
-         * High Performance Rendering Layer
-         */
-        function renderDisplayLayer() {
-            DOM.grid.innerHTML = "";
-            const count = GLOBAL_STATE.filteredVehicles.length;
-            DOM.counter.innerText = `${count} fordon matchar dina kriterier`;
-
-            if (count === 0) {
-                renderEmptyState();
-                return;
-            }
-
-            const fragment = document.createDocumentFragment();
-
-            GLOBAL_STATE.filteredVehicles.forEach(car => {
-                const card = document.createElement('a');
-                card.href = `details.html?id=${car.id}`;
-                card.className = `car-card ${GLOBAL_STATE.viewMode === 'list' ? 'list-mode' : ''}`;
-                
-                const priceFormatted = Number(car.price).toLocaleString('sv-SE');
-                const mainImg = (car.images && car.images.length > 0) ? car.images[0] : 'assets/no-image.jpg';
-
-                card.innerHTML = `
+    function render(data) {
+        grid.innerHTML = "";
+        document.getElementById('counter').innerText = `${data.length} bilar hittades`;
+        if (data.length === 0) {
+            grid.innerHTML = `<div class="empty-state"><h2>Inga bilar hittades</h2></div>`;
+            return;
+        }
+        data.forEach(c => {
+            grid.innerHTML += `
+                <a href="details.html?id=${c.id}" class="car-card">
                     <div class="img-box">
-                        <img src="${mainImg}" alt="${car.brand} ${car.model}" loading="lazy" onerror="this.src='assets/no-image.jpg'">
-                        <div class="price-badge">${priceFormatted} kr</div>
+                        <img src="${c.images?.[0] || ''}" style="width:100%; height:100%; object-fit:cover;">
+                        <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
                     </div>
-                    <div class="card-info">
-                        <h2 class="car-name">${car.brand} ${car.model}</h2>
-                        <div class="spec-container">
-                            <span class="tag"><i class="fa-regular fa-calendar-days"></i> ${car.year}</span>
-                            <span class="tag"><i class="fa-solid fa-road"></i> ${car.mileage} mil</span>
-                            <span class="tag"><i class="fa-solid fa-gas-pump"></i> ${car.fuel}</span>
-                            ${car.gearbox ? `<span class="tag"><i class="fa-solid fa-cog"></i> ${car.gearbox}</span>` : ''}
-                        </div>
-                        <div class="card-footer">
-                            <span><i class="fa-solid fa-location-dot"></i> ${car.city || 'Sverige'}</span>
-                            <span style="color:var(--primary)">Mer info <i class="fa-solid fa-circle-chevron-right"></i></span>
-                        </div>
+                    <div class="info">
+                        <h3>${c.brand} ${c.model}</h3>
+                        <p style="color:#666; font-size:14px; margin-top:10px;">${c.year} | ${c.mileage} mil | ${c.fuel}</p>
                     </div>
-                `;
-                fragment.appendChild(card);
-            });
+                </a>`;
+        });
+    }
 
-            DOM.grid.appendChild(fragment);
-        }
+    document.getElementById('applyF').onclick = () => {
+        const b = document.getElementById('fBrand').value;
+        location.href = `results-fixed.html?brand=${b}`;
+    };
 
-        /**
-         * State Feedback Functions
-         */
-        function renderEmptyState() {
-            DOM.grid.innerHTML = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-magnifying-glass-location"></i>
-                    <h2>Inga resultat matchar</h2>
-                    <p>Vi hittade inga fordon med valda filter. Försök att bredda din sökning.</p>
-                    <button onclick="window.location.href='results-fixed.html'" class="apply-btn" style="width:auto; margin:0 auto;">Återställ alla filter</button>
-                </div>`;
-        }
-
-        function renderErrorState(msg) {
-            DOM.grid.innerHTML = `<div class="empty-state"><i class="fa-solid fa-triangle-exclamation" style="color:var(--danger)"></i><h2>Systemfel</h2><p>${msg}</p></div>`;
-        }
-
-        /**
-         * Event Listeners Architecture
-         */
-        DOM.executeBtn.onclick = () => {
-            const params = new URLSearchParams();
-            const brand = DOM.brandFilter.value;
-            const fuel = DOM.fuelFilter.value;
-            const minP = document.getElementById('minPrice').value;
-            const maxP = document.getElementById('maxPrice').value;
-            const minM = document.getElementById('minMil').value;
-            const maxM = document.getElementById('maxMil').value;
-
-            if (brand !== 'all') params.set('brand', brand);
-            if (fuel !== 'all') params.set('fuel', fuel);
-            if (minP) params.set('minP', minP);
-            if (maxP) params.set('maxP', maxP);
-            if (minM) params.set('minM', minM);
-            if (maxM) params.set('maxM', maxM);
-
-            window.history.pushState({}, '', `?${params.toString()}`);
-            applyComplexFiltering();
-        };
-
-        DOM.sortSelect.onchange = applySortingLogic;
-
-        document.getElementById('setGrid').onclick = function() {
-            GLOBAL_STATE.viewMode = 'grid';
-            DOM.grid.classList.remove('list-mode');
-            this.classList.add('active');
-            document.getElementById('setList').classList.remove('active');
-            renderDisplayLayer();
-        };
-
-        document.getElementById('setList').onclick = function() {
-            GLOBAL_STATE.viewMode = 'list';
-            DOM.grid.classList.add('list-mode');
-            this.classList.add('active');
-            document.getElementById('setGrid').classList.remove('active');
-            renderDisplayLayer();
-        };
-
-        // Launch Engine on Load
-        window.addEventListener('DOMContentLoaded', initializeEngine);
-    </script>
+    init();
+</script>
 </body>
 </html>
