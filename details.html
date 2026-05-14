@@ -1,118 +1,321 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="sv" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biluppgifter | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fordonsdetaljer | BILHK Professional</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        :root { --primary: #2563eb; --dark: #0f172a; --bg: #f8fafc; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); }
-        header { background: white; padding: 15px 5%; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .container { max-width: 1000px; margin: 30px auto; padding: 20px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e07210;
+            --dark: #0f172a;
+            --muted: #64748b;
+            --light-bg: #f8fafc;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light-bg); color: var(--dark); line-height: 1.6; }
+
+        /* --- Navigation --- */
+        nav {
+            background: var(--white);
+            padding: 15px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: var(--dark); }
+        .logo span { color: var(--primary); }
+
+        /* --- Main Layout --- */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 380px; gap: 30px; }
+
+        /* --- Image Gallery --- */
+        .gallery-section { background: var(--white); border-radius: 24px; overflow: hidden; border: 1px solid var(--border); }
+        .main-img-container { width: 100%; height: 500px; background: #eee; position: relative; cursor: zoom-in; }
+        .main-img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
         
-        /* معرض الصور */
-        .image-gallery { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .main-img { width: 100%; height: 400px; object-fit: cover; border-radius: 15px; }
-        .side-images { display: flex; flex-direction: column; gap: 10px; }
-        .side-images img { width: 100%; height: 195px; object-fit: cover; border-radius: 15px; }
+        .thumbnails { display: flex; gap: 10px; padding: 15px; overflow-x: auto; background: var(--white); }
+        .thumb { width: 100px; height: 70px; border-radius: 8px; cursor: pointer; object-fit: cover; opacity: 0.6; transition: 0.2s; border: 2px solid transparent; }
+        .thumb.active { opacity: 1; border-color: var(--primary); }
 
-        .car-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
-        .car-header h1 { font-size: 32px; margin: 0; }
-        .price-tag { font-size: 30px; font-weight: 800; color: var(--primary); }
+        /* --- Car Info --- */
+        .details-card { background: var(--white); padding: 35px; border-radius: 24px; border: 1px solid var(--border); margin-top: 30px; }
+        .car-title-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+        .car-title-row h1 { font-size: 32px; font-weight: 900; letter-spacing: -1px; }
+        .price-big { font-size: 36px; font-weight: 900; color: var(--primary); }
 
-        /* جدول المواصفات */
-        .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .spec-item { background: #f1f5f9; padding: 15px; border-radius: 12px; }
-        .spec-label { font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; }
-        .spec-value { font-size: 18px; font-weight: 700; color: var(--dark); }
+        .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; margin: 30px 0; padding: 25px; background: var(--light-bg); border-radius: 20px; }
+        .spec-item { display: flex; flex-direction: column; gap: 5px; }
+        .spec-label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+        .spec-value { font-size: 16px; font-weight: 700; }
 
-        .contact-box { background: var(--dark); color: white; padding: 25px; border-radius: 15px; text-align: center; }
-        .btn-call { background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 10px; font-weight: 700; cursor: pointer; width: 100%; font-size: 18px; }
+        .description { margin-top: 30px; border-top: 1px solid var(--border); padding-top: 30px; }
+        .description h3 { margin-bottom: 15px; font-weight: 800; }
+        .description p { white-space: pre-wrap; color: #475569; }
+
+        /* --- Sidebar (Seller Info) --- */
+        .sidebar-sticky { position: sticky; top: 100px; }
+        .seller-card { background: var(--white); padding: 30px; border-radius: 24px; border: 1px solid var(--border); box-shadow: var(--shadow-lg); }
+        .seller-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .seller-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--primary-soft); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: var(--primary); border: 2px solid var(--border); }
+        .seller-name { font-size: 18px; font-weight: 800; }
+        .seller-type { font-size: 13px; color: var(--muted); }
+
+        .action-btns { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
+        .btn { padding: 16px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; font-size: 15px; text-decoration: none; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn-outline { background: var(--white); border: 2px solid var(--border); color: var(--dark); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* --- Loading State --- */
+        #loadingOverlay { position: fixed; inset: 0; background: var(--white); z-index: 2000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .spinner { width: 50px; height: 50px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .container { grid-template-columns: 1fr; }
+            .sidebar-sticky { position: static; }
+            .main-img-container { height: 350px; }
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <a href="index.html" style="text-decoration:none; color:var(--dark); font-weight:700;">← Tillbaka till sökning</a>
-</header>
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p style="margin-top:15px; font-weight:600;">Laddar fordonsuppgifter...</p>
+    </div>
 
-<div class="container" id="carDetails">
-    <p>Laddar information...</p>
-</div>
+    <nav>
+        <a href="index.html" class="logo">BIL<span>HK</span></a>
+        <div id="navAuth">
+            </div>
+    </nav>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import firebaseConfig from './firebase-config.js';
+    <div class="container" id="content">
+        <main>
+            <div class="gallery-section">
+                <div class="main-img-container">
+                    <img id="mainDisplayImg" src="" alt="Car Image">
+                </div>
+                <div class="thumbnails" id="thumbContainer">
+                    </div>
+            </div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+            <div class="details-card">
+                <div class="car-title-row">
+                    <div>
+                        <h1 id="carFullTitle">Laddar...</h1>
+                        <p id="carReg" style="color:var(--muted); font-weight:600; margin-top:5px;"></p>
+                    </div>
+                    <div class="price-big" id="carPrice">0 kr</div>
+                </div>
 
-    // الحصول على الـ ID من الرابط
-    const urlParams = new URLSearchParams(window.location.search);
-    const carId = urlParams.get('id');
+                <div class="specs-grid">
+                    <div class="spec-item">
+                        <span class="spec-label">Modellår</span>
+                        <span class="spec-value" id="specYear">-</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Miltal</span>
+                        <span class="spec-value" id="specMil">- mil</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Växellåda</span>
+                        <span class="spec-value" id="specGear">-</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Bränsle</span>
+                        <span class="spec-value" id="specFuel">-</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Hästkrafter</span>
+                        <span class="spec-value" id="specHp">- hk</span>
+                    </div>
+                </div>
 
-    async function getCarInfo() {
-        if (!carId) return;
-        const docRef = doc(db, "cars", carId);
-        const docSnap = await getDoc(docRef);
+                <div class="description">
+                    <h3>Beskrivning</h3>
+                    <p id="carDesc">Ingen beskrivning tillgänglig.</p>
+                </div>
+            </div>
+        </main>
 
-        if (docSnap.exists()) {
-            const car = docSnap.data();
-            renderDetails(car);
-        } else {
-            document.getElementById('carDetails').innerHTML = "Bilen hittades inte.";
+        <aside class="sidebar-sticky">
+            <div class="seller-card">
+                <div class="seller-header">
+                    <div class="seller-avatar" id="sellerInitials">?</div>
+                    <div>
+                        <div class="seller-name" id="sellerName">Laddar...</div>
+                        <div class="seller-type" id="sellerType">Privat säljare</div>
+                    </div>
+                </div>
+
+                <div class="action-btns">
+                    <button class="btn btn-primary" id="startChatBtn">
+                        <i class="fa-solid fa-comments"></i> Kontakta säljaren
+                    </button>
+                    <button class="btn btn-outline" id="showPhoneBtn">
+                        <i class="fa-solid fa-phone"></i> Visa telefonnummer
+                    </button>
+                    <a href="#" class="btn btn-outline" id="viewSellerProfile">
+                        <i class="fa-solid fa-user"></i> Visa alla annonser
+                    </a>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; padding: 20px; background: #eff6ff; border-radius: 18px; border: 1px solid #dbeafe;">
+                <p style="font-size: 13px; color: #1e40af; font-weight: 600;">
+                    <i class="fa-solid fa-shield-halved"></i> Köp tryggt via BILHK. Vi rekommenderar att du träffar säljaren och provkör fordonet innan betalning.
+                </p>
+            </div>
+        </aside>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { doc, getDoc, setDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const carId = urlParams.get('id');
+        let currentCarData = null;
+        let currentUser = null;
+
+        if (!carId) window.location.href = 'index.html';
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                document.getElementById('navAuth').innerHTML = `<a href="dashboard-fixed.html" class="btn btn-outline" style="padding:8px 15px; font-size:13px;">Mitt konto</a>`;
+            } else {
+                document.getElementById('navAuth').innerHTML = `<a href="login.html" class="btn btn-primary" style="padding:8px 15px; font-size:13px;">Logga in</a>`;
+            }
+        });
+
+        async function fetchCarDetails() {
+            try {
+                const docRef = doc(db, "cars", carId);
+                const snap = await getDoc(docRef);
+
+                if (snap.exists()) {
+                    currentCarData = snap.data();
+                    renderData(currentCarData);
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                } else {
+                    Swal.fire('Ett fel uppstod', 'Annonsen kunde inte hittas.', 'error').then(() => window.location.href='index.html');
+                }
+            } catch (error) {
+                console.error("Error fetching details:", error);
+            }
         }
-    }
 
-    function renderDetails(car) {
-        const container = document.getElementById('carDetails');
-        container.innerHTML = `
-            <div class="image-gallery">
-                <img src="${car.images?.[0] || 'placeholder.jpg'}" class="main-img">
-                <div class="side-images">
-                    <img src="${car.images?.[1] || car.images?.[0]}">
-                    <img src="${car.images?.[2] || car.images?.[0]}">
-                </div>
-            </div>
+        function renderData(car) {
+            // الصور
+            const images = car.images || ['placeholder.jpg'];
+            const mainImg = document.getElementById('mainDisplayImg');
+            mainImg.src = images[0];
 
-            <div class="car-header">
-                <div>
-                    <h1>${car.brand}</h1>
-                    <p style="color:gray;">Registreringsnummer: <strong>${car.regNr}</strong></p>
-                </div>
-                <div class="price-tag">${Number(car.price).toLocaleString()} kr</div>
-            </div>
+            const thumbContainer = document.getElementById('thumbContainer');
+            thumbContainer.innerHTML = images.map((img, idx) => `
+                <img src="${img}" class="thumb ${idx === 0 ? 'active' : ''}" onclick="changeImg('${img}', this)">
+            `).join('');
 
-            <div class="specs-grid">
-                <div class="spec-item">
-                    <div class="spec-label">Modellår</div>
-                    <div class="spec-value">${car.year || 'N/A'}</div>
-                </div>
-                <div class="spec-item">
-                    <div class="spec-label">Miltal</div>
-                    <div class="spec-value">${car.mileage || '0'} mil</div>
-                </div>
-                <div class="spec-item">
-                    <div class="spec-label">Växellåda</div>
-                    <div class="spec-value">Automat</div>
-                </div>
-                <div class="spec-item">
-                    <div class="spec-label">Bränsle</div>
-                    <div class="spec-value">Diesel</div>
-                </div>
-            </div>
+            // المعلومات الأساسية
+            document.title = `${car.brand} ${car.model} | BILHK`;
+            document.getElementById('carFullTitle').innerText = `${car.brand} ${car.model}`;
+            document.getElementById('carPrice').innerText = `${Number(car.price).toLocaleString('sv-SE')} kr`;
+            document.getElementById('carReg').innerText = car.regNr ? `REG: ${car.regNr.toUpperCase()}` : '';
+            
+            // المواصفات
+            document.getElementById('specYear').innerText = car.year;
+            document.getElementById('specMil').innerText = `${car.mileage} mil`;
+            document.getElementById('specGear').innerText = car.transmission || 'Automat';
+            document.getElementById('specFuel').innerText = car.fuel;
+            document.getElementById('specHp').innerText = car.hp ? `${car.hp} hk` : '- hk';
+            document.getElementById('carDesc').innerText = car.description || 'Ingen beskrivning tillgänglig.';
 
-            <div class="contact-box">
-                <h3>Intresserad av bilen?</h3>
-                <p>Kontakta säljaren direkt för mer information eller provkörning.</p>
-                <button class="btn-call">Visa Telefonnummer</button>
-            </div>
-        `;
-    }
+            // بيانات البائع
+            const sName = car.sellerName || 'Säljare';
+            document.getElementById('sellerName').innerText = sName;
+            document.getElementById('sellerInitials').innerText = sName.charAt(0).toUpperCase();
+            document.getElementById('sellerType').innerText = car.sellerType === 'Foretag' ? 'Professionell handlare' : 'Privatperson';
+            document.getElementById('viewSellerProfile').href = `seller.html?id=${car.ownerId}`;
+        }
 
-    getCarInfo();
-</script>
+        // تبديل الصور
+        window.changeImg = (url, el) => {
+            document.getElementById('mainDisplayImg').src = url;
+            document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        };
+
+        // إظهار الهاتف
+        document.getElementById('showPhoneBtn').onclick = () => {
+            if (!currentCarData) return;
+            const phone = currentCarData.sellerPhone || 'Ej angivet';
+            Swal.fire({
+                title: 'Telefonnummer',
+                text: phone,
+                icon: 'info',
+                confirmButtonText: 'Ring nu',
+                confirmButtonColor: '#f58220'
+            }).then((result) => {
+                if (result.isConfirmed && phone !== 'Ej angivet') window.location.href = `tel:${phone}`;
+            });
+        };
+
+        // بدء الدردشة
+        document.getElementById('startChatBtn').onclick = async () => {
+            if (!currentUser) {
+                Swal.fire('Logga in', 'Du måste vara inloggad för att skicka meddelanden.', 'warning').then(() => window.location.href='login.html');
+                return;
+            }
+
+            if (currentUser.uid === currentCarData.ownerId) {
+                Swal.fire('Info', 'Detta är din egen annons.', 'info');
+                return;
+            }
+
+            // إنشاء غرفة دردشة
+            const chatId = [currentUser.uid, currentCarData.ownerId].sort().join('_') + "_" + carId;
+            const chatRef = doc(db, "chats", chatId);
+
+            try {
+                await setDoc(chatRef, {
+                    id: chatId,
+                    participants: [currentUser.uid, currentCarData.ownerId],
+                    carId: carId,
+                    carTitle: `${currentCarData.brand} ${currentCarData.model}`,
+                    carImage: currentCarData.images[0],
+                    lastMessage: "Intresserad av bilen",
+                    lastMessageTime: serverTimestamp(),
+                    unreadCount: 1,
+                    lastMessageReceiver: currentCarData.ownerId
+                }, { merge: true });
+
+                window.location.href = `messages.html?chat=${chatId}`;
+            } catch (err) {
+                console.error("Chat Error:", err);
+            }
+        };
+
+        fetchCarDetails();
+    </script>
 </body>
 </html>
