@@ -2,128 +2,2045 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Redigera Annons | BilMarknad-HK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Redigera annons | BILHK</title>
+
+    <meta name="description" content="Redigera din fordonsannons på BILHK.">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        body { background: var(--bg); font-family: 'Inter', sans-serif; padding: 20px; color: var(--dark); margin: 0; }
-        .form-card { max-width: 600px; margin: 30px auto; background: white; padding: 35px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
-        h2 { margin-bottom: 25px; font-weight: 900; text-align: center; }
-        .form-group { margin-bottom: 18px; }
-        label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 14px; color: #64748b; }
-        input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); outline: none; font-size: 15px; background: #f8fafc; transition: 0.3s; }
-        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: white; }
-        .btn-save { width: 100%; padding: 16px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 16px; transition: 0.3s; margin-top: 10px; }
-        .btn-save:hover { background: #1e293b; }
-        .btn-save:disabled { background: #cbd5e1; cursor: not-allowed; }
-        .btn-cancel { width: 100%; padding: 16px; background: transparent; color: #64748b; border: none; font-weight: 700; cursor: pointer; margin-top: 5px; }
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e67312;
+            --primary-soft: rgba(245, 130, 32, 0.12);
+
+            --dark: #0f172a;
+            --dark-soft: #1e293b;
+
+            --text: #0f172a;
+            --muted: #64748b;
+            --muted-light: #94a3b8;
+
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-soft: #f1f5f9;
+
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --success: #16a34a;
+            --success-soft: rgba(22, 163, 74, 0.10);
+
+            --danger: #dc2626;
+            --danger-soft: rgba(220, 38, 38, 0.10);
+
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.13);
+
+            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
+            --shadow-lg: 0 28px 80px rgba(15, 23, 42, 0.16);
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 30px;
+            --radius-full: 999px;
+
+            --max-width: 1120px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at 12% 12%, rgba(245, 130, 32, 0.14), transparent 28%),
+                radial-gradient(circle at 88% 8%, rgba(15, 23, 42, 0.10), transparent 31%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+            color: var(--text);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .top-bar {
+            width: 100%;
+            background: linear-gradient(90deg, var(--dark) 0%, var(--dark-soft) 65%, #2b1d12 100%);
+            color: white;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .top-bar i {
+            color: var(--primary);
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 17px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 22px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--dark);
+            letter-spacing: -0.06em;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary) 0%, #ffb15c 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(245, 130, 32, 0.35);
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: var(--radius-full);
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 850;
+            transition: 0.25s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-soft);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .page-shell {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 38px 24px 80px;
+        }
+
+        .page-heading {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 20px;
+            align-items: end;
+            margin-bottom: 25px;
+        }
+
+        .eyebrow {
+            width: fit-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 13px;
+            border-radius: var(--radius-full);
+            background: var(--primary-soft);
+            color: var(--primary-hover);
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 13px;
+        }
+
+        .page-heading h1 {
+            font-size: clamp(30px, 4vw, 48px);
+            line-height: 1.05;
+            font-weight: 900;
+            letter-spacing: -0.055em;
+            color: var(--dark);
+            margin-bottom: 12px;
+        }
+
+        .page-heading p {
+            max-width: 760px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.75;
+            font-weight: 550;
+        }
+
+        .heading-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .edit-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 340px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .form-panel,
+        .side-panel {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(16px);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 22px 24px;
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.94)),
+                radial-gradient(circle at top right, rgba(245, 130, 32, 0.35), transparent 34%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .panel-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 17px;
+            display: grid;
+            place-items: center;
+            background: rgba(245, 130, 32, 0.18);
+            color: var(--primary);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            font-size: 19px;
+        }
+
+        .panel-title h2 {
+            font-size: 19px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 4px;
+        }
+
+        .panel-title span {
+            font-size: 12px;
+            color: #cbd5e1;
+            font-weight: 700;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.10);
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 850;
+            white-space: nowrap;
+        }
+
+        .status-pill i {
+            color: var(--primary);
+        }
+
+        .panel-body {
+            padding: 24px;
+        }
+
+        .form-section {
+            border: 1px solid var(--border);
+            background: rgba(248, 250, 252, 0.72);
+            border-radius: 24px;
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .section-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 15px;
+        }
+
+        .section-heading h3 {
+            color: var(--dark);
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 3px;
+        }
+
+        .section-heading span {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 7px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        label .hint {
+            color: var(--muted-light);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-light);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            background: white;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 700;
+            outline: none;
+            transition: 0.25s ease;
+        }
+
+        input,
+        select {
+            min-height: 48px;
+            padding: 12px 14px 12px 40px;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            padding: 14px;
+            line-height: 1.7;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.12);
+        }
+
+        input:disabled,
+        select:disabled,
+        textarea:disabled {
+            background: #e2e8f0;
+            color: #64748b;
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+
+        .field-error {
+            display: none;
+            margin-top: 7px;
+            color: var(--danger);
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1.45;
+        }
+
+        .form-group.invalid input,
+        .form-group.invalid select,
+        .form-group.invalid textarea {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.10);
+        }
+
+        .form-group.invalid .field-error {
+            display: block;
+        }
+
+        .actions-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn {
+            min-height: 52px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-radius: 17px;
+            border: none;
+            padding: 12px 17px;
+            font-size: 14px;
+            font-weight: 900;
+            text-align: center;
+            transition: 0.25s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 14px 28px rgba(245, 130, 32, 0.28);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-dark {
+            background: var(--dark);
+            color: white;
+        }
+
+        .btn-dark:hover {
+            background: var(--dark-soft);
+            transform: translateY(-1px);
+        }
+
+        .btn-light {
+            background: white;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-light:hover {
+            color: var(--primary-hover);
+            border-color: rgba(245, 130, 32, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger-soft {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .btn-danger-soft:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: #cbd5e1;
+            color: white;
+            border-color: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .side-panel {
+            position: sticky;
+            top: 98px;
+            padding: 22px;
+        }
+
+        .side-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .side-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 17px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .side-header h3 {
+            font-size: 17px;
+            font-weight: 900;
+            color: var(--dark);
+            letter-spacing: -0.025em;
+            margin-bottom: 4px;
+        }
+
+        .side-header p {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        .info-list {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 16px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+        }
+
+        .info-item i {
+            width: 25px;
+            height: 25px;
+            flex: 0 0 25px;
+            border-radius: 9px;
+            display: grid;
+            place-items: center;
+            background: var(--success-soft);
+            color: var(--success);
+            font-size: 12px;
+            margin-top: 1px;
+        }
+
+        .info-item strong {
+            display: block;
+            color: var(--dark);
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 3px;
+        }
+
+        .info-item span {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 650;
+            line-height: 1.55;
+        }
+
+        .warning-box {
+            padding: 15px;
+            border-radius: 18px;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            background: var(--warning-soft);
+            color: #92400e;
+            font-size: 12px;
+            font-weight: 750;
+            line-height: 1.65;
+        }
+
+        .warning-box i {
+            color: var(--warning);
+            margin-right: 6px;
+        }
+
+        .state-card {
+            max-width: 620px;
+            margin: 70px auto;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 34px;
+            text-align: center;
+        }
+
+        .state-icon {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 18px;
+            border-radius: 26px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 30px;
+        }
+
+        .state-icon.error {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .spinner {
+            width: 42px;
+            height: 42px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .state-card h2 {
+            color: var(--dark);
+            font-size: 26px;
+            line-height: 1.2;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 10px;
+        }
+
+        .state-card p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.75;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .footer {
+            background: var(--dark);
+            color: #94a3b8;
+            border-top: 1px solid #1e293b;
+            padding: 34px 24px;
+        }
+
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .footer-brand strong {
+            display: block;
+            color: white;
+            font-size: 14px;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .footer-brand span {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            font-size: 12px;
+            font-weight: 800;
+            transition: 0.25s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 980px) {
+            .edit-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .side-panel {
+                position: static;
+            }
+
+            .page-heading {
+                grid-template-columns: 1fr;
+            }
+
+            .heading-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .top-bar {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+
+            .header-inner {
+                padding: 14px 18px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-actions {
+                width: 100%;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                padding-bottom: 2px;
+            }
+
+            .nav-link {
+                white-space: nowrap;
+                font-size: 13px;
+                padding: 9px 13px;
+            }
+
+            .page-shell {
+                padding: 30px 18px 62px;
+            }
+
+            .form-grid,
+            .actions-row {
+                grid-template-columns: 1fr;
+            }
+
+            .panel-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .status-pill {
+                white-space: normal;
+            }
+
+            .form-section,
+            .panel-body {
+                padding: 18px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .logo {
+                font-size: 1.55rem;
+            }
+
+            .logo-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .page-heading h1 {
+                font-size: 32px;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<div class="form-card">
-    <h2>Redigera din annons</h2>
-    <form id="editForm">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="form-group"><label>Märke</label><input type="text" id="brand" required></div>
-            <div class="form-group"><label>Modell</label><input type="text" id="model" required></div>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="form-group"><label>Årsmodell</label><input type="number" id="year" required></div>
-            <div class="form-group"><label>Pris (kr)</label><input type="number" id="price" required></div>
-        </div>
+    <div class="top-bar">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Du kan endast redigera annonser som tillhör ditt konto.</span>
+    </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="form-group"><label>Miltal</label><input type="number" id="mileage" required></div>
-            <div class="form-group">
-                <label>Växellåda</label>
-                <select id="transmission">
-                    <option value="Automat">Automat</option>
-                    <option value="Manuell">Manuell</option>
-                </select>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo" aria-label="Gå till startsidan">
+                <span class="logo-icon">
+                    <i class="fa-solid fa-car-side"></i>
+                </span>
+                BIL<span>HK</span>
+            </a>
+
+            <nav class="nav-actions" aria-label="Huvudmeny">
+                <a href="my-account.html" class="nav-link">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Tillbaka
+                </a>
+
+                <a href="index.html" class="nav-link">
+                    <i class="fa-solid fa-house"></i>
+                    Hem
+                </a>
+
+                <a href="results.html" class="nav-link">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Sök bilar
+                </a>
+
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Dashboard
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-shell">
+
+        <section id="loadingState" class="state-card">
+            <div class="state-icon">
+                <div class="spinner"></div>
+            </div>
+            <h2>Laddar annons...</h2>
+            <p>Vänligen vänta medan vi kontrollerar annonsen och din behörighet.</p>
+        </section>
+
+        <section id="errorState" class="state-card hidden">
+            <div class="state-icon error">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h2 id="errorTitle">Ett fel uppstod</h2>
+            <p id="errorText">Annonsen kunde inte laddas.</p>
+            <a href="my-account.html" class="btn btn-primary">
+                <i class="fa-solid fa-arrow-left"></i>
+                Till mina annonser
+            </a>
+        </section>
+
+        <section id="editContent" class="hidden">
+            <div class="page-heading">
+                <div>
+                    <div class="eyebrow">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        Redigera annons
+                    </div>
+
+                    <h1 id="pageTitle">Redigera din annons</h1>
+
+                    <p id="pageSubtitle">
+                        Uppdatera bilens information noggrant. Ändringar sparas endast på din egen annons.
+                    </p>
+                </div>
+
+                <div class="heading-actions">
+                    <a href="my-account.html" class="btn btn-light">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Avbryt
+                    </a>
+                </div>
+            </div>
+
+            <section class="edit-layout">
+
+                <div class="form-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <div class="panel-icon">
+                                <i class="fa-solid fa-car-side"></i>
+                            </div>
+
+                            <div>
+                                <h2>Annonsuppgifter</h2>
+                                <span>Fyll i korrekta och tydliga uppgifter.</span>
+                            </div>
+                        </div>
+
+                        <div class="status-pill" id="editStatusPill">
+                            <i class="fa-solid fa-lock"></i>
+                            Behörighet kontrollerad
+                        </div>
+                    </div>
+
+                    <div class="panel-body">
+                        <form id="editForm" novalidate>
+
+                            <section class="form-section">
+                                <div class="section-heading">
+                                    <div class="section-icon">
+                                        <i class="fa-solid fa-car"></i>
+                                    </div>
+
+                                    <div>
+                                        <h3>Bilinformation</h3>
+                                        <span>Märke, modell och grunddata</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-grid">
+                                    <div class="form-group" data-field-group="brand">
+                                        <label for="brand">
+                                            Märke
+                                            <span class="hint">Obligatoriskt</span>
+                                        </label>
+
+                                        <div class="input-wrap">
+                                            <i class="fa-solid fa-car"></i>
+                                            <select id="brand" required></select>
+                                        </div>
+
+                                        <div class="field-error" id="brandError">Välj ett giltigt bilmärke.</div>
+                                    </div>
+
+                                    <div class="form-group" data-field-group="model">
+                                        <label for="model">
+                                            Modell
+                                            <span class="hint">Obligatoriskt</span>
+                                        </label>
+
+                                        <div class="input-wrap">
+                                            <i class="fa-solid fa-car-rear"></i>
+                                            <select id="model" required disabled></select>
+                                        </div>
+
+                                        <div class="field-error" id="modelError">Välj en giltig modell.</div>
+                                    </div>
+
+                                    <div class="form-group" data-field-group="year">
+                                        <label for="year">
+                                            Årsmodell
+                                            <span class="hint">1900–nästa år</span>
+                                        </label>
+
+                                        <div class="input-wrap">
+                                            <i class="fa-solid fa-calendar-days"></i>
+                                            <input type="number" id="year" min="1900" step="1" required>
+                                        </div>
+
+                                        <div class="field-error" id="yearError">Ange ett giltigt årsmodell.</div>
+                                    </div>
+
+                                    <div class="form-group" data-field-group="price">
+                                        <label for="price">
+                                            Pris
+                                            <span class="hint">SEK</span>
+                                        </label>
+
+                                        <div class="input-wrap">
+                                            <i class="fa-solid fa-tag"></i>
+                                            <input type="number" id="price" min="0" step="1" required>
+                                        </div>
+
+                                        <div class="field-error" id="priceError">Ange ett giltigt pris.</div>
+                                    </div>
+
+                                    <div class="form-group" data-field-group="mileage">
+                                        <label for="mileage">
+                                            Miltal
+                                            <span class="hint">mil</span>
+                                        </label>
+
+                                        <div class="input-wrap">
+                                            <i class="fa-solid fa-road"></i>
+                                            <input type="number" id="mileage" min="0" step="1" required>
+                                        </div>
+
+                                        <div class="field-error" id="mileageError">Ange ett giltigt miltal.</div>
+                                    </div>
+
+                                    <div class="form-group" data-field-group="bodyType">
+                                        <label for="bodyType">
+                                            Karosseri
+                                            <span class="hint">Valfritt</span>
+                                        </label>
+
+                                        <div class="input-wrap">
+                                            <i class="fa-solid fa-car-side"></i>
+                                            <select id="bodyType">
+                                                <option value="">Välj karosseri...</option>
+                                                <option value="Sedan">Sedan</option>
+                                                <option value="Kombi">Kombi</option>
+                                                <option value="SUV">SUV</option>
+                                                <option value="Halvkombi">Halvkombi</option>
+                                                <option value="Coupé">Coupé</option>
+                                                <option value="Cabriolet">Cabriolet</option>
+                                                <option value="Transportbil">Transportbil</option>
+                                                <option value="Pickup">Pickup</option>
+                                                <option value="Annat">Annat</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="field-error" id="bodyTypeError">Välj ett giltigt karosseri.</div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="form-section">
+                                <div class="section-heading">
+                                    <div class="section-icon">
+                                        <i class="fa-solid fa-gears"></i>
+                                    </div>
+
+                                    <div>
+                                        <h3>Tekniska uppgifter</h3>
+                                        <span>Drivmedel, växellåda och extra detaljer</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-grid">
+                                    <div class="form-group" data-field-group="transmission">
+                                        <label for="transmission">
+                                            Växellåda
+                                            <span class="hint">Obligatoriskt</span>
+                                        </label>
+
+                                        <div class="input-wrap">
+                                            <i class="fa-solid fa-gears"></i>
+                                            <select id="transmission" required>
+                                                <option value="Automat">Automat</option>
+                                                <option value="Manuell">Manuell</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="field-error" id="transmissionError">Välj växellåda.</div>
+                                    </div>
+
+                                    <div class="form-group" data-field-group="fuelType">
+                                        <label for="fuelType">
+                                            Drivmedel
+                                            <span class="hint">Obligatoriskt</span>
+                                        </label>
+
+                                        <div class="input-wrap">
+                                            <i class="fa-solid fa-gas-pump"></i>
+                                            <select id="fuelType" required>
+                                                <option value="Bensin">Bensin</option>
+                                                <option value="Diesel">Diesel</option>
+                                                <option value="El">El</option>
+                                                <option value="Hybrid">Hybrid</option>
+                                                <option value="Laddhybrid">Laddhybrid</option>
+                                                <option value="Etanol">Etanol</option>
+                                                <option value="Gas">Gas</option>
+                                                <option value="Annat">Annat</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="field-error" id="fuelTypeError">Välj drivmedel.</div>
+                                    </div>
+
+                                    <div class="form-group" data-field-group="color">
+                                        <label for="color">
+                                            Färg
+                                            <span class="hint">Valfritt</span>
+                                        </label>
+
+                                        <div class="input-wrap">
+                                            <i class="fa-solid fa-palette"></i>
+                                            <input type="text" id="color" maxlength="40" placeholder="Ex. Svart">
+                                        </div>
+
+                                        <div class="field-error" id="colorError">Färgen är för lång.</div>
+                                    </div>
+
+                                    <div class="form-group" data-field-group="location">
+                                        <label for="location">
+                                            Plats
+                                            <span class="hint">Valfritt</span>
+                                        </label>
+
+                                        <div class="input-wrap">
+                                            <i class="fa-solid fa-location-dot"></i>
+                                            <input type="text" id="location" maxlength="80" placeholder="Ex. Stockholm">
+                                        </div>
+
+                                        <div class="field-error" id="locationError">Platsen är för lång.</div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="form-section">
+                                <div class="section-heading">
+                                    <div class="section-icon">
+                                        <i class="fa-solid fa-align-left"></i>
+                                    </div>
+
+                                    <div>
+                                        <h3>Beskrivning</h3>
+                                        <span>Skriv tydligt men undvik känsliga personuppgifter</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group full" data-field-group="description">
+                                    <label for="description">
+                                        Beskrivning
+                                        <span class="hint">Max 5000 tecken</span>
+                                    </label>
+
+                                    <textarea id="description" rows="7" maxlength="5000" placeholder="Beskriv bilens skick, servicehistorik och viktig information."></textarea>
+
+                                    <div class="field-error" id="descriptionError">Beskrivningen är för lång.</div>
+                                </div>
+                            </section>
+
+                            <div class="actions-row">
+                                <button type="submit" class="btn btn-primary" id="saveBtn">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                    Spara ändringar
+                                </button>
+
+                                <button type="button" class="btn btn-light" id="cancelBtn">
+                                    <i class="fa-solid fa-xmark"></i>
+                                    Avbryt
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+                <aside class="side-panel">
+                    <div class="side-header">
+                        <div class="side-icon">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+
+                        <div>
+                            <h3>Redigeringstips</h3>
+                            <p>Gör annonsen tydlig och trovärdig.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-list">
+                        <div class="info-item">
+                            <i class="fa-solid fa-check"></i>
+                            <div>
+                                <strong>Kontrollera pris och miltal</strong>
+                                <span>Fel pris eller fel miltal kan göra annonsen missvisande.</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <i class="fa-solid fa-check"></i>
+                            <div>
+                                <strong>Skriv ärligt om skick</strong>
+                                <span>Nämn service, skador, fel och viktiga detaljer tydligt.</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <i class="fa-solid fa-check"></i>
+                            <div>
+                                <strong>Undvik privat information</strong>
+                                <span>Lägg inte personnummer, BankID, kortuppgifter eller lösenord i texten.</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <i class="fa-solid fa-check"></i>
+                            <div>
+                                <strong>Spara efter kontroll</strong>
+                                <span>Läs igenom alla uppgifter innan du uppdaterar annonsen.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Ändringar gäller direkt efter sparning. Kontrollera att uppgifterna är korrekta innan du fortsätter.
+                    </div>
+                </aside>
+
+            </section>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <strong>BILHK</strong>
+                <span>&copy; 2026 BILHK. En öppen marknadsplats för bilannonser.</span>
+            </div>
+
+            <div class="footer-links">
+                <a href="index.html">Hem</a>
+                <a href="results.html">Annonser</a>
+                <a href="add-car.html">Lägg till annons</a>
+                <a href="terms.html">Villkor</a>
             </div>
         </div>
+    </footer>
 
-        <div class="form-group">
-            <label>Drivmedel</label>
-            <select id="fuelType">
-                <option value="Bensin">Bensin</option>
-                <option value="Diesel">Diesel</option>
-                <option value="El">El</option>
-                <option value="Hybrid">Hybrid</option>
-            </select>
-        </div>
+    <script type="module">
+        import { auth, db } from "./firebase-config.js";
 
-        <div class="form-group">
-            <label>Beskrivning</label>
-            <textarea id="description" rows="5"></textarea>
-        </div>
+        import {
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        <button type="submit" class="btn-save" id="saveBtn">Spara ändringar</button>
-    </form>
-    <button class="btn-cancel" onclick="window.location.href='my-account.html'">Avbryt</button>
-</div>
+        import {
+            doc,
+            getDoc,
+            updateDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-<script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import {
+            attachBrandModelSelects,
+            isValidBrand,
+            isValidModelForBrand,
+            resolveBrandName,
+            resolveModelName
+        } from "./cars-data.js";
 
-    const carId = new URLSearchParams(window.location.search).get('id');
+        /**
+         * ============================================================
+         * BILHK - edit-car.html
+         * ------------------------------------------------------------
+         * صفحة تعديل إعلان سيارة.
+         *
+         * أهداف الإصلاح:
+         * 1. التأكد من تسجيل دخول المستخدم.
+         * 2. التأكد من أن الإعلان موجود.
+         * 3. التأكد من أن المستخدم الحالي هو صاحب الإعلان.
+         * 4. منع تعديل حقول حساسة مثل sellerId و createdAt و images.
+         * 5. تنظيف والتحقق من كل المدخلات قبل updateDoc.
+         * 6. استخدام DOM آمن بدون inline onclick.
+         * 7. استخدام car-data.js لتوحيد الماركات والموديلات.
+         * ============================================================
+         */
 
-    onAuthStateChanged(auth, (user) => {
-        if (!user) window.location.href = "login.html";
-        else fetchCar();
-    });
+        const EDIT_CONFIG = {
+            COLLECTIONS: {
+                CARS: "cars"
+            },
 
-    async function fetchCar() {
-        const snap = await getDoc(doc(db, "cars", carId));
-        if (snap.exists()) {
-            const data = snap.data();
-            document.getElementById('brand').value = data.brand || '';
-            document.getElementById('model').value = data.model || '';
-            document.getElementById('year').value = data.year || '';
-            document.getElementById('price').value = data.price || '';
-            document.getElementById('mileage').value = data.mileage || '';
-            document.getElementById('transmission').value = data.transmission || 'Automat';
-            document.getElementById('fuelType').value = data.fuelType || 'Bensin';
-            document.getElementById('description').value = data.description || '';
-        } else {
-            Swal.fire('Fel', 'Annonsen hittades inte.', 'error').then(() => {
-                window.location.href = "my-account.html";
+            ROUTES: {
+                LOGIN: "login.html",
+                ACCOUNT: "my-account.html",
+                DETAILS: "details.html",
+                HOME: "index.html"
+            },
+
+            LIMITS: {
+                DOCUMENT_ID_MAX_LENGTH: 140,
+                TEXT_MAX_LENGTH: 300,
+                DESCRIPTION_MAX_LENGTH: 5000,
+                COLOR_MAX_LENGTH: 40,
+                LOCATION_MAX_LENGTH: 80,
+                MIN_YEAR: 1900,
+                MAX_PRICE: 100000000,
+                MAX_MILEAGE: 3000000
+            },
+
+            ALLOWED: {
+                TRANSMISSION: ["Automat", "Manuell"],
+                FUEL_TYPE: ["Bensin", "Diesel", "El", "Hybrid", "Laddhybrid", "Etanol", "Gas", "Annat"],
+                BODY_TYPE: ["", "Sedan", "Kombi", "SUV", "Halvkombi", "Coupé", "Cabriolet", "Transportbil", "Pickup", "Annat"]
+            }
+        };
+
+        const state = {
+            carId: "",
+            currentUser: null,
+            originalCar: null,
+            isLoading: false,
+            isSaving: false,
+            detachBrandModelHandler: null
+        };
+
+        const elements = {
+            loadingState: document.getElementById("loadingState"),
+            errorState: document.getElementById("errorState"),
+            editContent: document.getElementById("editContent"),
+
+            errorTitle: document.getElementById("errorTitle"),
+            errorText: document.getElementById("errorText"),
+
+            pageTitle: document.getElementById("pageTitle"),
+            pageSubtitle: document.getElementById("pageSubtitle"),
+            editStatusPill: document.getElementById("editStatusPill"),
+
+            editForm: document.getElementById("editForm"),
+            saveBtn: document.getElementById("saveBtn"),
+            cancelBtn: document.getElementById("cancelBtn"),
+
+            brand: document.getElementById("brand"),
+            model: document.getElementById("model"),
+            year: document.getElementById("year"),
+            price: document.getElementById("price"),
+            mileage: document.getElementById("mileage"),
+            bodyType: document.getElementById("bodyType"),
+            transmission: document.getElementById("transmission"),
+            fuelType: document.getElementById("fuelType"),
+            color: document.getElementById("color"),
+            location: document.getElementById("location"),
+            description: document.getElementById("description")
+        };
+
+        initializeEditPage();
+
+        function initializeEditPage() {
+            attachGlobalErrorHandlers();
+            attachEventListeners();
+
+            state.carId = normalizeDocumentId(new URLSearchParams(window.location.search).get("id"));
+
+            if (!state.carId) {
+                renderErrorState("Ogiltig annonslänk", "Annonsens ID saknas eller är ogiltigt.");
+                return;
+            }
+
+            attachAuthObserver();
+        }
+
+        function attachEventListeners() {
+            elements.editForm.addEventListener("submit", handleFormSubmit);
+
+            elements.cancelBtn.addEventListener("click", handleCancel);
+
+            [
+                elements.brand,
+                elements.model,
+                elements.year,
+                elements.price,
+                elements.mileage,
+                elements.bodyType,
+                elements.transmission,
+                elements.fuelType,
+                elements.color,
+                elements.location,
+                elements.description
+            ].forEach((input) => {
+                input.addEventListener("input", () => {
+                    clearFieldError(input.id);
+                });
+
+                input.addEventListener("change", () => {
+                    clearFieldError(input.id);
+                });
             });
         }
-    }
 
-    document.getElementById('editForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('saveBtn');
-        btn.disabled = true; 
-        btn.innerText = "Sparar...";
+        function attachAuthObserver() {
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    redirectToLogin();
+                    return;
+                }
 
-        try {
-            await updateDoc(doc(db, "cars", carId), {
-                brand: document.getElementById('brand').value,
-                model: document.getElementById('model').value,
-                year: Number(document.getElementById('year').value),
-                price: Number(document.getElementById('price').value),
-                mileage: Number(document.getElementById('mileage').value),
-                transmission: document.getElementById('transmission').value,
-                fuelType: document.getElementById('fuelType').value,
-                description: document.getElementById('description').value,
+                state.currentUser = user;
+
+                await loadCarForEditing(state.carId, user);
+            });
+        }
+
+        async function loadCarForEditing(carId, user) {
+            setLoading(true);
+
+            try {
+                const carRef = doc(db, EDIT_CONFIG.COLLECTIONS.CARS, carId);
+                const carSnap = await getDoc(carRef);
+
+                if (!carSnap.exists()) {
+                    renderErrorState("Annonsen hittades inte", "Annonsen kan ha tagits bort eller så är länken fel.");
+                    return;
+                }
+
+                const car = normalizeCarDocument(carSnap.id, carSnap.data());
+
+                if (!isOwner(car, user)) {
+                    renderErrorState(
+                        "Ingen behörighet",
+                        "Du kan endast redigera annonser som tillhör ditt eget konto."
+                    );
+                    return;
+                }
+
+                if (car.isDeleted) {
+                    renderErrorState("Annonsen är borttagen", "Den här annonsen kan inte redigeras eftersom den är borttagen.");
+                    return;
+                }
+
+                state.originalCar = car;
+
+                prepareFormControls(car);
+                fillForm(car);
+                renderEditContent(car);
+            } catch (error) {
+                console.error("Could not load car for editing:", error);
+
+                renderErrorState(
+                    "Kunde inte ladda annonsen",
+                    getFriendlyFirestoreErrorMessage(error)
+                );
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function normalizeCarDocument(id, data) {
+            return {
+                id: normalizeDocumentId(id),
+
+                sellerId: normalizeDocumentId(data?.sellerId),
+                active: data?.active !== false,
+                isDeleted: data?.isDeleted === true,
+                status: normalizeText(data?.status || "active"),
+
+                brand: normalizeText(data?.brand),
+                model: normalizeText(data?.model),
+
+                year: toSafeInteger(data?.year, 0),
+                price: toSafeInteger(data?.price, 0),
+                mileage: toSafeInteger(data?.mileage, 0),
+
+                bodyType: normalizeText(data?.bodyType || data?.kar || data?.karosseri),
+                transmission: normalizeText(data?.transmission || data?.gearbox || data?.gear),
+                fuelType: normalizeText(data?.fuelType || data?.fuel),
+
+                color: normalizeLimitedText(data?.color, EDIT_CONFIG.LIMITS.COLOR_MAX_LENGTH),
+                location: normalizeLimitedText(data?.location || data?.city, EDIT_CONFIG.LIMITS.LOCATION_MAX_LENGTH),
+                description: normalizeLongText(data?.description),
+
+                createdAt: data?.createdAt || null,
+                updatedAt: data?.updatedAt || null
+            };
+        }
+
+        function isOwner(car, user) {
+            return Boolean(car?.sellerId && user?.uid && car.sellerId === user.uid);
+        }
+
+        function prepareFormControls(car) {
+            if (state.detachBrandModelHandler) {
+                state.detachBrandModelHandler();
+                state.detachBrandModelHandler = null;
+            }
+
+            state.detachBrandModelHandler = attachBrandModelSelects(elements.brand, elements.model, {
+                selectedBrand: car.brand,
+                selectedModel: car.model,
+                includeOther: true,
+                includeOtherModel: true
+            });
+        }
+
+        function fillForm(car) {
+            const resolvedBrand = resolveBrandName(car.brand);
+            const resolvedModel = resolveModelName(resolvedBrand, car.model);
+
+            elements.brand.value = resolvedBrand || car.brand || "";
+            elements.brand.dispatchEvent(new Event("change"));
+
+            if (resolvedModel) {
+                elements.model.value = resolvedModel;
+            }
+
+            elements.year.value = car.year || "";
+            elements.price.value = car.price || "";
+            elements.mileage.value = car.mileage || "";
+
+            setSelectValue(elements.bodyType, car.bodyType, "");
+            setSelectValue(elements.transmission, car.transmission, "Automat");
+            setSelectValue(elements.fuelType, car.fuelType, "Bensin");
+
+            elements.color.value = car.color || "";
+            elements.location.value = car.location || "";
+            elements.description.value = car.description || "";
+        }
+
+        function renderEditContent(car) {
+            showOnly("content");
+
+            const titleText = buildCarTitle(car);
+            elements.pageTitle.textContent = `Redigera ${titleText}`;
+            elements.pageSubtitle.textContent = "Uppdatera uppgifterna noggrant. Endast tillåtna annonsfält kommer att sparas.";
+
+            updateStatusPill("success", "Behörighet kontrollerad");
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+
+            if (state.isSaving || state.isLoading) {
+                return;
+            }
+
+            clearAllFieldErrors();
+
+            const validation = validateForm();
+
+            if (!validation.valid) {
+                await Swal.fire({
+                    icon: "warning",
+                    title: "Kontrollera uppgifterna",
+                    html: buildSafeErrorList(validation.messages),
+                    confirmButtonColor: "#f58220"
+                });
+
+                scrollToFirstInvalidField();
+                return;
+            }
+
+            const confirmation = await Swal.fire({
+                icon: "question",
+                title: "Spara ändringar?",
+                text: "Ändringarna kommer att uppdatera annonsen direkt.",
+                showCancelButton: true,
+                confirmButtonText: "Ja, spara",
+                cancelButtonText: "Avbryt",
+                confirmButtonColor: "#f58220",
+                cancelButtonColor: "#0f172a"
+            });
+
+            if (!confirmation.isConfirmed) {
+                return;
+            }
+
+            await saveChanges();
+        }
+
+        function validateForm() {
+            const messages = [];
+
+            const brand = normalizeText(elements.brand.value);
+            const model = normalizeText(elements.model.value);
+            const year = toSafeInteger(elements.year.value, NaN);
+            const price = toSafeInteger(elements.price.value, NaN);
+            const mileage = toSafeInteger(elements.mileage.value, NaN);
+            const bodyType = normalizeText(elements.bodyType.value);
+            const transmission = normalizeText(elements.transmission.value);
+            const fuelType = normalizeText(elements.fuelType.value);
+            const color = normalizeLimitedText(elements.color.value, EDIT_CONFIG.LIMITS.COLOR_MAX_LENGTH + 20);
+            const location = normalizeLimitedText(elements.location.value, EDIT_CONFIG.LIMITS.LOCATION_MAX_LENGTH + 20);
+            const description = normalizeLongText(elements.description.value);
+
+            const currentYear = new Date().getFullYear();
+            const maxYear = currentYear + 1;
+
+            if (!isValidBrand(brand)) {
+                setFieldError("brand", "Välj ett giltigt bilmärke.");
+                messages.push("Märke saknas eller är ogiltigt.");
+            }
+
+            if (!isValidModelForBrand(brand, model)) {
+                setFieldError("model", "Välj en giltig modell för valt märke.");
+                messages.push("Modell saknas eller matchar inte valt märke.");
+            }
+
+            if (!Number.isFinite(year) || year < EDIT_CONFIG.LIMITS.MIN_YEAR || year > maxYear) {
+                setFieldError("year", `Årsmodell måste vara mellan ${EDIT_CONFIG.LIMITS.MIN_YEAR} och ${maxYear}.`);
+                messages.push("Årsmodell är ogiltigt.");
+            }
+
+            if (!Number.isFinite(price) || price < 0 || price > EDIT_CONFIG.LIMITS.MAX_PRICE) {
+                setFieldError("price", "Ange ett giltigt pris.");
+                messages.push("Pris är ogiltigt.");
+            }
+
+            if (!Number.isFinite(mileage) || mileage < 0 || mileage > EDIT_CONFIG.LIMITS.MAX_MILEAGE) {
+                setFieldError("mileage", "Ange ett giltigt miltal.");
+                messages.push("Miltal är ogiltigt.");
+            }
+
+            if (!EDIT_CONFIG.ALLOWED.BODY_TYPE.includes(bodyType)) {
+                setFieldError("bodyType", "Välj ett giltigt karosserialternativ.");
+                messages.push("Karosseri är ogiltigt.");
+            }
+
+            if (!EDIT_CONFIG.ALLOWED.TRANSMISSION.includes(transmission)) {
+                setFieldError("transmission", "Välj en giltig växellåda.");
+                messages.push("Växellåda är ogiltig.");
+            }
+
+            if (!EDIT_CONFIG.ALLOWED.FUEL_TYPE.includes(fuelType)) {
+                setFieldError("fuelType", "Välj ett giltigt drivmedel.");
+                messages.push("Drivmedel är ogiltigt.");
+            }
+
+            if (color.length > EDIT_CONFIG.LIMITS.COLOR_MAX_LENGTH) {
+                setFieldError("color", "Färgen är för lång.");
+                messages.push("Färgen är för lång.");
+            }
+
+            if (location.length > EDIT_CONFIG.LIMITS.LOCATION_MAX_LENGTH) {
+                setFieldError("location", "Platsen är för lång.");
+                messages.push("Platsen är för lång.");
+            }
+
+            if (description.length > EDIT_CONFIG.LIMITS.DESCRIPTION_MAX_LENGTH) {
+                setFieldError("description", "Beskrivningen är för lång.");
+                messages.push("Beskrivningen är för lång.");
+            }
+
+            return {
+                valid: messages.length === 0,
+                messages
+            };
+        }
+
+        async function saveChanges() {
+            setSaving(true);
+
+            try {
+                if (!state.currentUser || !state.originalCar) {
+                    throw new Error("Saknar inloggad användare eller annonsdata.");
+                }
+
+                if (!isOwner(state.originalCar, state.currentUser)) {
+                    throw new Error("Du har inte behörighet att redigera den här annonsen.");
+                }
+
+                const updatePayload = buildUpdatePayload();
+
+                await updateDoc(
+                    doc(db, EDIT_CONFIG.COLLECTIONS.CARS, state.carId),
+                    updatePayload
+                );
+
+                await Swal.fire({
+                    icon: "success",
+                    title: "Sparat!",
+                    text: "Din annons har uppdaterats.",
+                    confirmButtonColor: "#f58220"
+                });
+
+                window.location.href = `${EDIT_CONFIG.ROUTES.DETAILS}?id=${encodeURIComponent(state.carId)}`;
+            } catch (error) {
+                console.error("Could not update car:", error);
+
+                await Swal.fire({
+                    icon: "error",
+                    title: "Kunde inte spara",
+                    text: getFriendlySaveErrorMessage(error),
+                    confirmButtonColor: "#f58220"
+                });
+            } finally {
+                setSaving(false);
+            }
+        }
+
+        function buildUpdatePayload() {
+            const brand = resolveBrandName(elements.brand.value);
+            const model = resolveModelName(brand, elements.model.value);
+
+            return removeUndefinedValues({
+                brand,
+                model,
+
+                year: toSafeInteger(elements.year.value, 0),
+                price: toSafeInteger(elements.price.value, 0),
+                mileage: toSafeInteger(elements.mileage.value, 0),
+
+                bodyType: normalizeText(elements.bodyType.value),
+                transmission: normalizeText(elements.transmission.value),
+                fuelType: normalizeText(elements.fuelType.value),
+
+                color: normalizeLimitedText(elements.color.value, EDIT_CONFIG.LIMITS.COLOR_MAX_LENGTH),
+                location: normalizeLimitedText(elements.location.value, EDIT_CONFIG.LIMITS.LOCATION_MAX_LENGTH),
+                description: normalizeLongText(elements.description.value),
+
+                title: buildTitleFromForm(),
+
                 updatedAt: serverTimestamp()
             });
-            await Swal.fire('Sparat!', 'Din annons har uppdaterats framgångsrikt.', 'success');
-            window.location.href = "my-account.html";
-        } catch (error) {
-            Swal.fire('Fel!', 'Ett fel uppstod: ' + error.message, 'error');
-            btn.disabled = false;
-            btn.innerText = "Spara ändringar";
         }
-    };
-</script>
+
+        function buildTitleFromForm() {
+            const brand = resolveBrandName(elements.brand.value);
+            const model = resolveModelName(brand, elements.model.value);
+            const year = toSafeInteger(elements.year.value, 0);
+
+            const parts = [brand, model].filter(Boolean);
+            const baseTitle = parts.length > 0 ? parts.join(" ") : "Fordonsannons";
+
+            if (year > 0) {
+                return `${baseTitle} ${year}`;
+            }
+
+            return baseTitle;
+        }
+
+        function handleCancel() {
+            window.location.href = EDIT_CONFIG.ROUTES.ACCOUNT;
+        }
+
+        function setLoading(isLoading) {
+            state.isLoading = isLoading;
+
+            if (isLoading) {
+                showOnly("loading");
+                disableForm(true);
+            } else {
+                disableForm(false);
+            }
+        }
+
+        function setSaving(isSaving) {
+            state.isSaving = isSaving;
+
+            disableForm(isSaving);
+
+            if (isSaving) {
+                replaceButtonContent(elements.saveBtn, "fa-solid fa-spinner fa-spin", "Sparar...");
+                updateStatusPill("loading", "Sparar ändringar...");
+            } else {
+                replaceButtonContent(elements.saveBtn, "fa-solid fa-floppy-disk", "Spara ändringar");
+                updateStatusPill("success", "Behörighet kontrollerad");
+            }
+        }
+
+        function disableForm(disabled) {
+            [
+                elements.brand,
+                elements.model,
+                elements.year,
+                elements.price,
+                elements.mileage,
+                elements.bodyType,
+                elements.transmission,
+                elements.fuelType,
+                elements.color,
+                elements.location,
+                elements.description,
+                elements.saveBtn,
+                elements.cancelBtn
+            ].forEach((element) => {
+                element.disabled = disabled;
+            });
+        }
+
+        function renderErrorState(title, text) {
+            elements.errorTitle.textContent = title || "Ett fel uppstod";
+            elements.errorText.textContent = text || "Annonsen kunde inte laddas.";
+            showOnly("error");
+        }
+
+        function showOnly(view) {
+            elements.loadingState.classList.add("hidden");
+            elements.errorState.classList.add("hidden");
+            elements.editContent.classList.add("hidden");
+
+            if (view === "loading") {
+                elements.loadingState.classList.remove("hidden");
+            }
+
+            if (view === "error") {
+                elements.errorState.classList.remove("hidden");
+            }
+
+            if (view === "content") {
+                elements.editContent.classList.remove("hidden");
+            }
+        }
+
+        function updateStatusPill(type, text) {
+            elements.editStatusPill.textContent = "";
+
+            const icon = document.createElement("i");
+
+            if (type === "loading") {
+                icon.className = "fa-solid fa-circle-notch fa-spin";
+            } else if (type === "success") {
+                icon.className = "fa-solid fa-circle-check";
+            } else if (type === "error") {
+                icon.className = "fa-solid fa-triangle-exclamation";
+            } else {
+                icon.className = "fa-solid fa-circle-info";
+            }
+
+            elements.editStatusPill.appendChild(icon);
+            elements.editStatusPill.appendChild(document.createTextNode(` ${text}`));
+        }
+
+        function replaceButtonContent(button, iconClass, text) {
+            button.textContent = "";
+
+            const icon = document.createElement("i");
+            icon.className = iconClass;
+
+            button.appendChild(icon);
+            button.appendChild(document.createTextNode(` ${text}`));
+        }
+
+        function setSelectValue(selectElement, value, fallback) {
+            const clean = normalizeText(value);
+
+            const exists = Array.from(selectElement.options).some((option) => {
+                return option.value === clean;
+            });
+
+            selectElement.value = exists ? clean : fallback;
+        }
+
+        function setFieldError(fieldId, message) {
+            const group = document.querySelector(`[data-field-group="${fieldId}"]`);
+            const error = document.getElementById(`${fieldId}Error`);
+
+            if (group) {
+                group.classList.add("invalid");
+            }
+
+            if (error && message) {
+                error.textContent = message;
+            }
+        }
+
+        function clearFieldError(fieldId) {
+            const group = document.querySelector(`[data-field-group="${fieldId}"]`);
+
+            if (group) {
+                group.classList.remove("invalid");
+            }
+        }
+
+        function clearAllFieldErrors() {
+            document.querySelectorAll(".form-group.invalid").forEach((group) => {
+                group.classList.remove("invalid");
+            });
+        }
+
+        function scrollToFirstInvalidField() {
+            const firstInvalid = document.querySelector(".form-group.invalid");
+
+            if (!firstInvalid) {
+                return;
+            }
+
+            firstInvalid.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+
+        function normalizeText(value) {
+            return String(value ?? "")
+                .replace(/\s+/g, " ")
+                .trim()
+                .slice(0, EDIT_CONFIG.LIMITS.TEXT_MAX_LENGTH);
+        }
+
+        function normalizeLimitedText(value, maxLength) {
+            return String(value ?? "")
+                .replace(/\s+/g, " ")
+                .trim()
+                .slice(0, maxLength);
+        }
+
+        function normalizeLongText(value) {
+            return String(value ?? "")
+                .replace(/\r\n/g, "\n")
+                .replace(/\r/g, "\n")
+                .replace(/[ \t]+/g, " ")
+                .trim()
+                .slice(0, EDIT_CONFIG.LIMITS.DESCRIPTION_MAX_LENGTH);
+        }
+
+        function normalizeDocumentId(value) {
+            return String(value ?? "")
+                .trim()
+                .slice(0, EDIT_CONFIG.LIMITS.DOCUMENT_ID_MAX_LENGTH)
+                .replace(/[^\w.-]/g, "");
+        }
+
+        function toSafeInteger(value, fallback = 0) {
+            const number = Number(value);
+
+            if (!Number.isFinite(number)) {
+                return fallback;
+            }
+
+            return Math.floor(number);
+        }
+
+        function removeUndefinedValues(data) {
+            const clean = {};
+
+            Object.entries(data || {}).forEach(([key, value]) => {
+                if (value !== undefined) {
+                    clean[key] = value;
+                }
+            });
+
+            return clean;
+        }
+
+        function buildCarTitle(car) {
+            const parts = [
+                normalizeText(car?.brand),
+                normalizeText(car?.model)
+            ].filter(Boolean);
+
+            const title = parts.length > 0 ? parts.join(" ") : "din annons";
+
+            if (car?.year) {
+                return `${title} ${car.year}`;
+            }
+
+            return title;
+        }
+
+        function buildSafeErrorList(messages) {
+            const safeItems = messages
+                .map((message) => `<li>${escapeHTML(message)}</li>`)
+                .join("");
+
+            return `
+                <ul style="text-align:left; margin:0; padding-left:20px; line-height:1.7;">
+                    ${safeItems}
+                </ul>
+            `;
+        }
+
+        function escapeHTML(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function redirectToLogin() {
+            window.location.href = EDIT_CONFIG.ROUTES.LOGIN;
+        }
+
+        function getFriendlyFirestoreErrorMessage(error) {
+            const code = error?.code || "";
+
+            const messages = {
+                "permission-denied": "Du saknar behörighet att läsa den här annonsen.",
+                "unavailable": "Tjänsten är tillfälligt otillgänglig. Försök igen senare.",
+                "deadline-exceeded": "Begäran tog för lång tid. Försök igen.",
+                "not-found": "Annonsen hittades inte."
+            };
+
+            return messages[code] || "Ett oväntat fel uppstod när annonsen skulle laddas.";
+        }
+
+        function getFriendlySaveErrorMessage(error) {
+            const code = error?.code || "";
+
+            const messages = {
+                "permission-denied": "Du saknar behörighet att uppdatera den här annonsen.",
+                "unavailable": "Tjänsten är tillfälligt otillgänglig. Försök igen senare.",
+                "deadline-exceeded": "Sparningen tog för lång tid. Försök igen.",
+                "not-found": "Annonsen finns inte längre."
+            };
+
+            return messages[code] || error?.message || "Ett oväntat fel uppstod när annonsen skulle sparas.";
+        }
+
+        function attachGlobalErrorHandlers() {
+            window.addEventListener("unhandledrejection", (event) => {
+                console.error("Unhandled promise rejection:", event.reason);
+            });
+
+            window.addEventListener("error", (event) => {
+                console.error("Global edit page error:", event.error || event.message);
+            });
+
+            window.addEventListener("beforeunload", () => {
+                if (state.detachBrandModelHandler) {
+                    state.detachBrandModelHandler();
+                    state.detachBrandModelHandler = null;
+                }
+            });
+        }
+    </script>
+
 </body>
 </html>
