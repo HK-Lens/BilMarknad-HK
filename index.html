@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="BILHK Professional Car Marketplace - Sweden's advanced digital platform.">
-    <title>BilMarknad HK | Professional Vehicle Search</title>
+    <title>BilMarknad HK | Professional Car Marketplace</title>
 
-    <!-- Professional Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -16,325 +13,178 @@
         :root {
             --primary: #f58220;
             --primary-hover: #e07210;
-            --primary-soft: #fff5eb;
             --dark: #0f172a;
-            --dark-accent: #1e293b;
-            --light-bg: #f8fafc;
+            --bg: #f8fafc;
             --white: #ffffff;
-            --border-color: #e2e8f0;
-            --danger: #ef4444;
-            --success: #10b981;
-            --text-muted: #64748b;
-            --card-shadow: 0 20px 40px rgba(0,0,0,0.06);
-            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --border: #e2e8f0;
+            --shadow: 0 20px 40px rgba(0,0,0,0.06);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--light-bg); color: var(--dark); line-height: 1.6; overflow-x: hidden; }
+        body { background-color: var(--bg); color: var(--dark); overflow-x: hidden; }
 
-        /* Announcement Bar */
-        .dev-notice {
-            background: linear-gradient(90deg, var(--danger), #dc2626);
-            color: white;
-            text-align: center;
-            padding: 12px;
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
-        }
-
-        /* Navigation Engine */
         header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: var(--white);
             padding: 18px 6%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
             z-index: 1000;
         }
-        .brand-logo { font-size: 28px; font-weight: 900; text-decoration: none; color: var(--dark); letter-spacing: -1.5px; }
-        .brand-logo span { color: var(--primary); }
+        .logo { font-size: 28px; font-weight: 900; text-decoration: none; color: var(--dark); letter-spacing: -1.5px; }
+        .logo span { color: var(--primary); }
 
-        .nav-actions { display: flex; gap: 15px; align-items: center; }
-        .btn-sell {
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            padding: 10px 24px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 800;
-            font-size: 14px;
-            transition: var(--transition-smooth);
-        }
-        .btn-sell:hover { background: var(--primary); color: white; transform: translateY(-2px); }
-
-        /* Hero Section */
-        .hero-engine {
-            background: linear-gradient(rgba(15,23,42,0.75), rgba(15,23,42,0.75)), 
-                        url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2000') center/cover;
+        .hero {
+            background: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2000') center/cover;
             padding: 120px 20px;
             text-align: center;
             color: white;
             clip-path: ellipse(150% 100% at 50% 0%);
         }
-        .hero-engine h1 { font-size: 52px; font-weight: 900; letter-spacing: -2px; margin-bottom: 15px; }
-        .hero-engine p { font-size: 18px; color: #cbd5e1; font-weight: 500; }
+        .hero h1 { font-size: 48px; font-weight: 900; margin-bottom: 10px; }
 
-        /* Advanced Search Panel */
         .search-panel {
             background: var(--white);
             max-width: 1100px;
-            width: 92%;
-            margin: -70px auto 0;
+            width: 90%;
+            margin: -80px auto 0;
             padding: 40px;
-            border-radius: 32px;
-            box-shadow: var(--card-shadow);
-            border: 1px solid var(--border-color);
-            position: relative;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
         }
 
-        .search-architecture {
+        .search-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
         }
 
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group label { font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        
-        .custom-select, .custom-input {
-            width: 100%;
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-size: 11px; font-weight: 900; color: #64748b; text-transform: uppercase; }
+        .input-group select, .input-group input {
             padding: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            background: var(--light-bg);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg);
             font-weight: 700;
-            color: var(--dark);
             outline: none;
-            transition: 0.3s;
         }
-        .custom-select:focus, .custom-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px var(--primary-soft); }
 
-        .search-trigger-box { margin-top: 30px; display: flex; justify-content: center; }
         .btn-deep-search {
+            grid-column: 1 / -1;
             background: var(--dark);
             color: white;
+            padding: 18px;
             border: none;
-            padding: 18px 60px;
-            border-radius: 20px;
+            border-radius: 16px;
             font-weight: 900;
             font-size: 16px;
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 12px;
-            transition: var(--transition-smooth);
-            width: 100%;
-            max-width: 400px;
+            transition: var(--transition);
+            margin-top: 20px;
         }
-        .btn-deep-search:hover { background: var(--primary); transform: translateY(-4px); box-shadow: 0 15px 30px rgba(245, 130, 32, 0.3); }
+        .btn-deep-search:hover { background: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(245, 130, 32, 0.3); }
 
-        /* Live Listing Section */
-        .live-listings { max-width: 1200px; margin: 80px auto; padding: 0 5%; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .section-header h2 { font-size: 32px; font-weight: 900; letter-spacing: -1px; }
-
-        .listing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
-
-        /* Professional Footer */
-        footer {
-            background: var(--white);
-            border-top: 1px solid var(--border-color);
-            padding: 60px 5%;
-            margin-top: 100px;
-            text-align: center;
-        }
-        .footer-content { color: var(--text-muted); font-size: 14px; font-weight: 600; max-width: 800px; margin: 0 auto; }
-
-        @media (max-width: 768px) {
-            .hero-engine h1 { font-size: 36px; }
-            .search-panel { padding: 25px; margin-top: -40px; }
-        }
+        .latest-section { max-width: 1200px; margin: 80px auto; padding: 0 5%; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
     </style>
 </head>
 <body>
 
-<div class="dev-notice">
-    <i class="fa-solid fa-flask-vial"></i> UNDER UTVECKLING: Professionell version 2.0.26
-</div>
-
 <header>
-    <a href="index.html" class="brand-logo">BIL<span>HK</span></a>
-    <nav class="nav-actions">
-        <a href="sell.html" class="btn-sell"><i class="fa-solid fa-plus"></i> SÄLJ DIN BIL</a>
-        <div id="authContainer"></div>
-    </nav>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
 </header>
 
-<section class="hero-engine">
-    <h1>Hitta din drömbil</h1>
-    <p>Marknadsplatsen med avancerad precisionsteknik</p>
+<section class="hero">
+    <h1>Hitta din nästa bil</h1>
+    <p>Professionell marknadsplats för fordon i Sverige</p>
 </section>
 
 <section class="search-panel">
-    <div class="search-architecture">
-        <!-- Brand Logic Engine -->
-        <div class="form-group">
-            <label>Märke (الماركة)</label>
-            <select id="brandEngine" class="custom-select">
-                <option value="all">Alla märken</option>
-            </select>
+    <div class="search-grid">
+        <div class="input-group">
+            <label>Märke</label>
+            <select id="homeBrand"><option value="all">Alla märken</option></select>
         </div>
-
-        <!-- Fuel Logic -->
-        <div class="form-group">
+        <div class="input-group">
             <label>Drivmedel</label>
-            <select id="fuelEngine" class="custom-select">
+            <select id="homeFuel">
                 <option value="all">Alla typer</option>
                 <option value="Bensin">Bensin</option>
                 <option value="Diesel">Diesel</option>
                 <option value="El">El</option>
-                <option value="Hybrid">Hybrid</option>
             </select>
         </div>
-
-        <!-- Budget Logic -->
-        <div class="form-group">
-            <label>Max Pris (SEK)</label>
-            <input type="number" id="priceEngine" class="custom-input" placeholder="Obegränsat">
+        <div class="input-group">
+            <label>Max Pris</label>
+            <input type="number" id="homePrice" placeholder="T.ex. 200000">
         </div>
-
-        <!-- Mileage Logic -->
-        <div class="form-group">
-            <label>Max Mil</label>
-            <input type="number" id="milEngine" class="custom-input" placeholder="T.ex. 10000">
-        </div>
-    </div>
-
-    <div class="search-trigger-box">
         <button id="deepSearchBtn" class="btn-deep-search">
-            <i class="fa-solid fa-magnifying-glass-chart"></i>
-            KÖR DJUP SÖKNING (بحث عميق)
+            <i class="fa-solid fa-magnifying-glass-plus"></i> KÖR DJUP SÖKNING
         </button>
     </div>
 </section>
 
-<main class="live-listings">
-    <div class="section-header">
-        <h2><i class="fa-solid fa-bolt" style="color:var(--primary)"></i> Senaste inkomna</h2>
-        <a href="results-fixed.html" style="color:var(--primary); font-weight:900; text-decoration:none;">Visa alla <i class="fa-solid fa-arrow-right"></i></a>
-    </div>
-
-    <div class="listing-grid" id="mainDisplayGrid">
-        <!-- Data dynamically injected via JavaScript -->
-    </div>
+<main class="latest-section">
+    <h2 style="margin-bottom: 30px;">Senast inkomna</h2>
+    <div class="grid" id="latestGrid"></div>
 </main>
-
-<footer>
-    <div class="footer-content">
-        <p>BILHK Professional Marketplace &copy; 2026</p>
-        <p style="margin-top:10px; font-size:12px;">Vi ansvarar ej för transaktioner mellan parter. All data verifieras via Firebase Realtime Database.</p>
-    </div>
-</footer>
 
 <script type="module">
     import { db } from './firebase-config.js';
     import { collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import carData from './cars-data.js';
 
-    /**
-     * DATABASE CATALOG ENGINE
-     * استخراج الماركات ديناميكياً لتغذية القوائم
-     */
-    const carCatalog = {
-        "Audi": ["A1", "A3", "A4", "A6", "Q3", "Q5", "Q7"],
-        "BMW": ["1-serie", "3-serie", "5-serie", "X1", "X3", "X5"],
-        "Mercedes-Benz": ["A-Klass", "C-Klass", "E-Klass", "GLC"],
-        "Volvo": ["S60", "V60", "V90", "XC40", "XC60", "XC90"],
-        "Volkswagen": ["Golf", "Passat", "Polo", "Tiguan", "ID.4"],
-        "Toyota": ["Yaris", "Corolla", "RAV4"],
-        "Tesla": ["Model 3", "Model Y", "Model S"]
-    };
+    // 1. تهيئة القائمة المنسدلة للماركات
+    const brandSelect = document.getElementById('homeBrand');
+    Object.keys(carData).sort().forEach(brand => {
+        const opt = document.createElement('option');
+        opt.value = brand;
+        opt.textContent = brand;
+        brandSelect.appendChild(opt);
+    });
 
-    // Initialize UI Logic
-    function initializeBrandList() {
-        const select = document.getElementById('brandEngine');
-        Object.keys(carCatalog).sort().forEach(brand => {
-            const opt = document.createElement('option');
-            opt.value = brand;
-            opt.textContent = brand;
-            select.appendChild(opt);
-        });
-    }
-
-    /**
-     * NAVIGATION HANDLER (DEEP SEARCH)
-     * توجيه المستخدم إلى results-fixed.html مع الفلاتر المختارة
-     */
+    // 2. منطق البحث العميق - التوجه إلى results-fixed.html
     document.getElementById('deepSearchBtn').addEventListener('click', () => {
-        const brand = document.getElementById('brandEngine').value;
-        const fuel = document.getElementById('fuelEngine').value;
-        const maxP = document.getElementById('priceEngine').value;
-        const maxM = document.getElementById('milEngine').value;
+        const brand = document.getElementById('homeBrand').value;
+        const fuel = document.getElementById('homeFuel').value;
+        const price = document.getElementById('homePrice').value;
 
         const params = new URLSearchParams();
         if (brand !== 'all') params.set('brand', brand);
         if (fuel !== 'all') params.set('fuel', fuel);
-        if (maxP) params.set('maxP', maxP);
-        if (maxM) params.set('maxM', maxM);
+        if (price) params.set('maxP', price);
 
-        // التوجه المباشر للملف المطلوب
         window.location.href = `results-fixed.html?${params.toString()}`;
     });
 
-    /**
-     * LATEST LISTINGS ENGINE
-     * جلب أحدث الإعلانات من Firebase لعرضها في الواجهة
-     */
-    async function fetchLatestListings() {
-        const grid = document.getElementById('mainDisplayGrid');
-        try {
-            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(4));
-            const snap = await getDocs(q);
-            
-            if (snap.empty) {
-                grid.innerHTML = "<p>Inga annonser tillgängliga just nu.</p>";
-                return;
-            }
-
-            grid.innerHTML = "";
-            snap.forEach(doc => {
-                const car = doc.data();
-                const price = Number(car.price).toLocaleString('sv-SE');
-                const img = (car.images && car.images.length > 0) ? car.images[0] : 'assets/no-image.jpg';
-
-                grid.innerHTML += `
-                    <div class="car-card" style="background:white; border-radius:24px; overflow:hidden; border:1px solid #e2e8f0; transition:0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-                        <div style="height:200px; background:#f1f5f9;"><img src="${img}" style="width:100%; height:100%; object-fit:cover;"></div>
-                        <div style="padding:20px;">
-                            <h3 style="font-size:18px; margin-bottom:5px;">${car.brand} ${car.model}</h3>
-                            <p style="color:var(--primary); font-weight:900; font-size:20px;">${price} kr</p>
-                            <div style="margin-top:15px; display:flex; gap:10px; font-size:12px; color:#64748b; font-weight:700;">
-                                <span><i class="fa-solid fa-gauge"></i> ${car.mileage} mil</span>
-                                <span><i class="fa-solid fa-gas-pump"></i> ${car.fuel}</span>
-                            </div>
-                        </div>
+    // 3. عرض آخر 4 إعلانات
+    async function loadLatest() {
+        const grid = document.getElementById('latestGrid');
+        const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(4));
+        const snap = await getDocs(q);
+        snap.forEach(doc => {
+            const car = doc.data();
+            grid.innerHTML += `
+                <div style="background:white; border-radius:20px; overflow:hidden; border:1px solid #eee;">
+                    <img src="${car.images?.[0] || 'assets/no-image.jpg'}" style="width:100%; height:180px; object-fit:cover;">
+                    <div style="padding:15px;">
+                        <h4 style="margin-bottom:5px;">${car.brand} ${car.model}</h4>
+                        <p style="color:var(--primary); font-weight:900;">${Number(car.price).toLocaleString()} kr</p>
                     </div>
-                `;
-            });
-        } catch (err) {
-            console.error("Critical Engine Failure:", err);
-        }
+                </div>`;
+        });
     }
-
-    // Launch Engines
-    initializeBrandList();
-    fetchLatestListings();
-
+    loadLatest();
 </script>
 </body>
 </html>
