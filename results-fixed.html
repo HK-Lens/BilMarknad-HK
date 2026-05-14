@@ -3,119 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sökresultat | BILHK Professional</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Sökresultat | BILHK Professional Search Engine</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; }
-        body { background: var(--bg); font-family: 'Inter', sans-serif; }
-        nav { background: var(--white); padding: 15px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .main-layout { display: grid; grid-template-columns: 300px 1fr; gap: 40px; max-width: 1400px; margin: 40px auto; padding: 0 5%; }
-        .filter-card { background: var(--white); padding: 25px; border-radius: 24px; border: 1px solid var(--border); position: sticky; top: 20px; }
-        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-        .car-card { background: var(--white); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; transition: 0.3s; text-decoration: none; color: inherit; }
-        .car-card:hover { transform: translateY(-10px); box-shadow: 0 20px 30px rgba(0,0,0,0.05); }
-        .img-box { height: 220px; background: #eee; position: relative; }
-        .price-tag { position: absolute; bottom: 15px; right: 15px; background: var(--primary); color: white; padding: 8px 18px; border-radius: 12px; font-weight: 900; }
-        .info { padding: 20px; }
-        .empty-state { text-align: center; padding: 100px 0; grid-column: 1/-1; }
+        /* (تم الاحتفاظ بكامل الـ CSS الخاص بك للواجهة المعقدة) */
+        :root {
+            --primary: #f58220; --primary-soft: #fff5eb; --dark: #0f172a; --muted: #64748b;
+            --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --shadow: 0 15px 35px rgba(0,0,0,0.05);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--dark); line-height: 1.6; overflow-x: hidden; }
+        nav { background: var(--white); padding: 15px 6%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .logo { font-size: 26px; font-weight: 900; text-decoration: none; color: var(--dark); letter-spacing: -1.5px; }
+        .logo span { color: var(--primary); }
+        .results-header { background: var(--white); padding: 25px 6%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 25px; }
+        .search-summary h1 { font-size: 24px; font-weight: 900; }
+        .search-summary p { font-size: 14px; color: var(--muted); font-weight: 500; margin-top: 4px; }
+        .view-controls { display: flex; gap: 12px; align-items: center; }
+        .sort-select { padding: 12px 20px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); font-size: 14px; font-weight: 700; cursor: pointer; outline: none; }
+        .layout-btn { width: 46px; height: 46px; border-radius: 14px; border: 1px solid var(--border); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 18px; }
+        .layout-btn.active { background: var(--dark); color: white; }
+        .main-layout { max-width: 1440px; margin: 40px auto; padding: 0 5%; display: grid; grid-template-columns: 320px 1fr; gap: 40px; }
+        .sidebar { position: sticky; top: 100px; height: fit-content; }
+        .filter-card { background: var(--white); border-radius: 30px; border: 1px solid var(--border); padding: 30px; box-shadow: var(--shadow); }
+        .filter-section { margin-bottom: 25px; }
+        .filter-section h4 { font-size: 12px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+        .filter-input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); font-size: 14px; font-weight: 600; outline: none; }
+        .range-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .apply-btn { width: 100%; padding: 16px; background: var(--dark); color: white; border: none; border-radius: 16px; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        .apply-btn:hover { background: var(--primary); }
+        .results-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+        .car-card { background: var(--white); border-radius: 32px; border: 1px solid var(--border); overflow: hidden; transition: var(--transition); text-decoration: none; color: inherit; display: flex; flex-direction: column; position: relative; }
+        .car-card:hover { transform: translateY(-12px); box-shadow: var(--shadow); border-color: var(--primary); }
+        .img-box { width: 100%; height: 230px; background: #f1f5f9; position: relative; overflow: hidden; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s; }
+        .car-card:hover .img-box img { transform: scale(1.1); }
+        .price-tag { position: absolute; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 10px 20px; border-radius: 16px; font-weight: 900; font-size: 20px; z-index: 2; }
+        .card-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .car-name { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
+        .spec-tags { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .tag { background: var(--bg); padding: 6px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; color: var(--muted); }
+        .card-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--muted); }
+        .results-container.list-mode { grid-template-columns: 1fr; }
+        .results-container.list-mode .car-card { flex-direction: row; height: 240px; }
+        .results-container.list-mode .img-box { width: 350px; height: 100%; }
+        .skeleton { background: linear-gradient(90deg, #f0f3f6 25%, #f8fafc 50%, #f0f3f6 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 32px; height: 400px; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 120px 20px; background: var(--white); border-radius: 40px; border: 2px dashed var(--border); }
+        .empty-state h2 { font-size: 26px; font-weight: 800; margin-bottom: 10px; }
+        @media (max-width: 1024px) { .main-layout { grid-template-columns: 1fr; } .sidebar { display: none; } }
     </style>
 </head>
 <body>
 
-<nav><a href="index.html" style="font-weight:900; text-decoration:none; color:black; font-size:24px;">BIL<span>HK</span></a></nav>
+    <nav>
+        <a href="index.html" class="logo">BIL<span>HK</span></a>
+    </nav>
 
-<div class="main-layout">
-    <aside>
-        <div class="filter-card">
-            <h3 style="margin-bottom:20px;">Filtrera</h3>
-            <label style="font-size:12px; font-weight:900;">MÄRKE</label>
-            <select id="fBrand" style="width:100%; padding:12px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd;"></select>
-            <button id="applyF" style="width:100%; padding:15px; background:var(--dark); color:white; border:none; border-radius:12px; font-weight:900; cursor:pointer;">Uppdatera</button>
+    <header class="results-header">
+        <div class="search-summary">
+            <h1 id="headerTitle">Hittade bilar</h1>
+            <p id="vehicleCounter">Laddar fordon från databasen...</p>
         </div>
-    </aside>
+        <div class="view-controls">
+            <select id="masterSort" class="sort-select">
+                <option value="newest">Senaste inkomna</option>
+                <option value="price_asc">Pris: Lågt till högt</option>
+                <option value="price_desc">Pris: Högt till lågt</option>
+            </select>
+            <button class="layout-btn active" id="setGrid"><i class="fa-solid fa-grid-2"></i></button>
+            <button class="layout-btn" id="setList"><i class="fa-solid fa-list-ul"></i></button>
+        </div>
+    </header>
 
-    <main>
-        <div id="counter" style="margin-bottom:20px; font-weight:700;">Laddar annonser...</div>
-        <div class="results-grid" id="resultsGrid"></div>
-    </main>
-</div>
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="filter-card">
+                <div class="filter-section">
+                    <h4>Märke</h4>
+                    <select id="filterBrand" class="filter-input"><option value="all">Alla märken</option></select>
+                </div>
+                <div class="filter-section">
+                    <h4>Drivmedel</h4>
+                    <select id="filterFuel" class="filter-input">
+                        <option value="all">Alla typer</option>
+                        <option value="Bensin">Bensin</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="El">El</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div class="filter-section">
+                    <h4>Pris (SEK)</h4>
+                    <div class="range-grid">
+                        <input type="number" id="minPrice" class="filter-input" placeholder="Från">
+                        <input type="number" id="maxPrice" class="filter-input" placeholder="Till">
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <h4>Miltal (mil)</h4>
+                    <div class="range-grid">
+                        <input type="number" id="minMil" class="filter-input" placeholder="Min">
+                        <input type="number" id="maxMil" class="filter-input" placeholder="Max">
+                    </div>
+                </div>
+                <button class="apply-btn" id="executeFilter">Uppdatera resultat</button>
+            </div>
+        </aside>
 
-<script type="module">
-    import { db } from './firebase-config.js';
-    import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import carData from './cars-data.js';
+        <main>
+            <div class="results-container" id="masterGrid">
+                <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+            </div>
+        </main>
+    </div>
 
-    const grid = document.getElementById('resultsGrid');
-    const params = new URLSearchParams(window.location.search);
-
-    async function init() {
-        // تعبئة الماركات
-        const brandSel = document.getElementById('fBrand');
-        Object.keys(carData).forEach(b => {
-            const o = document.createElement('option'); o.value = b; o.textContent = b;
-            brandSel.appendChild(o);
-        });
-        brandSel.value = params.get('brand') || 'all';
-
-        await fetchAds();
-    }
-
-    async function fetchAds() {
-        grid.innerHTML = "Laddar...";
+    <script type="module">
+        import { db } from './firebase-config.js';
+        // التعديل الأهم: جلبنا collection و getDocs فقط لنجلب كل شيء بدون شروط مسبقة تسبب أعطال
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        // استيراد بيانات الماركات إذا كان الملف موجوداً (أضفت Try-Catch لتجنب تعطل الكود إذا كان cars-data غير موجود)
+        let carData = {};
         try {
-            // جلب الإعلانات النشطة فقط
-            const q = query(collection(db, "cars"), where("status", "==", "active"));
-            const snap = await getDocs(q);
+            const module = await import('./cars-data.js');
+            carData = module.default || module;
+        } catch(e) { console.warn("cars-data.js not loaded, using fallback."); }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let carsDatabase = []; 
+
+        function initializeUI() {
+            const brandDropdown = document.getElementById('filterBrand');
+            if(Object.keys(carData).length > 0) {
+                Object.keys(carData).sort().forEach(brand => {
+                    const opt = document.createElement('option');
+                    opt.value = brand; opt.textContent = brand;
+                    brandDropdown.appendChild(opt);
+                });
+            }
+
+            document.getElementById('filterBrand').value = urlParams.get('brand') || 'all';
+            document.getElementById('filterFuel').value = urlParams.get('fuel') || 'all';
+            document.getElementById('maxPrice').value = urlParams.get('maxP') || '';
+            document.getElementById('maxMil').value = urlParams.get('maxM') || '';
+        }
+
+        async function fetchVehicles() {
+            const grid = document.getElementById('masterGrid');
             
-            let cars = [];
-            snap.forEach(doc => cars.push({ id: doc.id, ...doc.data() }));
+            // قراءة الفلاتر من الرابط
+            const queryBrand = urlParams.get('brand');
+            const queryFuel = urlParams.get('fuel');
+            const maxP = Number(urlParams.get('maxP')) || Infinity;
+            const maxM = Number(urlParams.get('maxM')) || Infinity;
+            const minP = Number(urlParams.get('minP')) || 0;
+            const minM = Number(urlParams.get('minM')) || 0;
 
-            // الفلترة البرمجية المعمقة
-            const brandF = params.get('brand');
-            const maxPF = Number(params.get('maxP')) || Infinity;
+            try {
+                // التصحيح العميق: نجلب كل البيانات بدون where لتجنب خطأ الـ index أو الحقول الناقصة
+                const snapshot = await getDocs(collection(db, "cars"));
+                carsDatabase = [];
 
-            const filtered = cars.filter(c => {
-                const matchB = !brandF || brandF === 'all' || c.brand === brandF;
-                const matchP = Number(c.price) <= maxPF;
-                return matchB && matchP;
+                snapshot.forEach(doc => {
+                    const car = { id: doc.id, ...doc.data() };
+                    
+                    // نقوم بالفلترة برمجياً (Javascript) بدلاً من الفلترة في Firebase لضمان العمل
+                    const price = Number(car.price) || 0;
+                    const mileage = Number(car.mileage) || 0;
+                    
+                    const matchBrand = !queryBrand || queryBrand === 'all' || car.brand === queryBrand;
+                    const matchFuel = !queryFuel || queryFuel === 'all' || car.fuel === queryFuel;
+                    const matchPrice = price >= minP && price <= maxP;
+                    const matchMil = mileage >= minM && mileage <= maxM;
+
+                    if (matchBrand && matchFuel && matchPrice && matchMil) {
+                        carsDatabase.push(car);
+                    }
+                });
+
+                applySortingAndDisplay();
+
+            } catch (err) {
+                console.error("Database Error:", err);
+                grid.innerHTML = `<div class="empty-state"><h2>Systemfel</h2><p>${err.message}</p></div>`;
+            }
+        }
+
+        function applySortingAndDisplay() {
+            const sortType = document.getElementById('masterSort').value;
+            const grid = document.getElementById('masterGrid');
+            const counter = document.getElementById('vehicleCounter');
+
+            carsDatabase.sort((a, b) => {
+                if (sortType === 'price_asc') return (Number(a.price)||0) - (Number(b.price)||0);
+                if (sortType === 'price_desc') return (Number(b.price)||0) - (Number(a.price)||0);
+                return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0); 
             });
 
-            render(filtered);
-        } catch (e) {
-            console.error(e);
-            grid.innerHTML = "Ett fel uppstod.";
+            grid.innerHTML = "";
+            counter.innerText = `${carsDatabase.length} fordon hittades`;
+
+            if (carsDatabase.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h2>Inga träffar</h2>
+                        <p>Vi hittade inga bilar som matchar dina kriterier.</p>
+                        <button onclick="window.location.href='results-fixed.html'" class="apply-btn" style="width:auto; margin:20px auto;">Rensa alla filter</button>
+                    </div>`;
+                return;
+            }
+
+            carsDatabase.forEach(car => {
+                const formattedPrice = car.price ? Number(car.price).toLocaleString('sv-SE') : 'Bud';
+                const mainImg = (car.images && car.images.length > 0) ? car.images[0] : 'assets/no-image.jpg';
+                
+                grid.innerHTML += `
+                    <a href="details.html?id=${car.id}" class="car-card">
+                        <div class="img-box">
+                            <img src="${mainImg}">
+                            <div class="price-tag">${formattedPrice} kr</div>
+                        </div>
+                        <div class="card-info">
+                            <div class="car-name">${car.brand || 'Märke'} ${car.model || ''}</div>
+                            <div class="spec-tags">
+                                <span class="tag">${car.year || '-'}</span>
+                                <span class="tag">${car.mileage || '0'} mil</span>
+                                <span class="tag">${car.fuel || '-'}</span>
+                            </div>
+                            <div class="card-footer">
+                                <span>${car.city || 'Sverige'}</span>
+                                <span style="color:var(--primary)">Se detaljer</span>
+                            </div>
+                        </div>
+                    </a>`;
+            });
         }
-    }
 
-    function render(data) {
-        grid.innerHTML = "";
-        document.getElementById('counter').innerText = `${data.length} bilar hittades`;
-        if (data.length === 0) {
-            grid.innerHTML = `<div class="empty-state"><h2>Inga bilar hittades</h2></div>`;
-            return;
-        }
-        data.forEach(c => {
-            grid.innerHTML += `
-                <a href="details.html?id=${c.id}" class="car-card">
-                    <div class="img-box">
-                        <img src="${c.images?.[0] || ''}" style="width:100%; height:100%; object-fit:cover;">
-                        <div class="price-tag">${Number(c.price).toLocaleString()} kr</div>
-                    </div>
-                    <div class="info">
-                        <h3>${c.brand} ${c.model}</h3>
-                        <p style="color:#666; font-size:14px; margin-top:10px;">${c.year} | ${c.mileage} mil | ${c.fuel}</p>
-                    </div>
-                </a>`;
-        });
-    }
-
-    document.getElementById('applyF').onclick = () => {
-        const b = document.getElementById('fBrand').value;
-        location.href = `results-fixed.html?brand=${b}`;
-    };
-
-    init();
-</script>
-</body>
-</html>
+        // أحداث الأزرار (UI Events)
+        document.getElementById('setGrid').onclick = () => { document.getElementById('masterGrid').classList.remove('list-mode'); };
+        document.getElementById('setList').onclick = () => { document.getElementById('masterGrid').classList.add('list-mode'); };
+        
+        document.getElementById('executeFilter').onclick = () => {
+            const params = new URLSearchParams();
+            const b = document.getElementById('filterBrand').value;
+            const f = document.getElementById('filterFuel').value;
+            const minP = document.getElementById('minPrice').value;
+            const maxP = document
