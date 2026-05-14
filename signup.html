@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skapa konto | BILHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f4f6f9; --border: #e5e7eb; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        
+        .auth-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border: 1px solid var(--border); }
+        
+        .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .logo { text-decoration: none; font-size: 24px; font-weight: 900; color: var(--dark); }
+        .logo span { color: var(--primary); }
+        .login-link-top { font-size: 14px; color: var(--primary); text-decoration: none; font-weight: 700; border: 1px solid var(--primary); padding: 5px 12px; border-radius: 8px; transition: 0.3s; }
+        .login-link-top:hover { background: var(--primary); color: white; }
+        
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f9fafb; font-size: 14px; outline: none; }
+        input:focus { border-color: var(--primary); background: white; }
+
+        /* حقول الشركات المخفية */
+        #businessFields { display: none; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px dashed #cbd5e1; margin-bottom: 15px; }
+
+        .disclaimer-box { background: #fff8f1; border: 1px solid #fde6d5; padding: 15px; border-radius: 10px; margin: 15px 0; display: flex; gap: 10px; align-items: flex-start; text-align: left; }
+        .disclaimer-box input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); margin-top: 3px; }
+        .disclaimer-box label { font-size: 11px; color: #555; line-height: 1.4; font-weight: 400; }
+
+        .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-primary:hover { background: #e07210; }
+        .btn-primary:disabled { background: #ccc; }
+
+        .footer-links { margin-top: 20px; text-align: center; font-size: 14px; color: #64748b; }
+        .footer-links a { color: var(--primary); text-decoration: none; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <div class="header-box">
+        <a href="index.html" class="logo">BIL<span>HK</span></a>
+        <a href="login.html" class="login-link-top">Logga in</a>
+    </div>
+
+    <h2>Skapa konto</h2>
+    <p style="font-size: 13px; color: #64748b; margin-bottom: 20px; text-align: center;">Fyll i uppgifterna nedan för att registrera dig.</p>
+    
+    <form id="regForm">
+        <div class="form-group">
+            <label>Kontotyp</label>
+            <select id="userType" onchange="toggleFields()">
+                <option value="private">Privatperson</option>
+                <option value="business">Företag / Bilhandlare</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label id="nameLabel">Ditt Namn</label>
+            <input type="text" id="fullName" placeholder="T.ex. Miro" required>
+        </div>
+
+        <div id="businessFields">
+            <div class="form-group">
+                <label>Organisationsnummer</label>
+                <input type="text" id="taxId" placeholder="55XXXX-XXXX">
+            </div>
+            <div class="form-group">
+                <label>Företagsadress</label>
+                <input type="text" id="address" placeholder="Gata, Postort">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>E-postadress</label>
+            <input type="email" id="email" placeholder="din@epost.se" required>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group">
+                <label>Lösenord</label>
+                <input type="password" id="pass" placeholder="Minst 6 tecken" required>
+            </div>
+            <div class="form-group">
+                <label>Bekräfta</label>
+                <input type="password" id="confirmPass" placeholder="Upprepa" required>
+            </div>
+        </div>
+
+        <div class="disclaimer-box">
+            <input type="checkbox" id="termsCheck" required>
+            <label for="termsCheck">
+                <strong>Ansvarsfriskrivning:</strong><br>
+                Jag godkänner att BILHK endast är en förmedlingsplattform. Webbplatsen tar inget juridiskt eller ekonomiskt ansvar för affärer mellan parterna.
+            </label>
+        </div>
+
+        <button type="submit" class="btn-primary" id="regBtn">Skapa konto</button>
+    </form>
+
+    <div class="footer-links">
+        Har du redan ett konto? <a href="login.html">Logga in här</a>
+    </div>
+</div>
+
+<script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    window.toggleFields = () => {
+        const type = document.getElementById('userType').value;
+        const bFields = document.getElementById('businessFields');
+        const nLabel = document.getElementById('nameLabel');
+        if(type === 'business') {
+            bFields.style.display = 'block';
+            nLabel.innerText = "Företagsnamn";
+        } else {
+            bFields.style.display = 'none';
+            nLabel.innerText = "Ditt Namn";
+        }
+    };
+
+    document.getElementById('regForm').onsubmit = async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('fullName').value;
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('pass').value;
+        const confirm = document.getElementById('confirmPass').value;
+
+        if (pass !== confirm) { alert("Lösenorden matchar inte!"); return; }
+        if (pass.length < 6) { alert("Lösenordet måste vara minst 6 tecken!"); return; }
+
+        const regBtn = document.getElementById('regBtn');
+        regBtn.disabled = true;
+        regBtn.innerText = "Behandlar...";
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+            const user = userCredential.user;
+
+            await updateProfile(user, { displayName: name });
+            await sendEmailVerification(user);
+
+            await setDoc(doc(db, "users", user.uid), {
+                name: name,
+                email: email,
+                userType: document.getElementById('userType').value,
+                taxId: document.getElementById('taxId').value || "",
+                address: document.getElementById('address').value || "",
+                createdAt: serverTimestamp()
+            });
+
+            await signOut(auth);
+            alert(`Tack ${name}! Ditt konto har skapats. Ett bekräftelsemail har skickats. Aktivera kontot innan du loggar in.`);
+            window.location.href = "login.html";
+
+        } catch (err) {
+            alert("Fel: " + err.message);
+            regBtn.disabled = false;
+            regBtn.innerText = "Skapa konto";
+        }
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifierar... | BILHK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .confirm-card { background: white; width: 100%; max-width: 500px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); text-align: center; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .form-group { text-align: left; margin-bottom: 15px; display: none; } /* مخفي افتراضياً ويظهر للشركات الجديدة */
+        label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; background: #f9fafb; }
+        .btn-finish { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="confirm-card" id="statusCard">
+    <h2 id="statusTitle">Verifierar din länk...</h2>
+    <div class="loader" id="loader"></div>
+    <p id="statusText">Vänligen vänta medan vi bekräftar din inloggning.</p>
+
+    <div id="companyFields">
+        <div class="form-group"><label>Företagsnamn</label><input type="text" id="compName"></div>
+        <div class="form-group"><label>Organisationsnummer</label><input type="text" id="taxId" placeholder="XXXXXX-XXXX"></div>
+        <div class="form-group"><label>Företagsadress</label><input type="text" id="address"></div>
+        <button class="btn-finish" id="finishBtn">Slutför registrering</button>
+    </div>
+</div>
+
+<script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    async function handleConfirmation() {
+        if (isSignInWithEmailLink(auth, window.location.href)) {
+            let email = window.localStorage.getItem('emailForSignIn');
+            const userType = window.localStorage.getItem('userTypePreference') || 'Privat';
+
+            if (!email) {
+                const { value: emailPrompt } = await Swal.fire({
+                    title: 'Bekräfta din e-post',
+                    input: 'email',
+                    inputLabel: 'Skriv in din e-postadress igen för att fortsätta',
+                    confirmButtonColor: '#f58220'
+                });
+                email = emailPrompt;
+            }
+
+            try {
+                const result = await signInWithEmailLink(auth, email, window.location.href);
+                const user = result.user;
+
+                // التحقق هل المستخدم موجود مسبقاً في Firestore
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+
+                if (!userDoc.exists()) {
+                    // إذا كان المستخدم جديداً واختار "شركة"
+                    if (userType === 'Foretag') {
+                        showCompanyForm(user, email);
+                    } else {
+                        // مستخدم شخصي جديد
+                        await saveUserToDB(user.uid, {
+                            uid: user.uid,
+                            email: email,
+                            userType: 'Privat',
+                            createdAt: serverTimestamp()
+                        });
+                    }
+                } else {
+                    // المستخدم موجود مسبقاً، توجه للرئيسية
+                    finalizeLogin();
+                }
+
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Fel', 'Länken är ogiltig eller har gått ut.', 'error');
+            }
+        }
+    }
+
+    function showCompanyForm(user, email) {
+        document.getElementById('statusTitle').innerText = "Slutför företagsprofil";
+        document.getElementById('statusText').innerText = "Vänligen fyll i dina företagsuppgifter.";
+        document.getElementById('loader').style.display = "none";
+        
+        // إظهار الخانات
+        const groups = document.querySelectorAll('.form-group');
+        groups.forEach(g => g.style.display = 'block');
+        const finishBtn = document.getElementById('finishBtn');
+        finishBtn.style.display = 'block';
+
+        finishBtn.onclick = async () => {
+            const companyData = {
+                uid: user.uid,
+                email: email,
+                userType: 'Foretag',
+                companyName: document.getElementById('compName').value,
+                taxId: document.getElementById('taxId').value,
+                address: document.getElementById('address').value,
+                createdAt: serverTimestamp()
+            };
+
+            if (!companyData.companyName || !companyData.taxId) {
+                return Swal.fire('Obs', 'Fyll i företagsnamn och organisationsnummer.', 'warning');
+            }
+
+            await saveUserToDB(user.uid, companyData);
+        };
+    }
+
+    async function saveUserToDB(uid, data) {
+        try {
+            await setDoc(doc(db, "users", uid), data);
+            finalizeLogin();
+        } catch (e) {
+            Swal.fire('Fel', 'Kunde inte spara profil.', 'error');
+        }
+    }
+
+    function finalizeLogin() {
+        window.localStorage.removeItem('emailForSignIn');
+        window.localStorage.removeItem('userTypePreference');
+        Swal.fire({
+            title: 'Inloggad!',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false
+        }).then(() => {
+            window.location.href = "index.html";
+        });
+    }
+
+    handleConfirmation();
+</script>
+</body>
+</html>
