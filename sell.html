@@ -2,134 +2,1689 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>Sälj din bil | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <meta name="description" content="Publicera en bilannons på BILHK. Lägg till fordonets uppgifter, utrustning, bilder och beskrivning på ett säkert sätt.">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg); padding: 20px; color: var(--dark); }
-        .form-card { max-width: 950px; margin: 0 auto; background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .section-header { font-size: 13px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin: 30px 0 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
-        .reg-panel { background: #0f172a; padding: 25px; border-radius: 20px; margin-bottom: 30px; display: flex; gap: 15px; align-items: flex-end; }
-        .reg-input { text-transform: uppercase; font-weight: 900; font-size: 26px; letter-spacing: 3px; text-align: center; border: none; background: white; height: 65px; border-radius: 12px; flex: 1; }
-        .btn-fetch { background: var(--primary); color: white; padding: 0 30px; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; height: 65px; display: flex; align-items: center; gap: 10px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
-        label { display: block; margin-bottom: 6px; font-weight: 800; color: #475569; font-size: 13px; }
-        input, select, textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; font-size: 15px; outline: none; }
-        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
-        .feature-item { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 12px; cursor: pointer; background: white; padding: 10px; border-radius: 10px; border: 1px solid var(--border); }
-        .btn-submit { width: 100%; padding: 22px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 20px; margin-top: 35px; }
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e67312;
+            --primary-soft: rgba(245, 130, 32, 0.12);
+
+            --dark: #0f172a;
+            --dark-soft: #1e293b;
+
+            --text: #0f172a;
+            --muted: #64748b;
+            --muted-light: #94a3b8;
+
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-soft: #f1f5f9;
+
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --danger: #dc2626;
+            --danger-soft: rgba(220, 38, 38, 0.10);
+
+            --success: #16a34a;
+            --success-soft: rgba(22, 163, 74, 0.10);
+
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.13);
+
+            --shadow-sm: 0 4px 14px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 18px 45px rgba(15, 23, 42, 0.10);
+            --shadow-lg: 0 30px 80px rgba(15, 23, 42, 0.16);
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 28px;
+            --radius-xl: 34px;
+            --radius-full: 999px;
+
+            --max-width: 1120px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(245, 130, 32, 0.16), transparent 36%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+            color: var(--text);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 15px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+            color: var(--dark);
+            font-size: 1.75rem;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--primary), #ffb15c);
+            color: white;
+            display: grid;
+            place-items: center;
+            box-shadow: 0 12px 28px rgba(245, 130, 32, 0.30);
+            font-size: 18px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .nav-btn {
+            min-height: 42px;
+            padding: 10px 15px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            transition: 0.25s ease;
+        }
+
+        .nav-btn:hover {
+            border-color: rgba(245, 130, 32, 0.50);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 10px 24px rgba(245, 130, 32, 0.22);
+        }
+
+        .page-shell {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 32px 22px 80px;
+        }
+
+        .hero-card {
+            background:
+                radial-gradient(circle at 18% 0%, rgba(245, 130, 32, 0.35), transparent 34%),
+                linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border-radius: var(--radius-xl);
+            padding: 34px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            right: -80px;
+            top: -80px;
+            width: 230px;
+            height: 230px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 18px;
+        }
+
+        .hero-card h1 {
+            font-size: clamp(30px, 5vw, 50px);
+            line-height: 1.06;
+            letter-spacing: -0.06em;
+            font-weight: 900;
+            margin-bottom: 12px;
+            max-width: 760px;
+        }
+
+        .hero-card p {
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.75;
+            font-weight: 600;
+            max-width: 760px;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .form-topbar {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+            background: white;
+        }
+
+        .form-topbar-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-topbar-title-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 17px;
+        }
+
+        .form-topbar h2 {
+            font-size: 21px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            color: var(--dark);
+        }
+
+        .form-topbar p {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 3px;
+        }
+
+        .auth-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 13px;
+            border-radius: var(--radius-full);
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 900;
+            max-width: 100%;
+        }
+
+        .auth-pill i {
+            color: var(--primary);
+        }
+
+        .auth-pill span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 280px;
+        }
+
+        form {
+            padding: 28px;
+        }
+
+        .section-header {
+            margin: 32px 0 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--surface-soft);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .section-header:first-child {
+            margin-top: 0;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .section-note {
+            color: var(--muted-light);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .reg-panel {
+            background:
+                radial-gradient(circle at 12% 0%, rgba(245, 130, 32, 0.34), transparent 34%),
+                linear-gradient(135deg, var(--dark) 0%, var(--dark-soft) 100%);
+            padding: 24px;
+            border-radius: 26px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            align-items: end;
+            margin-bottom: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .reg-panel label {
+            color: #e2e8f0;
+        }
+
+        .reg-help {
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .reg-input {
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 26px;
+            letter-spacing: 3px;
+            text-align: center;
+            border: 2px solid transparent;
+            background: white;
+            height: 66px;
+            border-radius: 15px;
+            color: var(--dark);
+        }
+
+        .btn-fetch {
+            height: 66px;
+            background: var(--primary);
+            color: white;
+            padding: 0 26px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 14px 28px rgba(245, 130, 32, 0.22);
+            transition: 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .btn-fetch:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-fetch:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .form-grid.two {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .form-grid.four {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .form-group {
+            min-width: 0;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 850;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        .required-mark {
+            color: var(--danger);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 15px 14px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--surface-soft);
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 650;
+            outline: none;
+            transition: 0.22s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: rgba(245, 130, 32, 0.70);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.10);
+        }
+
+        select:disabled,
+        input:disabled,
+        textarea:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.7;
+        }
+
+        .field-help {
+            display: block;
+            margin-top: 7px;
+            color: var(--muted-light);
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1.45;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 10px;
+            background: var(--surface-soft);
+            padding: 18px;
+            border-radius: 22px;
+            border: 1px solid var(--border);
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 12px;
+            cursor: pointer;
+            background: white;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            transition: 0.22s ease;
+            user-select: none;
+        }
+
+        .feature-item:hover {
+            border-color: rgba(245, 130, 32, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .feature-item input {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--primary);
+            flex: 0 0 auto;
+        }
+
+        .feature-item.active {
+            background: #fff7ed;
+            border-color: #fed7aa;
+            color: #9a3412;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border-strong);
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 24px;
+            text-align: center;
+            transition: 0.22s ease;
+        }
+
+        .upload-zone:hover {
+            border-color: rgba(245, 130, 32, 0.60);
+            background: #fff7ed;
+        }
+
+        .upload-zone i {
+            font-size: 34px;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .upload-zone strong {
+            display: block;
+            color: var(--dark);
+            font-size: 15px;
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+
+        .upload-zone p {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+
+        .upload-zone input {
+            background: white;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .preview-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .preview-card img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            display: block;
+            background: #e2e8f0;
+        }
+
+        .preview-card div {
+            padding: 9px;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 800;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .legal-box {
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 20px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #9a3412;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.7;
+        }
+
+        .legal-box strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #7c2d12;
+            font-weight: 900;
+        }
+
+        .submit-row {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-submit {
+            width: 100%;
+            min-height: 62px;
+            padding: 18px 22px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 17px;
+            box-shadow: 0 16px 34px rgba(245, 130, 32, 0.26);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.25s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-submit:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .btn-cancel {
+            min-height: 62px;
+            padding: 18px 20px;
+            background: white;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            transition: 0.25s ease;
+        }
+
+        .btn-cancel:hover {
+            color: var(--dark);
+            border-color: var(--border-strong);
+        }
+
+        .spinner {
+            animation: spin 0.85s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 860px) {
+            .header-inner {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 3px;
+            }
+
+            .hero-card {
+                padding: 26px;
+                border-radius: 28px;
+            }
+
+            form,
+            .form-topbar {
+                padding: 22px;
+            }
+
+            .form-grid,
+            .form-grid.two,
+            .form-grid.four {
+                grid-template-columns: 1fr;
+            }
+
+            .reg-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-fetch {
+                width: 100%;
+            }
+
+            .submit-row {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-cancel {
+                width: 100%;
+            }
+        }
     </style>
 </head>
+
 <body>
-<div class="form-card">
-    <h1 style="text-align:center; font-weight:900;">Publicera Fordon</h1>
-    <div class="reg-panel">
-        <div style="flex:1">
-            <label style="color:white">Registreringsnummer (Reg-nr)</label>
-            <input type="text" id="regNr" class="reg-input" placeholder="ABC 123" maxlength="7">
-        </div>
-        <button type="button" class="btn-fetch" id="fetchBtn"><i class="fa-solid fa-sync"></i> HÄMTA</button>
+
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo" aria-label="BILHK startsida">
+            <span class="logo-icon">
+                <i class="fa-solid fa-car-side"></i>
+            </span>
+            BIL<span>HK</span>
+        </a>
+
+        <nav class="header-actions" aria-label="Sidmeny">
+            <a href="index.html" class="nav-btn">
+                <i class="fa-solid fa-house"></i>
+                Hem
+            </a>
+
+            <a href="my-account.html" class="nav-btn">
+                <i class="fa-solid fa-user"></i>
+                Mitt konto
+            </a>
+
+            <a href="filter.html" class="nav-btn">
+                <i class="fa-solid fa-sliders"></i>
+                Sök bilar
+            </a>
+
+            <a href="sell.html" class="nav-btn primary">
+                <i class="fa-solid fa-circle-plus"></i>
+                Sälj bil
+            </a>
+        </nav>
     </div>
-    <form id="sellForm">
-        <div class="section-header">Identitet & Basdata</div>
-        <div class="form-grid">
-            <select id="brand" required><option value="">Välj märke...</option></select>
-            <select id="model" required disabled><option value="">Välj modell...</option></select>
-            <input type="number" id="year" placeholder="Årsmodell" required>
-        </div>
-        <div class="form-grid">
-            <input type="number" id="price" placeholder="Pris (SEK)" required>
-            <input type="number" id="mileage" placeholder="Miltal (mil)" required>
-            <div><label>Besiktigad till</label><input type="date" id="besiktning"></div>
+</header>
+
+<main class="page-shell">
+    <section class="hero-card">
+        <div class="hero-label">
+            <i class="fa-solid fa-shield-halved"></i>
+            Säker publicering
         </div>
 
-        <div class="section-header">Mekanik & Ekonomi</div>
-        <div class="form-grid">
-            <select id="fuel" required>
-                <option value="Bensin">Bensin</option><option value="Diesel">Diesel</option>
-                <option value="El">Elbil (EV)</option><option value="Hybrid">Laddhybrid</option>
-            </select>
-            <select id="transmission" required><option value="Automat">Automat</option><option value="Manuell">Manuell</option></select>
-            <select id="drive"><option value="FWD">FWD (Fram)</option><option value="RWD">RWD (Bak)</option><option value="AWD">AWD (4WD)</option></select>
-        </div>
-        <div class="form-grid">
-            <input type="number" id="hp" placeholder="Hästkrafter (hk)">
-            <input type="number" id="tax" placeholder="Årsskatt (kr)">
-            <input type="number" id="owners" placeholder="Antal ägare">
-            <input type="text" id="color" placeholder="Färg">
-            <input type="number" id="seats" placeholder="Antal säten">
-            <select id="karosseri">
-                <option value="Sedan">Sedan</option><option value="SUV">SUV</option><option value="Kombi">Kombi</option>
-                <option value="Van">Van</option><option value="Cab">Cab</option>
-            </select>
+        <h1>Publicera en komplett och tydlig bilannons</h1>
+
+        <p>
+            Fyll i fordonets uppgifter noggrant. Ju bättre information du lägger in, desto lättare blir det för köpare
+            att hitta annonsen och förstå bilens skick, utrustning och historik.
+        </p>
+    </section>
+
+    <section class="form-card">
+        <div class="form-topbar">
+            <div class="form-topbar-title">
+                <div class="form-topbar-title-icon">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                </div>
+
+                <div>
+                    <h2>Annonsuppgifter</h2>
+                    <p>Alla obligatoriska fält måste fyllas i innan publicering.</p>
+                </div>
+            </div>
+
+            <div class="auth-pill" id="authStatus">
+                <i class="fa-solid fa-circle-notch spinner"></i>
+                <span>Kontrollerar inloggning...</span>
+            </div>
         </div>
 
-        <div class="section-header">Utrustning & ADAS</div>
-        <div class="feature-grid">
-            <label class="feature-item"><input type="checkbox" class="feat" value="ABS"> ABS/ESP</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="ACC"> Adaptiv farthållare</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="AEB"> Autobroms (AEB)</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="LKA"> Filassistans (LKA)</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="BSM"> Döda vinkel-varnare</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="360Cam"> 360° Kamera</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="HUD"> Head-up display</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Matrix"> Matrix LED</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Dragkrok"> Dragkrok</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Service"> Full servicehistorik</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Vinterhjul"> Vinterhjul</label>
-            <label class="feature-item"><input type="checkbox" class="feat" value="Navi"> Navigation (GPS)</label>
-        </div>
+        <form id="sellForm" novalidate>
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fa-solid fa-id-card"></i>
+                    Registrering
+                </div>
 
-        <textarea id="description" rows="5" placeholder="Beskrivning..." required style="margin-top:20px;"></textarea>
-        <input type="file" id="images" multiple accept="image/*" required style="margin-top:15px;">
-        <button type="submit" class="btn-submit" id="submitBtn">PUBLICERA ANNONSON</button>
-    </form>
-</div>
+                <div class="section-note">
+                    Frivilligt men rekommenderat
+                </div>
+            </div>
+
+            <div class="reg-panel">
+                <div>
+                    <label for="regNr">Registreringsnummer</label>
+                    <input type="text" id="regNr" class="reg-input" placeholder="ABC123" maxlength="8" autocomplete="off" inputmode="text">
+                    <div class="reg-help">
+                        Skriv utan bindestreck. Exempel: ABC123. Funktionen “Hämta” är förberedd för framtida fordonsdata-API.
+                    </div>
+                </div>
+
+                <button type="button" class="btn-fetch" id="fetchBtn">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    HÄMTA
+                </button>
+            </div>
+
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fa-solid fa-car"></i>
+                    Identitet & basdata
+                </div>
+
+                <div class="section-note">
+                    Märke, modell och år
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="brand">Märke <span class="required-mark">*</span></label>
+                    <select id="brand" required>
+                        <option value="">Välj märke...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="model">Modell <span class="required-mark">*</span></label>
+                    <select id="model" required disabled>
+                        <option value="">Välj märke först...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="year">Årsmodell <span class="required-mark">*</span></label>
+                    <input type="number" id="year" placeholder="Ex. 2020" min="1900" max="2027" required>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fa-solid fa-coins"></i>
+                    Pris, miltal & kontroll
+                </div>
+
+                <div class="section-note">
+                    Viktigt för sökresultat
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="price">Pris SEK <span class="required-mark">*</span></label>
+                    <input type="number" id="price" placeholder="Ex. 249000" min="1" max="20000000" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="mileage">Miltal <span class="required-mark">*</span></label>
+                    <input type="number" id="mileage" placeholder="Ex. 8700" min="0" max="200000" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="besiktning">Besiktigad till</label>
+                    <input type="date" id="besiktning">
+                </div>
+            </div>
+
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fa-solid fa-gears"></i>
+                    Mekanik & ekonomi
+                </div>
+
+                <div class="section-note">
+                    Drivmedel, växellåda, skatt
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="fuelType">Drivmedel <span class="required-mark">*</span></label>
+                    <select id="fuelType" required>
+                        <option value="Bensin">Bensin</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="El">Elbil</option>
+                        <option value="Hybrid">Hybrid / Laddhybrid</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="transmission">Växellåda <span class="required-mark">*</span></label>
+                    <select id="transmission" required>
+                        <option value="Automat">Automat</option>
+                        <option value="Manuell">Manuell</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="drive">Drivning</label>
+                    <select id="drive">
+                        <option value="">Ej angivet</option>
+                        <option value="FWD">FWD / Framhjulsdrift</option>
+                        <option value="RWD">RWD / Bakhjulsdrift</option>
+                        <option value="AWD">AWD / 4WD</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid four" style="margin-top: 15px;">
+                <div class="form-group">
+                    <label for="hp">Hästkrafter</label>
+                    <input type="number" id="hp" placeholder="hk" min="0" max="3000">
+                </div>
+
+                <div class="form-group">
+                    <label for="tax">Årsskatt</label>
+                    <input type="number" id="tax" placeholder="kr" min="0" max="200000">
+                </div>
+
+                <div class="form-group">
+                    <label for="owners">Antal ägare</label>
+                    <input type="number" id="owners" placeholder="st" min="0" max="99">
+                </div>
+
+                <div class="form-group">
+                    <label for="seats">Antal säten</label>
+                    <input type="number" id="seats" placeholder="Ex. 5" min="1" max="99">
+                </div>
+            </div>
+
+            <div class="form-grid two" style="margin-top: 15px;">
+                <div class="form-group">
+                    <label for="color">Färg</label>
+                    <input type="text" id="color" placeholder="Ex. Svart, vit, blå" maxlength="40">
+                </div>
+
+                <div class="form-group">
+                    <label for="bodyType">Karosseri <span class="required-mark">*</span></label>
+                    <select id="bodyType" required>
+                        <option value="Sedan">Sedan</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Kombi">Kombi</option>
+                        <option value="Van">Van</option>
+                        <option value="Cab">Cab</option>
+                        <option value="Småbil">Småbil</option>
+                        <option value="Coupe">Coupe</option>
+                        <option value="Pickup">Pickup</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Utrustning & ADAS
+                </div>
+
+                <div class="section-note">
+                    Välj allt som finns i bilen
+                </div>
+            </div>
+
+            <div class="feature-grid" id="featureGrid">
+                <label class="feature-item"><input type="checkbox" class="feat" value="ABS"> ABS / ESP</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="ACC"> Adaptiv farthållare</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="AEB"> Autobroms</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="LKA"> Filassistans</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="BSM"> Döda vinkel-varnare</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="TPMS"> TPMS</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="HSA"> Hill Start Assist</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="360Cam"> 360° Kamera</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="HUD"> Head-up display</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Matrix"> Matrix LED</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="CarPlay"> Apple CarPlay / Android Auto</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Dragkrok"> Dragkrok</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Service"> Full servicehistorik</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Vinterhjul"> Vinterhjul</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Navi"> Navigation</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Panoramic"> Panoramaglastak</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Skinn"> Skinnklädsel</label>
+                <label class="feature-item"><input type="checkbox" class="feat" value="Keyless"> Keyless</label>
+            </div>
+
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fa-solid fa-align-left"></i>
+                    Beskrivning
+                </div>
+
+                <div class="section-note">
+                    Max 2500 tecken
+                </div>
+            </div>
+
+            <div class="form-group full">
+                <label for="description">Beskrivning <span class="required-mark">*</span></label>
+                <textarea id="description" maxlength="2500" placeholder="Beskriv bilens skick, servicehistorik, utrustning, eventuella fel och övrig viktig information..." required></textarea>
+                <span class="field-help" id="descriptionCounter">0 / 2500 tecken</span>
+            </div>
+
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fa-solid fa-images"></i>
+                    Bilder
+                </div>
+
+                <div class="section-note">
+                    Max 12 bilder, 5MB per bild
+                </div>
+            </div>
+
+            <div class="upload-zone">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <strong>Ladda upp bilbilder</strong>
+                <p>
+                    Använd tydliga bilder från flera vinklar. Första bilden blir huvudbild i sökresultat.
+                </p>
+
+                <input type="file" id="images" multiple accept="image/*" required>
+
+                <div class="preview-grid" id="previewGrid"></div>
+            </div>
+
+            <div class="legal-box">
+                <strong>Viktig säkerhetsinformation</strong>
+                Genom att publicera annonsen bekräftar du att uppgifterna är korrekta enligt din kännedom.
+                BILHK är en öppen marknadsplats och granskar inte fordonets faktiska skick. Handel sker på användarens eget ansvar.
+            </div>
+
+            <div class="submit-row">
+                <button type="submit" class="btn-submit" id="submitBtn" disabled>
+                    <i class="fa-solid fa-circle-plus"></i>
+                    PUBLICERA ANNONSEN
+                </button>
+
+                <a href="index.html" class="btn-cancel">
+                    <i class="fa-solid fa-xmark"></i>
+                    Avbryt
+                </a>
+            </div>
+        </form>
+    </section>
+</main>
+
 <script type="module">
-    import { carData } from './cars-data.js';
-    import { auth, db, storage } from './firebase-config.js';
-    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-    import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { carData } from "./cars-data.js";
 
-    const bSel = document.getElementById('brand'), mSel = document.getElementById('model');
-    Object.keys(carData).sort().forEach(b => { bSel.innerHTML += `<option value="${b}">${b}</option>`; });
-    bSel.onchange = () => {
-        mSel.innerHTML = '<option value="">Modell...</option>';
-        if(carData[bSel.value]) { mSel.disabled = false; carData[bSel.value].sort().forEach(m => { mSel.innerHTML += `<option value="${m}">${m}</option>`; }); }
+    import { auth, db, storage } from "./firebase-config.js";
+
+    import {
+        ref,
+        uploadBytes,
+        getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+    import {
+        collection,
+        addDoc,
+        serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    import {
+        onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const SELL_CONFIG = {
+        LIMITS: {
+            MAX_IMAGES: 12,
+            MAX_IMAGE_SIZE_BYTES: 5 * 1024 * 1024,
+            MAX_DESCRIPTION_LENGTH: 2500,
+            MIN_YEAR: 1900,
+            MAX_YEAR: new Date().getFullYear() + 1,
+            MAX_PRICE: 20000000,
+            MAX_MILEAGE: 200000
+        },
+
+        COLLECTIONS: {
+            CARS: "cars"
+        },
+
+        ROUTES: {
+            LOGIN: "login.html",
+            ACCOUNT: "my-account.html",
+            HOME: "index.html"
+        },
+
+        STORAGE: {
+            CAR_IMAGES_DIR: "cars"
+        }
     };
 
-    document.getElementById('sellForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true; btn.innerText = "Publicerar...";
-        try {
-            const files = document.getElementById('images').files, urls = [];
-            for (let f of files) {
-                const sRef = ref(storage, `cars/${Date.now()}_${f.name}`);
-                await uploadBytes(sRef, f);
-                urls.push(await getDownloadURL(sRef));
-            }
-            const features = Array.from(document.querySelectorAll('.feat:checked')).map(el => el.value);
-            await addDoc(collection(db, "cars"), {
-                regNo: document.getElementById('regNr').value.toUpperCase(),
-                brand: bSel.value, model: mSel.value, year: Number(document.getElementById('year').value),
-                price: Number(document.getElementById('price').value), mileage: Number(document.getElementById('mileage').value),
-                fuel: document.getElementById('fuel').value, transmission: document.getElementById('transmission').value,
-                drive: document.getElementById('drive').value, hp: Number(document.getElementById('hp').value), 
-                tax: Number(document.getElementById('tax').value), owners: Number(document.getElementById('owners').value), 
-                color: document.getElementById('color').value, seats: Number(document.getElementById('seats').value),
-                karosseri: document.getElementById('karosseri').value, besiktning: document.getElementById('besiktning').value, 
-                features: features, description: document.getElementById('description').value, images: urls,
-                sellerId: auth.currentUser.uid, active: true, createdAt: serverTimestamp()
+    const elements = {
+        authStatus: document.getElementById("authStatus"),
+
+        sellForm: document.getElementById("sellForm"),
+        submitBtn: document.getElementById("submitBtn"),
+        fetchBtn: document.getElementById("fetchBtn"),
+
+        regNo: document.getElementById("regNr"),
+        brand: document.getElementById("brand"),
+        model: document.getElementById("model"),
+        year: document.getElementById("year"),
+
+        price: document.getElementById("price"),
+        mileage: document.getElementById("mileage"),
+        besiktning: document.getElementById("besiktning"),
+
+        fuelType: document.getElementById("fuelType"),
+        transmission: document.getElementById("transmission"),
+        drive: document.getElementById("drive"),
+
+        hp: document.getElementById("hp"),
+        tax: document.getElementById("tax"),
+        owners: document.getElementById("owners"),
+        seats: document.getElementById("seats"),
+
+        color: document.getElementById("color"),
+        bodyType: document.getElementById("bodyType"),
+
+        featureGrid: document.getElementById("featureGrid"),
+
+        description: document.getElementById("description"),
+        descriptionCounter: document.getElementById("descriptionCounter"),
+
+        images: document.getElementById("images"),
+        previewGrid: document.getElementById("previewGrid")
+    };
+
+    const state = {
+        currentUser: null,
+        selectedFiles: [],
+        isSubmitting: false
+    };
+
+    initializeSellPage();
+
+    function initializeSellPage() {
+        attachGlobalErrorHandlers();
+        populateBrands();
+        attachEvents();
+        watchAuthState();
+    }
+
+    function attachEvents() {
+        elements.brand.addEventListener("change", handleBrandChange);
+        elements.description.addEventListener("input", updateDescriptionCounter);
+        elements.images.addEventListener("change", handleImageSelection);
+        elements.sellForm.addEventListener("submit", handleSubmit);
+
+        elements.fetchBtn.addEventListener("click", () => {
+            Swal.fire({
+                title: "Funktionen är förberedd",
+                text: "Automatisk hämtning via registreringsnummer kräver ett externt fordonsdata-API. Fyll i uppgifterna manuellt tills API är kopplat.",
+                icon: "info",
+                confirmButtonColor: "#f58220"
             });
-            Swal.fire('Klart!', 'Annonsen är live!', 'success');
-            setTimeout(() => window.location.href="index.html", 2000);
-        } catch (err) { Swal.fire('Fel', err.message, 'error'); btn.disabled = false; }
-    };
+        });
+
+        elements.featureGrid.querySelectorAll(".feature-item").forEach((label) => {
+            const checkbox = label.querySelector("input");
+
+            checkbox.addEventListener("change", () => {
+                label.classList.toggle("active", checkbox.checked);
+            });
+        });
+
+        elements.regNo.addEventListener("input", () => {
+            elements.regNo.value = formatRegistrationNumber(elements.regNo.value);
+        });
+    }
+
+    function watchAuthState() {
+        onAuthStateChanged(auth, (user) => {
+            state.currentUser = user;
+
+            if (!user) {
+                setAuthStatus("Du måste logga in för att publicera annons.", "danger");
+                elements.submitBtn.disabled = true;
+
+                Swal.fire({
+                    title: "Logga in krävs",
+                    text: "Du behöver vara inloggad för att publicera en bilannons.",
+                    icon: "warning",
+                    confirmButtonColor: "#f58220"
+                }).then(() => {
+                    window.location.href = SELL_CONFIG.ROUTES.LOGIN;
+                });
+
+                return;
+            }
+
+            setAuthStatus(user.email || "Inloggad användare", "success");
+            elements.submitBtn.disabled = false;
+        });
+    }
+
+    function populateBrands() {
+        clearSelect(elements.brand, "Välj märke...");
+
+        Object.keys(carData)
+            .sort((a, b) => a.localeCompare(b, "sv"))
+            .forEach((brandName) => {
+                const option = document.createElement("option");
+                option.value = brandName;
+                option.textContent = brandName;
+                elements.brand.appendChild(option);
+            });
+    }
+
+    function handleBrandChange() {
+        const selectedBrand = elements.brand.value;
+
+        clearSelect(elements.model, selectedBrand ? "Välj modell..." : "Välj märke först...");
+
+        if (!selectedBrand || !Array.isArray(carData[selectedBrand])) {
+            elements.model.disabled = true;
+            return;
+        }
+
+        carData[selectedBrand]
+            .slice()
+            .sort((a, b) => a.localeCompare(b, "sv"))
+            .forEach((modelName) => {
+                const option = document.createElement("option");
+                option.value = modelName;
+                option.textContent = modelName;
+                elements.model.appendChild(option);
+            });
+
+        elements.model.disabled = false;
+    }
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+
+        if (state.isSubmitting) {
+            return;
+        }
+
+        if (!state.currentUser) {
+            await Swal.fire("Logga in krävs", "Du måste vara inloggad för att publicera annons.", "warning");
+            window.location.href = SELL_CONFIG.ROUTES.LOGIN;
+            return;
+        }
+
+        const validation = validateForm();
+
+        if (!validation.ok) {
+            await Swal.fire({
+                title: "Kontrollera uppgifterna",
+                html: validation.errors.map((error) => `<div style="text-align:left;margin-bottom:6px;">• ${escapeForSweetAlert(error)}</div>`).join(""),
+                icon: "warning",
+                confirmButtonColor: "#f58220"
+            });
+
+            return;
+        }
+
+        state.isSubmitting = true;
+        setSubmitLoading(true, "Publicerar annons...");
+
+        try {
+            const imageUrls = await uploadSelectedImages(state.selectedFiles, state.currentUser.uid);
+            const carPayload = buildCarPayload(imageUrls);
+
+            const docRef = await addDoc(collection(db, SELL_CONFIG.COLLECTIONS.CARS), carPayload);
+
+            await Swal.fire({
+                title: "Klart!",
+                text: "Annonsen är publicerad.",
+                icon: "success",
+                confirmButtonColor: "#f58220"
+            });
+
+            window.location.href = `details.html?id=${encodeURIComponent(docRef.id)}`;
+        } catch (error) {
+            console.error("[BILHK] Failed to publish car:", error);
+
+            await Swal.fire({
+                title: "Fel",
+                text: getFriendlyErrorMessage(error),
+                icon: "error",
+                confirmButtonColor: "#f58220"
+            });
+
+            state.isSubmitting = false;
+            setSubmitLoading(false, "PUBLICERA ANNONSEN");
+        }
+    }
+
+    function validateForm() {
+        const errors = [];
+
+        const brand = cleanText(elements.brand.value, 80);
+        const model = cleanText(elements.model.value, 100);
+        const year = cleanNumber(elements.year.value);
+        const price = cleanNumber(elements.price.value);
+        const mileage = cleanNumber(elements.mileage.value);
+        const description = cleanText(elements.description.value, SELL_CONFIG.LIMITS.MAX_DESCRIPTION_LENGTH);
+
+        if (!brand) errors.push("Välj märke.");
+        if (!model) errors.push("Välj modell.");
+
+        if (year === null || year < SELL_CONFIG.LIMITS.MIN_YEAR || year > SELL_CONFIG.LIMITS.MAX_YEAR) {
+            errors.push(`Årsmodell måste vara mellan ${SELL_CONFIG.LIMITS.MIN_YEAR} och ${SELL_CONFIG.LIMITS.MAX_YEAR}.`);
+        }
+
+        if (price === null || price <= 0 || price > SELL_CONFIG.LIMITS.MAX_PRICE) {
+            errors.push("Ange ett giltigt pris.");
+        }
+
+        if (mileage === null || mileage < 0 || mileage > SELL_CONFIG.LIMITS.MAX_MILEAGE) {
+            errors.push("Ange ett giltigt miltal.");
+        }
+
+        if (!description || description.length < 20) {
+            errors.push("Beskrivningen måste vara minst 20 tecken.");
+        }
+
+        if (!elements.fuelType.value) errors.push("Välj drivmedel.");
+        if (!elements.transmission.value) errors.push("Välj växellåda.");
+        if (!elements.bodyType.value) errors.push("Välj karosseri.");
+
+        if (state.selectedFiles.length === 0) {
+            errors.push("Ladda upp minst en bild.");
+        }
+
+        if (state.selectedFiles.length > SELL_CONFIG.LIMITS.MAX_IMAGES) {
+            errors.push(`Du kan ladda upp max ${SELL_CONFIG.LIMITS.MAX_IMAGES} bilder.`);
+        }
+
+        state.selectedFiles.forEach((file) => {
+            if (!file.type.startsWith("image/")) {
+                errors.push(`Filen "${file.name}" är inte en bild.`);
+            }
+
+            if (file.size > SELL_CONFIG.LIMITS.MAX_IMAGE_SIZE_BYTES) {
+                errors.push(`Bilden "${file.name}" är större än 5MB.`);
+            }
+        });
+
+        return {
+            ok: errors.length === 0,
+            errors
+        };
+    }
+
+    function buildCarPayload(imageUrls) {
+        const fuelType = cleanText(elements.fuelType.value, 50);
+        const bodyType = cleanText(elements.bodyType.value, 50);
+
+        const payload = {
+            regNo: cleanText(elements.regNo.value.toUpperCase(), 12),
+
+            brand: cleanText(elements.brand.value, 80),
+            model: cleanText(elements.model.value, 100),
+            year: cleanNumber(elements.year.value),
+            price: cleanNumber(elements.price.value),
+            mileage: cleanNumber(elements.mileage.value),
+
+            fuelType: fuelType,
+            transmission: cleanText(elements.transmission.value, 50),
+            bodyType: bodyType,
+
+            drive: cleanText(elements.drive.value, 40),
+            hp: cleanOptionalNumber(elements.hp.value),
+            tax: cleanOptionalNumber(elements.tax.value),
+            owners: cleanOptionalNumber(elements.owners.value),
+            seats: cleanOptionalNumber(elements.seats.value),
+
+            color: cleanText(elements.color.value, 40),
+            besiktning: cleanText(elements.besiktning.value, 20),
+
+            features: getSelectedFeatures(),
+            description: cleanText(elements.description.value, SELL_CONFIG.LIMITS.MAX_DESCRIPTION_LENGTH),
+
+            images: imageUrls,
+
+            sellerId: state.currentUser.uid,
+            sellerEmail: state.currentUser.email || "",
+
+            active: true,
+            status: "active",
+
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+
+            source: "sell-page-v2",
+
+            /*
+                Compatibility fields:
+                بعض الملفات القديمة عندك كانت تستخدم fuel و karosseri.
+                أبقيناها مؤقتًا حتى لا تنكسر الصفحات القديمة.
+            */
+            fuel: fuelType,
+            karosseri: bodyType
+        };
+
+        return removeUndefinedValues(payload);
+    }
+
+    async function uploadSelectedImages(files, userId) {
+        const uploadedUrls = [];
+
+        for (let index = 0; index < files.length; index++) {
+            const file = files[index];
+
+            setSubmitLoading(true, `Laddar upp bild ${index + 1} av ${files.length}...`);
+
+            const safeFileName = buildSafeStorageFileName(file.name, index);
+            const storagePath = `${SELL_CONFIG.STORAGE.CAR_IMAGES_DIR}/${userId}/${Date.now()}_${safeFileName}`;
+            const storageRef = ref(storage, storagePath);
+
+            await uploadBytes(storageRef, file, {
+                contentType: file.type || "image/jpeg",
+                customMetadata: {
+                    uploadedBy: userId,
+                    originalName: safeFileName
+                }
+            });
+
+            const downloadUrl = await getDownloadURL(storageRef);
+            uploadedUrls.push(downloadUrl);
+        }
+
+        return uploadedUrls;
+    }
+
+    function handleImageSelection() {
+        const files = Array.from(elements.images.files || []);
+
+        state.selectedFiles = files.slice(0, SELL_CONFIG.LIMITS.MAX_IMAGES);
+
+        if (files.length > SELL_CONFIG.LIMITS.MAX_IMAGES) {
+            Swal.fire({
+                title: "För många bilder",
+                text: `Endast de första ${SELL_CONFIG.LIMITS.MAX_IMAGES} bilderna kommer att användas.`,
+                icon: "warning",
+                confirmButtonColor: "#f58220"
+            });
+        }
+
+        renderImagePreviews(state.selectedFiles);
+    }
+
+    function renderImagePreviews(files) {
+        clearElement(elements.previewGrid);
+
+        files.forEach((file) => {
+            const card = document.createElement("div");
+            card.className = "preview-card";
+
+            const img = document.createElement("img");
+            img.alt = file.name;
+            img.src = URL.createObjectURL(file);
+
+            img.onload = () => {
+                URL.revokeObjectURL(img.src);
+            };
+
+            const name = document.createElement("div");
+            name.textContent = `${file.name} · ${formatFileSize(file.size)}`;
+
+            card.appendChild(img);
+            card.appendChild(name);
+
+            elements.previewGrid.appendChild(card);
+        });
+    }
+
+    function getSelectedFeatures() {
+        return Array.from(document.querySelectorAll(".feat:checked"))
+            .map((checkbox) => cleanText(checkbox.value, 60))
+            .filter(Boolean);
+    }
+
+    function updateDescriptionCounter() {
+        const length = elements.description.value.length;
+        elements.descriptionCounter.textContent = `${length} / ${SELL_CONFIG.LIMITS.MAX_DESCRIPTION_LENGTH} tecken`;
+    }
+
+    function setAuthStatus(text, type) {
+        const iconClass = type === "success"
+            ? "fa-solid fa-circle-check"
+            : type === "danger"
+                ? "fa-solid fa-circle-exclamation"
+                : "fa-solid fa-circle-notch spinner";
+
+        elements.authStatus.innerHTML = "";
+
+        const icon = document.createElement("i");
+        icon.className = iconClass;
+
+        const span = document.createElement("span");
+        span.textContent = text;
+
+        elements.authStatus.appendChild(icon);
+        elements.authStatus.appendChild(span);
+    }
+
+    function setSubmitLoading(isLoading, text) {
+        elements.submitBtn.disabled = isLoading || !state.currentUser;
+
+        elements.submitBtn.innerHTML = "";
+
+        const icon = document.createElement("i");
+        icon.className = isLoading ? "fa-solid fa-circle-notch spinner" : "fa-solid fa-circle-plus";
+
+        const span = document.createElement("span");
+        span.textContent = text;
+
+        elements.submitBtn.appendChild(icon);
+        elements.submitBtn.appendChild(span);
+    }
+
+    function clearSelect(selectElement, placeholder) {
+        while (selectElement.firstChild) {
+            selectElement.removeChild(selectElement.firstChild);
+        }
+
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = placeholder;
+
+        selectElement.appendChild(defaultOption);
+    }
+
+    function clearElement(element) {
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
+    }
+
+    function cleanText(value, maxLength = 180) {
+        return String(value ?? "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, maxLength);
+    }
+
+    function cleanNumber(value) {
+        if (value === null || value === undefined || value === "") {
+            return null;
+        }
+
+        const number = Number(String(value).replace(/[^\d.-]/g, ""));
+
+        if (!Number.isFinite(number)) {
+            return null;
+        }
+
+        return number;
+    }
+
+    function cleanOptionalNumber(value) {
+        const number = cleanNumber(value);
+
+        if (number === null || number < 0) {
+            return null;
+        }
+
+        return number;
+    }
+
+    function removeUndefinedValues(object) {
+        const cleaned = {};
+
+        Object.entries(object).forEach(([key, value]) => {
+            if (value !== undefined) {
+                cleaned[key] = value;
+            }
+        });
+
+        return cleaned;
+    }
+
+    function buildSafeStorageFileName(originalName, index) {
+        const extension = String(originalName || "")
+            .split(".")
+            .pop()
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "")
+            .slice(0, 8) || "jpg";
+
+        return `image_${index + 1}.${extension}`;
+    }
+
+    function formatRegistrationNumber(value) {
+        return String(value || "")
+            .toUpperCase()
+            .replace(/[^A-Z0-9]/g, "")
+            .slice(0, 7);
+    }
+
+    function formatFileSize(bytes) {
+        if (!Number.isFinite(bytes)) {
+            return "";
+        }
+
+        const mb = bytes / (1024 * 1024);
+
+        return `${mb.toFixed(2)} MB`;
+    }
+
+    function escapeForSweetAlert(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function getFriendlyErrorMessage(error) {
+        const code = error?.code || "";
+
+        if (code === "permission-denied") {
+            return "Du har inte behörighet att publicera annonsen. Kontrollera Firestore Security Rules.";
+        }
+
+        if (code === "storage/unauthorized") {
+            return "Du har inte behörighet att ladda upp bilder. Kontrollera Storage Rules.";
+        }
+
+        if (code === "storage/quota-exceeded") {
+            return "Lagringsutrymmet är fullt eller kvoten är överskriden.";
+        }
+
+        if (code === "unavailable") {
+            return "Tjänsten är tillfälligt otillgänglig. Försök igen senare.";
+        }
+
+        return error?.message || "Ett okänt fel uppstod.";
+    }
+
+    function attachGlobalErrorHandlers() {
+        window.addEventListener("unhandledrejection", (event) => {
+            console.error("[BILHK] Unhandled promise rejection:", event.reason);
+        });
+
+        window.addEventListener("error", (event) => {
+            console.error("[BILHK] Page error:", event.error || event.message);
+        });
+    }
 </script>
+
 </body>
 </html>
