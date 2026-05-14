@@ -5,10 +5,9 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Mitt konto | BILHK</title>
+    <title>Mitt Konto | BILHK</title>
 
-    <meta name="description" content="Hantera ditt konto, dina annonser, sparade bilar och meddelanden på BILHK.">
-
+    <meta name="description" content="Hantera dina annonser, sparade bilar, meddelanden och kontoinformation på BILHK.">
     <meta name="robots" content="noindex, nofollow">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -37,29 +36,22 @@
             --border: #e2e8f0;
             --border-strong: #cbd5e1;
 
+            --danger: #dc2626;
+            --danger-soft: rgba(220, 38, 38, 0.10);
+
             --success: #16a34a;
             --success-soft: rgba(22, 163, 74, 0.10);
 
-            --danger: #dc2626;
-            --danger-hover: #b91c1c;
-            --danger-soft: rgba(220, 38, 38, 0.10);
-
             --warning: #f59e0b;
-            --warning-soft: rgba(245, 158, 11, 0.13);
-
-            --info: #2563eb;
-            --info-soft: rgba(37, 99, 235, 0.10);
+            --warning-soft: rgba(245, 158, 11, 0.12);
 
             --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
             --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
-            --shadow-lg: 0 28px 80px rgba(15, 23, 42, 0.16);
 
             --radius-sm: 12px;
             --radius-md: 18px;
             --radius-lg: 28px;
             --radius-full: 999px;
-
-            --max-width: 1180px;
         }
 
         * {
@@ -68,18 +60,13 @@
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
             min-height: 100vh;
             font-family: 'Inter', sans-serif;
-            color: var(--text);
             background:
-                radial-gradient(circle at 8% 6%, rgba(245, 130, 32, 0.13), transparent 32%),
-                radial-gradient(circle at 92% 3%, rgba(15, 23, 42, 0.08), transparent 34%),
+                radial-gradient(circle at 12% 12%, rgba(245, 130, 32, 0.13), transparent 28%),
                 linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+            color: var(--text);
         }
 
         a {
@@ -87,289 +74,246 @@
             text-decoration: none;
         }
 
-        button,
-        input {
-            font-family: inherit;
-        }
-
         button {
+            font-family: inherit;
             cursor: pointer;
         }
 
-        img {
-            display: block;
-            max-width: 100%;
-        }
-
-        .site-header {
+        .topbar {
             position: sticky;
             top: 0;
-            z-index: 50;
-            background: rgba(255, 255, 255, 0.94);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(18px);
-        }
-
-        .header-inner {
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 17px 24px;
+            padding: 16px 6%;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
             gap: 18px;
         }
 
         .logo {
             display: inline-flex;
             align-items: center;
-            gap: 11px;
-            color: var(--dark);
-            font-size: 1.8rem;
+            gap: 10px;
+            font-size: 26px;
             font-weight: 900;
             letter-spacing: -0.06em;
-            white-space: nowrap;
+            color: var(--dark);
         }
 
         .logo-icon {
-            width: 43px;
-            height: 43px;
+            width: 42px;
+            height: 42px;
             border-radius: 15px;
             display: grid;
             place-items: center;
             background: linear-gradient(135deg, var(--primary), #ffb15c);
             color: white;
-            box-shadow: 0 12px 28px rgba(245, 130, 32, 0.34);
-            font-size: 18px;
+            box-shadow: 0 12px 28px rgba(245, 130, 32, 0.28);
         }
 
         .logo span {
             color: var(--primary);
         }
 
-        .header-actions {
+        .top-actions {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
             gap: 10px;
             flex-wrap: wrap;
         }
 
-        .nav-btn {
+        .top-link {
             min-height: 42px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 14px;
+            padding: 10px 15px;
             border-radius: var(--radius-full);
-            color: var(--dark);
-            font-size: 13px;
-            font-weight: 900;
-            transition: 0.25s ease;
             border: 1px solid var(--border);
             background: white;
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 850;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s ease;
         }
 
-        .nav-btn:hover {
+        .top-link:hover {
             border-color: rgba(245, 130, 32, 0.45);
             color: var(--primary-hover);
             transform: translateY(-1px);
         }
 
-        .nav-btn.primary {
-            border-color: var(--primary);
+        .top-link.primary {
             background: var(--primary);
             color: white;
-            box-shadow: 0 10px 24px rgba(245, 130, 32, 0.26);
+            border-color: var(--primary);
         }
 
-        .nav-btn.primary:hover {
-            background: var(--primary-hover);
-            color: white;
-        }
-
-        .nav-btn.danger {
+        .top-link.danger {
             color: var(--danger);
-            border-color: rgba(220, 38, 38, 0.18);
-            background: var(--danger-soft);
         }
 
-        .nav-btn.danger:hover {
-            background: var(--danger);
-            color: white;
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 34px auto 70px;
         }
 
-        .page-shell {
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 34px 24px 80px;
-        }
-
-        .hero-card {
-            position: relative;
-            overflow: hidden;
+        .account-hero {
             background:
                 linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.96)),
-                radial-gradient(circle at top left, rgba(245, 130, 32, 0.36), transparent 35%);
+                radial-gradient(circle at 18% 15%, rgba(245, 130, 32, 0.35), transparent 30%);
             color: white;
             border-radius: 34px;
-            padding: 36px;
-            box-shadow: var(--shadow-lg);
+            padding: 32px;
+            box-shadow: var(--shadow-md);
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: center;
             margin-bottom: 28px;
+            overflow: hidden;
+            position: relative;
         }
 
-        .hero-card::before {
+        .account-hero::after {
             content: "";
             position: absolute;
             right: -120px;
-            top: -140px;
+            bottom: -140px;
             width: 340px;
             height: 340px;
             border-radius: 999px;
-            background: rgba(245, 130, 32, 0.16);
+            background: rgba(245, 130, 32, 0.18);
         }
 
         .hero-content {
             position: relative;
             z-index: 1;
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            align-items: end;
-            gap: 24px;
         }
 
         .hero-badge {
             width: fit-content;
             display: inline-flex;
             align-items: center;
-            gap: 9px;
-            padding: 9px 14px;
-            border-radius: var(--radius-full);
+            gap: 8px;
             background: rgba(255, 255, 255, 0.10);
             border: 1px solid rgba(255, 255, 255, 0.12);
             color: #e2e8f0;
-            font-size: 12px;
+            border-radius: var(--radius-full);
+            padding: 8px 12px;
+            font-size: 11px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .hero-badge i {
             color: var(--primary);
         }
 
-        .hero-card h1 {
-            font-size: clamp(30px, 4vw, 48px);
-            line-height: 1.05;
+        .account-hero h1 {
+            font-size: clamp(28px, 4vw, 42px);
             font-weight: 900;
-            letter-spacing: -0.055em;
-            margin-bottom: 12px;
+            letter-spacing: -0.06em;
+            margin-bottom: 8px;
         }
 
-        .hero-card p {
-            max-width: 760px;
+        .account-hero p {
             color: #cbd5e1;
-            font-size: 15px;
-            line-height: 1.75;
-            font-weight: 600;
+            font-size: 14px;
+            line-height: 1.7;
+            font-weight: 650;
         }
 
-        .account-layout {
+        .hero-user {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            padding: 18px;
+            min-width: 230px;
+        }
+
+        .hero-user small {
+            display: block;
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .hero-user strong {
+            display: block;
+            color: white;
+            font-size: 14px;
+            font-weight: 850;
+            word-break: break-word;
+        }
+
+        .wrapper {
             display: grid;
-            grid-template-columns: 290px minmax(0, 1fr);
-            gap: 24px;
+            grid-template-columns: 280px minmax(0, 1fr);
+            gap: 26px;
             align-items: start;
         }
 
-        .sidebar-card {
+        .sidebar {
             position: sticky;
-            top: 94px;
-            background: rgba(255, 255, 255, 0.96);
+            top: 96px;
+            background: white;
             border: 1px solid var(--border);
             border-radius: 28px;
-            padding: 18px;
+            padding: 14px;
             box-shadow: var(--shadow-sm);
-        }
-
-        .profile-mini {
-            padding: 18px;
-            border-radius: 22px;
-            background: var(--surface-soft);
-            border: 1px solid var(--border);
-            margin-bottom: 14px;
-        }
-
-        .avatar {
-            width: 58px;
-            height: 58px;
-            border-radius: 22px;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, var(--dark), #334155);
-            color: white;
-            font-size: 22px;
-            margin-bottom: 12px;
-        }
-
-        .profile-mini strong {
-            display: block;
-            color: var(--dark);
-            font-size: 15px;
-            font-weight: 900;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .profile-mini span {
-            display: block;
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 750;
-            margin-top: 4px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         .tab-btn {
             width: 100%;
-            min-height: 50px;
+            min-height: 54px;
+            padding: 14px 16px;
             border: 1px solid transparent;
-            border-radius: 16px;
+            border-radius: 17px;
             background: transparent;
-            color: var(--dark);
-            padding: 12px 14px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-align: left;
+            color: var(--muted);
             font-size: 14px;
             font-weight: 900;
-            transition: 0.25s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            transition: 0.2s ease;
+            margin-bottom: 6px;
+        }
+
+        .tab-btn i {
+            width: 22px;
+            text-align: center;
         }
 
         .tab-btn:hover {
             background: var(--surface-soft);
-            color: var(--primary-hover);
+            color: var(--dark);
         }
 
         .tab-btn.active {
             background: var(--primary);
             color: white;
-            box-shadow: 0 10px 24px rgba(245, 130, 32, 0.24);
+            box-shadow: 0 12px 24px rgba(245, 130, 32, 0.20);
         }
 
-        .main-card {
-            min-height: 520px;
-            background: rgba(255, 255, 255, 0.97);
+        .content {
+            min-height: 360px;
+            background: white;
             border: 1px solid var(--border);
             border-radius: 30px;
-            padding: 24px;
             box-shadow: var(--shadow-sm);
+            padding: 24px;
         }
 
         .content-header {
@@ -386,213 +330,179 @@
             color: var(--dark);
             font-size: 25px;
             font-weight: 900;
-            letter-spacing: -0.045em;
+            letter-spacing: -0.04em;
             margin-bottom: 5px;
         }
 
         .content-header p {
             color: var(--muted);
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 650;
             line-height: 1.6;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: var(--surface-soft);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .stat-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 16px;
-            display: grid;
-            place-items: center;
-            background: var(--primary-soft);
-            color: var(--primary);
+        .counter-pill {
             flex: 0 0 auto;
-        }
-
-        .stat-card strong {
-            display: block;
-            color: var(--dark);
-            font-size: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: var(--radius-full);
+            background: var(--primary-soft);
+            color: var(--primary-hover);
+            font-size: 12px;
             font-weight: 900;
         }
 
-        .stat-card span {
-            display: block;
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 850;
-        }
-
-        .toolbar {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--muted-light);
-            pointer-events: none;
-        }
-
-        .search-box input {
-            width: 100%;
-            min-height: 50px;
-            padding: 12px 14px 12px 42px;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            background: white;
-            color: var(--dark);
-            font-size: 14px;
-            font-weight: 750;
-            outline: none;
-            transition: 0.25s ease;
-        }
-
-        .search-box input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.12);
-        }
-
-        .list {
+        .ads-list {
             display: grid;
             gap: 14px;
         }
 
-        .vehicle-card {
+        .ad-card {
+            display: grid;
+            grid-template-columns: 150px minmax(0, 1fr) auto;
+            gap: 16px;
+            align-items: center;
             background: white;
             border: 1px solid var(--border);
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            display: grid;
-            grid-template-columns: 170px minmax(0, 1fr) auto;
-            gap: 18px;
-            align-items: stretch;
-            transition: 0.25s ease;
+            border-radius: 22px;
+            padding: 14px;
+            transition: 0.2s ease;
+            cursor: pointer;
         }
 
-        .vehicle-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            border-color: rgba(245, 130, 32, 0.32);
-        }
-
-        .vehicle-img {
-            width: 100%;
-            height: 145px;
-            object-fit: cover;
-            background: #e2e8f0;
-        }
-
-        .vehicle-main {
-            min-width: 0;
-            padding: 18px 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .vehicle-title {
-            color: var(--dark);
-            font-size: 18px;
-            font-weight: 900;
-            letter-spacing: -0.035em;
-            line-height: 1.3;
-            margin-bottom: 6px;
-        }
-
-        .vehicle-meta {
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
-
-        .vehicle-price {
-            color: var(--primary);
-            font-size: 22px;
-            font-weight: 900;
-            letter-spacing: -0.04em;
-        }
-
-        .vehicle-actions {
-            padding: 16px;
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 8px;
-            min-width: 160px;
-        }
-
-        .action-btn {
-            min-height: 40px;
-            border: none;
-            border-radius: 14px;
-            padding: 9px 12px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 900;
-            transition: 0.25s ease;
-            white-space: nowrap;
-        }
-
-        .action-btn:hover {
+        .ad-card:hover {
+            border-color: rgba(245, 130, 32, 0.45);
             transform: translateY(-1px);
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
         }
 
-        .action-btn.view {
-            background: var(--info-soft);
-            color: var(--info);
-        }
-
-        .action-btn.edit {
-            background: var(--primary-soft);
-            color: var(--primary-hover);
-        }
-
-        .action-btn.manage {
+        .ad-image {
+            width: 150px;
+            height: 105px;
+            border-radius: 17px;
+            object-fit: cover;
             background: var(--surface-soft);
-            color: var(--dark);
             border: 1px solid var(--border);
         }
 
-        .action-btn.delete {
+        .ad-info {
+            min-width: 0;
+        }
+
+        .ad-title {
+            color: var(--dark);
+            font-size: 17px;
+            font-weight: 900;
+            margin-bottom: 7px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .ad-price {
+            color: var(--primary);
+            font-size: 21px;
+            font-weight: 900;
+            margin-bottom: 7px;
+        }
+
+        .ad-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .ad-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            padding: 6px 9px;
+        }
+
+        .ad-actions {
+            display: grid;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: white;
+            display: grid;
+            place-items: center;
+            color: var(--muted);
+            transition: 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            background: var(--surface-soft);
+            color: var(--primary);
+        }
+
+        .icon-btn.danger:hover {
             background: var(--danger-soft);
+            border-color: rgba(220, 38, 38, 0.25);
             color: var(--danger);
         }
 
-        .action-btn.delete:hover {
-            background: var(--danger);
+        .empty-state,
+        .loading-state,
+        .error-state {
+            min-height: 260px;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            border: 1px dashed var(--border-strong);
+            border-radius: 24px;
+            background: var(--surface-soft);
+        }
+
+        .state-box i {
+            font-size: 42px;
+            color: var(--primary);
+            margin-bottom: 14px;
+        }
+
+        .state-box h3 {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .state-box p {
+            max-width: 520px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 650;
+            line-height: 1.7;
+            margin: 0 auto 16px;
+        }
+
+        .state-box .btn-small {
+            width: fit-content;
+            min-height: 42px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: var(--radius-full);
+            background: var(--primary);
             color: white;
+            font-size: 13px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .profile-grid {
@@ -601,148 +511,100 @@
             gap: 14px;
         }
 
-        .info-box {
-            background: var(--surface-soft);
+        .profile-box {
             border: 1px solid var(--border);
+            background: white;
             border-radius: 20px;
             padding: 16px;
         }
 
-        .info-box label {
+        .profile-box small {
             display: block;
             color: var(--muted-light);
             font-size: 11px;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.05em;
             margin-bottom: 8px;
         }
 
-        .info-box p {
+        .profile-box strong {
             color: var(--dark);
             font-size: 14px;
             font-weight: 850;
-            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
-        .state-card {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 26px;
-            padding: 42px 22px;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .state-icon {
-            width: 72px;
-            height: 72px;
-            margin: 0 auto 18px;
-            border-radius: 24px;
-            display: grid;
-            place-items: center;
-            background: var(--primary-soft);
-            color: var(--primary);
-            font-size: 29px;
-        }
-
-        .state-card h3 {
-            color: var(--dark);
-            font-size: 21px;
-            font-weight: 900;
-            letter-spacing: -0.035em;
-            margin-bottom: 8px;
-        }
-
-        .state-card p {
-            max-width: 560px;
-            margin: 0 auto 20px;
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.7;
-            font-weight: 650;
-        }
-
-        @media (max-width: 980px) {
-            .hero-content {
+        @media (max-width: 900px) {
+            .account-hero {
                 grid-template-columns: 1fr;
             }
 
-            .account-layout {
+            .hero-user {
+                min-width: 0;
+            }
+
+            .wrapper {
                 grid-template-columns: 1fr;
             }
 
-            .sidebar-card {
+            .sidebar {
                 position: static;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .vehicle-card {
-                grid-template-columns: 150px minmax(0, 1fr);
-            }
-
-            .vehicle-actions {
-                grid-column: 1 / -1;
-                border-left: none;
-                border-top: 1px solid var(--border);
                 display: grid;
-                grid-template-columns: repeat(4, minmax(0, 1fr));
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
 
-        @media (max-width: 720px) {
-            .header-inner {
-                flex-direction: column;
+        @media (max-width: 640px) {
+            .topbar {
+                padding: 14px 16px;
                 align-items: flex-start;
-                padding: 15px 18px;
-            }
-
-            .header-actions {
-                width: 100%;
-                justify-content: flex-start;
-                overflow-x: auto;
-                flex-wrap: nowrap;
-                padding-bottom: 3px;
-            }
-
-            .page-shell {
-                padding: 24px 18px 70px;
-            }
-
-            .hero-card {
-                padding: 28px 22px;
-                border-radius: 28px;
-            }
-
-            .main-card {
-                padding: 18px;
-            }
-
-            .content-header {
                 flex-direction: column;
             }
 
-            .toolbar {
+            .top-actions {
+                width: 100%;
+            }
+
+            .top-link {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .page {
+                width: calc(100% - 24px);
+                margin-top: 20px;
+            }
+
+            .account-hero {
+                padding: 24px;
+                border-radius: 26px;
+            }
+
+            .content {
+                padding: 18px;
+                border-radius: 24px;
+            }
+
+            .sidebar {
                 grid-template-columns: 1fr;
             }
 
-            .vehicle-card {
+            .ad-card {
                 grid-template-columns: 1fr;
             }
 
-            .vehicle-img {
-                height: 220px;
+            .ad-image {
+                width: 100%;
+                height: 190px;
             }
 
-            .vehicle-main {
-                padding: 0 18px 18px;
+            .ad-actions {
+                grid-template-columns: repeat(3, 1fr);
             }
 
-            .vehicle-actions {
-                grid-template-columns: 1fr 1fr;
+            .icon-btn {
+                width: 100%;
             }
 
             .profile-grid {
@@ -754,8 +616,7 @@
 
 <body>
 
-<header class="site-header">
-    <div class="header-inner">
+    <header class="topbar">
         <a href="index.html" class="logo" aria-label="Gå till startsidan">
             <span class="logo-icon">
                 <i class="fa-solid fa-car-side"></i>
@@ -763,1075 +624,797 @@
             BIL<span>HK</span>
         </a>
 
-        <nav class="header-actions" aria-label="Kontomeny">
-            <a href="index.html" class="nav-btn">
+        <div class="top-actions">
+            <a href="index.html" class="top-link">
                 <i class="fa-solid fa-house"></i>
-                Startsida
+                Hem
             </a>
 
-            <a href="add-car.html" class="nav-btn primary">
+            <a href="sell.html" class="top-link primary">
                 <i class="fa-solid fa-plus"></i>
                 Ny annons
             </a>
 
-            <button type="button" class="nav-btn danger" id="logoutBtn">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <button type="button" class="top-link danger" id="logoutBtn">
+                <i class="fa-solid fa-right-from-bracket"></i>
                 Logga ut
             </button>
-        </nav>
-    </div>
-</header>
+        </div>
+    </header>
 
-<main class="page-shell">
-
-    <section class="hero-card">
-        <div class="hero-content">
-            <div>
+    <main class="page">
+        <section class="account-hero">
+            <div class="hero-content">
                 <div class="hero-badge">
                     <i class="fa-solid fa-user-shield"></i>
                     Mitt konto
                 </div>
 
-                <h1>Hantera ditt BILHK-konto</h1>
+                <h1 id="welcomeTitle">Hej...</h1>
 
                 <p>
-                    Här kan du kontrollera dina annonser, sparade bilar, meddelanden och grundläggande kontoinformation.
-                    Sidan visar endast data som tillhör ditt inloggade konto.
+                    Här kan du hantera dina publicerade annonser, öppna meddelanden,
+                    kontrollera sparade bilar och administrera ditt konto.
                 </p>
             </div>
 
-            <a href="add-car.html" class="nav-btn primary">
-                <i class="fa-solid fa-plus"></i>
-                Publicera annons
-            </a>
-        </div>
-    </section>
-
-    <section class="account-layout">
-
-        <aside class="sidebar-card">
-            <div class="profile-mini">
-                <div class="avatar">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-
-                <strong id="miniName">Laddar...</strong>
-                <span id="miniEmail">...</span>
+            <div class="hero-user">
+                <small>Inloggad som</small>
+                <strong id="userEmail">...</strong>
             </div>
+        </section>
 
-            <button type="button" class="tab-btn active" id="tabAds">
-                <i class="fa-solid fa-car"></i>
-                Mina annonser
-            </button>
+        <section class="wrapper">
+            <aside class="sidebar">
+                <button class="tab-btn active" type="button" id="btnAds" data-tab="ads">
+                    <i class="fa-solid fa-car"></i>
+                    Mina Annonser
+                </button>
 
-            <button type="button" class="tab-btn" id="tabFavs">
-                <i class="fa-solid fa-heart"></i>
-                Sparade bilar
-            </button>
+                <button class="tab-btn" type="button" id="btnFavs" data-tab="favs">
+                    <i class="fa-solid fa-heart"></i>
+                    Sparade Bilar
+                </button>
 
-            <button type="button" class="tab-btn" id="tabProfile">
-                <i class="fa-solid fa-id-card"></i>
-                Kontouppgifter
-            </button>
+                <button class="tab-btn" type="button" id="btnMessages">
+                    <i class="fa-solid fa-comments"></i>
+                    Meddelanden
+                </button>
 
-            <button type="button" class="tab-btn" id="tabMessages">
-                <i class="fa-solid fa-comments"></i>
-                Meddelanden
-            </button>
+                <button class="tab-btn" type="button" id="btnDashboard">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Dashboard
+                </button>
 
-            <button type="button" class="tab-btn" id="tabDashboard">
-                <i class="fa-solid fa-chart-line"></i>
-                Dashboard
-            </button>
-        </aside>
+                <button class="tab-btn" type="button" id="btnProfile" data-tab="profile">
+                    <i class="fa-solid fa-id-card"></i>
+                    Profil
+                </button>
+            </aside>
 
-        <section class="main-card" id="mainContent"></section>
+            <section class="content" id="mainContent">
+                <div class="loading-state">
+                    <div class="state-box">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        <h3>Laddar konto...</h3>
+                        <p>Vänta medan vi hämtar dina uppgifter.</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
 
-    </section>
+    <script type="module">
+        import {
+            auth,
+            db
+        } from "./firebase-config.js";
 
-</main>
+        import {
+            onAuthStateChanged,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-<script type="module">
-    import {
-        auth,
-        db
-    } from "./firebase-config.js";
+        import {
+            collection,
+            query,
+            where,
+            getDocs,
+            getDoc,
+            deleteDoc,
+            doc,
+            writeBatch,
+            orderBy,
+            limit
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    import {
-        onAuthStateChanged,
-        signOut,
-        sendPasswordResetEmail
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        const ACCOUNT_CONFIG = Object.freeze({
+            ROUTES: {
+                HOME: "index.html",
+                LOGIN: "login.html",
+                SELL: "sell.html",
+                DETAILS: "details.html",
+                EDIT: "edit-car.html",
+                MESSAGES: "messages.html",
+                DASHBOARD: "dashboard.html"
+            },
 
-    import {
-        collection,
-        query,
-        where,
-        getDocs,
-        getDoc,
-        doc,
-        deleteDoc,
-        updateDoc,
-        serverTimestamp,
-        orderBy,
-        limit,
-        writeBatch
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+            COLLECTIONS: {
+                USERS: "users",
+                CARS: "cars",
+                FAVORITES: "favorites",
+                CHATS: "chats"
+            },
 
-    const ACCOUNT_CONFIG = {
-        ROUTES: {
-            LOGIN: "login.html",
-            HOME: "index.html",
-            ADD_CAR: "add-car.html",
-            EDIT_CAR: "edit-car.html",
-            MANAGE: "manage.html",
-            DETAILS: "details.html",
-            MESSAGES: "messages.html",
-            DASHBOARD: "dashboard.html"
-        },
+            PLACEHOLDER_IMAGE:
+                "data:image/svg+xml;charset=UTF-8," +
+                encodeURIComponent(`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520">
+                        <rect width="800" height="520" fill="#f1f5f9"/>
+                        <circle cx="400" cy="230" r="72" fill="#e2e8f0"/>
+                        <path d="M230 370h340c18 0 31-17 25-34l-40-109c-8-22-29-37-52-37H297c-23 0-44 15-52 37l-40 109c-6 17 7 34 25 34z" fill="#cbd5e1"/>
+                        <text x="400" y="430" text-anchor="middle" font-family="Arial" font-size="28" font-weight="700" fill="#64748b">BILHK</text>
+                    </svg>
+                `)
+        });
 
-        COLLECTIONS: {
-            USERS: "users",
-            CARS: "cars",
-            FAVORITES: "favorites",
-            CHATS: "chats"
-        },
+        const state = {
+            user: null,
+            profile: null,
+            activeTab: "ads",
+            ads: [],
+            favorites: []
+        };
 
-        DEFAULTS: {
-            PLACEHOLDER_IMAGE: "placeholder.jpg"
-        },
+        const elements = {
+            mainContent: document.getElementById("mainContent"),
+            welcomeTitle: document.getElementById("welcomeTitle"),
+            userEmail: document.getElementById("userEmail"),
 
-        LIMITS: {
-            SEARCH_MAX_LENGTH: 120,
-            BATCH_SAFE_LIMIT: 450
-        },
+            btnAds: document.getElementById("btnAds"),
+            btnFavs: document.getElementById("btnFavs"),
+            btnMessages: document.getElementById("btnMessages"),
+            btnDashboard: document.getElementById("btnDashboard"),
+            btnProfile: document.getElementById("btnProfile"),
+            logoutBtn: document.getElementById("logoutBtn")
+        };
 
-        MESSAGES: {
-            AUTH_REQUIRED: "Du måste logga in för att öppna ditt konto.",
-            LOAD_ERROR: "Kunde inte ladda informationen just nu.",
-            NOT_OWNER: "Du kan bara ändra eller radera dina egna annonser.",
-            DELETE_SUCCESS: "Annonsen har raderats.",
-            DELETE_ERROR: "Annonsen kunde inte raderas just nu.",
-            RESET_SENT: "En länk för lösenordsåterställning har skickats till din e-post."
+        initializeAccountPage();
+
+        function initializeAccountPage() {
+            attachEventListeners();
+
+            onAuthStateChanged(auth, async (firebaseUser) => {
+                if (!firebaseUser) {
+                    window.location.href = ACCOUNT_CONFIG.ROUTES.LOGIN;
+                    return;
+                }
+
+                state.user = firebaseUser;
+
+                elements.userEmail.textContent = firebaseUser.email || "Ingen e-post";
+
+                await loadUserProfile();
+
+                renderUserHeader();
+
+                await switchTab("ads");
+            });
         }
-    };
 
-    const state = {
-        currentUser: null,
-        userProfile: null,
-        activeTab: "ads",
-        ads: [],
-        favorites: [],
-        searchText: ""
-    };
+        function attachEventListeners() {
+            elements.btnAds.addEventListener("click", () => switchTab("ads"));
+            elements.btnFavs.addEventListener("click", () => switchTab("favs"));
+            elements.btnProfile.addEventListener("click", () => switchTab("profile"));
 
-    const elements = {
-        miniName: document.getElementById("miniName"),
-        miniEmail: document.getElementById("miniEmail"),
+            elements.btnMessages.addEventListener("click", () => {
+                window.location.href = ACCOUNT_CONFIG.ROUTES.MESSAGES;
+            });
 
-        mainContent: document.getElementById("mainContent"),
+            elements.btnDashboard.addEventListener("click", () => {
+                window.location.href = ACCOUNT_CONFIG.ROUTES.DASHBOARD;
+            });
 
-        tabAds: document.getElementById("tabAds"),
-        tabFavs: document.getElementById("tabFavs"),
-        tabProfile: document.getElementById("tabProfile"),
-        tabMessages: document.getElementById("tabMessages"),
-        tabDashboard: document.getElementById("tabDashboard"),
+            elements.logoutBtn.addEventListener("click", handleLogout);
+        }
 
-        logoutBtn: document.getElementById("logoutBtn")
-    };
+        async function loadUserProfile() {
+            try {
+                const userRef = doc(db, ACCOUNT_CONFIG.COLLECTIONS.USERS, state.user.uid);
+                const userSnap = await getDoc(userRef);
 
-    initializeAccountPage();
+                state.profile = userSnap.exists() ? userSnap.data() : null;
+            } catch (error) {
+                console.warn("[BILHK] Could not load user profile:", error);
+                state.profile = null;
+            }
+        }
 
-    function initializeAccountPage() {
-        attachGlobalErrorHandlers();
-        attachEventListeners();
-        observeAuthState();
-    }
+        function renderUserHeader() {
+            const displayName =
+                normalizeText(state.profile?.name, 80) ||
+                normalizeText(state.user.displayName, 80) ||
+                "Användare";
 
-    function attachEventListeners() {
-        elements.tabAds.addEventListener("click", () => switchTab("ads"));
-        elements.tabFavs.addEventListener("click", () => switchTab("favs"));
-        elements.tabProfile.addEventListener("click", () => switchTab("profile"));
+            elements.welcomeTitle.textContent = `Hej, ${displayName}`;
+        }
 
-        elements.tabMessages.addEventListener("click", () => {
-            window.location.href = ACCOUNT_CONFIG.ROUTES.MESSAGES;
-        });
+        async function switchTab(tab) {
+            state.activeTab = tab;
 
-        elements.tabDashboard.addEventListener("click", () => {
-            window.location.href = ACCOUNT_CONFIG.ROUTES.DASHBOARD;
-        });
+            updateActiveTabUI(tab);
 
-        elements.logoutBtn.addEventListener("click", logoutCurrentUser);
-    }
-
-    function observeAuthState() {
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                await Swal.fire({
-                    icon: "info",
-                    title: "Inloggning krävs",
-                    text: ACCOUNT_CONFIG.MESSAGES.AUTH_REQUIRED,
-                    confirmButtonColor: "#f58220",
-                    confirmButtonText: "Logga in"
-                });
-
-                window.location.href = ACCOUNT_CONFIG.ROUTES.LOGIN;
+            if (tab === "ads") {
+                await loadMyAds();
+                renderAds();
                 return;
             }
 
-            state.currentUser = user;
-
-            await loadUserProfile();
-            renderMiniProfile();
-
-            switchTab("ads");
-        });
-    }
-
-    async function loadUserProfile() {
-        if (!state.currentUser) {
-            return;
-        }
-
-        try {
-            const userRef = doc(db, ACCOUNT_CONFIG.COLLECTIONS.USERS, state.currentUser.uid);
-            const userSnap = await getDoc(userRef);
-
-            state.userProfile = userSnap.exists() ? userSnap.data() : null;
-        } catch (error) {
-            console.warn("[BILHK] Could not load user profile:", error);
-            state.userProfile = null;
-        }
-    }
-
-    function renderMiniProfile() {
-        const displayName =
-            normalizeText(state.userProfile?.name, 90) ||
-            normalizeText(state.userProfile?.companyName, 90) ||
-            getEmailName(state.currentUser?.email) ||
-            "BILHK-användare";
-
-        elements.miniName.textContent = displayName;
-        elements.miniEmail.textContent = state.currentUser?.email || "Ingen e-post";
-    }
-
-    async function switchTab(tabName) {
-        state.activeTab = tabName;
-        state.searchText = "";
-
-        updateTabStyles();
-
-        if (tabName === "ads") {
-            await renderAdsTab();
-            return;
-        }
-
-        if (tabName === "favs") {
-            await renderFavoritesTab();
-            return;
-        }
-
-        if (tabName === "profile") {
-            renderProfileTab();
-        }
-    }
-
-    function updateTabStyles() {
-        elements.tabAds.classList.toggle("active", state.activeTab === "ads");
-        elements.tabFavs.classList.toggle("active", state.activeTab === "favs");
-        elements.tabProfile.classList.toggle("active", state.activeTab === "profile");
-    }
-
-    async function renderAdsTab() {
-        renderLoadingState("Laddar dina annonser...");
-
-        try {
-            state.ads = await fetchUserAds();
-            renderAdsContent(state.ads);
-        } catch (error) {
-            console.error("[BILHK] Ads tab error:", error);
-            renderErrorState(ACCOUNT_CONFIG.MESSAGES.LOAD_ERROR);
-        }
-    }
-
-    async function fetchUserAds() {
-        const adsQuery = query(
-            collection(db, ACCOUNT_CONFIG.COLLECTIONS.CARS),
-            where("sellerId", "==", state.currentUser.uid),
-            orderBy("createdAt", "desc")
-        );
-
-        const snapshot = await getDocs(adsQuery);
-
-        return snapshot.docs.map((documentSnapshot) => {
-            return {
-                id: documentSnapshot.id,
-                ...documentSnapshot.data()
-            };
-        });
-    }
-
-    function renderAdsContent(ads) {
-        clearElement(elements.mainContent);
-
-        elements.mainContent.appendChild(createContentHeader(
-            "Mina annonser",
-            "Här visas endast annonser där sellerId matchar ditt inloggade konto.",
-            createHeaderButton("Ny annons", "fa-solid fa-plus", () => {
-                window.location.href = ACCOUNT_CONFIG.ROUTES.ADD_CAR;
-            })
-        ));
-
-        elements.mainContent.appendChild(createStatsGrid([
-            {
-                icon: "fa-solid fa-car",
-                value: String(ads.length),
-                label: "Totalt"
-            },
-            {
-                icon: "fa-solid fa-circle-check",
-                value: String(ads.filter((ad) => ad.active !== false).length),
-                label: "Aktiva"
-            },
-            {
-                icon: "fa-solid fa-circle-pause",
-                value: String(ads.filter((ad) => ad.active === false).length),
-                label: "Pausade"
-            }
-        ]));
-
-        elements.mainContent.appendChild(createToolbar("Sök i dina annonser...", (value) => {
-            state.searchText = normalizeText(value, ACCOUNT_CONFIG.LIMITS.SEARCH_MAX_LENGTH).toLowerCase();
-            renderAdsList(filterVehicleList(state.ads, state.searchText));
-        }));
-
-        const list = document.createElement("div");
-        list.className = "list";
-        list.id = "vehicleList";
-
-        elements.mainContent.appendChild(list);
-
-        renderAdsList(ads);
-    }
-
-    function renderAdsList(ads) {
-        const list = document.getElementById("vehicleList");
-
-        if (!list) {
-            return;
-        }
-
-        clearElement(list);
-
-        if (!Array.isArray(ads) || ads.length === 0) {
-            list.appendChild(createStateCard(
-                "fa-solid fa-car-side",
-                "Inga annonser hittades",
-                "Du har inga annonser som matchar detta filter."
-            ));
-            return;
-        }
-
-        ads.forEach((ad) => {
-            list.appendChild(createVehicleCard(ad, "ad"));
-        });
-    }
-
-    async function renderFavoritesTab() {
-        renderLoadingState("Laddar sparade bilar...");
-
-        try {
-            state.favorites = await fetchUserFavorites();
-            renderFavoritesContent(state.favorites);
-        } catch (error) {
-            console.error("[BILHK] Favorites tab error:", error);
-            renderErrorState(ACCOUNT_CONFIG.MESSAGES.LOAD_ERROR);
-        }
-    }
-
-    async function fetchUserFavorites() {
-        const favoritesQuery = query(
-            collection(db, ACCOUNT_CONFIG.COLLECTIONS.FAVORITES),
-            where("userId", "==", state.currentUser.uid),
-            orderBy("createdAt", "desc")
-        );
-
-        const snapshot = await getDocs(favoritesQuery);
-
-        return snapshot.docs.map((documentSnapshot) => {
-            return {
-                favoriteId: documentSnapshot.id,
-                ...documentSnapshot.data()
-            };
-        });
-    }
-
-    function renderFavoritesContent(favorites) {
-        clearElement(elements.mainContent);
-
-        elements.mainContent.appendChild(createContentHeader(
-            "Sparade bilar",
-            "Här visas bilar som du har sparat som favorit.",
-            null
-        ));
-
-        elements.mainContent.appendChild(createStatsGrid([
-            {
-                icon: "fa-solid fa-heart",
-                value: String(favorites.length),
-                label: "Sparade"
-            },
-            {
-                icon: "fa-solid fa-clock",
-                value: "-",
-                label: "Senaste"
-            },
-            {
-                icon: "fa-solid fa-shield-halved",
-                value: "Privat",
-                label: "Endast du"
-            }
-        ]));
-
-        elements.mainContent.appendChild(createToolbar("Sök i sparade bilar...", (value) => {
-            state.searchText = normalizeText(value, ACCOUNT_CONFIG.LIMITS.SEARCH_MAX_LENGTH).toLowerCase();
-            renderFavoritesList(filterVehicleList(state.favorites, state.searchText));
-        }));
-
-        const list = document.createElement("div");
-        list.className = "list";
-        list.id = "vehicleList";
-
-        elements.mainContent.appendChild(list);
-
-        renderFavoritesList(favorites);
-    }
-
-    function renderFavoritesList(favorites) {
-        const list = document.getElementById("vehicleList");
-
-        if (!list) {
-            return;
-        }
-
-        clearElement(list);
-
-        if (!Array.isArray(favorites) || favorites.length === 0) {
-            list.appendChild(createStateCard(
-                "fa-solid fa-heart",
-                "Inga sparade bilar",
-                "Du har inte sparat några bilar ännu."
-            ));
-            return;
-        }
-
-        favorites.forEach((favorite) => {
-            list.appendChild(createVehicleCard(favorite, "favorite"));
-        });
-    }
-
-    function renderProfileTab() {
-        clearElement(elements.mainContent);
-
-        elements.mainContent.appendChild(createContentHeader(
-            "Kontouppgifter",
-            "Grundläggande information om ditt konto.",
-            createHeaderButton("Byt lösenord", "fa-solid fa-key", sendResetPassword)
-        ));
-
-        const grid = document.createElement("div");
-        grid.className = "profile-grid";
-
-        grid.appendChild(createInfoBox("E-post", state.currentUser?.email || "Ej angivet"));
-        grid.appendChild(createInfoBox("Namn", state.userProfile?.name || state.currentUser?.displayName || "Ej angivet"));
-        grid.appendChild(createInfoBox("Kontotyp", state.userProfile?.userType || "Ej angivet"));
-        grid.appendChild(createInfoBox("Telefon", state.userProfile?.phone || "Ej angivet"));
-        grid.appendChild(createInfoBox("Företagsnamn", state.userProfile?.companyName || "Ej angivet"));
-        grid.appendChild(createInfoBox("Organisationsnummer", state.userProfile?.taxId || "Ej angivet"));
-
-        elements.mainContent.appendChild(grid);
-    }
-
-    function createVehicleCard(item, type) {
-        const carId = type === "ad" ? item.id : item.carId;
-
-        const card = document.createElement("article");
-        card.className = "vehicle-card";
-
-        const image = document.createElement("img");
-        image.className = "vehicle-img";
-        image.src = getVehicleImage(item);
-        image.alt = buildVehicleTitle(item);
-        image.loading = "lazy";
-        image.referrerPolicy = "no-referrer";
-        image.addEventListener("error", () => {
-            image.src = ACCOUNT_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE;
-        });
-
-        const main = document.createElement("div");
-        main.className = "vehicle-main";
-
-        const title = document.createElement("h3");
-        title.className = "vehicle-title";
-        title.textContent = buildVehicleTitle(item);
-
-        const meta = document.createElement("p");
-        meta.className = "vehicle-meta";
-        meta.textContent = buildVehicleMeta(item);
-
-        const price = document.createElement("div");
-        price.className = "vehicle-price";
-        price.textContent = formatPrice(item.price);
-
-        main.appendChild(title);
-        main.appendChild(meta);
-        main.appendChild(price);
-
-        const actions = document.createElement("div");
-        actions.className = "vehicle-actions";
-
-        actions.appendChild(createActionButton("view", "fa-solid fa-eye", "Visa", () => {
-            openDetails(carId);
-        }));
-
-        if (type === "ad") {
-            actions.appendChild(createActionButton("edit", "fa-solid fa-pen-to-square", "Redigera", () => {
-                window.location.href = `${ACCOUNT_CONFIG.ROUTES.EDIT_CAR}?id=${encodeURIComponent(carId)}`;
-            }));
-
-            actions.appendChild(createActionButton("manage", "fa-solid fa-list-check", "Hantera", () => {
-                window.location.href = ACCOUNT_CONFIG.ROUTES.MANAGE;
-            }));
-
-            actions.appendChild(createActionButton("delete", "fa-solid fa-trash", "Radera", () => {
-                confirmDeleteAd(item);
-            }));
-        } else {
-            actions.appendChild(createActionButton("delete", "fa-solid fa-heart-crack", "Ta bort", () => {
-                removeFavorite(item);
-            }));
-        }
-
-        card.appendChild(image);
-        card.appendChild(main);
-        card.appendChild(actions);
-
-        return card;
-    }
-
-    async function confirmDeleteAd(ad) {
-        const verification = await verifyAdOwnership(ad.id);
-
-        if (!verification.allowed) {
-            Swal.fire({
-                icon: "error",
-                title: "Åtkomst nekad",
-                text: ACCOUNT_CONFIG.MESSAGES.NOT_OWNER,
-                confirmButtonColor: "#f58220"
-            });
-            return;
-        }
-
-        const result = await Swal.fire({
-            icon: "warning",
-            title: "Radera annons?",
-            text: "Annonsen tas bort. Relaterade chattar markeras som kopplade till raderad annons, men vi raderar inte andra användares konversationer direkt.",
-            showCancelButton: true,
-            confirmButtonText: "Ja, radera",
-            cancelButtonText: "Avbryt",
-            confirmButtonColor: "#dc2626",
-            cancelButtonColor: "#64748b"
-        });
-
-        if (!result.isConfirmed) {
-            return;
-        }
-
-        try {
-            await deleteDoc(doc(db, ACCOUNT_CONFIG.COLLECTIONS.CARS, ad.id));
-            await markRelatedChatsAsCarDeleted(ad.id);
-
-            await Swal.fire({
-                icon: "success",
-                title: "Raderad",
-                text: ACCOUNT_CONFIG.MESSAGES.DELETE_SUCCESS,
-                confirmButtonColor: "#f58220"
-            });
-
-            await renderAdsTab();
-        } catch (error) {
-            console.error("[BILHK] Delete ad failed:", error);
-
-            Swal.fire({
-                icon: "error",
-                title: "Fel",
-                text: ACCOUNT_CONFIG.MESSAGES.DELETE_ERROR,
-                confirmButtonColor: "#f58220"
-            });
-        }
-    }
-
-    async function markRelatedChatsAsCarDeleted(carId) {
-        const chatsQuery = query(
-            collection(db, ACCOUNT_CONFIG.COLLECTIONS.CHATS),
-            where("carId", "==", carId),
-            limit(ACCOUNT_CONFIG.LIMITS.BATCH_SAFE_LIMIT)
-        );
-
-        const snapshot = await getDocs(chatsQuery);
-
-        if (snapshot.empty) {
-            return;
-        }
-
-        const batch = writeBatch(db);
-
-        snapshot.docs.forEach((chatDoc) => {
-            batch.update(chatDoc.ref, {
-                carDeleted: true,
-                carDeletedAt: serverTimestamp(),
-                updatedAt: serverTimestamp()
-            });
-        });
-
-        await batch.commit();
-    }
-
-    async function verifyAdOwnership(adId) {
-        try {
-            const adRef = doc(db, ACCOUNT_CONFIG.COLLECTIONS.CARS, adId);
-            const adSnap = await getDoc(adRef);
-
-            if (!adSnap.exists()) {
-                return {
-                    allowed: false,
-                    data: null
-                };
+            if (tab === "favs") {
+                await loadFavorites();
+                renderFavorites();
+                return;
             }
 
-            const data = adSnap.data();
+            if (tab === "profile") {
+                renderProfile();
+            }
+        }
 
-            return {
-                allowed: data.sellerId === state.currentUser.uid,
-                data
+        function updateActiveTabUI(tab) {
+            const buttons = document.querySelectorAll(".tab-btn[data-tab]");
+
+            buttons.forEach((button) => {
+                button.classList.toggle("active", button.dataset.tab === tab);
+            });
+        }
+
+        async function loadMyAds() {
+            renderLoading("Laddar dina annonser...", "Vi hämtar annonser kopplade till ditt konto.");
+
+            try {
+                const adsQuery = query(
+                    collection(db, ACCOUNT_CONFIG.COLLECTIONS.CARS),
+                    where("sellerId", "==", state.user.uid)
+                );
+
+                const adsSnapshot = await getDocs(adsQuery);
+
+                state.ads = adsSnapshot.docs.map((item) => {
+                    return {
+                        id: item.id,
+                        ...item.data()
+                    };
+                });
+
+                state.ads.sort((a, b) => {
+                    const aTime = getMillisFromTimestamp(a.createdAt);
+                    const bTime = getMillisFromTimestamp(b.createdAt);
+                    return bTime - aTime;
+                });
+            } catch (error) {
+                console.error("[BILHK] Failed loading my ads:", error);
+                renderError(
+                    "Kunde inte hämta annonser",
+                    "Kontrollera Firestore Security Rules och att varje annons har sellerId som matchar ditt konto."
+                );
+            }
+        }
+
+        async function loadFavorites() {
+            renderLoading("Laddar sparade bilar...", "Vi hämtar dina favoriter.");
+
+            try {
+                const favQuery = query(
+                    collection(db, ACCOUNT_CONFIG.COLLECTIONS.FAVORITES),
+                    where("userId", "==", state.user.uid)
+                );
+
+                const favSnapshot = await getDocs(favQuery);
+
+                state.favorites = favSnapshot.docs.map((item) => {
+                    return {
+                        id: item.id,
+                        ...item.data()
+                    };
+                });
+            } catch (error) {
+                console.error("[BILHK] Failed loading favorites:", error);
+                renderError(
+                    "Kunde inte hämta sparade bilar",
+                    "Kontrollera att favorites-samlingen och säkerhetsreglerna är korrekt inställda."
+                );
+            }
+        }
+
+        function renderAds() {
+            const title = "Mina Annonser";
+            const description = "Här visas annonser där sellerId matchar ditt inloggade användar-ID.";
+
+            if (!state.ads.length) {
+                elements.mainContent.innerHTML = `
+                    ${buildContentHeader(title, description, 0)}
+                    <div class="empty-state">
+                        <div class="state-box">
+                            <i class="fa-solid fa-car-burst"></i>
+                            <h3>Inga annonser hittades</h3>
+                            <p>
+                                Det finns inga annonser kopplade till detta konto ännu.
+                                Kontrollera att nya annonser sparas med fältet <strong>sellerId</strong>
+                                och att värdet är samma som ditt Firebase Auth UID.
+                            </p>
+                            <a class="btn-small" href="${ACCOUNT_CONFIG.ROUTES.SELL}">
+                                <i class="fa-solid fa-plus"></i>
+                                Publicera annons
+                            </a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const cards = state.ads.map((car) => buildAdCard(car, "ads")).join("");
+
+            elements.mainContent.innerHTML = `
+                ${buildContentHeader(title, description, state.ads.length)}
+                <div class="ads-list">
+                    ${cards}
+                </div>
+            `;
+
+            bindAdCardEvents();
+        }
+
+        function renderFavorites() {
+            const title = "Sparade Bilar";
+            const description = "Här visas bilar som du har sparat som favoriter.";
+
+            if (!state.favorites.length) {
+                elements.mainContent.innerHTML = `
+                    ${buildContentHeader(title, description, 0)}
+                    <div class="empty-state">
+                        <div class="state-box">
+                            <i class="fa-regular fa-heart"></i>
+                            <h3>Inga sparade bilar</h3>
+                            <p>Du har inte sparat några bilar ännu.</p>
+                            <a class="btn-small" href="${ACCOUNT_CONFIG.ROUTES.HOME}">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                Sök bilar
+                            </a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const cards = state.favorites.map((fav) => buildFavoriteCard(fav)).join("");
+
+            elements.mainContent.innerHTML = `
+                ${buildContentHeader(title, description, state.favorites.length)}
+                <div class="ads-list">
+                    ${cards}
+                </div>
+            `;
+
+            bindAdCardEvents();
+        }
+
+        function renderProfile() {
+            const name =
+                normalizeText(state.profile?.name, 80) ||
+                normalizeText(state.user.displayName, 80) ||
+                "Ej angivet";
+
+            const email =
+                normalizeText(state.profile?.email, 120) ||
+                normalizeText(state.user.email, 120) ||
+                "Ej angivet";
+
+            const userType =
+                normalizeText(state.profile?.userType, 40) ||
+                "Ej angivet";
+
+            const phone =
+                normalizeText(state.profile?.phone, 40) ||
+                "Ej angivet";
+
+            const address =
+                normalizeText(state.profile?.address, 160) ||
+                "Ej angivet";
+
+            const taxId =
+                normalizeText(state.profile?.taxId, 40) ||
+                "Ej angivet";
+
+            elements.mainContent.innerHTML = `
+                ${buildContentHeader("Profil", "Grundläggande information om ditt konto.", 0, false)}
+                <div class="profile-grid">
+                    <div class="profile-box">
+                        <small>Namn</small>
+                        <strong>${escapeHTML(name)}</strong>
+                    </div>
+
+                    <div class="profile-box">
+                        <small>E-post</small>
+                        <strong>${escapeHTML(email)}</strong>
+                    </div>
+
+                    <div class="profile-box">
+                        <small>Kontotyp</small>
+                        <strong>${escapeHTML(userType)}</strong>
+                    </div>
+
+                    <div class="profile-box">
+                        <small>Telefon</small>
+                        <strong>${escapeHTML(phone)}</strong>
+                    </div>
+
+                    <div class="profile-box">
+                        <small>Organisationsnummer</small>
+                        <strong>${escapeHTML(taxId)}</strong>
+                    </div>
+
+                    <div class="profile-box">
+                        <small>Adress</small>
+                        <strong>${escapeHTML(address)}</strong>
+                    </div>
+                </div>
+            `;
+        }
+
+        function buildContentHeader(title, description, count, showCounter = true) {
+            return `
+                <div class="content-header">
+                    <div>
+                        <h2>${escapeHTML(title)}</h2>
+                        <p>${escapeHTML(description)}</p>
+                    </div>
+
+                    ${
+                        showCounter
+                            ? `
+                                <div class="counter-pill">
+                                    <i class="fa-solid fa-database"></i>
+                                    ${Number(count || 0)} st
+                                </div>
+                            `
+                            : ""
+                    }
+                </div>
+            `;
+        }
+
+        function buildAdCard(car, source) {
+            const carId = normalizeText(car.id, 120);
+            const imageUrl = getPrimaryImage(car);
+
+            const brand = normalizeText(car.brand, 80) || "Okänt märke";
+            const model = normalizeText(car.model, 80) || "Okänd modell";
+            const title = `${brand} ${model}`.trim();
+
+            const price = formatPrice(car.price);
+            const year = formatValue(car.year, "År saknas");
+            const mileage = formatValue(car.mileage, "Miltal saknas");
+            const fuel = normalizeText(car.fuel || car.fuelType, 50) || "Drivmedel saknas";
+            const transmission = normalizeText(car.transmission || car.gearbox, 50) || "Växellåda saknas";
+
+            return `
+                <article class="ad-card" data-action="open" data-car-id="${escapeAttribute(carId)}">
+                    <img
+                        class="ad-image"
+                        src="${escapeAttribute(imageUrl)}"
+                        alt="${escapeAttribute(title)}"
+                        loading="lazy"
+                        onerror="this.src='${ACCOUNT_CONFIG.PLACEHOLDER_IMAGE}'"
+                    >
+
+                    <div class="ad-info">
+                        <h3 class="ad-title">${escapeHTML(title)}</h3>
+                        <div class="ad-price">${escapeHTML(price)}</div>
+
+                        <div class="ad-meta">
+                            <span><i class="fa-solid fa-calendar"></i>${escapeHTML(year)}</span>
+                            <span><i class="fa-solid fa-road"></i>${escapeHTML(mileage)} mil</span>
+                            <span><i class="fa-solid fa-gas-pump"></i>${escapeHTML(fuel)}</span>
+                            <span><i class="fa-solid fa-gears"></i>${escapeHTML(transmission)}</span>
+                        </div>
+                    </div>
+
+                    <div class="ad-actions">
+                        <button
+                            class="icon-btn"
+                            type="button"
+                            title="Öppna"
+                            data-action="open"
+                            data-car-id="${escapeAttribute(carId)}"
+                        >
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+
+                        ${
+                            source === "ads"
+                                ? `
+                                    <button
+                                        class="icon-btn"
+                                        type="button"
+                                        title="Redigera"
+                                        data-action="edit"
+                                        data-car-id="${escapeAttribute(carId)}"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button
+                                        class="icon-btn danger"
+                                        type="button"
+                                        title="Radera"
+                                        data-action="delete"
+                                        data-car-id="${escapeAttribute(carId)}"
+                                    >
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                `
+                                : ""
+                        }
+                    </div>
+                </article>
+            `;
+        }
+
+        function buildFavoriteCard(fav) {
+            const carId = normalizeText(fav.carId || fav.id, 120);
+
+            const safeFavorite = {
+                id: carId,
+                brand: fav.brand || "Sparad bil",
+                model: fav.model || "",
+                price: fav.price || 0,
+                year: fav.year || "",
+                mileage: fav.mileage || "",
+                fuel: fav.fuel || fav.fuelType || "",
+                transmission: fav.transmission || "",
+                images: fav.image ? [fav.image] : []
             };
-        } catch (error) {
-            console.error("[BILHK] Verify ad ownership failed:", error);
 
-            return {
-                allowed: false,
-                data: null
-            };
-        }
-    }
-
-    async function removeFavorite(favorite) {
-        const result = await Swal.fire({
-            icon: "question",
-            title: "Ta bort sparad bil?",
-            text: "Bilen tas bort från dina sparade favoriter.",
-            showCancelButton: true,
-            confirmButtonText: "Ta bort",
-            cancelButtonText: "Avbryt",
-            confirmButtonColor: "#dc2626",
-            cancelButtonColor: "#64748b"
-        });
-
-        if (!result.isConfirmed) {
-            return;
+            return buildAdCard(safeFavorite, "favs");
         }
 
-        try {
-            await deleteDoc(doc(db, ACCOUNT_CONFIG.COLLECTIONS.FAVORITES, favorite.favoriteId));
-            await renderFavoritesTab();
-        } catch (error) {
-            console.error("[BILHK] Remove favorite failed:", error);
+        function bindAdCardEvents() {
+            const clickableElements = elements.mainContent.querySelectorAll("[data-action]");
 
-            Swal.fire({
-                icon: "error",
-                title: "Fel",
-                text: "Favoriten kunde inte tas bort just nu.",
-                confirmButtonColor: "#f58220"
+            clickableElements.forEach((element) => {
+                element.addEventListener("click", async (event) => {
+                    event.stopPropagation();
+
+                    const action = element.dataset.action;
+                    const carId = element.dataset.carId;
+
+                    if (!carId) {
+                        return;
+                    }
+
+                    if (action === "open") {
+                        window.location.href = `${ACCOUNT_CONFIG.ROUTES.DETAILS}?id=${encodeURIComponent(carId)}`;
+                        return;
+                    }
+
+                    if (action === "edit") {
+                        window.location.href = `${ACCOUNT_CONFIG.ROUTES.EDIT}?id=${encodeURIComponent(carId)}`;
+                        return;
+                    }
+
+                    if (action === "delete") {
+                        await deleteAd(carId);
+                    }
+                });
             });
         }
-    }
 
-    async function sendResetPassword() {
-        if (!state.currentUser?.email) {
-            Swal.fire({
-                icon: "error",
-                title: "Ingen e-post",
-                text: "Det finns ingen e-postadress kopplad till detta konto.",
+        async function deleteAd(carId) {
+            const result = await Swal.fire({
+                title: "Radera annons?",
+                text: "Annonsen och relaterade chattar tas bort. Detta går inte att ångra.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Ja, radera",
+                cancelButtonText: "Avbryt",
+                confirmButtonColor: "#dc2626",
+                cancelButtonColor: "#64748b"
+            });
+
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, ACCOUNT_CONFIG.COLLECTIONS.CARS, carId));
+
+                await deleteRelatedChats(carId);
+
+                await Swal.fire({
+                    title: "Raderad",
+                    text: "Annonsen har tagits bort.",
+                    icon: "success",
+                    timer: 1400,
+                    showConfirmButton: false
+                });
+
+                await switchTab("ads");
+            } catch (error) {
+                console.error("[BILHK] Failed deleting ad:", error);
+
+                Swal.fire({
+                    title: "Fel",
+                    text: "Kunde inte radera annonsen. Kontrollera behörighet och försök igen.",
+                    icon: "error",
+                    confirmButtonColor: "#f58220"
+                });
+            }
+        }
+
+        async function deleteRelatedChats(carId) {
+            try {
+                const chatsQuery = query(
+                    collection(db, ACCOUNT_CONFIG.COLLECTIONS.CHATS),
+                    where("carId", "==", carId),
+                    limit(100)
+                );
+
+                const chatSnapshot = await getDocs(chatsQuery);
+
+                if (chatSnapshot.empty) {
+                    return;
+                }
+
+                const batch = writeBatch(db);
+                let operations = 0;
+
+                for (const chatDoc of chatSnapshot.docs) {
+                    const messagesSnapshot = await getDocs(
+                        collection(db, `${ACCOUNT_CONFIG.COLLECTIONS.CHATS}/${chatDoc.id}/messages`)
+                    );
+
+                    messagesSnapshot.forEach((messageDoc) => {
+                        if (operations < 450) {
+                            batch.delete(messageDoc.ref);
+                            operations++;
+                        }
+                    });
+
+                    if (operations < 450) {
+                        batch.delete(chatDoc.ref);
+                        operations++;
+                    }
+                }
+
+                if (operations > 0) {
+                    await batch.commit();
+                }
+            } catch (error) {
+                console.warn("[BILHK] Related chats could not be fully deleted:", error);
+            }
+        }
+
+        async function handleLogout() {
+            const result = await Swal.fire({
+                title: "Logga ut?",
+                text: "Vill du logga ut från ditt konto?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Logga ut",
+                cancelButtonText: "Avbryt",
                 confirmButtonColor: "#f58220"
             });
-            return;
+
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            try {
+                await signOut(auth);
+                window.location.href = ACCOUNT_CONFIG.ROUTES.LOGIN;
+            } catch (error) {
+                console.error("[BILHK] Logout failed:", error);
+                Swal.fire("Fel", "Kunde inte logga ut just nu.", "error");
+            }
         }
 
-        try {
-            await sendPasswordResetEmail(auth, state.currentUser.email);
-
-            Swal.fire({
-                icon: "success",
-                title: "Skickat",
-                text: ACCOUNT_CONFIG.MESSAGES.RESET_SENT,
-                confirmButtonColor: "#f58220"
-            });
-        } catch (error) {
-            console.error("[BILHK] Password reset failed:", error);
-
-            Swal.fire({
-                icon: "error",
-                title: "Fel",
-                text: "Kunde inte skicka lösenordslänk just nu.",
-                confirmButtonColor: "#f58220"
-            });
-        }
-    }
-
-    async function logoutCurrentUser() {
-        const result = await Swal.fire({
-            icon: "question",
-            title: "Logga ut?",
-            text: "Du loggas ut från ditt konto.",
-            showCancelButton: true,
-            confirmButtonText: "Logga ut",
-            cancelButtonText: "Avbryt",
-            confirmButtonColor: "#f58220",
-            cancelButtonColor: "#64748b"
-        });
-
-        if (!result.isConfirmed) {
-            return;
+        function renderLoading(title, description) {
+            elements.mainContent.innerHTML = `
+                <div class="loading-state">
+                    <div class="state-box">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        <h3>${escapeHTML(title)}</h3>
+                        <p>${escapeHTML(description)}</p>
+                    </div>
+                </div>
+            `;
         }
 
-        try {
-            await signOut(auth);
-            window.location.href = ACCOUNT_CONFIG.ROUTES.HOME;
-        } catch (error) {
-            console.error("[BILHK] Logout failed:", error);
-
-            Swal.fire({
-                icon: "error",
-                title: "Fel",
-                text: "Kunde inte logga ut just nu.",
-                confirmButtonColor: "#f58220"
-            });
-        }
-    }
-
-    function createContentHeader(titleText, descriptionText, actionElement) {
-        const header = document.createElement("div");
-        header.className = "content-header";
-
-        const textWrap = document.createElement("div");
-
-        const title = document.createElement("h2");
-        title.textContent = titleText;
-
-        const description = document.createElement("p");
-        description.textContent = descriptionText;
-
-        textWrap.appendChild(title);
-        textWrap.appendChild(description);
-
-        header.appendChild(textWrap);
-
-        if (actionElement) {
-            header.appendChild(actionElement);
+        function renderError(title, description) {
+            elements.mainContent.innerHTML = `
+                <div class="error-state">
+                    <div class="state-box">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <h3>${escapeHTML(title)}</h3>
+                        <p>${escapeHTML(description)}</p>
+                    </div>
+                </div>
+            `;
         }
 
-        return header;
-    }
+        function getPrimaryImage(car) {
+            if (Array.isArray(car.images) && car.images.length > 0 && car.images[0]) {
+                return String(car.images[0]);
+            }
 
-    function createHeaderButton(text, iconClass, handler) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "nav-btn primary";
-        button.appendChild(createIcon(iconClass));
-        button.appendChild(document.createTextNode(text));
-        button.addEventListener("click", handler);
-        return button;
-    }
+            if (car.image) {
+                return String(car.image);
+            }
 
-    function createStatsGrid(items) {
-        const grid = document.createElement("div");
-        grid.className = "stats-grid";
+            if (car.photoURL) {
+                return String(car.photoURL);
+            }
 
-        items.forEach((item) => {
-            const card = document.createElement("div");
-            card.className = "stat-card";
-
-            const iconWrap = document.createElement("div");
-            iconWrap.className = "stat-icon";
-            iconWrap.appendChild(createIcon(item.icon));
-
-            const textWrap = document.createElement("div");
-
-            const value = document.createElement("strong");
-            value.textContent = item.value;
-
-            const label = document.createElement("span");
-            label.textContent = item.label;
-
-            textWrap.appendChild(value);
-            textWrap.appendChild(label);
-
-            card.appendChild(iconWrap);
-            card.appendChild(textWrap);
-
-            grid.appendChild(card);
-        });
-
-        return grid;
-    }
-
-    function createToolbar(placeholder, onSearch) {
-        const toolbar = document.createElement("div");
-        toolbar.className = "toolbar";
-
-        const searchBox = document.createElement("div");
-        searchBox.className = "search-box";
-
-        searchBox.appendChild(createIcon("fa-solid fa-magnifying-glass"));
-
-        const input = document.createElement("input");
-        input.type = "search";
-        input.placeholder = placeholder;
-        input.maxLength = ACCOUNT_CONFIG.LIMITS.SEARCH_MAX_LENGTH;
-        input.autocomplete = "off";
-
-        input.addEventListener("input", () => {
-            onSearch(input.value);
-        });
-
-        searchBox.appendChild(input);
-
-        const refresh = document.createElement("button");
-        refresh.type = "button";
-        refresh.className = "nav-btn";
-        refresh.appendChild(createIcon("fa-solid fa-rotate-right"));
-        refresh.appendChild(document.createTextNode("Uppdatera"));
-        refresh.addEventListener("click", () => switchTab(state.activeTab));
-
-        toolbar.appendChild(searchBox);
-        toolbar.appendChild(refresh);
-
-        return toolbar;
-    }
-
-    function createInfoBox(labelText, valueText) {
-        const box = document.createElement("div");
-        box.className = "info-box";
-
-        const label = document.createElement("label");
-        label.textContent = labelText;
-
-        const value = document.createElement("p");
-        value.textContent = normalizeText(valueText, 200) || "Ej angivet";
-
-        box.appendChild(label);
-        box.appendChild(value);
-
-        return box;
-    }
-
-    function createActionButton(type, iconClass, label, handler) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = `action-btn ${type}`;
-        button.appendChild(createIcon(iconClass));
-        button.appendChild(document.createTextNode(label));
-        button.addEventListener("click", handler);
-        return button;
-    }
-
-    function createStateCard(iconClass, titleText, messageText) {
-        const card = document.createElement("div");
-        card.className = "state-card";
-
-        const iconWrap = document.createElement("div");
-        iconWrap.className = "state-icon";
-        iconWrap.appendChild(createIcon(iconClass));
-
-        const title = document.createElement("h3");
-        title.textContent = titleText;
-
-        const message = document.createElement("p");
-        message.textContent = messageText;
-
-        card.appendChild(iconWrap);
-        card.appendChild(title);
-        card.appendChild(message);
-
-        return card;
-    }
-
-    function renderLoadingState(message) {
-        clearElement(elements.mainContent);
-
-        elements.mainContent.appendChild(createStateCard(
-            "fa-solid fa-circle-notch fa-spin",
-            "Laddar...",
-            message
-        ));
-    }
-
-    function renderErrorState(message) {
-        clearElement(elements.mainContent);
-
-        elements.mainContent.appendChild(createStateCard(
-            "fa-solid fa-triangle-exclamation",
-            "Något gick fel",
-            message
-        ));
-    }
-
-    function filterVehicleList(items, searchText) {
-        if (!searchText) {
-            return items;
+            return ACCOUNT_CONFIG.PLACEHOLDER_IMAGE;
         }
 
-        return items.filter((item) => {
-            const combined = [
-                item.brand,
-                item.model,
-                item.year,
-                item.price,
-                item.regNo,
-                item.regNr,
-                item.registrationNumber
-            ].map((value) => normalizeText(value).toLowerCase()).join(" ");
+        function formatPrice(value) {
+            const number = Number(value);
 
-            return combined.includes(searchText);
-        });
-    }
+            if (!Number.isFinite(number) || number <= 0) {
+                return "Pris saknas";
+            }
 
-    function openDetails(carId) {
-        if (!carId) {
-            return;
+            return `${number.toLocaleString("sv-SE")} kr`;
         }
 
-        window.location.href = `${ACCOUNT_CONFIG.ROUTES.DETAILS}?id=${encodeURIComponent(carId)}`;
-    }
+        function formatValue(value, fallback) {
+            if (value === null || value === undefined || value === "") {
+                return fallback;
+            }
 
-    function getVehicleImage(item) {
-        if (Array.isArray(item.images) && item.images.length > 0 && isSafeImageURL(item.images[0])) {
-            return item.images[0];
+            return String(value);
         }
 
-        if (typeof item.image === "string" && isSafeImageURL(item.image)) {
-            return item.image;
+        function normalizeText(value, maxLength = 300) {
+            return String(value ?? "")
+                .replace(/\s+/g, " ")
+                .trim()
+                .slice(0, maxLength);
         }
 
-        return ACCOUNT_CONFIG.DEFAULTS.PLACEHOLDER_IMAGE;
-    }
+        function getMillisFromTimestamp(value) {
+            if (!value) {
+                return 0;
+            }
 
-    function isSafeImageURL(value) {
-        const url = String(value || "").trim().toLowerCase();
+            if (typeof value.toMillis === "function") {
+                return value.toMillis();
+            }
 
-        if (!url) {
-            return false;
+            if (typeof value.toDate === "function") {
+                return value.toDate().getTime();
+            }
+
+            const parsed = Date.parse(value);
+
+            return Number.isFinite(parsed) ? parsed : 0;
         }
 
-        if (url.startsWith("javascript:")) {
-            return false;
+        function escapeHTML(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
         }
 
-        if (url.startsWith("data:text/html")) {
-            return false;
+        function escapeAttribute(value) {
+            return escapeHTML(value).replaceAll("`", "&#096;");
         }
-
-        return true;
-    }
-
-    function buildVehicleTitle(item) {
-        const brand = normalizeText(item.brand, 80);
-        const model = normalizeText(item.model, 80);
-
-        return `${brand} ${model}`.trim() || "Okänt fordon";
-    }
-
-    function buildVehicleMeta(item) {
-        const parts = [];
-
-        if (item.year) {
-            parts.push(`År ${item.year}`);
-        }
-
-        if (item.mileage) {
-            parts.push(`${formatNumber(item.mileage)} mil`);
-        }
-
-        if (item.fuelType || item.fuel) {
-            parts.push(normalizeText(item.fuelType || item.fuel, 40));
-        }
-
-        if (item.transmission || item.gearbox) {
-            parts.push(normalizeText(item.transmission || item.gearbox, 40));
-        }
-
-        return parts.length ? parts.join(" • ") : "Fordonsinformation saknas";
-    }
-
-    function formatPrice(value) {
-        const number = Number(value);
-
-        if (!Number.isFinite(number) || number < 0) {
-            return "Pris saknas";
-        }
-
-        return `${number.toLocaleString("sv-SE")} kr`;
-    }
-
-    function formatNumber(value) {
-        const number = Number(value);
-
-        if (!Number.isFinite(number)) {
-            return "";
-        }
-
-        return number.toLocaleString("sv-SE");
-    }
-
-    function getEmailName(email) {
-        const value = normalizeText(email, 120);
-
-        if (!value || !value.includes("@")) {
-            return "";
-        }
-
-        return value.split("@")[0];
-    }
-
-    function normalizeText(value, maxLength = 160) {
-        return String(value ?? "")
-            .replace(/\s+/g, " ")
-            .trim()
-            .slice(0, maxLength);
-    }
-
-    function createIcon(className) {
-        const icon = document.createElement("i");
-        icon.className = className;
-        return icon;
-    }
-
-    function clearElement(element) {
-        while (element.firstChild) {
-            element.removeChild(element.firstChild);
-        }
-    }
-
-    function attachGlobalErrorHandlers() {
-        window.addEventListener("unhandledrejection", (event) => {
-            console.error("[BILHK] Unhandled promise rejection:", event.reason);
-        });
-
-        window.addEventListener("error", (event) => {
-            console.error("[BILHK] Global account page error:", event.error || event.message);
-        });
-    }
-</script>
+    </script>
 
 </body>
 </html>
