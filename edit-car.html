@@ -1,172 +1,306 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="sv" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Redigera Annons | BILHK Pro</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e07210;
+            --dark: #0f172a;
+            --muted: #64748b;
+            --bg: #f8fafc;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --danger: #ef4444;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--dark); }
+        body { background-color: var(--bg); color: var(--dark); line-height: 1.6; }
 
-        /* Navigation Bar */
-        nav { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: var(--dark); }
-        .logo span { color: var(--primary); }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; margin-left: 20px; font-size: 14px; }
-        .logout-btn { color: #ef4444 !important; cursor: pointer; }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
 
-        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        /* --- Header & Navigation --- */
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn-back { text-decoration: none; color: var(--muted); font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-back:hover { color: var(--dark); }
 
-        /* Welcome Header */
-        .welcome-section { margin-bottom: 30px; }
-        .welcome-section h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
-        .welcome-section p { color: #64748b; }
+        /* --- Form Styling --- */
+        .edit-card { background: var(--white); border-radius: 24px; border: 1px solid var(--border); padding: 40px; box-shadow: var(--shadow); }
+        .section-title { font-size: 20px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; color: var(--dark); }
 
-        /* Profile Info Card */
-        .card { background: white; border-radius: 20px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 30px; }
-        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .info-item label { display: block; font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
-        .info-item span { font-size: 16px; font-weight: 600; color: var(--dark); }
-        .badge { background: #fff4eb; color: var(--primary); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .full-width { grid-column: 1 / -1; }
 
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-box { background: white; padding: 20px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
-        .stat-box h3 { font-size: 24px; font-weight: 800; color: var(--primary); }
-        .stat-box p { font-size: 13px; color: #64748b; font-weight: 600; }
+        label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: #f1f5f9;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+        .form-control:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.1); }
 
-        /* Action Buttons */
-        .actions { display: flex; gap: 15px; margin-bottom: 30px; }
-        .btn { padding: 15px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; transition: 0.3s; text-decoration: none; font-size: 14px; text-align: center; }
-        .btn-add { background: var(--primary); color: white; flex: 2; }
-        .btn-add:hover { background: #e07210; transform: translateY(-2px); }
-        .btn-outline { background: white; color: var(--dark); border: 1px solid var(--border); flex: 1; }
-        .btn-outline:hover { background: #f1f5f9; }
+        textarea.form-control { min-height: 120px; resize: vertical; }
 
-        /* Listings Placeholder */
-        .listings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .empty-state { text-align: center; padding: 60px 20px; background: #f1f5f9; border-radius: 20px; border: 2px dashed #cbd5e1; color: #64748b; }
+        /* --- Image Management --- */
+        .image-manager { margin-top: 30px; padding-top: 30px; border-top: 1px solid var(--border); }
+        .preview-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-top: 15px; }
+        .img-slot { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #eee; }
+        .img-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .remove-img { position: absolute; top: 5px; right: 5px; background: var(--danger); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
 
-        #businessDetails { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+        .upload-box {
+            border: 2px dashed var(--border);
+            border-radius: 14px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: var(--bg);
+        }
+        .upload-box:hover { border-color: var(--primary); background: #fff5eb; }
+        .upload-box i { font-size: 30px; color: var(--primary); margin-bottom: 10px; }
+
+        /* --- Action Buttons --- */
+        .form-actions { margin-top: 40px; display: flex; gap: 15px; }
+        .btn { padding: 16px 32px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; font-size: 15px; }
+        .btn-primary { background: var(--primary); color: white; flex: 1; justify-content: center; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn-danger { background: #fee2e2; color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; }
+
+        /* --- Loading Overlay --- */
+        #loadingOverlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; flex-direction: column; visibility: hidden; }
+        .spinner { width: 45px; height: 45px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<nav>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-    <div class="nav-links">
-        <a href="index.html">Hem</a>
-        <a id="logoutBtn" class="logout-btn">Logga ut</a>
-    </div>
-</nav>
-
-<div class="container">
-    <div class="welcome-section">
-        <h1 id="welcomeUser">Hej, ...</h1>
-        <p>Här kan du hantera dina annonser och se din profil.</p>
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p style="margin-top:15px; font-weight:700;">Hämtar fordonsdata...</p>
     </div>
 
-    <div class="card">
-        <div class="profile-grid">
-            <div class="info-item">
-                <label>Kontotyp</label>
-                <span id="displayUserType" class="badge">Laddar...</span>
-            </div>
-            <div class="info-item">
-                <label>E-post</label>
-                <span id="displayEmail">...</span>
-            </div>
+    <div class="container">
+        <div class="page-header">
+            <a href="manage.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Tillbaka till mina annonser</a>
+            <h1 style="font-size: 24px; font-weight: 900;">Redigera annons</h1>
         </div>
 
-        <div id="businessDetails" class="profile-grid">
-            <div class="info-item">
-                <label>Organisationsnummer</label>
-                <span id="displayTaxId">...</span>
-            </div>
-            <div class="info-item">
-                <label>Adress</label>
-                <span id="displayAddress">...</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="stats-grid">
-        <div class="stat-box">
-            <h3 id="carCount">0</h3>
-            <p>Aktiva annonser</p>
-        </div>
-        <div class="stat-box">
-            <h3>0</h3>
-            <p>Visningar</p>
-        </div>
-        <div class="stat-box">
-            <h3>0</h3>
-            <p>Meddelanden</p>
-        </div>
-    </div>
-
-    <div class="actions">
-        <a href="add-car.html" class="btn btn-add">+ Skapa ny annons</a>
-        <a href="edit-profile.html" class="btn btn-outline">Redigera profil</a>
-    </div>
-
-    <div class="listings-header">
-        <h2>Dina annonser</h2>
-    </div>
-    <div id="listingsContainer" class="empty-state">
-        <p>Du har inga aktiva annonser än. Klicka på knappen ovan för att lägga till din första bil!</p>
-    </div>
-</div>
-
-<script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    // 1. مراقبة حالة تسجيل الدخول
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            // المستخدم مسجل دخول، جلب بياناته من Firestore
-            await loadUserProfile(user);
-        } else {
-            // غير مسجل دخول، توجيهه لصفحة الدخول
-            window.location.href = "login.html";
-        }
-    });
-
-    async function loadUserProfile(user) {
-        try {
-            const userDoc = await getDoc(doc(db, "users", user.uid));
-            if (userDoc.exists()) {
-                const data = userDoc.data();
+        <div class="edit-card">
+            <form id="editCarForm">
+                <div class="section-title"><i class="fa-solid fa-circle-info" style="color:var(--primary)"></i> Grundläggande information</div>
                 
-                // تحديث الواجهة
-                document.getElementById('welcomeUser').innerText = `Hej, ${data.name || 'Användare'}!`;
-                document.getElementById('displayEmail').innerText = user.email;
-                document.getElementById('displayUserType').innerText = data.userType === 'business' ? 'Företag' : 'Privatperson';
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Märke</label>
+                        <input type="text" id="brand" class="form-control" readonly style="opacity: 0.7;">
+                    </div>
+                    <div class="form-group">
+                        <label>Modell</label>
+                        <input type="text" id="model" class="form-control" readonly style="opacity: 0.7;">
+                    </div>
+                    <div class="form-group">
+                        <label>Pris (SEK)</label>
+                        <input type="number" id="price" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Miltal (mil)</label>
+                        <input type="number" id="mileage" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Modellår</label>
+                        <input type="number" id="year" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Växellåda</label>
+                        <select id="transmission" class="form-control">
+                            <option value="Automat">Automat</option>
+                            <option value="Manuell">Manuell</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Beskrivning</label>
+                        <textarea id="description" class="form-control" placeholder="Berätta mer om bilen..."></textarea>
+                    </div>
+                </div>
 
-                // إظهار تفاصيل الشركة إذا كان الحساب تجارياً
-                if (data.userType === 'business') {
-                    document.getElementById('businessDetails').style.display = 'grid';
-                    document.getElementById('displayTaxId').innerText = data.taxId || 'Ej angivet';
-                    document.getElementById('displayAddress').innerText = data.address || 'Ej angivet';
+                <div class="image-manager">
+                    <div class="section-title"><i class="fa-solid fa-images" style="color:var(--primary)"></i> Hantera bilder</div>
+                    <p style="font-size: 13px; color: var(--muted); margin-bottom: 15px;">Du kan ta bort befintliga bilder eller lägga till nya.</p>
+                    
+                    <div class="preview-container" id="imagePreview">
+                        </div>
+
+                    <div class="upload-box" onclick="document.getElementById('fileInput').click()" style="margin-top: 20px;">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p>Klicka för att lägga till nya bilder</p>
+                        <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-danger" id="deleteBtn">
+                        <i class="fa-solid fa-trash"></i> Radera annons
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-check-double"></i> Spara ändringar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { doc, getDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // ملاحظة: إذا كنت تستخدم Firebase Storage، قم باستيراد أدوات الرفع هنا
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const carId = urlParams.get('id');
+        let currentCarData = null;
+        let existingImages = [];
+
+        if (!carId) window.location.href = 'manage.html';
+
+        // --- 1. التحقق من الدخول وجلب البيانات ---
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            loadCarData(user.uid);
+        });
+
+        async function loadCarData(uid) {
+            toggleLoader(true);
+            try {
+                const docRef = doc(db, "cars", carId);
+                const snap = await getDoc(docRef);
+
+                if (snap.exists()) {
+                    currentCarData = snap.data();
+
+                    // حماية: التأكد من أن المستخدم هو صاحب الإعلان
+                    if (currentCarData.ownerId !== uid) {
+                        Swal.fire('Obehörig', 'Du har inte tillgång till denna annons.', 'error').then(() => {
+                            window.location.href = 'manage.html';
+                        });
+                        return;
+                    }
+
+                    // ملء النموذج
+                    document.getElementById('brand').value = currentCarData.brand;
+                    document.getElementById('model').value = currentCarData.model;
+                    document.getElementById('price').value = currentCarData.price;
+                    document.getElementById('mileage').value = currentCarData.mileage;
+                    document.getElementById('year').value = currentCarData.year;
+                    document.getElementById('transmission').value = currentCarData.transmission || 'Automat';
+                    document.getElementById('description').value = currentCarData.description || '';
+                    
+                    existingImages = currentCarData.images || [];
+                    renderImages();
+                } else {
+                    window.location.href = 'manage.html';
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                toggleLoader(false);
+            }
+        }
+
+        // --- 2. إدارة الصور ---
+        function renderImages() {
+            const container = document.getElementById('imagePreview');
+            container.innerHTML = existingImages.map((img, idx) => `
+                <div class="img-slot">
+                    <img src="${img}">
+                    <button type="button" class="remove-img" onclick="removeImage(${idx})">×</button>
+                </div>
+            `).join('');
+        }
+
+        window.removeImage = (index) => {
+            existingImages.splice(index, 1);
+            renderImages();
+        };
+
+        // --- 3. حفظ التعديلات ---
+        document.getElementById('editCarForm').onsubmit = async (e) => {
+            e.preventDefault();
+            toggleLoader(true, 'Sparar ändringar...');
+
+            try {
+                const docRef = doc(db, "cars", carId);
+                await updateDoc(docRef, {
+                    price: Number(document.getElementById('price').value),
+                    mileage: Number(document.getElementById('mileage').value),
+                    year: Number(document.getElementById('year').value),
+                    transmission: document.getElementById('transmission').value,
+                    description: document.getElementById('description').value,
+                    images: existingImages, // الصور المتبقية
+                    updatedAt: serverTimestamp()
+                });
+
+                Swal.fire('Uppdaterad!', 'Dina ändringar har sparats.', 'success').then(() => {
+                    window.location.href = 'manage.html';
+                });
+            } catch (err) {
+                Swal.fire('Fel', 'Kunde inte spara: ' + err.message, 'error');
+            } finally {
+                toggleLoader(false);
+            }
+        };
+
+        // --- 4. حذف الإعلان ---
+        document.getElementById('deleteBtn').onclick = async () => {
+            const result = await Swal.fire({
+                title: 'Är du säker?',
+                text: "Denna annons kommer att raderas permanent!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                confirmButtonText: 'Ja, radera den',
+                cancelButtonText: 'Avbryt'
+            });
+
+            if (result.isConfirmed) {
+                toggleLoader(true, 'Raderar annons...');
+                try {
+                    await deleteDoc(doc(db, "cars", carId));
+                    Swal.fire('Raderad!', 'Annonsen har tagits bort.', 'success').then(() => {
+                        window.location.href = 'manage.html';
+                    });
+                } catch (err) {
+                    Swal.fire('Fel', 'Kunde inte radera.', 'error');
+                } finally {
+                    toggleLoader(false);
                 }
             }
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-        }
-    }
+        };
 
-    // 2. تسجيل الخروج
-    document.getElementById('logoutBtn').onclick = async () => {
-        if (confirm("Är du säker på att du vill logga ut?")) {
-            await signOut(auth);
-            window.location.href = "login.html";
+        function toggleLoader(show, text = 'Laddar...') {
+            const loader = document.getElementById('loadingOverlay');
+            loader.style.visibility = show ? 'visible' : 'hidden';
+            loader.querySelector('p').innerText = text;
         }
-    };
-</script>
-
+    </script>
 </body>
 </html>
