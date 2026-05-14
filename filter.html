@@ -7,7 +7,7 @@
 
     <title>Avancerad sökning | BILHK</title>
 
-    <meta name="description" content="Avancerad bilsökning på BILHK. Filtrera annonser efter märke, modell, pris, miltal, drivmedel och växellåda.">
+    <meta name="description" content="Avancerad bilsökning på BILHK. Filtrera annonser efter märke, modell, pris, miltal, drivmedel, växellåda, karosstyp, utrustning, komfort, säkerhet, interiör och exteriör.">
 
     <meta name="robots" content="index, follow">
 
@@ -53,8 +53,8 @@
             --radius-lg: 30px;
             --radius-full: 999px;
 
-            --max-width: 1120px;
-            --footer-height: 104px;
+            --max-width: 1180px;
+            --footer-height: 108px;
         }
 
         * {
@@ -91,11 +91,6 @@
 
         button {
             cursor: pointer;
-        }
-
-        button[hidden],
-        a[hidden] {
-            display: none !important;
         }
 
         .top-bar {
@@ -200,19 +195,9 @@
             box-shadow: 0 12px 25px rgba(245, 130, 32, 0.25);
         }
 
-        .nav-link.primary:hover {
-            background: var(--primary-hover);
-            color: white;
-        }
-
-        .nav-button.logout {
-            background: var(--dark);
-            color: white;
-        }
-
-        .nav-button.logout:hover {
-            background: var(--primary-hover);
-            color: white;
+        .nav-button[hidden],
+        .nav-link[hidden] {
+            display: none !important;
         }
 
         .page-shell {
@@ -255,7 +240,7 @@
         }
 
         .page-heading p {
-            max-width: 760px;
+            max-width: 800px;
             color: var(--muted);
             font-size: 16px;
             line-height: 1.75;
@@ -264,7 +249,7 @@
 
         .filter-layout {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) 330px;
+            grid-template-columns: minmax(0, 1fr) 340px;
             gap: 24px;
             align-items: start;
         }
@@ -354,6 +339,7 @@
             background: var(--primary-soft);
             color: var(--primary);
             font-size: 15px;
+            flex: 0 0 38px;
         }
 
         .section-heading h3 {
@@ -418,6 +404,10 @@
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 14px;
+        }
+
+        .form-grid.grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
         .form-group {
@@ -489,23 +479,49 @@
             cursor: not-allowed;
         }
 
-        .field-error {
-            display: none;
-            margin-top: 7px;
-            color: var(--danger);
-            font-size: 12px;
-            font-weight: 800;
-            line-height: 1.45;
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+            gap: 10px;
         }
 
-        .form-group.invalid input,
-        .form-group.invalid select {
-            border-color: var(--danger);
-            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.10);
+        .feature-chip {
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 12px 14px;
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            background: white;
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 850;
+            text-align: left;
+            transition: 0.22s ease;
         }
 
-        .form-group.invalid .field-error {
-            display: block;
+        .feature-chip i {
+            width: 18px;
+            text-align: center;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .feature-chip:hover {
+            border-color: rgba(245, 130, 32, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .feature-chip.active {
+            background: var(--dark);
+            color: white;
+            border-color: var(--dark);
+            box-shadow: 0 12px 22px rgba(15, 23, 42, 0.16);
+        }
+
+        .feature-chip.active i {
+            color: white;
         }
 
         .summary-panel {
@@ -530,6 +546,7 @@
             background: var(--primary-soft);
             color: var(--primary);
             font-size: 18px;
+            flex: 0 0 46px;
         }
 
         .side-header h3 {
@@ -550,6 +567,9 @@
             display: grid;
             gap: 10px;
             margin-bottom: 18px;
+            max-height: 520px;
+            overflow: auto;
+            padding-right: 2px;
         }
 
         .summary-item {
@@ -660,7 +680,7 @@
             box-shadow: none;
         }
 
-        @media (max-width: 980px) {
+        @media (max-width: 1080px) {
             .filter-layout {
                 grid-template-columns: 1fr;
             }
@@ -674,7 +694,7 @@
             }
         }
 
-        @media (max-width: 720px) {
+        @media (max-width: 760px) {
             body {
                 padding-bottom: 150px;
             }
@@ -710,6 +730,7 @@
             }
 
             .form-grid,
+            .form-grid.grid-3,
             .footer-action-inner {
                 grid-template-columns: 1fr;
             }
@@ -722,6 +743,10 @@
             .panel-header {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -750,12 +775,11 @@
 
     <div class="top-bar">
         <i class="fa-solid fa-magnifying-glass-chart"></i>
-        <span>Filtrera annonser noggrant och visa endast relevanta resultat.</span>
+        <span>Filtrera annonser noggrant med detaljerade bilspecifikationer och utrustning.</span>
     </div>
 
     <header class="site-header">
         <div class="header-inner">
-
             <a href="index.html" class="logo" aria-label="Gå till startsidan">
                 <span class="logo-icon">
                     <i class="fa-solid fa-car-side"></i>
@@ -784,17 +808,15 @@
                     Logga in
                 </a>
 
-                <button type="button" class="nav-button logout" id="logoutBtn" hidden>
+                <button type="button" class="nav-button" id="logoutBtn" hidden>
                     <i class="fa-solid fa-right-from-bracket"></i>
                     Logga ut
                 </button>
             </nav>
-
         </div>
     </header>
 
     <main class="page-shell">
-
         <section class="page-heading">
             <div>
                 <div class="eyebrow">
@@ -802,19 +824,17 @@
                     Avancerad sökning
                 </div>
 
-                <h1>Hitta rätt bil snabbare</h1>
+                <h1>Hitta rätt bil med detaljerade filter</h1>
 
                 <p>
-                    Välj märke, modell, pris, årsmodell och andra filter.
-                    När du trycker på knappen skickas alla val till results.html och annonserna filtreras där.
+                    Filtrera efter märke, modell, pris, årsmodell, miltal, karosstyp, motor, växellåda, färg,
+                    säkerhet, komfort, interiör, exteriör, fönster, dörrar, säten och extra utrustning.
                 </p>
             </div>
         </section>
 
         <section class="filter-layout">
-
             <form class="filter-panel" id="filterForm" novalidate>
-
                 <div class="panel-header">
                     <div class="panel-title">
                         <div class="panel-icon">
@@ -822,7 +842,7 @@
                         </div>
 
                         <div>
-                            <h2>Filter</h2>
+                            <h2>Detaljerade filter</h2>
                             <span>Alla fält är frivilliga</span>
                         </div>
                     </div>
@@ -838,7 +858,7 @@
 
                             <div>
                                 <h3>Karosstyp</h3>
-                                <span>Välj en typ eller lämna tomt</span>
+                                <span>Välj biltyp</span>
                             </div>
                         </div>
 
@@ -868,9 +888,29 @@
                                 <span>Coupé</span>
                             </button>
 
-                            <button type="button" class="type-card" data-body-type="Transportbil">
+                            <button type="button" class="type-card" data-body-type="Cabriolet">
+                                <i class="fa-solid fa-car-burst"></i>
+                                <span>Cabriolet</span>
+                            </button>
+
+                            <button type="button" class="type-card" data-body-type="Pickup">
+                                <i class="fa-solid fa-truck-pickup"></i>
+                                <span>Pickup</span>
+                            </button>
+
+                            <button type="button" class="type-card" data-body-type="Minibuss">
                                 <i class="fa-solid fa-van-shuttle"></i>
+                                <span>Minibuss</span>
+                            </button>
+
+                            <button type="button" class="type-card" data-body-type="Transportbil">
+                                <i class="fa-solid fa-truck"></i>
                                 <span>Transport</span>
+                            </button>
+
+                            <button type="button" class="type-card" data-body-type="Övrigt">
+                                <i class="fa-solid fa-circle-plus"></i>
+                                <span>Övrigt</span>
                             </button>
                         </div>
                     </div>
@@ -888,7 +928,7 @@
                         </div>
 
                         <div class="form-grid">
-                            <div class="form-group" data-field-group="brand">
+                            <div class="form-group">
                                 <label for="brand">
                                     Märke
                                     <span class="hint">Valfritt</span>
@@ -898,11 +938,9 @@
                                     <i class="fa-solid fa-copyright"></i>
                                     <select id="brand" name="brand"></select>
                                 </div>
-
-                                <div class="field-error" id="brandError">Kontrollera bilmärket.</div>
                             </div>
 
-                            <div class="form-group" data-field-group="model">
+                            <div class="form-group">
                                 <label for="model">
                                     Modell
                                     <span class="hint">Baserat på märke</span>
@@ -912,11 +950,9 @@
                                     <i class="fa-solid fa-car"></i>
                                     <select id="model" name="model"></select>
                                 </div>
-
-                                <div class="field-error" id="modelError">Kontrollera modellen.</div>
                             </div>
 
-                            <div class="form-group" data-field-group="minYear">
+                            <div class="form-group">
                                 <label for="minYear">
                                     Från år
                                     <span class="hint">Ex. 2018</span>
@@ -926,11 +962,9 @@
                                     <i class="fa-solid fa-calendar"></i>
                                     <input type="number" id="minYear" name="minYear" min="1900" max="2027" placeholder="Från år">
                                 </div>
-
-                                <div class="field-error" id="minYearError">Ange ett giltigt startår.</div>
                             </div>
 
-                            <div class="form-group" data-field-group="maxYear">
+                            <div class="form-group">
                                 <label for="maxYear">
                                     Till år
                                     <span class="hint">Ex. 2026</span>
@@ -940,8 +974,6 @@
                                     <i class="fa-solid fa-calendar-check"></i>
                                     <input type="number" id="maxYear" name="maxYear" min="1900" max="2027" placeholder="Till år">
                                 </div>
-
-                                <div class="field-error" id="maxYearError">Ange ett giltigt slutår.</div>
                             </div>
                         </div>
                     </div>
@@ -953,13 +985,13 @@
                             </div>
 
                             <div>
-                                <h3>Pris och miltal</h3>
-                                <span>Begränsa resultaten ekonomiskt</span>
+                                <h3>Pris, miltal och plats</h3>
+                                <span>Begränsa resultat efter ekonomi och läge</span>
                             </div>
                         </div>
 
                         <div class="form-grid">
-                            <div class="form-group" data-field-group="minPrice">
+                            <div class="form-group">
                                 <label for="minPrice">
                                     Minpris
                                     <span class="hint">SEK</span>
@@ -969,11 +1001,9 @@
                                     <i class="fa-solid fa-tag"></i>
                                     <input type="number" id="minPrice" name="minPrice" min="0" placeholder="Minpris">
                                 </div>
-
-                                <div class="field-error" id="minPriceError">Ange ett giltigt minpris.</div>
                             </div>
 
-                            <div class="form-group" data-field-group="maxPrice">
+                            <div class="form-group">
                                 <label for="maxPrice">
                                     Maxpris
                                     <span class="hint">SEK</span>
@@ -983,11 +1013,9 @@
                                     <i class="fa-solid fa-tags"></i>
                                     <input type="number" id="maxPrice" name="maxPrice" min="0" placeholder="Maxpris">
                                 </div>
-
-                                <div class="field-error" id="maxPriceError">Ange ett giltigt maxpris.</div>
                             </div>
 
-                            <div class="form-group full" data-field-group="maxMileage">
+                            <div class="form-group">
                                 <label for="maxMileage">
                                     Max miltal
                                     <span class="hint">km</span>
@@ -997,8 +1025,18 @@
                                     <i class="fa-solid fa-road"></i>
                                     <input type="number" id="maxMileage" name="maxMileage" min="0" placeholder="Ex. 120000">
                                 </div>
+                            </div>
 
-                                <div class="field-error" id="maxMileageError">Ange ett giltigt miltal.</div>
+                            <div class="form-group">
+                                <label for="location">
+                                    Plats
+                                    <span class="hint">Stad</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <input type="text" id="location" name="location" maxlength="80" placeholder="Ex. Stockholm">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1010,12 +1048,12 @@
                             </div>
 
                             <div>
-                                <h3>Tekniska val</h3>
-                                <span>Bränsle, växellåda och skick</span>
+                                <h3>Motor och teknik</h3>
+                                <span>Drivmedel, växellåda, drivning och effekt</span>
                             </div>
                         </div>
 
-                        <div class="form-grid">
+                        <div class="form-grid grid-3">
                             <div class="form-group">
                                 <label for="fuelType">Bränsle</label>
 
@@ -1050,6 +1088,45 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="drive">Drivning</label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-route"></i>
+                                    <select id="drive" name="drive">
+                                        <option value="">Alla</option>
+                                        <option value="FWD">Framhjulsdrift</option>
+                                        <option value="RWD">Bakhjulsdrift</option>
+                                        <option value="AWD">Fyrhjulsdrift</option>
+                                        <option value="4WD">4WD</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="minHp">
+                                    Min hk
+                                    <span class="hint">Hästkrafter</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-bolt"></i>
+                                    <input type="number" id="minHp" name="minHp" min="0" placeholder="Min hk">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="maxHp">
+                                    Max hk
+                                    <span class="hint">Hästkrafter</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-bolt-lightning"></i>
+                                    <input type="number" id="maxHp" name="maxHp" min="0" placeholder="Max hk">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="condition">Skick</label>
 
                                 <div class="input-wrap">
@@ -1064,15 +1141,488 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-palette"></i>
+                            </div>
+
+                            <div>
+                                <h3>Exteriör, dörrar och färg</h3>
+                                <span>Färg, dörrar, fönster, drag och tak</span>
+                            </div>
+                        </div>
+
+                        <div class="form-grid grid-3">
                             <div class="form-group">
-                                <label for="location">Plats</label>
+                                <label for="color">Färg</label>
 
                                 <div class="input-wrap">
-                                    <i class="fa-solid fa-location-dot"></i>
-                                    <input type="text" id="location" name="location" maxlength="80" placeholder="Ex. Stockholm">
+                                    <i class="fa-solid fa-fill-drip"></i>
+                                    <select id="color" name="color">
+                                        <option value="">Alla</option>
+                                        <option value="Svart">Svart</option>
+                                        <option value="Vit">Vit</option>
+                                        <option value="Grå">Grå</option>
+                                        <option value="Silver">Silver</option>
+                                        <option value="Blå">Blå</option>
+                                        <option value="Röd">Röd</option>
+                                        <option value="Grön">Grön</option>
+                                        <option value="Brun">Brun</option>
+                                        <option value="Beige">Beige</option>
+                                        <option value="Gul">Gul</option>
+                                        <option value="Orange">Orange</option>
+                                        <option value="Annan">Annan</option>
+                                    </select>
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label for="doors">Antal dörrar</label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-door-open"></i>
+                                    <select id="doors" name="doors">
+                                        <option value="">Alla</option>
+                                        <option value="2">2 dörrar</option>
+                                        <option value="3">3 dörrar</option>
+                                        <option value="4">4 dörrar</option>
+                                        <option value="5">5 dörrar</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="seats">Antal säten</label>
+
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-chair"></i>
+                                    <select id="seats" name="seats">
+                                        <option value="">Alla</option>
+                                        <option value="2">2 säten</option>
+                                        <option value="4">4 säten</option>
+                                        <option value="5">5 säten</option>
+                                        <option value="6">6 säten</option>
+                                        <option value="7">7 säten</option>
+                                        <option value="8">8+ säten</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-grid" data-feature-group="exterior">
+                            <button type="button" class="feature-chip" data-feature="Dragkrok">
+                                <i class="fa-solid fa-link"></i>
+                                Dragkrok
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Panoramatak">
+                                <i class="fa-solid fa-border-top-left"></i>
+                                Panoramatak
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Taklucka">
+                                <i class="fa-regular fa-square"></i>
+                                Taklucka
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Takräcke">
+                                <i class="fa-solid fa-grip-lines"></i>
+                                Takräcke
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Elinfällbara speglar">
+                                <i class="fa-solid fa-clone"></i>
+                                Elinfällbara speglar
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Tonade rutor">
+                                <i class="fa-solid fa-window-maximize"></i>
+                                Tonade rutor
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Elhissar fram">
+                                <i class="fa-solid fa-window-restore"></i>
+                                Elhissar fram
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Elhissar bak">
+                                <i class="fa-solid fa-window-restore"></i>
+                                Elhissar bak
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="LED-strålkastare">
+                                <i class="fa-solid fa-lightbulb"></i>
+                                LED-strålkastare
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Matrix LED">
+                                <i class="fa-solid fa-sun"></i>
+                                Matrix LED
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Xenonljus">
+                                <i class="fa-regular fa-lightbulb"></i>
+                                Xenonljus
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Dimljus">
+                                <i class="fa-solid fa-cloud"></i>
+                                Dimljus
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-couch"></i>
+                            </div>
+
+                            <div>
+                                <h3>Interiör och säten</h3>
+                                <span>Säten, ratt, komfort och material</span>
+                            </div>
+                        </div>
+
+                        <div class="feature-grid" data-feature-group="interior">
+                            <button type="button" class="feature-chip" data-feature="Skinnsäten">
+                                <i class="fa-solid fa-chair"></i>
+                                Skinnsäten
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Alcantara">
+                                <i class="fa-solid fa-layer-group"></i>
+                                Alcantara
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Elstolar">
+                                <i class="fa-solid fa-chair"></i>
+                                Elstolar
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Minne förarstol">
+                                <i class="fa-solid fa-memory"></i>
+                                Minne förarstol
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Sportstolar">
+                                <i class="fa-solid fa-person-running"></i>
+                                Sportstolar
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Sätesvärme fram">
+                                <i class="fa-solid fa-temperature-high"></i>
+                                Sätesvärme fram
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Sätesvärme bak">
+                                <i class="fa-solid fa-temperature-high"></i>
+                                Sätesvärme bak
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Sätesventilation">
+                                <i class="fa-solid fa-wind"></i>
+                                Sätesventilation
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Massagefunktion">
+                                <i class="fa-solid fa-hand-sparkles"></i>
+                                Massagefunktion
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Rattvärme">
+                                <i class="fa-solid fa-life-ring"></i>
+                                Rattvärme
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Multifunktionsratt">
+                                <i class="fa-solid fa-gamepad"></i>
+                                Multifunktionsratt
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="ISOFIX">
+                                <i class="fa-solid fa-child"></i>
+                                ISOFIX
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+
+                            <div>
+                                <h3>Säkerhet och förarassistans</h3>
+                                <span>ADAS, kameror och aktiva säkerhetssystem</span>
+                            </div>
+                        </div>
+
+                        <div class="feature-grid" data-feature-group="safety">
+                            <button type="button" class="feature-chip" data-feature="ABS">
+                                <i class="fa-solid fa-shield"></i>
+                                ABS
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="ESP">
+                                <i class="fa-solid fa-car-burst"></i>
+                                ESP
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Airbag">
+                                <i class="fa-solid fa-circle-dot"></i>
+                                Airbag
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Adaptiv farthållare">
+                                <i class="fa-solid fa-gauge"></i>
+                                Adaptiv farthållare
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Farthållare">
+                                <i class="fa-solid fa-gauge-high"></i>
+                                Farthållare
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Autobroms">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                Autobroms
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Filhållningsassistans">
+                                <i class="fa-solid fa-road"></i>
+                                Filhållningsassistans
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Dödavinkelvarnare">
+                                <i class="fa-solid fa-eye"></i>
+                                Dödavinkelvarnare
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Trafikskyltigenkänning">
+                                <i class="fa-solid fa-signs-post"></i>
+                                Trafikskyltigenkänning
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Parkeringssensor fram">
+                                <i class="fa-solid fa-square-parking"></i>
+                                Parkeringssensor fram
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Parkeringssensor bak">
+                                <i class="fa-solid fa-square-parking"></i>
+                                Parkeringssensor bak
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Backkamera">
+                                <i class="fa-solid fa-camera"></i>
+                                Backkamera
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="360-kamera">
+                                <i class="fa-solid fa-camera-retro"></i>
+                                360-kamera
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Head-up display">
+                                <i class="fa-solid fa-vr-cardboard"></i>
+                                Head-up display
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Night Vision">
+                                <i class="fa-solid fa-moon"></i>
+                                Night Vision
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-snowflake"></i>
+                            </div>
+
+                            <div>
+                                <h3>Komfort och klimat</h3>
+                                <span>Klimatanläggning, värme och bekvämlighet</span>
+                            </div>
+                        </div>
+
+                        <div class="feature-grid" data-feature-group="comfort">
+                            <button type="button" class="feature-chip" data-feature="AC">
+                                <i class="fa-solid fa-snowflake"></i>
+                                AC
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Klimatanläggning">
+                                <i class="fa-solid fa-temperature-half"></i>
+                                Klimatanläggning
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="2-zons klimat">
+                                <i class="fa-solid fa-temperature-arrow-up"></i>
+                                2-zons klimat
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="4-zons klimat">
+                                <i class="fa-solid fa-temperature-arrow-up"></i>
+                                4-zons klimat
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Kupévärmare">
+                                <i class="fa-solid fa-fire"></i>
+                                Kupévärmare
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Fjärrstart">
+                                <i class="fa-solid fa-key"></i>
+                                Fjärrstart
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Keyless">
+                                <i class="fa-solid fa-unlock-keyhole"></i>
+                                Keyless
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Elbaklucka">
+                                <i class="fa-solid fa-door-closed"></i>
+                                Elbaklucka
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Regnsensor">
+                                <i class="fa-solid fa-cloud-rain"></i>
+                                Regnsensor
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Ljussensor">
+                                <i class="fa-solid fa-sun"></i>
+                                Ljussensor
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-music"></i>
+                            </div>
+
+                            <div>
+                                <h3>Media, navigation och uppkoppling</h3>
+                                <span>Skärm, ljud, mobil och digitala funktioner</span>
+                            </div>
+                        </div>
+
+                        <div class="feature-grid" data-feature-group="media">
+                            <button type="button" class="feature-chip" data-feature="Navigation">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                                Navigation
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Bluetooth">
+                                <i class="fa-brands fa-bluetooth"></i>
+                                Bluetooth
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Apple CarPlay">
+                                <i class="fa-brands fa-apple"></i>
+                                Apple CarPlay
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Android Auto">
+                                <i class="fa-brands fa-android"></i>
+                                Android Auto
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="USB-C">
+                                <i class="fa-brands fa-usb"></i>
+                                USB-C
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Trådlös laddning">
+                                <i class="fa-solid fa-charging-station"></i>
+                                Trådlös laddning
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Digital instrumentpanel">
+                                <i class="fa-solid fa-tablet-screen-button"></i>
+                                Digital instrumentpanel
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Premium ljudsystem">
+                                <i class="fa-solid fa-volume-high"></i>
+                                Premium ljudsystem
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="DAB-radio">
+                                <i class="fa-solid fa-radio"></i>
+                                DAB-radio
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-screwdriver-wrench"></i>
+                            </div>
+
+                            <div>
+                                <h3>Service, däck och historik</h3>
+                                <span>Servicehistorik, besiktning och vinterutrustning</span>
+                            </div>
+                        </div>
+
+                        <div class="feature-grid" data-feature-group="history">
+                            <button type="button" class="feature-chip" data-feature="Full servicehistorik">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                                Full servicehistorik
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Nyservad">
+                                <i class="fa-solid fa-wrench"></i>
+                                Nyservad
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Besiktigad">
+                                <i class="fa-solid fa-check-double"></i>
+                                Besiktigad
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Garanti">
+                                <i class="fa-solid fa-certificate"></i>
+                                Garanti
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Vinterhjul">
+                                <i class="fa-regular fa-snowflake"></i>
+                                Vinterhjul
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Sommardäck">
+                                <i class="fa-solid fa-sun"></i>
+                                Sommardäck
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Nya däck">
+                                <i class="fa-solid fa-circle"></i>
+                                Nya däck
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="En ägare">
+                                <i class="fa-solid fa-user-check"></i>
+                                En ägare
+                            </button>
+
+                            <button type="button" class="feature-chip" data-feature="Rökfri">
+                                <i class="fa-solid fa-ban-smoking"></i>
+                                Rökfri
+                            </button>
                         </div>
                     </div>
 
@@ -1098,7 +1648,6 @@
                     Kontrollera alltid bilens skick, dokumentation och säljare innan affär.
                 </div>
             </aside>
-
         </section>
     </main>
 
@@ -1117,7 +1666,7 @@
     </div>
 
     <script type="module">
-        import { auth } from "./firebase-config.js";
+        import { auth } from './firebase-config.js';
 
         import {
             onAuthStateChanged,
@@ -1126,37 +1675,39 @@
 
         import {
             attachBrandModelSelects
-        } from "./cars-data.js";
+        } from './cars-data.js';
 
-        const FILTER_CONFIG = {
-            ROUTES: {
-                HOME: "index.html",
-                LOGIN: "login.html",
-                ACCOUNT: "my-account.html",
-                SELL: "sell.html",
-                RESULTS: "results.html"
-            },
+        const FILTER_CONFIG = Object.freeze({
+            RESULTS_PAGE: "results.html",
+            LOGIN_PAGE: "login.html",
+            HOME_PAGE: "index.html",
 
-            YEAR: {
-                MIN: 1900,
-                MAX: 2027
-            },
-
-            PRICE: {
-                MIN: 0,
-                MAX: 20000000
-            },
-
-            MILEAGE: {
-                MIN: 0,
-                MAX: 2000000
-            }
-        };
+            PARAMS: Object.freeze({
+                BODY_TYPE: "bodyType",
+                BRAND: "brand",
+                MODEL: "model",
+                MIN_YEAR: "minYear",
+                MAX_YEAR: "maxYear",
+                MIN_PRICE: "minPrice",
+                MAX_PRICE: "maxPrice",
+                MAX_MILEAGE: "maxMileage",
+                LOCATION: "location",
+                FUEL_TYPE: "fuelType",
+                TRANSMISSION: "transmission",
+                DRIVE: "drive",
+                MIN_HP: "minHp",
+                MAX_HP: "maxHp",
+                CONDITION: "condition",
+                COLOR: "color",
+                DOORS: "doors",
+                SEATS: "seats",
+                FEATURES: "features"
+            })
+        });
 
         const state = {
             selectedBodyType: "",
-            currentUser: null,
-            detachBrandModelSelects: null
+            selectedFeatures: new Set()
         };
 
         const elements = {
@@ -1170,16 +1721,21 @@
 
             minPrice: document.getElementById("minPrice"),
             maxPrice: document.getElementById("maxPrice"),
-
             maxMileage: document.getElementById("maxMileage"),
+            location: document.getElementById("location"),
 
             fuelType: document.getElementById("fuelType"),
             transmission: document.getElementById("transmission"),
+            drive: document.getElementById("drive"),
+            minHp: document.getElementById("minHp"),
+            maxHp: document.getElementById("maxHp"),
             condition: document.getElementById("condition"),
-            location: document.getElementById("location"),
+
+            color: document.getElementById("color"),
+            doors: document.getElementById("doors"),
+            seats: document.getElementById("seats"),
 
             bodyTypeGrid: document.getElementById("bodyTypeGrid"),
-
             summaryList: document.getElementById("summaryList"),
 
             resetBtn: document.getElementById("resetBtn"),
@@ -1193,45 +1749,26 @@
 
         function initializePage() {
             hydrateFromURL();
-            initializeBrandModelSelects();
+
+            attachBrandModelSelects(elements.brand, elements.model, {
+                selectedBrand: elements.brand.dataset.initialBrand || "",
+                selectedModel: elements.model.dataset.initialModel || "",
+                includeOther: true,
+                includeOtherModel: true
+            });
+
             attachEvents();
             observeAuth();
             updateBodyTypeUI();
+            updateFeatureUI();
             updateSummary();
-        }
-
-        function initializeBrandModelSelects() {
-            if (typeof state.detachBrandModelSelects === "function") {
-                state.detachBrandModelSelects();
-            }
-
-            state.detachBrandModelSelects = attachBrandModelSelects(
-                elements.brand,
-                elements.model,
-                {
-                    selectedBrand: elements.brand.dataset.initialBrand || "",
-                    selectedModel: elements.model.dataset.initialModel || "",
-                    includeOther: true,
-                    includeOtherModel: true,
-                    onChange: () => {
-                        updateSummary();
-                    }
-                }
-            );
         }
 
         function observeAuth() {
             onAuthStateChanged(auth, (user) => {
-                state.currentUser = user || null;
-                updateHeaderAuthUI();
+                elements.loginLink.hidden = Boolean(user);
+                elements.logoutBtn.hidden = !user;
             });
-        }
-
-        function updateHeaderAuthUI() {
-            const isLoggedIn = Boolean(state.currentUser);
-
-            elements.loginLink.hidden = isLoggedIn;
-            elements.logoutBtn.hidden = !isLoggedIn;
         }
 
         function attachEvents() {
@@ -1239,11 +1776,32 @@
 
             elements.bodyTypeGrid.querySelectorAll("[data-body-type]").forEach((button) => {
                 button.addEventListener("click", () => {
-                    const value = String(button.dataset.bodyType || "").trim();
+                    const value = button.dataset.bodyType || "";
 
-                    state.selectedBodyType = state.selectedBodyType === value ? "" : value;
+                    state.selectedBodyType = state.selectedBodyType === value
+                        ? ""
+                        : value;
 
                     updateBodyTypeUI();
+                    updateSummary();
+                });
+            });
+
+            document.querySelectorAll(".feature-chip[data-feature]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const feature = normalizeValue(button.dataset.feature);
+
+                    if (!feature) {
+                        return;
+                    }
+
+                    if (state.selectedFeatures.has(feature)) {
+                        state.selectedFeatures.delete(feature);
+                    } else {
+                        state.selectedFeatures.add(feature);
+                    }
+
+                    updateFeatureUI();
                     updateSummary();
                 });
             });
@@ -1259,63 +1817,96 @@
 
         async function handleLogout() {
             try {
-                elements.logoutBtn.disabled = true;
-                elements.logoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loggar ut...';
-
                 await signOut(auth);
-
-                window.location.href = FILTER_CONFIG.ROUTES.HOME;
+                window.location.href = FILTER_CONFIG.HOME_PAGE;
             } catch (error) {
                 console.error("[BILHK] Logout failed:", error);
-
-                elements.logoutBtn.disabled = false;
-                elements.logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Logga ut';
             }
         }
 
         function hydrateFromURL() {
             const params = new URLSearchParams(window.location.search);
 
-            elements.brand.dataset.initialBrand = normalizeParam(params.get("brand"));
-            elements.model.dataset.initialModel = normalizeParam(params.get("model"));
+            elements.brand.dataset.initialBrand = getFirstParam(params, [
+                "brand",
+                "märke",
+                "make"
+            ]);
 
-            state.selectedBodyType =
-                normalizeParam(params.get("bodyType")) ||
-                normalizeParam(params.get("karosseri")) ||
-                normalizeParam(params.get("kar"));
+            elements.model.dataset.initialModel = getFirstParam(params, [
+                "model",
+                "modell"
+            ]);
 
-            setFieldFromParam("minYear", params);
-            setFieldFromParam("maxYear", params);
+            state.selectedBodyType = getFirstParam(params, [
+                "bodyType",
+                "karosseri",
+                "kar"
+            ]);
 
-            setFieldFromParam("minPrice", params);
-            setFieldFromParam("maxPrice", params);
-            setFieldFromParam("maxMileage", params);
+            setFieldValueFromURL(params, elements.minYear, ["minYear", "yearFrom"]);
+            setFieldValueFromURL(params, elements.maxYear, ["maxYear", "yearTo"]);
+            setFieldValueFromURL(params, elements.minPrice, ["minPrice", "minP", "priceFrom"]);
+            setFieldValueFromURL(params, elements.maxPrice, ["maxPrice", "maxP", "priceTo"]);
+            setFieldValueFromURL(params, elements.maxMileage, ["maxMileage", "mileageTo"]);
+            setFieldValueFromURL(params, elements.location, ["location", "plats"]);
+            setFieldValueFromURL(params, elements.fuelType, ["fuelType", "fuel", "bränsle"]);
+            setFieldValueFromURL(params, elements.transmission, ["transmission", "gearbox"]);
+            setFieldValueFromURL(params, elements.drive, ["drive", "drivning"]);
+            setFieldValueFromURL(params, elements.minHp, ["minHp", "hpFrom"]);
+            setFieldValueFromURL(params, elements.maxHp, ["maxHp", "hpTo"]);
+            setFieldValueFromURL(params, elements.condition, ["condition", "skick"]);
+            setFieldValueFromURL(params, elements.color, ["color", "färg"]);
+            setFieldValueFromURL(params, elements.doors, ["doors", "dörrar"]);
+            setFieldValueFromURL(params, elements.seats, ["seats", "säten"]);
 
-            setFieldFromParam("fuelType", params);
-            setFieldFromParam("transmission", params);
-            setFieldFromParam("condition", params);
-            setFieldFromParam("location", params);
+            const features = getFirstParam(params, ["features", "equipment", "utrustning"]);
+
+            if (features) {
+                features
+                    .split(",")
+                    .map((value) => normalizeValue(value))
+                    .filter(Boolean)
+                    .forEach((value) => state.selectedFeatures.add(value));
+            }
         }
 
-        function setFieldFromParam(fieldId, params) {
-            const element = elements[fieldId];
-
-            if (!element) {
-                return;
-            }
-
-            const value = normalizeParam(params.get(fieldId));
+        function setFieldValueFromURL(params, field, keys) {
+            const value = getFirstParam(params, keys);
 
             if (value) {
-                element.value = value;
+                field.value = value;
             }
+        }
+
+        function getFirstParam(params, keys) {
+            for (const key of keys) {
+                const value = params.get(key);
+
+                if (value !== null && String(value).trim() !== "") {
+                    return String(value).trim();
+                }
+            }
+
+            return "";
         }
 
         function updateBodyTypeUI() {
             elements.bodyTypeGrid.querySelectorAll("[data-body-type]").forEach((button) => {
                 button.classList.toggle(
                     "active",
-                    String(button.dataset.bodyType || "") === state.selectedBodyType
+                    button.dataset.bodyType === state.selectedBodyType
+                );
+            });
+        }
+
+        function updateFeatureUI() {
+            document.querySelectorAll(".feature-chip[data-feature]").forEach((button) => {
+                const feature = normalizeValue(button.dataset.feature);
+
+                button.classList.toggle(
+                    "active",
+                    state.selectedFeatures.has(feature)
                 );
             });
         }
@@ -1344,16 +1935,29 @@
             addItem(items, "År", rangeText(elements.minYear.value, elements.maxYear.value));
             addItem(items, "Pris", priceRangeText(elements.minPrice.value, elements.maxPrice.value));
             addItem(items, "Max miltal", elements.maxMileage.value ? `${formatNumber(elements.maxMileage.value)} km` : "");
+            addItem(items, "Plats", elements.location.value);
             addItem(items, "Bränsle", elements.fuelType.value);
             addItem(items, "Växellåda", elements.transmission.value);
+            addItem(items, "Drivning", elements.drive.value);
+            addItem(items, "Hästkrafter", hpRangeText(elements.minHp.value, elements.maxHp.value));
             addItem(items, "Skick", elements.condition.value);
-            addItem(items, "Plats", elements.location.value);
+            addItem(items, "Färg", elements.color.value);
+            addItem(items, "Dörrar", elements.doors.value ? `${elements.doors.value} dörrar` : "");
+            addItem(items, "Säten", elements.seats.value ? `${elements.seats.value} säten` : "");
+
+            if (state.selectedFeatures.size > 0) {
+                addItem(
+                    items,
+                    "Utrustning",
+                    Array.from(state.selectedFeatures).sort((a, b) => a.localeCompare(b, "sv-SE")).join(", ")
+                );
+            }
 
             return items;
         }
 
         function addItem(items, label, value) {
-            const clean = String(value || "").trim();
+            const clean = normalizeValue(value);
 
             if (!clean) {
                 return;
@@ -1382,8 +1986,8 @@
         }
 
         function rangeText(min, max) {
-            const cleanMin = String(min || "").trim();
-            const cleanMax = String(max || "").trim();
+            const cleanMin = normalizeValue(min);
+            const cleanMax = normalizeValue(max);
 
             if (cleanMin && cleanMax) {
                 return `${cleanMin} - ${cleanMax}`;
@@ -1401,8 +2005,8 @@
         }
 
         function priceRangeText(min, max) {
-            const cleanMin = String(min || "").trim();
-            const cleanMax = String(max || "").trim();
+            const cleanMin = normalizeValue(min);
+            const cleanMax = normalizeValue(max);
 
             if (cleanMin && cleanMax) {
                 return `${formatNumber(cleanMin)} - ${formatNumber(cleanMax)} kr`;
@@ -1419,6 +2023,25 @@
             return "";
         }
 
+        function hpRangeText(min, max) {
+            const cleanMin = normalizeValue(min);
+            const cleanMax = normalizeValue(max);
+
+            if (cleanMin && cleanMax) {
+                return `${formatNumber(cleanMin)} - ${formatNumber(cleanMax)} hk`;
+            }
+
+            if (cleanMin) {
+                return `Från ${formatNumber(cleanMin)} hk`;
+            }
+
+            if (cleanMax) {
+                return `Till ${formatNumber(cleanMax)} hk`;
+            }
+
+            return "";
+        }
+
         function formatNumber(value) {
             return new Intl.NumberFormat("sv-SE").format(Number(value) || 0);
         }
@@ -1427,164 +2050,64 @@
             elements.form.reset();
 
             state.selectedBodyType = "";
+            state.selectedFeatures.clear();
 
-            elements.brand.dataset.initialBrand = "";
-            elements.model.dataset.initialModel = "";
-
-            initializeBrandModelSelects();
+            elements.brand.dispatchEvent(new Event("change"));
 
             updateBodyTypeUI();
+            updateFeatureUI();
             updateSummary();
         }
 
         function goToResults() {
-            if (!validateFilterValues()) {
-                return;
-            }
-
             const params = new URLSearchParams();
 
-            setParam(params, "bodyType", state.selectedBodyType);
-            setParam(params, "brand", elements.brand.value);
-            setParam(params, "model", elements.model.value);
+            setParam(params, FILTER_CONFIG.PARAMS.BODY_TYPE, state.selectedBodyType);
+            setParam(params, FILTER_CONFIG.PARAMS.BRAND, elements.brand.value);
+            setParam(params, FILTER_CONFIG.PARAMS.MODEL, elements.model.value);
+            setParam(params, FILTER_CONFIG.PARAMS.MIN_YEAR, elements.minYear.value);
+            setParam(params, FILTER_CONFIG.PARAMS.MAX_YEAR, elements.maxYear.value);
+            setParam(params, FILTER_CONFIG.PARAMS.MIN_PRICE, elements.minPrice.value);
+            setParam(params, FILTER_CONFIG.PARAMS.MAX_PRICE, elements.maxPrice.value);
+            setParam(params, FILTER_CONFIG.PARAMS.MAX_MILEAGE, elements.maxMileage.value);
+            setParam(params, FILTER_CONFIG.PARAMS.LOCATION, elements.location.value);
+            setParam(params, FILTER_CONFIG.PARAMS.FUEL_TYPE, elements.fuelType.value);
+            setParam(params, FILTER_CONFIG.PARAMS.TRANSMISSION, elements.transmission.value);
+            setParam(params, FILTER_CONFIG.PARAMS.DRIVE, elements.drive.value);
+            setParam(params, FILTER_CONFIG.PARAMS.MIN_HP, elements.minHp.value);
+            setParam(params, FILTER_CONFIG.PARAMS.MAX_HP, elements.maxHp.value);
+            setParam(params, FILTER_CONFIG.PARAMS.CONDITION, elements.condition.value);
+            setParam(params, FILTER_CONFIG.PARAMS.COLOR, elements.color.value);
+            setParam(params, FILTER_CONFIG.PARAMS.DOORS, elements.doors.value);
+            setParam(params, FILTER_CONFIG.PARAMS.SEATS, elements.seats.value);
 
-            setParam(params, "minYear", elements.minYear.value);
-            setParam(params, "maxYear", elements.maxYear.value);
-
-            setParam(params, "minPrice", elements.minPrice.value);
-            setParam(params, "maxPrice", elements.maxPrice.value);
-
-            setParam(params, "maxMileage", elements.maxMileage.value);
-
-            setParam(params, "fuelType", elements.fuelType.value);
-            setParam(params, "transmission", elements.transmission.value);
-            setParam(params, "condition", elements.condition.value);
-            setParam(params, "location", elements.location.value);
+            if (state.selectedFeatures.size > 0) {
+                setParam(
+                    params,
+                    FILTER_CONFIG.PARAMS.FEATURES,
+                    Array.from(state.selectedFeatures).join(",")
+                );
+            }
 
             const queryString = params.toString();
 
             window.location.href = queryString
-                ? `${FILTER_CONFIG.ROUTES.RESULTS}?${queryString}`
-                : FILTER_CONFIG.ROUTES.RESULTS;
-        }
-
-        function validateFilterValues() {
-            clearAllFieldErrors();
-
-            let valid = true;
-
-            const minYear = numberOrNull(elements.minYear.value);
-            const maxYear = numberOrNull(elements.maxYear.value);
-
-            const minPrice = numberOrNull(elements.minPrice.value);
-            const maxPrice = numberOrNull(elements.maxPrice.value);
-
-            const maxMileage = numberOrNull(elements.maxMileage.value);
-
-            if (minYear !== null && !isBetween(minYear, FILTER_CONFIG.YEAR.MIN, FILTER_CONFIG.YEAR.MAX)) {
-                setFieldError("minYear", `Ange ett år mellan ${FILTER_CONFIG.YEAR.MIN} och ${FILTER_CONFIG.YEAR.MAX}.`);
-                valid = false;
-            }
-
-            if (maxYear !== null && !isBetween(maxYear, FILTER_CONFIG.YEAR.MIN, FILTER_CONFIG.YEAR.MAX)) {
-                setFieldError("maxYear", `Ange ett år mellan ${FILTER_CONFIG.YEAR.MIN} och ${FILTER_CONFIG.YEAR.MAX}.`);
-                valid = false;
-            }
-
-            if (minYear !== null && maxYear !== null && minYear > maxYear) {
-                setFieldError("minYear", "Från år får inte vara större än till år.");
-                setFieldError("maxYear", "Till år måste vara större än från år.");
-                valid = false;
-            }
-
-            if (minPrice !== null && !isBetween(minPrice, FILTER_CONFIG.PRICE.MIN, FILTER_CONFIG.PRICE.MAX)) {
-                setFieldError("minPrice", "Ange ett giltigt minpris.");
-                valid = false;
-            }
-
-            if (maxPrice !== null && !isBetween(maxPrice, FILTER_CONFIG.PRICE.MIN, FILTER_CONFIG.PRICE.MAX)) {
-                setFieldError("maxPrice", "Ange ett giltigt maxpris.");
-                valid = false;
-            }
-
-            if (minPrice !== null && maxPrice !== null && minPrice > maxPrice) {
-                setFieldError("minPrice", "Minpris får inte vara större än maxpris.");
-                setFieldError("maxPrice", "Maxpris måste vara större än minpris.");
-                valid = false;
-            }
-
-            if (maxMileage !== null && !isBetween(maxMileage, FILTER_CONFIG.MILEAGE.MIN, FILTER_CONFIG.MILEAGE.MAX)) {
-                setFieldError("maxMileage", "Ange ett giltigt miltal.");
-                valid = false;
-            }
-
-            if (!valid) {
-                scrollToFirstInvalid();
-            }
-
-            return valid;
+                ? `${FILTER_CONFIG.RESULTS_PAGE}?${queryString}`
+                : FILTER_CONFIG.RESULTS_PAGE;
         }
 
         function setParam(params, key, value) {
-            const clean = String(value || "").trim();
+            const clean = normalizeValue(value);
 
             if (clean) {
                 params.set(key, clean);
             }
         }
 
-        function normalizeParam(value) {
-            return String(value || "").trim();
-        }
-
-        function numberOrNull(value) {
-            const clean = String(value || "").trim();
-
-            if (!clean) {
-                return null;
-            }
-
-            const number = Number(clean);
-
-            if (!Number.isFinite(number)) {
-                return null;
-            }
-
-            return number;
-        }
-
-        function isBetween(value, min, max) {
-            return Number.isFinite(value) && value >= min && value <= max;
-        }
-
-        function setFieldError(fieldId, message) {
-            const group = document.querySelector(`[data-field-group="${fieldId}"]`);
-            const error = document.getElementById(`${fieldId}Error`);
-
-            if (group) {
-                group.classList.add("invalid");
-            }
-
-            if (error) {
-                error.textContent = message;
-            }
-        }
-
-        function clearAllFieldErrors() {
-            document.querySelectorAll(".form-group.invalid").forEach((group) => {
-                group.classList.remove("invalid");
-            });
-        }
-
-        function scrollToFirstInvalid() {
-            const firstInvalid = document.querySelector(".form-group.invalid");
-
-            if (firstInvalid) {
-                firstInvalid.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
-            }
+        function normalizeValue(value) {
+            return String(value || "")
+                .replace(/\s+/g, " ")
+                .trim();
         }
     </script>
 
