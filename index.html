@@ -1,958 +1,340 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="sv" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="BILHK är en digital annonsplattform för att köpa och sälja bilar i Sverige.">
-    <title>BilMarknad HK | Köp och sälj bilar</title>
+    <meta name="description" content="BILHK Professional Car Marketplace - Sweden's advanced digital platform.">
+    <title>BilMarknad HK | Professional Vehicle Search</title>
 
+    <!-- Professional Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         :root {
             --primary: #f58220;
             --primary-hover: #e07210;
+            --primary-soft: #fff5eb;
             --dark: #0f172a;
-            --light: #f8fafc;
-            --border: #e2e8f0;
+            --dark-accent: #1e293b;
+            --light-bg: #f8fafc;
             --white: #ffffff;
+            --border-color: #e2e8f0;
             --danger: #ef4444;
             --success: #10b981;
-            --gray-text: #64748b;
-            --shadow: 0 10px 20px rgba(0,0,0,.08);
+            --text-muted: #64748b;
+            --card-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Inter, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light-bg); color: var(--dark); line-height: 1.6; overflow-x: hidden; }
 
-        body {
-            background: var(--light);
-            color: var(--dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .notice {
-            background: var(--danger);
+        /* Announcement Bar */
+        .dev-notice {
+            background: linear-gradient(90deg, var(--danger), #dc2626);
             color: white;
             text-align: center;
-            padding: 10px 18px;
+            padding: 12px;
             font-size: 13px;
             font-weight: 800;
-            line-height: 1.5;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
         }
 
+        /* Navigation Engine */
         header {
-            background: var(--white);
-            padding: 15px 6%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 18px 6%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 1000;
         }
+        .brand-logo { font-size: 28px; font-weight: 900; text-decoration: none; color: var(--dark); letter-spacing: -1.5px; }
+        .brand-logo span { color: var(--primary); }
 
-        .logo {
-            text-decoration: none;
-            font-size: 26px;
-            font-weight: 900;
-            color: var(--dark);
-            letter-spacing: -0.7px;
-            white-space: nowrap;
-        }
-
-        .logo span {
-            color: var(--primary);
-        }
-
-        .top-nav {
-            display: flex;
-            gap: 14px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-
-        .top-link,
-        .sell-link,
-        .account-link,
-        .login-link {
-            font-weight: 900;
-            text-decoration: none;
-            color: var(--dark);
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            white-space: nowrap;
-        }
-
-        .sell-link {
+        .nav-actions { display: flex; gap: 15px; align-items: center; }
+        .btn-sell {
             color: var(--primary);
             border: 2px solid var(--primary);
-            padding: 8px 18px;
+            padding: 10px 24px;
             border-radius: 50px;
-            background: white;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 14px;
+            transition: var(--transition-smooth);
         }
+        .btn-sell:hover { background: var(--primary); color: white; transform: translateY(-2px); }
 
-        .sell-link:hover {
-            background: #fff7ed;
-        }
-
-        .account-link {
-            background: var(--dark);
-            color: white;
-            padding: 9px 18px;
-            border-radius: 50px;
-        }
-
-        .login-link {
-            background: #f1f5f9;
-            padding: 9px 18px;
-            border-radius: 50px;
-            border: 1px solid var(--border);
-        }
-
-        #msgBadge {
-            display: none;
-            background: var(--danger);
-            color: white;
-            border-radius: 999px;
-            padding: 2px 7px;
-            margin-left: 4px;
-            font-size: 11px;
-            font-weight: 900;
-        }
-
-        .hero {
-            background:
-                linear-gradient(rgba(15,23,42,.72), rgba(15,23,42,.72)),
-                url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2000') center/cover;
-            padding: 85px 20px;
+        /* Hero Section */
+        .hero-engine {
+            background: linear-gradient(rgba(15,23,42,0.75), rgba(15,23,42,0.75)), 
+                        url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2000') center/cover;
+            padding: 120px 20px;
             text-align: center;
             color: white;
+            clip-path: ellipse(150% 100% at 50% 0%);
+        }
+        .hero-engine h1 { font-size: 52px; font-weight: 900; letter-spacing: -2px; margin-bottom: 15px; }
+        .hero-engine p { font-size: 18px; color: #cbd5e1; font-weight: 500; }
+
+        /* Advanced Search Panel */
+        .search-panel {
+            background: var(--white);
+            max-width: 1100px;
+            width: 92%;
+            margin: -70px auto 0;
+            padding: 40px;
+            border-radius: 32px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            position: relative;
         }
 
-        .hero h1 {
-            font-size: 44px;
-            font-weight: 900;
-            margin-bottom: 12px;
-            letter-spacing: -1px;
-        }
-
-        .hero p {
-            font-size: 17px;
-            color: #e2e8f0;
-            font-weight: 500;
-        }
-
-        .search-container {
-            background: white;
-            max-width: 1120px;
-            width: calc(100% - 24px);
-            margin: -55px auto 0;
-            padding: 28px;
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-
-        .body-types {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 22px;
-        }
-
-        .body-btn {
-            background: white;
-            border: 1px solid var(--border);
-            padding: 10px 18px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 800;
-            color: var(--dark);
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .body-btn.active,
-        .body-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: #fff7ed;
-        }
-
-        .search-grid {
+        .search-architecture {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 14px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
         }
 
-        .search-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: 900;
-            color: var(--gray-text);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-        }
-
-        .search-group input,
-        .search-group select {
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .custom-select, .custom-input {
             width: 100%;
-            padding: 13px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: #f8fafc;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: var(--light-bg);
             font-weight: 700;
             color: var(--dark);
             outline: none;
+            transition: 0.3s;
         }
+        .custom-select:focus, .custom-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px var(--primary-soft); }
 
-        .search-group input:focus,
-        .search-group select:focus {
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(245,130,32,.10);
-        }
-
-        .actions {
-            display: flex;
-            gap: 14px;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn-search,
-        .btn-advanced {
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-weight: 900;
-            text-decoration: none;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-search {
-            background: var(--primary);
+        .search-trigger-box { margin-top: 30px; display: flex; justify-content: center; }
+        .btn-deep-search {
+            background: var(--dark);
             color: white;
-            border: 0;
-            min-width: 240px;
-            font-size: 15px;
-        }
-
-        .btn-search:hover {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-        }
-
-        .btn-advanced {
-            background: #f1f5f9;
-            color: var(--dark);
-            border: 1px solid var(--border);
-        }
-
-        .btn-advanced:hover {
-            background: white;
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .main-content {
-            max-width: 1200px;
-            width: 100%;
-            margin: 55px auto;
-            padding: 0 20px;
-            flex: 1;
-        }
-
-        .section-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-
-        .section-title {
-            font-size: 28px;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .view-all {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 900;
-            font-size: 14px;
-        }
-
-        .cars-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
-        .car-card {
-            background: white;
-            border: 1px solid var(--border);
+            border: none;
+            padding: 18px 60px;
             border-radius: 20px;
-            overflow: hidden;
-            cursor: pointer;
-            position: relative;
-            transition: .2s;
-        }
-
-        .car-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow);
-        }
-
-        .car-img-wrap {
-            width: 100%;
-            height: 190px;
-            background: #e2e8f0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .car-img-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .sold-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: var(--danger);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-size: 11px;
             font-weight: 900;
-            z-index: 2;
-            box-shadow: 0 4px 10px rgba(0,0,0,.18);
-        }
-
-        .car-info {
-            padding: 20px;
-        }
-
-        .car-price {
-            color: var(--primary);
-            font-size: 22px;
-            font-weight: 900;
-            margin-bottom: 6px;
-        }
-
-        .car-name {
             font-size: 16px;
-            font-weight: 900;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
-        .car-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 9px;
-            color: var(--gray-text);
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .seller-line {
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: #475569;
-            font-size: 12px;
-            font-weight: 800;
-            border-top: 1px solid var(--border);
-            padding-top: 12px;
+            gap: 12px;
+            transition: var(--transition-smooth);
+            width: 100%;
+            max-width: 400px;
         }
+        .btn-deep-search:hover { background: var(--primary); transform: translateY(-4px); box-shadow: 0 15px 30px rgba(245, 130, 32, 0.3); }
 
-        .empty-state,
-        .loading-state,
-        .error-state {
-            grid-column: 1 / -1;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 45px 20px;
-            text-align: center;
-            color: var(--gray-text);
-            font-weight: 700;
-        }
+        /* Live Listing Section */
+        .live-listings { max-width: 1200px; margin: 80px auto; padding: 0 5%; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .section-header h2 { font-size: 32px; font-weight: 900; letter-spacing: -1px; }
 
+        .listing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+
+        /* Professional Footer */
         footer {
-            background: white;
-            border-top: 1px solid var(--border);
-            padding: 34px 20px;
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+            padding: 60px 5%;
+            margin-top: 100px;
             text-align: center;
-            color: #94a3b8;
-            font-size: 13px;
-            margin-top: auto;
         }
+        .footer-content { color: var(--text-muted); font-size: 14px; font-weight: 600; max-width: 800px; margin: 0 auto; }
 
-        .footer-links {
-            display: flex;
-            gap: 18px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            font-weight: 900;
-            color: #64748b;
-            text-decoration: none;
-        }
-
-        .footer-links a:hover {
-            color: var(--primary);
-        }
-
-        @media(max-width: 620px) {
-            header {
-                padding: 14px 18px;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .hero h1 {
-                font-size: 32px;
-            }
-
-            .hero {
-                padding: 60px 16px;
-            }
-
-            .search-container {
-                margin: -35px 12px 0;
-                padding: 20px;
-            }
-
-            .top-nav {
-                justify-content: flex-end;
-                gap: 9px;
-            }
-
-            .sell-link,
-            .account-link,
-            .login-link {
-                padding: 7px 12px;
-                font-size: 12px;
-            }
-
-            .top-link {
-                font-size: 12px;
-            }
-
-            .actions {
-                flex-direction: column;
-            }
-
-            .btn-search,
-            .btn-advanced {
-                width: 100%;
-            }
+        @media (max-width: 768px) {
+            .hero-engine h1 { font-size: 36px; }
+            .search-panel { padding: 25px; margin-top: -40px; }
         }
     </style>
 </head>
 <body>
 
-<div class="notice">
-    <i class="fa-solid fa-triangle-exclamation"></i>
-    Webbplatsen är under utveckling. Kontrollera alltid fordon, säljare och betalning själv.
+<div class="dev-notice">
+    <i class="fa-solid fa-flask-vial"></i> UNDER UTVECKLING: Professionell version 2.0.26
 </div>
 
 <header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
-
-    <nav class="top-nav">
-        <a href="sell.html" class="sell-link">
-            <i class="fa-solid fa-plus"></i>
-            Sälj din bil
-        </a>
-
-        <a href="messages.html" id="msgLink" class="top-link" style="display:none">
-            <i class="fa-regular fa-message"></i>
-            Meddelanden
-            <span id="msgBadge"></span>
-        </a>
-
-        <div id="authStatus"></div>
+    <a href="index.html" class="brand-logo">BIL<span>HK</span></a>
+    <nav class="nav-actions">
+        <a href="sell.html" class="btn-sell"><i class="fa-solid fa-plus"></i> SÄLJ DIN BIL</a>
+        <div id="authContainer"></div>
     </nav>
 </header>
 
-<section class="hero">
-    <h1>Hitta din nästa bil</h1>
-    <p>Sveriges enkla marknadsplats för fordon</p>
+<section class="hero-engine">
+    <h1>Hitta din drömbil</h1>
+    <p>Marknadsplatsen med avancerad precisionsteknik</p>
 </section>
 
-<section class="search-container">
-    <div class="body-types" id="bodyTypeSelector">
-        <button class="body-btn" type="button" data-type="Sedan"><i class="fa-solid fa-car-side"></i> Sedan</button>
-        <button class="body-btn" type="button" data-type="Halvkombi"><i class="fa-solid fa-car"></i> Halvkombi</button>
-        <button class="body-btn" type="button" data-type="Kombi"><i class="fa-solid fa-shuttle-space"></i> Kombi</button>
-        <button class="body-btn" type="button" data-type="SUV"><i class="fa-solid fa-truck-pickup"></i> SUV</button>
-        <button class="body-btn" type="button" data-type="Coupé"><i class="fa-solid fa-car-rear"></i> Coupé</button>
-        <button class="body-btn" type="button" data-type="Cabriolet"><i class="fa-solid fa-car-burst"></i> Cabriolet</button>
-        <button class="body-btn" type="button" data-type="Pickup"><i class="fa-solid fa-truck-pickup"></i> Pickup</button>
-        <button class="body-btn" type="button" data-type="Transportbil"><i class="fa-solid fa-van-shuttle"></i> Transportbil</button>
-    </div>
-
-    <div class="search-grid">
-        <div class="search-group">
-            <label>Märke</label>
-            <input id="brandSelect" list="brandList" placeholder="Alla märken" autocomplete="off">
-            <datalist id="brandList"></datalist>
+<section class="search-panel">
+    <div class="search-architecture">
+        <!-- Brand Logic Engine -->
+        <div class="form-group">
+            <label>Märke (الماركة)</label>
+            <select id="brandEngine" class="custom-select">
+                <option value="all">Alla märken</option>
+            </select>
         </div>
 
-        <div class="search-group">
-            <label>Modell</label>
-            <input id="modelInput" list="modelList" placeholder="Alla modeller" autocomplete="off">
-            <datalist id="modelList"></datalist>
-        </div>
-
-        <div class="search-group">
-            <label>Max pris</label>
-            <input type="number" id="maxPrice" placeholder="Obegränsat" min="0">
-        </div>
-
-        <div class="search-group">
-            <label>År från</label>
-            <input type="number" id="yearFrom" placeholder="2018" min="1900" max="2100">
-        </div>
-
-        <div class="search-group">
-            <label>År till</label>
-            <input type="number" id="yearTo" placeholder="2026" min="1900" max="2100">
-        </div>
-
-        <div class="search-group">
+        <!-- Fuel Logic -->
+        <div class="form-group">
             <label>Drivmedel</label>
-            <select id="fuelSelect">
-                <option value="all">Alla</option>
+            <select id="fuelEngine" class="custom-select">
+                <option value="all">Alla typer</option>
                 <option value="Bensin">Bensin</option>
                 <option value="Diesel">Diesel</option>
                 <option value="El">El</option>
                 <option value="Hybrid">Hybrid</option>
-                <option value="Laddhybrid">Laddhybrid</option>
-                <option value="Gas">Gas</option>
-                <option value="Etanol">Etanol</option>
             </select>
         </div>
 
-        <div class="search-group">
-            <label>Växellåda</label>
-            <select id="gearSelect">
-                <option value="all">Alla</option>
-                <option value="Automat">Automat</option>
-                <option value="Manuell">Manuell</option>
-            </select>
+        <!-- Budget Logic -->
+        <div class="form-group">
+            <label>Max Pris (SEK)</label>
+            <input type="number" id="priceEngine" class="custom-input" placeholder="Obegränsat">
         </div>
 
-        <div class="search-group">
-            <label>Max mil</label>
-            <input type="number" id="maxMileage" placeholder="10000" min="0">
+        <!-- Mileage Logic -->
+        <div class="form-group">
+            <label>Max Mil</label>
+            <input type="number" id="milEngine" class="custom-input" placeholder="T.ex. 10000">
         </div>
     </div>
 
-    <div class="actions">
-        <button id="searchBtn" class="btn-search" type="button">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            Visa resultat
+    <div class="search-trigger-box">
+        <button id="deepSearchBtn" class="btn-deep-search">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+            KÖR DJUP SÖKNING (بحث عميق)
         </button>
-
-        <a href="filter.html" class="btn-advanced">
-            <i class="fa-solid fa-sliders"></i>
-            Detaljerad sök
-        </a>
     </div>
 </section>
 
-<main class="main-content">
-    <div class="section-head">
-        <h2 class="section-title">
-            <i class="fa-solid fa-bolt" style="color:var(--primary)"></i>
-            Senast inkommet
-        </h2>
-        <a href="results.html" class="view-all">Visa alla annonser <i class="fa-solid fa-arrow-right"></i></a>
+<main class="live-listings">
+    <div class="section-header">
+        <h2><i class="fa-solid fa-bolt" style="color:var(--primary)"></i> Senaste inkomna</h2>
+        <a href="results-fixed.html" style="color:var(--primary); font-weight:900; text-decoration:none;">Visa alla <i class="fa-solid fa-arrow-right"></i></a>
     </div>
 
-    <div class="cars-grid" id="carsGrid">
-        <div class="loading-state">
-            <i class="fa-solid fa-spinner fa-spin"></i>
-            Laddar annonser...
-        </div>
+    <div class="listing-grid" id="mainDisplayGrid">
+        <!-- Data dynamically injected via JavaScript -->
     </div>
 </main>
 
 <footer>
-    <div class="footer-links">
-        <a href="terms.html">Användarvillkor</a>
-        <a href="terms.html#disclaimer">Ansvarsfriskrivning</a>
-    </div>
-    <div>
-        BILHK är endast en annonsplattform. Vi ansvarar inte för annonser, betalningar, affärer eller juridiska/finansiella tvister mellan användare.
+    <div class="footer-content">
+        <p>BILHK Professional Marketplace &copy; 2026</p>
+        <p style="margin-top:10px; font-size:12px;">Vi ansvarar ej för transaktioner mellan parter. All data verifieras via Firebase Realtime Database.</p>
     </div>
 </footer>
 
 <script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import {
-        collection,
-        getDocs,
-        query,
-        orderBy,
-        limit,
-        where,
-        onSnapshot
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { db } from './firebase-config.js';
+    import { collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    /**
+     * DATABASE CATALOG ENGINE
+     * استخراج الماركات ديناميكياً لتغذية القوائم
+     */
     const carCatalog = {
-        "Abarth": ["124 Spider", "500", "595", "695"],
-        "Acura": ["Integra", "MDX", "NSX", "RDX", "TLX"],
-        "Alfa Romeo": ["147", "156", "159", "Giulia", "Giulietta", "MiTo", "Stelvio", "Tonale"],
-        "Aston Martin": ["DB9", "DB11", "DB12", "DBS", "Rapide", "Vantage", "Vanquish"],
-        "Audi": ["A1", "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q4 e-tron", "Q5", "Q7", "Q8", "TT", "R8", "e-tron", "RS3", "RS4", "RS5", "RS6", "RS7"],
-        "Bentley": ["Bentayga", "Continental GT", "Flying Spur", "Mulsanne"],
-        "BMW": ["1-serie", "2-serie", "3-serie", "4-serie", "5-serie", "6-serie", "7-serie", "8-serie", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "Z3", "Z4", "i3", "i4", "i5", "i7", "i8", "iX", "M2", "M3", "M4", "M5"],
-        "BYD": ["Atto 3", "Dolphin", "Han", "Seal", "Tang"],
-        "Cadillac": ["ATS", "CT5", "Escalade", "SRX", "XT4", "XT5"],
-        "Chevrolet": ["Aveo", "Camaro", "Captiva", "Corvette", "Cruze", "Malibu", "Spark", "Tahoe", "Trailblazer"],
-        "Chrysler": ["300C", "Crossfire", "Grand Voyager", "Pacifica", "PT Cruiser", "Voyager"],
-        "Citroën": ["Berlingo", "C1", "C3", "C3 Aircross", "C4", "C4 Cactus", "C5", "C5 Aircross", "DS3", "Jumpy"],
-        "Cupra": ["Ateca", "Born", "Formentor", "Leon", "Tavascan"],
-        "Dacia": ["Dokker", "Duster", "Jogger", "Logan", "Sandero", "Spring"],
-        "Dodge": ["Caliber", "Challenger", "Charger", "Durango", "Journey", "Ram"],
-        "DS": ["DS 3", "DS 4", "DS 5", "DS 7", "DS 9"],
-        "Ferrari": ["360", "430", "458 Italia", "488 GTB", "812", "California", "F8 Tributo", "F40", "F50", "LaFerrari", "Portofino", "Roma", "SF90 Stradale"],
-        "Fiat": ["124 Spider", "500", "500L", "500X", "Bravo", "Doblò", "Ducato", "Panda", "Punto", "Tipo"],
-        "Ford": ["B-Max", "Bronco", "C-Max", "Edge", "Explorer", "F-150", "Fiesta", "Focus", "Galaxy", "Kuga", "Mondeo", "Mustang", "Puma", "Ranger", "S-Max", "Transit"],
-        "Genesis": ["G70", "G80", "G90", "GV60", "GV70", "GV80"],
-        "Honda": ["Accord", "Civic", "CR-V", "CR-Z", "e", "HR-V", "Jazz", "NSX"],
-        "Hyundai": ["Bayon", "Elantra", "i10", "i20", "i30", "IONIQ", "IONIQ 5", "IONIQ 6", "Kona", "Santa Fe", "Tucson"],
-        "Jaguar": ["E-Pace", "F-Pace", "F-Type", "I-Pace", "XE", "XF", "XJ"],
-        "Jeep": ["Cherokee", "Compass", "Grand Cherokee", "Renegade", "Wrangler"],
-        "Kia": ["Ceed", "e-Niro", "EV3", "EV6", "EV9", "Niro", "Optima", "Picanto", "Rio", "Sorento", "Soul", "Sportage", "Stinger", "XCeed"],
-        "Lamborghini": ["Aventador", "Gallardo", "Huracán", "Urus"],
-        "Land Rover": ["Defender", "Discovery", "Discovery Sport", "Range Rover", "Range Rover Evoque", "Range Rover Sport", "Range Rover Velar"],
-        "Lexus": ["CT", "ES", "GS", "IS", "LC", "LS", "NX", "RX", "UX"],
-        "Lotus": ["Elise", "Emira", "Eletre", "Evora", "Exige"],
-        "Maserati": ["Ghibli", "GranTurismo", "Grecale", "Levante", "Quattroporte"],
-        "Mazda": ["2", "3", "5", "6", "CX-3", "CX-30", "CX-5", "CX-60", "MX-30", "MX-5"],
-        "Mercedes-Benz": ["A-Klass", "B-Klass", "C-Klass", "E-Klass", "S-Klass", "CLA", "CLS", "GLA", "GLB", "GLC", "GLE", "GLS", "SL", "SLC", "V-Klass", "EQB", "EQC", "EQE", "EQS", "EQA", "AMG GT"],
-        "MG": ["4", "5", "EHS", "HS", "Marvel R", "ZS", "ZS EV"],
-        "MINI": ["Cabrio", "Clubman", "Cooper", "Countryman", "Paceman"],
-        "Mitsubishi": ["ASX", "Colt", "Eclipse Cross", "L200", "Outlander", "Pajero", "Space Star"],
-        "Nissan": ["Ariya", "Juke", "Leaf", "Micra", "Navara", "Note", "NV200", "Qashqai", "X-Trail", "370Z"],
-        "Opel": ["Adam", "Astra", "Corsa", "Crossland", "Grandland", "Insignia", "Mokka", "Vivaro", "Zafira"],
-        "Peugeot": ["107", "108", "2008", "206", "207", "208", "3008", "307", "308", "407", "508", "5008", "Partner", "Rifter"],
-        "Polestar": ["1", "2", "3", "4"],
-        "Porsche": ["718 Boxster", "718 Cayman", "911", "Boxster", "Cayenne", "Cayman", "Macan", "Panamera", "Taycan"],
-        "Renault": ["Arkana", "Captur", "Clio", "Espace", "Kadjar", "Kangoo", "Koleos", "Megane", "Scenic", "Talisman", "Trafic", "Zoe"],
-        "Rolls-Royce": ["Cullinan", "Ghost", "Phantom", "Wraith"],
-        "Saab": ["9-3", "9-5", "900", "9000"],
-        "Seat": ["Alhambra", "Arona", "Ateca", "Ibiza", "Leon", "Tarraco"],
-        "Skoda": ["Citigo", "Enyaq", "Fabia", "Kamiq", "Karoq", "Kodiaq", "Octavia", "Rapid", "Scala", "Superb", "Yeti"],
-        "Smart": ["Forfour", "Fortwo", "#1", "#3"],
-        "Subaru": ["BRZ", "Forester", "Impreza", "Legacy", "Levorg", "Outback", "XV"],
-        "Suzuki": ["Across", "Baleno", "Ignis", "Jimny", "S-Cross", "Swift", "Vitara"],
-        "Tesla": ["Model S", "Model 3", "Model X", "Model Y", "Cybertruck", "Roadster"],
-        "Toyota": ["Auris", "Avensis", "Aygo", "bZ4X", "C-HR", "Camry", "Corolla", "GT86", "Hilux", "Land Cruiser", "Prius", "Proace", "RAV4", "Supra", "Yaris", "Yaris Cross"],
-        "Volkswagen": ["Amarok", "Arteon", "Beetle", "Caddy", "Crafter", "Golf", "ID.3", "ID.4", "ID.5", "ID.7", "Passat", "Polo", "Scirocco", "Sharan", "T-Cross", "T-Roc", "Tiguan", "Touareg", "Touran", "Transporter", "Up"],
-        "Volvo": ["240", "740", "850", "C30", "C40", "EX30", "EX40", "EX90", "S40", "S60", "S80", "S90", "V40", "V50", "V60", "V70", "V90", "XC40", "XC60", "XC70", "XC90"],
-        "Annat märke": ["Annan modell"]
+        "Audi": ["A1", "A3", "A4", "A6", "Q3", "Q5", "Q7"],
+        "BMW": ["1-serie", "3-serie", "5-serie", "X1", "X3", "X5"],
+        "Mercedes-Benz": ["A-Klass", "C-Klass", "E-Klass", "GLC"],
+        "Volvo": ["S60", "V60", "V90", "XC40", "XC60", "XC90"],
+        "Volkswagen": ["Golf", "Passat", "Polo", "Tiguan", "ID.4"],
+        "Toyota": ["Yaris", "Corolla", "RAV4"],
+        "Tesla": ["Model 3", "Model Y", "Model S"]
     };
 
-    let selectedBodyType = null;
-    let currentUser = null;
-    let unreadUnsubscribe = null;
-
-    const brandInput = document.getElementById('brandSelect');
-    const modelInput = document.getElementById('modelInput');
-    const brandList = document.getElementById('brandList');
-    const modelList = document.getElementById('modelList');
-    const carsGrid = document.getElementById('carsGrid');
-
-    function escapeHtml(value) {
-        return String(value ?? '')
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#039;');
-    }
-
-    function normalizeText(value) {
-        return String(value ?? '').trim();
-    }
-
-    function fillBrands() {
-        brandList.innerHTML = '';
-        Object.keys(carCatalog).sort((a, b) => a.localeCompare(b, 'sv')).forEach(brand => {
-            brandList.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(brand)}"></option>`);
+    // Initialize UI Logic
+    function initializeBrandList() {
+        const select = document.getElementById('brandEngine');
+        Object.keys(carCatalog).sort().forEach(brand => {
+            const opt = document.createElement('option');
+            opt.value = brand;
+            opt.textContent = brand;
+            select.appendChild(opt);
         });
     }
 
-    function fillModels(brand) {
-        modelList.innerHTML = '';
-        const models = carCatalog[brand] || [];
-        models.sort((a, b) => a.localeCompare(b, 'sv')).forEach(model => {
-            modelList.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(model)}"></option>`);
-        });
-    }
+    /**
+     * NAVIGATION HANDLER (DEEP SEARCH)
+     * توجيه المستخدم إلى results-fixed.html مع الفلاتر المختارة
+     */
+    document.getElementById('deepSearchBtn').addEventListener('click', () => {
+        const brand = document.getElementById('brandEngine').value;
+        const fuel = document.getElementById('fuelEngine').value;
+        const maxP = document.getElementById('priceEngine').value;
+        const maxM = document.getElementById('milEngine').value;
 
-    fillBrands();
-
-    brandInput.addEventListener('input', () => {
-        const brand = normalizeText(brandInput.value);
-        modelInput.value = '';
-        fillModels(brand);
-    });
-
-    document.querySelectorAll('.body-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const value = button.dataset.type;
-            document.querySelectorAll('.body-btn').forEach(b => b.classList.remove('active'));
-
-            if (selectedBodyType === value) {
-                selectedBodyType = null;
-                button.classList.remove('active');
-            } else {
-                selectedBodyType = value;
-                button.classList.add('active');
-            }
-        });
-    });
-
-    onAuthStateChanged(auth, async (user) => {
-        currentUser = user;
-        renderAuthStatus(user);
-        setupMessageBadge(user);
-    });
-
-    function renderAuthStatus(user) {
-        const authStatus = document.getElementById('authStatus');
-        const msgLink = document.getElementById('msgLink');
-
-        if (!authStatus) return;
-
-        if (user) {
-            authStatus.innerHTML = `
-                <a href="dashboard.html" class="account-link">
-                    <i class="fa-solid fa-circle-user"></i>
-                    Min sida
-                </a>
-            `;
-            if (msgLink) msgLink.style.display = 'inline-flex';
-        } else {
-            authStatus.innerHTML = `
-                <a href="login.html" class="login-link">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                    Logga in
-                </a>
-            `;
-            if (msgLink) msgLink.style.display = 'none';
-        }
-    }
-
-    function setupMessageBadge(user) {
-        const msgBadge = document.getElementById('msgBadge');
-        if (unreadUnsubscribe) {
-            unreadUnsubscribe();
-            unreadUnsubscribe = null;
-        }
-
-        if (!msgBadge) return;
-
-        msgBadge.style.display = 'none';
-        msgBadge.textContent = '';
-
-        if (!user) return;
-
-        try {
-            const chatsQuery = query(
-                collection(db, 'chats'),
-                where('participants', 'array-contains', user.uid)
-            );
-
-            unreadUnsubscribe = onSnapshot(chatsQuery, snapshot => {
-                let count = 0;
-                snapshot.forEach(docSnap => {
-                    const chat = docSnap.data();
-                    const hiddenFor = Array.isArray(chat.hiddenFor) ? chat.hiddenFor : [];
-                    if (hiddenFor.includes(user.uid)) return;
-
-                    const unreadBy = chat.unreadBy || {};
-                    const value = Number(unreadBy[user.uid] || 0);
-                    count += value;
-                });
-
-                if (count > 0) {
-                    msgBadge.textContent = count > 99 ? '99+' : String(count);
-                    msgBadge.style.display = 'inline-block';
-                } else {
-                    msgBadge.style.display = 'none';
-                }
-            });
-        } catch (error) {
-            console.warn('Message badge could not be loaded:', error);
-        }
-    }
-
-    document.getElementById('searchBtn').addEventListener('click', () => {
         const params = new URLSearchParams();
+        if (brand !== 'all') params.set('brand', brand);
+        if (fuel !== 'all') params.set('fuel', fuel);
+        if (maxP) params.set('maxP', maxP);
+        if (maxM) params.set('maxM', maxM);
 
-        const brand = normalizeText(brandInput.value);
-        const model = normalizeText(modelInput.value);
-        const maxPrice = normalizeText(document.getElementById('maxPrice').value);
-        const yearFrom = normalizeText(document.getElementById('yearFrom').value);
-        const yearTo = normalizeText(document.getElementById('yearTo').value);
-        const fuel = normalizeText(document.getElementById('fuelSelect').value);
-        const gear = normalizeText(document.getElementById('gearSelect').value);
-        const maxMileage = normalizeText(document.getElementById('maxMileage').value);
-
-        if (brand) params.set('brand', brand);
-        if (model) params.set('model', model);
-        if (maxPrice) params.set('maxP', maxPrice);
-        if (yearFrom) params.set('yFrom', yearFrom);
-        if (yearTo) params.set('yTo', yearTo);
-        if (fuel && fuel !== 'all') params.set('fuel', fuel);
-        if (gear && gear !== 'all') params.set('gear', gear);
-        if (maxMileage) params.set('mil', maxMileage);
-        if (selectedBodyType) {
-            params.set('body', selectedBodyType);
-            params.set('karosseri', selectedBodyType);
-        }
-
-        window.location.href = `results.html?${params.toString()}`;
+        // التوجه المباشر للملف المطلوب
+        window.location.href = `results-fixed.html?${params.toString()}`;
     });
 
-    async function loadRecentCars() {
-        carsGrid.innerHTML = `
-            <div class="loading-state">
-                <i class="fa-solid fa-spinner fa-spin"></i>
-                Laddar annonser...
-            </div>
-        `;
-
+    /**
+     * LATEST LISTINGS ENGINE
+     * جلب أحدث الإعلانات من Firebase لعرضها في الواجهة
+     */
+    async function fetchLatestListings() {
+        const grid = document.getElementById('mainDisplayGrid');
         try {
-            let snapshot;
-
-            try {
-                const carsQuery = query(
-                    collection(db, 'cars'),
-                    orderBy('createdAt', 'desc'),
-                    limit(12)
-                );
-                snapshot = await getDocs(carsQuery);
-            } catch (indexOrOrderError) {
-                const fallbackQuery = query(
-                    collection(db, 'cars'),
-                    limit(12)
-                );
-                snapshot = await getDocs(fallbackQuery);
-            }
-
-            const cars = [];
-            snapshot.forEach(docSnap => {
-                cars.push({ id: docSnap.id, ...docSnap.data() });
-            });
-
-            if (cars.length === 0) {
-                carsGrid.innerHTML = `
-                    <div class="empty-state">
-                        Det finns inga annonser ännu.
-                    </div>
-                `;
+            const q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(4));
+            const snap = await getDocs(q);
+            
+            if (snap.empty) {
+                grid.innerHTML = "<p>Inga annonser tillgängliga just nu.</p>";
                 return;
             }
 
-            carsGrid.innerHTML = cars.map(renderCarCard).join('');
-        } catch (error) {
-            console.error('Could not load cars:', error);
-            carsGrid.innerHTML = `
-                <div class="error-state">
-                    Kunde inte ladda annonser just nu. Kontrollera Firebase Rules och internetanslutning.
-                </div>
-            `;
+            grid.innerHTML = "";
+            snap.forEach(doc => {
+                const car = doc.data();
+                const price = Number(car.price).toLocaleString('sv-SE');
+                const img = (car.images && car.images.length > 0) ? car.images[0] : 'assets/no-image.jpg';
+
+                grid.innerHTML += `
+                    <div class="car-card" style="background:white; border-radius:24px; overflow:hidden; border:1px solid #e2e8f0; transition:0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="height:200px; background:#f1f5f9;"><img src="${img}" style="width:100%; height:100%; object-fit:cover;"></div>
+                        <div style="padding:20px;">
+                            <h3 style="font-size:18px; margin-bottom:5px;">${car.brand} ${car.model}</h3>
+                            <p style="color:var(--primary); font-weight:900; font-size:20px;">${price} kr</p>
+                            <div style="margin-top:15px; display:flex; gap:10px; font-size:12px; color:#64748b; font-weight:700;">
+                                <span><i class="fa-solid fa-gauge"></i> ${car.mileage} mil</span>
+                                <span><i class="fa-solid fa-gas-pump"></i> ${car.fuel}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        } catch (err) {
+            console.error("Critical Engine Failure:", err);
         }
     }
 
-    function renderCarCard(car) {
-        const image = Array.isArray(car.images) && car.images.length > 0
-            ? car.images[0]
-            : (car.image || car.imageUrl || 'placeholder.jpg');
+    // Launch Engines
+    initializeBrandList();
+    fetchLatestListings();
 
-        const brand = escapeHtml(car.brand || 'Okänt märke');
-        const model = escapeHtml(car.model || 'Okänd modell');
-        const year = escapeHtml(car.year || '-');
-        const mileage = escapeHtml(car.mileage ?? car.mil ?? '-');
-        const fuel = escapeHtml(car.fuel || car.fuelType || '-');
-        const gear = escapeHtml(car.gear || car.transmission || '-');
-        const price = Number(car.price || 0).toLocaleString('sv-SE');
-        const sellerName = escapeHtml(car.sellerName || car.companyName || car.sellerDisplayName || 'Säljare');
-        const status = String(car.status || '').toLowerCase();
-        const isSold = status === 'sold' || status === 'såld' || car.sold === true;
-
-        return `
-            <article class="car-card" onclick="window.location.href='details.html?id=${encodeURIComponent(car.id)}'">
-                <div class="car-img-wrap">
-                    ${isSold ? '<div class="sold-badge">SÅLD</div>' : ''}
-                    <img src="${escapeHtml(image)}" alt="${brand} ${model}" loading="lazy" onerror="this.src='placeholder.jpg'">
-                </div>
-
-                <div class="car-info" style="${isSold ? 'opacity:.72;' : ''}">
-                    <div class="car-price">${price} kr</div>
-                    <div class="car-name">${brand} ${model}</div>
-
-                    <div class="car-meta">
-                        <span><i class="fa-regular fa-calendar"></i> ${year}</span>
-                        <span><i class="fa-solid fa-gauge"></i> ${mileage} mil</span>
-                        <span><i class="fa-solid fa-gas-pump"></i> ${fuel}</span>
-                        <span><i class="fa-solid fa-gear"></i> ${gear}</span>
-                    </div>
-
-                    <div class="seller-line">
-                        <i class="fa-solid fa-user-tie" style="color:var(--primary)"></i>
-                        ${sellerName}
-                    </div>
-                </div>
-            </article>
-        `;
-    }
-
-    loadRecentCars();
 </script>
-
 </body>
 </html>
