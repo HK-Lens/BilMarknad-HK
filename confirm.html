@@ -4,54 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifierar Inloggning - BILHK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .auth-card { background: white; width: 100%; max-width: 500px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); text-align: center; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .form-group { text-align: left; margin-bottom: 15px; }
-        label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; background: #f9fafb; }
-        .btn-auth { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-    </style>
 </head>
 <body>
-    <div class="auth-card" id="confirmCard">
-        <h2>Verifierar din länk...</h2>
-        <div id="loadingSpinner" class="spinner"></div>
+    <div class="auth-container">
+        <div class="auth-card" id="confirmCard">
+            <h2>Verifierar din länk...</h2>
+            <div id="loadingSpinner" class="spinner"></div>
 
-        <div id="companyForm" style="display: none; text-align: left; margin-top: 20px;">
-            <h3 style="text-align: center; margin-bottom: 20px;">Företagsinformation</h3>
-            <div class="form-group">
-                <label>Företagsnamn (اسم الشركة)</label>
-                <input type="text" id="compName" placeholder="Ex: BILHK AB" required>
+            <div id="companyForm" style="display: none; text-align: left; margin-top: 20px;">
+                <h3 style="text-align: center; margin-bottom: 20px;">Företagsinformation</h3>
+                <div class="form-group">
+                    <label>Företagsnamn (اسم الشركة)</label>
+                    <input type="text" id="compName" placeholder="Ex: BILHK AB" required>
+                </div>
+                <div class="form-group">
+                    <label>Organisationsnummer (الرقم الضريبي)</label>
+                    <input type="text" id="compTax" placeholder="55XXXX-XXXX" required>
+                </div>
+                <div class="form-group">
+                    <label>Företagsadress (عنوان الشركة)</label>
+                    <input type="text" id="compAddress" placeholder="Gatunamn 1, Stad" required>
+                </div>
+                <div class="form-group">
+                    <label>Telefonnummer (رقم الهاتف)</label>
+                    <input type="tel" id="compPhone" placeholder="070-XXX XX XX" required>
+                </div>
+                <div class="form-group">
+                    <label>Officiell E-post (الإيميل الرسمي)</label>
+                    <input type="email" id="compEmail" placeholder="info@foretag.se" required>
+                </div>
+                <div class="form-group">
+                    <label>Webbplats (الموقع الإلكتروني الرسمي)</label>
+                    <input type="url" id="compWeb" placeholder="https://www.foretag.se">
+                </div>
+                <button class="btn-auth" onclick="saveCompanyAndFinish()">Spara och Fortsätt</button>
             </div>
-            <div class="form-group">
-                <label>Organisationsnummer (الرقم الضريبي)</label>
-                <input type="text" id="compTax" placeholder="55XXXX-XXXX" required>
-            </div>
-            <div class="form-group">
-                <label>Företagsadress (عنوان الشركة)</label>
-                <input type="text" id="compAddress" placeholder="Gatunamn 1, Stad" required>
-            </div>
-            <div class="form-group">
-                <label>Telefonnummer (رقم الهاتف)</label>
-                <input type="tel" id="compPhone" placeholder="070-XXX XX XX" required>
-            </div>
-            <div class="form-group">
-                <label>Officiell E-post (الإيميل الرسمي)</label>
-                <input type="email" id="compEmail" placeholder="info@foretag.se" required>
-            </div>
-            <div class="form-group">
-                <label>Webbplats (الموقع الإلكتروني الرسمي)</label>
-                <input type="url" id="compWeb" placeholder="https://www.foretag.se">
-            </div>
-            <button class="btn-auth" onclick="saveCompanyAndFinish()">Spara och Fortsätt</button>
         </div>
     </div>
 
@@ -63,14 +52,13 @@
         async function handleConfirmation() {
             if (isSignInWithEmailLink(auth, window.location.href)) {
                 let email = window.localStorage.getItem('emailForSignIn');
-                const userType = window.localStorage.getItem('userTypePreference') || 'Privat';
+                const userType = window.localStorage.getItem('userTypePreference'); // جلب النوع المختار من صفحة اللوجن
 
                 if (!email) {
                     const result = await Swal.fire({
                         title: 'Ange din e-post',
                         input: 'email',
-                        inputPlaceholder: 'Bekräfta din e-postadress',
-                        confirmButtonColor: '#f58220'
+                        inputPlaceholder: 'Bekräfta din e-postadress'
                     });
                     email = result.value;
                 }
@@ -79,16 +67,19 @@
                     const result = await signInWithEmailLink(auth, email, window.location.href);
                     const user = result.user;
                     window.localStorage.removeItem('emailForSignIn');
-                    window.localStorage.removeItem('userTypePreference');
 
+                    // فحص إذا كان المستخدم مسجلاً مسبقاً
                     const userDoc = await getDoc(doc(db, "users", user.uid));
                     
                     if (userType === 'Foretag' && !userDoc.exists()) {
+                        // إذا كان شركة ولأول مرة، نظهر النموذج
                         document.querySelector('h2').innerText = "Komplettera profil";
                         document.getElementById('loadingSpinner').style.display = 'none';
                         document.getElementById('companyForm').style.display = 'block';
+                        // تعبئة الإيميل الرسمي تلقائياً كبداية
                         document.getElementById('compEmail').value = email;
                     } else {
+                        // إذا كان حساباً شخصياً أو شركة مسجلة مسبقاً، نوجهه للرئيسية
                         if (!userDoc.exists()) {
                             await setDoc(doc(db, "users", user.uid), {
                                 email: user.email,
