@@ -72,20 +72,44 @@
         .container { flex: 1; padding: 0 6% 80px; }
         .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
         .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .car-card { position: relative; }
+
+        .car-card {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .car-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
         .favorite-btn {
             position: absolute; top: 12px; right: 12px; width: 42px; height: 42px;
             border: none; border-radius: 50%; background: rgba(255,255,255,0.95);
             color: #94a3b8; box-shadow: 0 8px 20px rgba(15,23,42,0.18);
             cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 18px; z-index: 5; transition: 0.2s;
+            font-size: 18px; z-index: 50; transition: 0.2s;
+            touch-action: manipulation;
         }
         .favorite-btn:hover { transform: scale(1.08); color: var(--primary); }
         .favorite-btn.saved { color: #ef4444; }
+        .favorite-btn:disabled { opacity: 0.6; cursor: wait; }
 
         footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; border-top: 1px solid #1e293b; }
         .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
         .legal-box { margin-top: 50px; padding-top: 30px; border-top: 1px solid #1e293b; text-align: center; font-size: 12px; }
+
+        @media (max-width: 768px) {
+            header { padding: 1rem 4%; }
+            .nav-links { gap: 12px; }
+            .filter-grid { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -163,119 +187,337 @@
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
-    import { collection, query, orderBy, limit, getDocs, where, doc, getDoc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import {
+        collection,
+        query,
+        orderBy,
+        limit,
+        getDocs,
+        where,
+        doc,
+        getDoc,
+        setDoc,
+        deleteDoc,
+        serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import {
+        onAuthStateChanged,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { carData } from './cars-data.js';
 
     const brandSelect = document.getElementById('brandSelect');
     const modelSelect = document.getElementById('modelSelect');
     const grid = document.getElementById('carsGrid');
     const authContainer = document.getElementById('authStatusContainer');
+    const searchBtn = document.getElementById('searchBtn');
+
     let selectedBodyType = "";
     let currentUser = null;
     let savedFavoriteIds = new Set();
     let favoriteCarCache = {};
+    let favoritesLoaded = false;
+
+    function safeText(value, fallback = '') {
+        if (value === undefined || value === null || value === '') return fallback;
+        return String(value);
+    }
+
+    function safeNumber(value, fallback = 0) {
+        const n = Number(value);
+        return Number.isFinite(n) ? n : fallback;
+    }
+
+    function getCarImage(car) {
+        if (Array.isArray(car.images) && car.images.length > 0 && car.images[0]) {
+            return car.images[0];
+        }
+        if (car.image) {
+            return car.image;
+        }
+        return 'placeholder.jpg';
+    }
+
+    function formatPrice(price) {
+        const value = safeNumber(price, 0);
+        return value.toLocaleString('sv-SE');
+    }
+
+    function normalizeId(value) {
+        return String(value || '').trim();
+    }
+
+    async function loadUserFavorites() {
+        if (!currentUser) {
+            savedFavoriteIds = new Set();
+            favoritesLoaded = false;
+            return;
+        }
+
+        try {
+            const qFav = query(
+                collection(db, "favorites"),
+                where("userId", "==", currentUser.uid)
+            );
+
+            const snap = await getDocs(qFav);
+            savedFavoriteIds = new Set(
+                snap.docs
+                    .map(d => normalizeId(d.data().carId))
+                    .filter(Boolean)
+            );
+
+            favoritesLoaded = true;
+        } catch (error) {
+            console.error("Fel vid laddning av sparade bilar:", error);
+            savedFavoriteIds = new Set();
+            favoritesLoaded = false;
+        }
+    }
+
+    function updateFavoriteButtons() {
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            const carId = normalizeId(btn.dataset.carId);
+            const isSaved = savedFavoriteIds.has(carId);
+
+            btn.classList.toggle('saved', isSaved);
+            btn.title = isSaved ? 'Ta bort från sparade' : 'Spara bilen';
+            btn.setAttribute('aria-label', isSaved ? 'Ta bort från sparade' : 'Spara bilen');
+            btn.innerHTML = `<i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-heart"></i>`;
+        });
+    }
+
+    async function toggleFavoriteById(carId, buttonElement = null) {
+        carId = normalizeId(carId);
+
+        if (!carId) {
+            alert("Annonsen kunde inte identifieras.");
+            return;
+        }
+
+        if (!currentUser) {
+            window.location.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`;
+            return;
+        }
+
+        if (buttonElement) {
+            buttonElement.disabled = true;
+        }
+
+        try {
+            const car = favoriteCarCache[carId] || {};
+            const favRef = doc(db, "favorites", `${currentUser.uid}_${carId}`);
+            const favSnap = await getDoc(favRef);
+
+            if (favSnap.exists()) {
+                await deleteDoc(favRef);
+                savedFavoriteIds.delete(carId);
+            } else {
+                await setDoc(favRef, {
+                    userId: currentUser.uid,
+                    carId: carId,
+                    brand: safeText(car.brand),
+                    model: safeText(car.model),
+                    year: safeNumber(car.year, 0),
+                    mileage: safeNumber(car.mileage, 0),
+                    price: safeNumber(car.price, 0),
+                    image: getCarImage(car),
+                    createdAt: serverTimestamp()
+                });
+
+                savedFavoriteIds.add(carId);
+            }
+
+            updateFavoriteButtons();
+        } catch (error) {
+            console.error("Fel vid sparande av favorit:", error);
+
+            if (error && error.code === "permission-denied") {
+                alert("Kunde inte spara bilen. Kontrollera Firebase Rules för favorites.");
+            } else {
+                alert("Kunde inte spara bilen just nu. Försök igen.");
+            }
+        } finally {
+            if (buttonElement) {
+                buttonElement.disabled = false;
+            }
+        }
+    }
 
     onAuthStateChanged(auth, async (user) => {
         currentUser = user;
+
         if (user) {
             authContainer.innerHTML = `
                 <a href="my-account.html" style="color: var(--primary); font-weight: 800;"><i class="fa-solid fa-circle-user"></i> Mitt Konto</a>
                 <a href="#" id="logoutAction" style="color: #ef4444; font-size: 12px; margin-left:10px;">Logga ut</a>
             `;
-            document.getElementById('logoutAction').onclick = async (e) => { e.preventDefault(); await signOut(auth); window.location.reload(); };
+
+            const logoutAction = document.getElementById('logoutAction');
+            if (logoutAction) {
+                logoutAction.onclick = async (e) => {
+                    e.preventDefault();
+                    try {
+                        await signOut(auth);
+                        window.location.reload();
+                    } catch (error) {
+                        console.error("Fel vid utloggning:", error);
+                        alert("Kunde inte logga ut just nu.");
+                    }
+                };
+            }
+
             await loadUserFavorites();
         } else {
             savedFavoriteIds = new Set();
+            favoritesLoaded = false;
             authContainer.innerHTML = `<a href="login.html">Logga in</a>`;
         }
+
         updateFavoriteButtons();
     });
 
     const brands = Object.keys(carData).sort();
-    brands.forEach(b => { brandSelect.innerHTML += `<option value="${b}">${b}</option>`; });
+    brands.forEach(b => {
+        brandSelect.innerHTML += `<option value="${b}">${b}</option>`;
+    });
+
     brandSelect.onchange = () => {
         modelSelect.innerHTML = '<option value="">Alla modeller</option>';
-        if (carData[brandSelect.value]) carData[brandSelect.value].sort().forEach(m => { modelSelect.innerHTML += `<option value="${m}">${m}</option>`; });
-    };
 
-    async function loadUserFavorites() {
-        if (!currentUser) return;
-        const qFav = query(collection(db, "favorites"), where("userId", "==", currentUser.uid));
-        const snap = await getDocs(qFav);
-        savedFavoriteIds = new Set(snap.docs.map(d => d.data().carId));
-    }
-
-    function updateFavoriteButtons() {
-        document.querySelectorAll('.favorite-btn').forEach(btn => {
-            const carId = btn.dataset.carId;
-            const isSaved = savedFavoriteIds.has(carId);
-            btn.classList.toggle('saved', isSaved);
-            btn.title = isSaved ? 'Ta bort från sparade' : 'Spara bilen';
-            btn.innerHTML = `<i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-heart"></i>`;
-        });
-    }
-
-    window.toggleFavorite = async (event, carId) => {
-        event.stopPropagation();
-        if (!currentUser) {
-            window.location.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`;
-            return;
-        }
-        const car = favoriteCarCache[carId] || {};
-
-        const favRef = doc(db, "favorites", `${currentUser.uid}_${carId}`);
-        const favSnap = await getDoc(favRef);
-
-        if (favSnap.exists()) {
-            await deleteDoc(favRef);
-            savedFavoriteIds.delete(carId);
-        } else {
-            await setDoc(favRef, {
-                userId: currentUser.uid,
-                carId,
-                brand: car.brand || '',
-                model: car.model || '',
-                price: Number(car.price) || 0,
-                image: car.images?.[0] || 'placeholder.jpg',
-                createdAt: serverTimestamp()
+        if (carData[brandSelect.value]) {
+            carData[brandSelect.value].sort().forEach(m => {
+                modelSelect.innerHTML += `<option value="${m}">${m}</option>`;
             });
-            savedFavoriteIds.add(carId);
         }
-        updateFavoriteButtons();
     };
 
     async function fetchCars() {
         grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Söker...</p>";
-        let q = query(collection(db, "cars"), orderBy("createdAt", "desc"), limit(20));
-        
-        // تطبيق الفلاتر برمجياً للتوافق مع الفهرس
-        const snapshot = await getDocs(q);
-        grid.innerHTML = "";
-        
-        snapshot.forEach(doc => {
-            const car = doc.data();
-            favoriteCarCache[doc.id] = car;
-            const matchesBrand = !brandSelect.value || car.brand === brandSelect.value;
-            const matchesType = !selectedBodyType || car.karosseri === selectedBodyType;
-            
-            if (matchesBrand && matchesType) {
-                grid.innerHTML += `
-                    <div class="car-card" style="background:white; border-radius:20px; overflow:hidden; border:1px solid #e2e8f0; cursor:pointer;" onclick="window.location.href='details.html?id=${doc.id}'">
-                        <button class="favorite-btn" data-car-id="${doc.id}" onclick="toggleFavorite(event, '${doc.id}')" title="Spara bilen">
-                            <i class="fa-regular fa-heart"></i>
-                        </button>
-                        <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:190px; object-fit:cover;">
-                        <div style="padding:20px;">
-                            <h3 style="color:var(--primary); font-size:22px; font-weight:900;">${Number(car.price).toLocaleString()} kr</h3>
-                            <p style="font-weight:700;">${car.brand} ${car.model}</p>
-                            <p style="color:#64748b; font-size:13px;">${car.year} | ${car.mileage} mil</p>
-                        </div>
-                    </div>`;
+
+        try {
+            const q = query(
+                collection(db, "cars"),
+                orderBy("createdAt", "desc"),
+                limit(20)
+            );
+
+            const snapshot = await getDocs(q);
+            grid.innerHTML = "";
+            favoriteCarCache = {};
+
+            if (snapshot.empty) {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga annonser hittades.</p>";
+                return;
             }
-        });
-        updateFavoriteButtons();
+
+            let visibleCount = 0;
+
+            snapshot.forEach((carDoc) => {
+                const car = carDoc.data();
+                const carId = normalizeId(carDoc.id);
+
+                favoriteCarCache[carId] = car;
+
+                const matchesBrand = !brandSelect.value || car.brand === brandSelect.value;
+                const matchesModel = !modelSelect.value || car.model === modelSelect.value;
+                const matchesType = !selectedBodyType || car.karosseri === selectedBodyType;
+
+                const minPrice = safeNumber(document.getElementById('minPrice').value, 0);
+                const maxPrice = safeNumber(document.getElementById('maxPrice').value, 0);
+                const minMil = safeNumber(document.getElementById('minMil').value, 0);
+                const maxMil = safeNumber(document.getElementById('maxMil').value, 0);
+                const minYear = safeNumber(document.getElementById('minYear').value, 0);
+                const maxYear = safeNumber(document.getElementById('maxYear').value, 0);
+
+                const carPrice = safeNumber(car.price, 0);
+                const carMileage = safeNumber(car.mileage, 0);
+                const carYear = safeNumber(car.year, 0);
+
+                const matchesMinPrice = !minPrice || carPrice >= minPrice;
+                const matchesMaxPrice = !maxPrice || carPrice <= maxPrice;
+                const matchesMinMil = !minMil || carMileage >= minMil;
+                const matchesMaxMil = !maxMil || carMileage <= maxMil;
+                const matchesMinYear = !minYear || carYear >= minYear;
+                const matchesMaxYear = !maxYear || carYear <= maxYear;
+
+                if (
+                    matchesBrand &&
+                    matchesModel &&
+                    matchesType &&
+                    matchesMinPrice &&
+                    matchesMaxPrice &&
+                    matchesMinMil &&
+                    matchesMaxMil &&
+                    matchesMinYear &&
+                    matchesMaxYear
+                ) {
+                    visibleCount++;
+
+                    const isSaved = savedFavoriteIds.has(carId);
+                    const heartClass = isSaved ? 'fa-solid' : 'fa-regular';
+                    const savedClass = isSaved ? 'saved' : '';
+
+                    grid.innerHTML += `
+                        <div class="car-card" data-car-id="${carId}">
+                            <button
+                                type="button"
+                                class="favorite-btn ${savedClass}"
+                                data-car-id="${carId}"
+                                title="${isSaved ? 'Ta bort från sparade' : 'Spara bilen'}"
+                                aria-label="${isSaved ? 'Ta bort från sparade' : 'Spara bilen'}">
+                                <i class="${heartClass} fa-heart"></i>
+                            </button>
+
+                            <img src="${getCarImage(car)}" alt="${safeText(car.brand)} ${safeText(car.model)}" style="width:100%; height:190px; object-fit:cover;">
+
+                            <div style="padding:20px;">
+                                <h3 style="color:var(--primary); font-size:22px; font-weight:900;">${formatPrice(car.price)} kr</h3>
+                                <p style="font-weight:700;">${safeText(car.brand)} ${safeText(car.model)}</p>
+                                <p style="color:#64748b; font-size:13px;">${safeText(car.year, '-')} | ${safeText(car.mileage, '0')} mil</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            if (visibleCount === 0) {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Inga annonser matchar din sökning.</p>";
+            }
+
+            updateFavoriteButtons();
+        } catch (error) {
+            console.error("Fel vid hämtning av bilar:", error);
+
+            if (error && error.code === "permission-denied") {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color:#ef4444;'>Kunde inte läsa annonser. Kontrollera Firebase Rules för cars.</p>";
+            } else {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color:#ef4444;'>Ett fel uppstod vid laddning av annonser.</p>";
+            }
+        }
     }
+
+    grid.addEventListener('click', async (event) => {
+        const favoriteButton = event.target.closest('.favorite-btn');
+
+        if (favoriteButton) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const carId = favoriteButton.dataset.carId;
+            await toggleFavoriteById(carId, favoriteButton);
+            return;
+        }
+
+        const card = event.target.closest('.car-card');
+
+        if (card) {
+            const carId = card.dataset.carId;
+            if (carId) {
+                window.location.href = `details.html?id=${encodeURIComponent(carId)}`;
+            }
+        }
+    });
 
     window.setType = (type, btn) => {
         document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
@@ -284,17 +526,13 @@
         fetchCars();
     };
 
-    window.onload = fetchCars;
-    document.getElementById('searchBtn').onclick = () => {
-        const params = new URLSearchParams({
-            brand: brandSelect.value,
-            model: modelSelect.value,
-            maxP: document.getElementById('maxPrice').value,
-            minP: document.getElementById('minPrice').value,
-            kar: selectedBodyType
-        });
-        window.location.href = `index.html?${params.toString()}`;
+    searchBtn.onclick = () => {
+        fetchCars();
     };
+
+    window.addEventListener('load', async () => {
+        await fetchCars();
+    });
 </script>
 </body>
 </html>
