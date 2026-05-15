@@ -277,4 +277,376 @@
         <h2>Logga in</h2>
 
         <div class="login-tabs">
-            <button type="button"
+            <button type="button" id="tabPrivate" class="tab-btn active">Privatperson</button>
+            <button type="button" id="tabBusiness" class="tab-btn">Företag</button>
+        </div>
+
+        <div class="disclaimer-box">
+            <i class="fa-solid fa-shield-halved"></i>
+            <strong>Säkerhet först:</strong>
+            Vi ansvarar inte för annonsernas innehåll. Betala aldrig i förskott och dela inte personlig information.
+            All handel sker på egen risk.
+        </div>
+
+        <div class="verify-box" id="verifyBox">
+            <i class="fa-solid fa-envelope-circle-check"></i>
+            <strong>E-postverifiering krävs:</strong>
+            Ditt konto finns, men e-postadressen är inte verifierad ännu.
+            Ett nytt verifieringsmail har skickats. Kontrollera inkorg, skräppost och spam.
+        </div>
+
+        <label class="terms-container">
+            <input type="checkbox" id="termsCheck">
+            <span>Jag godkänner villkoren och bekräftar ansvarsfriskrivningen.</span>
+        </label>
+
+        <div id="googleSection">
+            <button type="button" class="btn-google" id="googleLoginBtn" disabled>
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="">
+                Logga in med Google
+            </button>
+
+            <div class="divider">
+                <span>eller</span>
+            </div>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label id="emailLabel">E-postadress</label>
+                <input type="email" id="email" placeholder="din@epost.se" required>
+            </div>
+
+            <div class="form-group">
+                <label>Lösenord</label>
+                <input type="password" id="pass" placeholder="Ditt lösenord" required>
+            </div>
+
+            <button type="submit" class="btn-primary" id="loginBtn" disabled>
+                Logga in
+            </button>
+        </form>
+
+        <div class="register-section">
+            <p>Saknar du ett konto?</p>
+            <a href="register.html" class="btn-outline">Skapa nytt konto</a>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import {
+        auth,
+        googleProvider,
+        db
+    } from "./firebase-config.js";
+
+    import {
+        signInWithEmailAndPassword,
+        signInWithPopup,
+        sendEmailVerification,
+        signOut,
+        reload
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    import {
+        doc,
+        getDoc,
+        setDoc,
+        serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const LOGIN_CONFIG = {
+        ROUTES: {
+            HOME: "index.html",
+            REGISTER: "register.html"
+        },
+
+        COLLECTIONS: {
+            USERS: "users"
+        },
+
+        ACCOUNT_TYPES: {
+            PRIVATE: "private",
+            BUSINESS: "business"
+        }
+    };
+
+    const state = {
+        selectedType: LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE,
+        isSubmitting: false
+    };
+
+    const elements = {
+        tabPrivate: document.getElementById("tabPrivate"),
+        tabBusiness: document.getElementById("tabBusiness"),
+
+        termsCheck: document.getElementById("termsCheck"),
+
+        loginForm: document.getElementById("loginForm"),
+        loginBtn: document.getElementById("loginBtn"),
+        googleBtn: document.getElementById("googleLoginBtn"),
+        googleSection: document.getElementById("googleSection"),
+
+        emailLabel: document.getElementById("emailLabel"),
+        email: document.getElementById("email"),
+        password: document.getElementById("pass"),
+
+        verifyBox: document.getElementById("verifyBox")
+    };
+
+    initializeLoginPage();
+
+    function initializeLoginPage() {
+        elements.tabPrivate.addEventListener("click", () => switchTab(LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE));
+        elements.tabBusiness.addEventListener("click", () => switchTab(LOGIN_CONFIG.ACCOUNT_TYPES.BUSINESS));
+
+        elements.termsCheck.addEventListener("change", updateActionButtons);
+
+        elements.loginForm.addEventListener("submit", loginWithEmailPassword);
+        elements.googleBtn.addEventListener("click", loginWithGoogle);
+
+        switchTab(LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE);
+        updateActionButtons();
+    }
+
+    function switchTab(type) {
+        state.selectedType = type;
+
+        const isPrivate = type === LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE;
+        const isBusiness = type === LOGIN_CONFIG.ACCOUNT_TYPES.BUSINESS;
+
+        elements.tabPrivate.classList.toggle("active", isPrivate);
+        elements.tabBusiness.classList.toggle("active", isBusiness);
+
+        elements.emailLabel.innerText = isPrivate ? "E-postadress" : "Företags-e-post";
+
+        elements.googleSection.style.display = isPrivate ? "block" : "none";
+
+        hideVerificationBox();
+        updateActionButtons();
+    }
+
+    function updateActionButtons() {
+        const accepted = elements.termsCheck.checked;
+        const disabled = !accepted || state.isSubmitting;
+
+        elements.loginBtn.disabled = disabled;
+        elements.googleBtn.disabled = disabled;
+    }
+
+    async function loginWithEmailPassword(event) {
+        event.preventDefault();
+
+        if (state.isSubmitting) {
+            return;
+        }
+
+        hideVerificationBox();
+
+        const email = safeEmail(elements.email.value);
+        const password = String(elements.password.value || "");
+
+        if (!email || !password) {
+            alert("Ange e-post och lösenord.");
+            return;
+        }
+
+        state.isSubmitting = true;
+        setButtonLoading(elements.loginBtn, true, "Loggar in...");
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            await reload(user);
+
+            if (!user.emailVerified) {
+                try {
+                    await sendEmailVerification(user);
+                } catch (verificationError) {
+                    console.error("[BILHK] Verification email resend failed:", verificationError);
+                }
+
+                await signOut(auth);
+
+                showVerificationBox();
+
+                alert("Du måste verifiera din e-post först. Ett nytt verifieringsmail har skickats. Kontrollera även skräppost/spam.");
+                return;
+            }
+
+            const userRef = doc(db, LOGIN_CONFIG.COLLECTIONS.USERS, user.uid);
+            const userDoc = await getDoc(userRef);
+
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+
+                if (userData.userType && userData.userType !== state.selectedType) {
+                    alert(`Obs: Detta konto är registrerat som ${userData.userType === "business" ? "Företag" : "Privat"}.`);
+                }
+
+                await setDoc(userRef, {
+                    emailVerified: true,
+                    lastLoginAt: serverTimestamp(),
+                    accountUpdatedAt: serverTimestamp()
+                }, { merge: true });
+            } else {
+                await setDoc(userRef, {
+                    uid: user.uid,
+                    name: user.displayName || getEmailName(user.email),
+                    email: safeEmail(user.email),
+                    userType: state.selectedType,
+                    provider: "email-password",
+                    active: true,
+                    role: "user",
+                    emailVerified: true,
+                    createdAt: serverTimestamp(),
+                    lastLoginAt: serverTimestamp(),
+                    accountUpdatedAt: serverTimestamp(),
+                    accountCreatedFrom: "login.html"
+                }, { merge: true });
+            }
+
+            window.location.href = LOGIN_CONFIG.ROUTES.HOME;
+
+        } catch (error) {
+            console.error("[BILHK] Login failed:", error);
+            showLoginError(error);
+        } finally {
+            state.isSubmitting = false;
+            setButtonLoading(elements.loginBtn, false, "Logga in");
+            updateActionButtons();
+        }
+    }
+
+    async function loginWithGoogle() {
+        if (state.isSubmitting) {
+            return;
+        }
+
+        if (state.selectedType !== LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE) {
+            alert("Google-inloggning är endast för privatkonto.");
+            return;
+        }
+
+        if (!elements.termsCheck.checked) {
+            alert("Du måste godkänna villkoren innan du loggar in.");
+            return;
+        }
+
+        state.isSubmitting = true;
+        setButtonLoading(elements.googleBtn, true, "Loggar in...");
+
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+
+            const userRef = doc(db, LOGIN_CONFIG.COLLECTIONS.USERS, user.uid);
+            const userDoc = await getDoc(userRef);
+
+            const payload = {
+                uid: user.uid,
+                name: user.displayName || getEmailName(user.email),
+                email: safeEmail(user.email),
+                userType: LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE,
+                provider: "google",
+                active: true,
+                role: "user",
+                emailVerified: Boolean(user.emailVerified),
+                lastLoginAt: serverTimestamp(),
+                accountUpdatedAt: serverTimestamp()
+            };
+
+            if (!userDoc.exists()) {
+                payload.createdAt = serverTimestamp();
+                payload.accountCreatedFrom = "login.html";
+            }
+
+            await setDoc(userRef, payload, { merge: true });
+
+            window.location.href = LOGIN_CONFIG.ROUTES.HOME;
+
+        } catch (error) {
+            console.error("[BILHK] Google login failed:", error);
+            alert("Kunde inte logga in med Google just nu.");
+        } finally {
+            state.isSubmitting = false;
+            setButtonLoading(elements.googleBtn, false, "Logga in med Google", true);
+            updateActionButtons();
+        }
+    }
+
+    function showLoginError(error) {
+        const code = error?.code || "";
+
+        let message = "Fel e-post eller lösenord.";
+
+        if (code === "auth/invalid-email") {
+            message = "E-postadressen är inte giltig.";
+        } else if (code === "auth/user-disabled") {
+            message = "Detta konto har inaktiverats.";
+        } else if (code === "auth/too-many-requests") {
+            message = "För många försök. Vänta en stund och försök igen.";
+        } else if (code === "auth/network-request-failed") {
+            message = "Nätverksfel. Kontrollera internetanslutningen.";
+        } else if (code === "auth/invalid-credential") {
+            message = "Fel e-post eller lösenord.";
+        }
+
+        alert(message);
+    }
+
+    function showVerificationBox() {
+        elements.verifyBox.classList.add("show");
+    }
+
+    function hideVerificationBox() {
+        elements.verifyBox.classList.remove("show");
+    }
+
+    function setButtonLoading(button, loading, text, isGoogle = false) {
+        button.innerHTML = "";
+
+        if (loading) {
+            const icon = document.createElement("i");
+            icon.className = "fa-solid fa-circle-notch fa-spin";
+            button.appendChild(icon);
+            button.appendChild(document.createTextNode(" " + text));
+            button.disabled = true;
+            return;
+        }
+
+        if (isGoogle) {
+            const img = document.createElement("img");
+            img.src = "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
+            img.width = 20;
+            img.alt = "";
+            button.appendChild(img);
+            button.appendChild(document.createTextNode(" " + text));
+            return;
+        }
+
+        button.textContent = text;
+    }
+
+    function safeEmail(value) {
+        return String(value || "")
+            .trim()
+            .toLowerCase()
+            .slice(0, 120);
+    }
+
+    function getEmailName(email) {
+        const clean = safeEmail(email);
+
+        if (!clean || !clean.includes("@")) {
+            return "BILHK-användare";
+        }
+
+        return clean.split("@")[0];
+    }
+</script>
+
+</body>
+</html>
