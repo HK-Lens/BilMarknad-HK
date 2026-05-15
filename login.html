@@ -2,1627 +2,451 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Logga in | BILHK</title>
-
-    <meta name="description" content="Logga in på BILHK för att hantera bilannonser, kontakta säljare och administrera ditt konto.">
-
-    <meta name="robots" content="noindex, nofollow">
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Logga in | BilMarknad-HK</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         :root {
             --primary: #f58220;
-            --primary-hover: #e67312;
-            --primary-soft: rgba(245, 130, 32, 0.12);
-
+            --primary-hover: #e07210;
             --dark: #0f172a;
-            --dark-soft: #1e293b;
-
-            --text: #0f172a;
-            --muted: #64748b;
-            --muted-light: #94a3b8;
-
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --surface-soft: #f1f5f9;
-
+            --light: #f8fafc;
             --border: #e2e8f0;
-            --border-strong: #cbd5e1;
-
-            --success: #16a34a;
-            --success-soft: rgba(22, 163, 74, 0.10);
-
-            --danger: #dc2626;
-            --danger-soft: rgba(220, 38, 38, 0.10);
-
-            --warning: #f59e0b;
-            --warning-soft: rgba(245, 158, 11, 0.13);
-
-            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
-            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
-            --shadow-lg: 0 28px 80px rgba(15, 23, 42, 0.16);
-
-            --radius-sm: 12px;
-            --radius-md: 18px;
-            --radius-lg: 30px;
-            --radius-full: 999px;
+            --white: #ffffff;
+            --danger: #ef4444;
+            --warning-bg: #fff7ed;
+            --warning-text: #9a3412;
+            --success-bg: #ecfdf5;
+            --success-text: #166534;
+            --info-bg: #eff6ff;
+            --info-text: #1d4ed8;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light); display: flex; flex-direction: column; min-height: 100vh; }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        header { background: var(--white); padding: 15px 6%; border-bottom: 1px solid var(--border); text-align: center; }
+        .logo { font-size: 1.8rem; font-weight: 900; color: var(--dark); text-decoration: none; }
+        .logo span { color: var(--primary); }
 
-        body {
-            min-height: 100vh;
-            font-family: 'Inter', sans-serif;
-            color: var(--text);
-            background:
-                radial-gradient(circle at 12% 12%, rgba(245, 130, 32, 0.16), transparent 28%),
-                radial-gradient(circle at 88% 8%, rgba(15, 23, 42, 0.12), transparent 31%),
-                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        button,
-        input {
-            font-family: inherit;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        .auth-page {
-            min-height: 100vh;
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(430px, 540px);
-        }
-
-        .brand-panel {
-            position: relative;
-            overflow: hidden;
-            background:
-                linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.96)),
-                radial-gradient(circle at 20% 20%, rgba(245, 130, 32, 0.35), transparent 35%);
-            color: white;
-            padding: 54px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .brand-panel::before {
-            content: "";
-            position: absolute;
-            right: -150px;
-            bottom: -190px;
-            width: 460px;
-            height: 460px;
-            border-radius: 999px;
-            background: rgba(245, 130, 32, 0.16);
-        }
-
-        .brand-panel::after {
-            content: "";
-            position: absolute;
-            left: -160px;
-            top: 110px;
-            width: 360px;
-            height: 360px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        .brand-content,
-        .security-stack {
-            position: relative;
-            z-index: 1;
-        }
-
-        .logo {
-            width: fit-content;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            color: white;
-            font-size: 2rem;
-            font-weight: 900;
-            letter-spacing: -0.06em;
-            margin-bottom: 70px;
-        }
-
-        .logo-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 17px;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, var(--primary), #ffb15c);
-            color: white;
-            box-shadow: 0 16px 35px rgba(245, 130, 32, 0.38);
-        }
-
-        .logo span {
-            color: var(--primary);
-        }
-
-        .brand-badge {
-            width: fit-content;
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-            padding: 9px 14px;
-            border-radius: var(--radius-full);
-            background: rgba(255, 255, 255, 0.10);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #e2e8f0;
-            font-size: 12px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 18px;
-        }
-
-        .brand-badge i {
-            color: var(--primary);
-        }
-
-        .brand-panel h1 {
-            max-width: 720px;
-            font-size: clamp(38px, 5vw, 62px);
-            line-height: 1.02;
-            font-weight: 900;
-            letter-spacing: -0.065em;
-            margin-bottom: 22px;
-        }
-
-        .brand-panel p {
-            max-width: 620px;
-            color: #cbd5e1;
-            font-size: 17px;
-            line-height: 1.8;
-            font-weight: 550;
-        }
-
-        .security-stack {
-            display: grid;
-            gap: 12px;
-            margin-top: 42px;
-        }
-
-        .security-item {
-            max-width: 620px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 14px 16px;
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            backdrop-filter: blur(12px);
-        }
-
-        .security-item i {
-            width: 30px;
-            height: 30px;
-            flex: 0 0 30px;
-            border-radius: 11px;
-            display: grid;
-            place-items: center;
-            background: rgba(245, 130, 32, 0.18);
-            color: var(--primary);
-            margin-top: 2px;
-        }
-
-        .security-item strong {
-            display: block;
-            color: white;
-            font-size: 13px;
-            font-weight: 900;
-            margin-bottom: 3px;
-        }
-
-        .security-item span {
-            display: block;
-            color: #cbd5e1;
-            font-size: 12px;
-            font-weight: 650;
-            line-height: 1.55;
-        }
-
-        .auth-panel {
-            min-height: 100vh;
-            padding: 42px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        .auth-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
         .auth-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
             width: 100%;
-            max-width: 490px;
-            background: rgba(255, 255, 255, 0.94);
+            max-width: 480px;
             border: 1px solid var(--border);
-            border-radius: 32px;
-            box-shadow: var(--shadow-lg);
-            backdrop-filter: blur(16px);
-            overflow: hidden;
         }
 
-        .card-header {
-            padding: 34px 34px 20px;
-            text-align: center;
-        }
-
-        .mobile-logo {
-            display: none;
-            width: fit-content;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin: 0 auto 24px;
-            font-size: 1.85rem;
-            font-weight: 900;
-            letter-spacing: -0.06em;
-            color: var(--dark);
-        }
-
-        .mobile-logo .logo-icon {
-            width: 42px;
-            height: 42px;
-        }
-
-        .mobile-logo span {
-            color: var(--primary);
-        }
-
-        .card-icon {
-            width: 76px;
-            height: 76px;
-            margin: 0 auto 18px;
-            border-radius: 26px;
-            display: grid;
-            place-items: center;
-            background: var(--primary-soft);
-            color: var(--primary);
-            font-size: 30px;
-        }
-
-        .card-header h2 {
-            color: var(--dark);
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: -0.045em;
-            margin-bottom: 10px;
-        }
-
-        .card-header p {
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.75;
-            font-weight: 600;
-        }
-
-        .card-body {
-            padding: 10px 34px 34px;
-        }
+        h2 { text-align: center; margin-bottom: 25px; font-weight: 800; color: var(--dark); }
 
         .login-tabs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            background: var(--surface-soft);
-            border-radius: var(--radius-full);
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 50px;
             padding: 5px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
+            margin-bottom: 25px;
         }
-
         .tab-btn {
-            min-height: 46px;
+            flex: 1;
             border: none;
-            border-radius: var(--radius-full);
-            background: transparent;
-            color: var(--muted);
+            padding: 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
             font-size: 14px;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: 0.25s ease;
+            color: #64748b;
+            background: transparent;
+            transition: 0.3s;
         }
-
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 10px 20px rgba(245, 130, 32, 0.22);
-        }
+        .tab-btn.active { background: var(--primary); color: white; }
 
         .disclaimer-box {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            background: var(--warning-soft);
-            border: 1px solid rgba(245, 158, 11, 0.22);
+            background: var(--warning-bg);
+            border: 1px solid #ffedd5;
             padding: 15px;
-            border-radius: 18px;
-            margin-bottom: 18px;
-            color: #92400e;
+            border-radius: 12px;
+            margin-bottom: 20px;
             font-size: 12px;
-            font-weight: 700;
-            line-height: 1.65;
+            color: var(--warning-text);
+            line-height: 1.5;
         }
 
-        .disclaimer-box i {
-            color: var(--warning);
-            margin-top: 3px;
+        .verify-box {
+            display: none;
+            background: var(--info-bg);
+            border: 1px solid #bfdbfe;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: var(--info-text);
+            line-height: 1.55;
         }
+        .verify-box.active { display: block; }
+        .verify-box strong { display: block; margin-bottom: 6px; font-size: 13px; }
+        .verify-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+        .verify-actions button {
+            border: none;
+            border-radius: 999px;
+            padding: 9px 12px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .btn-resend { background: var(--primary); color: white; }
+        .btn-resend:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .btn-clear { background: white; color: var(--info-text); border: 1px solid #bfdbfe !important; }
 
         .terms-container {
             display: flex;
             align-items: flex-start;
             gap: 10px;
-            margin-bottom: 18px;
-            padding: 14px;
-            border-radius: 18px;
-            background: white;
-            border: 1px solid var(--border);
-            color: #475569;
-            cursor: pointer;
-            transition: 0.25s ease;
-        }
-
-        .terms-container:hover {
-            border-color: rgba(245, 130, 32, 0.45);
-        }
-
-        .terms-container input {
-            width: 18px;
-            height: 18px;
-            margin-top: 2px;
-            accent-color: var(--primary);
-            cursor: pointer;
-            flex: 0 0 auto;
-        }
-
-        .terms-container span {
+            margin-bottom: 20px;
             font-size: 13px;
-            font-weight: 700;
-            line-height: 1.55;
-        }
-
-        .terms-container a {
-            color: var(--primary);
-            font-weight: 900;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        label.field-label {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
             color: #475569;
-            font-size: 12px;
-            font-weight: 900;
-            margin-bottom: 7px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
+            cursor: pointer;
         }
+        .terms-container input { width: 18px; height: 18px; margin-top: 2px; cursor: pointer; }
 
-        label.field-label .hint {
-            color: var(--muted-light);
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: none;
-            letter-spacing: 0;
-        }
-
-        .input-wrap {
-            position: relative;
-        }
-
-        .input-wrap .left-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--muted-light);
-            font-size: 15px;
-            pointer-events: none;
-        }
-
-        input[type="email"],
-        input[type="password"],
-        input[type="text"] {
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 8px; }
+        
+        input {
             width: 100%;
-            min-height: 54px;
-            padding: 13px 48px 13px 44px;
+            padding: 14px;
             border: 1px solid var(--border);
-            border-radius: 16px;
-            background: white;
-            color: var(--dark);
-            font-size: 15px;
-            font-weight: 750;
-            outline: none;
-            transition: 0.25s ease;
-        }
-
-        input::placeholder {
-            color: #a8b3c3;
-        }
-
-        input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.12);
-        }
-
-        input:disabled {
-            background: #e2e8f0;
-            color: #64748b;
-            cursor: not-allowed;
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 9px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 38px;
-            height: 38px;
-            border: none;
             border-radius: 12px;
-            background: transparent;
-            color: var(--muted);
-            display: grid;
-            place-items: center;
-            transition: 0.25s ease;
-        }
-
-        .password-toggle:hover {
-            background: var(--surface-soft);
-            color: var(--primary);
-        }
-
-        .field-error {
-            display: none;
-            margin-top: 8px;
-            color: var(--danger);
-            font-size: 12px;
-            font-weight: 800;
-            line-height: 1.45;
-        }
-
-        .form-group.invalid input {
-            border-color: var(--danger);
-            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.10);
-        }
-
-        .form-group.invalid .field-error {
-            display: block;
-        }
-
-        .btn {
-            width: 100%;
-            min-height: 56px;
-            border: none;
-            border-radius: 17px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 14px 18px;
+            background: #f1f5f9;
+            outline: none;
             font-size: 15px;
-            font-weight: 900;
-            transition: 0.25s ease;
         }
+        input:focus { border-color: var(--primary); background: white; }
 
         .btn-primary {
+            width: 100%;
+            padding: 16px;
             background: var(--primary);
             color: white;
-            box-shadow: 0 14px 28px rgba(245, 130, 32, 0.28);
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
         }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:disabled,
-        .btn-google:disabled {
-            background: #cbd5e1;
-            color: white;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-            border-color: #cbd5e1;
-        }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; }
 
         .btn-google {
+            width: 100%;
+            padding: 14px;
             background: white;
             color: var(--dark);
             border: 1px solid var(--border);
-            margin-top: 12px;
-        }
-
-        .btn-google:hover {
-            border-color: rgba(245, 130, 32, 0.45);
-            color: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        .google-icon {
-            width: 20px;
-            height: 20px;
-            display: block;
-        }
-
-        .divider {
-            margin: 22px 0;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
             display: flex;
             align-items: center;
-            gap: 14px;
-            color: var(--muted-light);
-            font-size: 12px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
+            justify-content: center;
+            gap: 12px;
         }
+        .btn-google:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .divider::before,
-        .divider::after {
-            content: "";
-            flex: 1;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .message-box {
-            display: none;
-            margin-top: 16px;
-            padding: 15px;
-            border-radius: 18px;
-            font-size: 13px;
-            font-weight: 750;
-            line-height: 1.65;
-        }
-
-        .message-box.show {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .message-box.success {
-            color: #166534;
-            background: var(--success-soft);
-            border: 1px solid rgba(22, 163, 74, 0.20);
-        }
-
-        .message-box.error {
-            color: #991b1b;
-            background: var(--danger-soft);
-            border: 1px solid rgba(220, 38, 38, 0.20);
-        }
-
-        .message-box.info {
-            color: #92400e;
-            background: var(--warning-soft);
-            border: 1px solid rgba(245, 158, 11, 0.22);
-        }
-
-        .message-box i {
-            margin-top: 3px;
-        }
-
-        .helper-row {
-            margin: 13px 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            flex-wrap: wrap;
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 750;
-        }
-
-        .helper-row a {
-            color: var(--primary);
-            font-weight: 900;
-        }
-
-        .helper-row a:hover {
-            color: var(--primary-hover);
-        }
+        .divider { margin: 25px 0; display: flex; align-items: center; color: #94a3b8; font-size: 13px; gap: 10px; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
 
         .register-section {
-            margin-top: 26px;
-            padding-top: 22px;
-            border-top: 1px dashed var(--border-strong);
+            margin-top: 30px;
             text-align: center;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border);
         }
-
-        .register-section p {
-            color: var(--muted);
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
+        .register-section p { font-size: 14px; color: #64748b; margin-bottom: 10px; }
         .btn-outline {
+            display: inline-block;
+            width: 100%;
+            padding: 14px;
             border: 2px solid var(--primary);
-            background: transparent;
             color: var(--primary);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 800;
+            transition: 0.3s;
         }
-
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-1px);
-        }
-
-        .tiny-text {
-            margin-top: 18px;
-            color: var(--muted-light);
-            font-size: 11px;
-            line-height: 1.6;
-            font-weight: 650;
-            text-align: center;
-        }
-
-        @media (max-width: 980px) {
-            .auth-page {
-                grid-template-columns: 1fr;
-            }
-
-            .brand-panel {
-                display: none;
-            }
-
-            .auth-panel {
-                min-height: 100vh;
-            }
-
-            .mobile-logo {
-                display: inline-flex;
-            }
-        }
-
-        @media (max-width: 560px) {
-            .auth-panel {
-                padding: 22px 16px;
-            }
-
-            .auth-card {
-                border-radius: 26px;
-            }
-
-            .card-header {
-                padding: 28px 22px 18px;
-            }
-
-            .card-body {
-                padding: 8px 22px 26px;
-            }
-
-            .card-header h2 {
-                font-size: 25px;
-            }
-
-            .login-tabs {
-                grid-template-columns: 1fr;
-                border-radius: 20px;
-            }
-
-            .tab-btn {
-                border-radius: 16px;
-            }
-        }
+        .btn-outline:hover { background: var(--primary); color: white; }
     </style>
 </head>
-
 <body>
 
-    <main class="auth-page">
+<header>
+    <a href="index.html" class="logo">BIL<span>HK</span></a>
+</header>
 
-        <section class="brand-panel" aria-label="BILHK säkerhet">
-            <div class="brand-content">
-                <a href="index.html" class="logo" aria-label="Gå till startsidan">
-                    <span class="logo-icon">
-                        <i class="fa-solid fa-car-side"></i>
-                    </span>
-                    BIL<span>HK</span>
-                </a>
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Logga in</h2>
 
-                <div class="brand-badge">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    Säker inloggning
-                </div>
+        <div class="login-tabs">
+            <button type="button" id="tabPrivate" class="tab-btn active" onclick="window.switchTab('private')">Privatperson</button>
+            <button type="button" id="tabBusiness" class="tab-btn" onclick="window.switchTab('business')">Företag</button>
+        </div>
 
-                <h1>Logga in och hantera dina bilannonser tryggt.</h1>
+        <div class="disclaimer-box">
+            <i class="fa-solid fa-shield-halved"></i>
+            <strong>Säkerhet först:</strong> Vi ansvarar inte för annonsernas innehåll. Betala aldrig i förskott och dela inte personlig information. All handel sker på egen risk.
+        </div>
 
-                <p>
-                    Fortsätt till ditt konto, hantera annonser, kontakta säljare och följ dina meddelanden.
-                    Läs alltid säkerhetsinformationen innan du genomför en affär.
-                </p>
+        <div class="verify-box" id="verifyBox">
+            <strong><i class="fa-solid fa-envelope-circle-check"></i> E-postadressen är inte verifierad</strong>
+            Kontrollera inkorgen och skräpposten. Du måste verifiera e-postadressen innan kontot får använda webbplatsen.
+            <div class="verify-actions">
+                <button type="button" class="btn-resend" id="resendVerificationBtn">Skicka ny verifieringslänk</button>
+                <button type="button" class="btn-clear" id="hideVerifyBoxBtn">Stäng</button>
             </div>
+        </div>
 
-            <div class="security-stack">
-                <div class="security-item">
-                    <i class="fa-solid fa-user-lock"></i>
-                    <div>
-                        <strong>Skydda kontot</strong>
-                        <span>Använd ett starkt lösenord och dela aldrig inloggningsuppgifter med någon.</span>
-                    </div>
-                </div>
+        <label class="terms-container">
+            <input type="checkbox" id="termsCheck">
+            <span>Jag godkänner villkoren och bekräftar ansvarsfriskrivningen.</span>
+        </label>
 
-                <div class="security-item">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <div>
-                        <strong>Undvik förskottsbetalning</strong>
-                        <span>Betala inte innan du kontrollerat bilen, säljaren och dokumentationen.</span>
-                    </div>
-                </div>
+        <div id="googleSection">
+            <button type="button" class="btn-google" id="googleLoginBtn" disabled>
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google">
+                Logga in med Google
+            </button>
+            <div class="divider"><span>eller</span></div>
+        </div>
 
-                <div class="security-item">
-                    <i class="fa-solid fa-comments"></i>
-                    <div>
-                        <strong>Kommunicera tydligt</strong>
-                        <span>Spara viktig information och kontrollera uppgifter innan affären avslutas.</span>
-                    </div>
-                </div>
-
-                <div class="security-item">
-                    <i class="fa-solid fa-lock"></i>
-                    <div>
-                        <strong>Säker inloggning</strong>
-                        <span>Dina uppgifter skyddas via Firebase Authentication och säkra inloggningsflöden.</span>
-                    </div>
-                </div>
-
-                <div class="security-item">
-                    <i class="fa-solid fa-user-shield"></i>
-                    <div>
-                        <strong>Trygg handel</strong>
-                        <span>Kommunicera säkert med köpare och säljare och kontrollera alltid fordonet före köp.</span>
-                    </div>
-                </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label id="emailLabel">E-postadress</label>
+                <input type="email" id="email" placeholder="din@epost.se" required autocomplete="email">
             </div>
-        </section>
-
-        <section class="auth-panel" aria-label="Logga in">
-            <div class="auth-card">
-
-                <div class="card-header">
-                    <a href="index.html" class="mobile-logo" aria-label="Gå till startsidan">
-                        <span class="logo-icon">
-                            <i class="fa-solid fa-car-side"></i>
-                        </span>
-                        BIL<span>HK</span>
-                    </a>
-
-                    <div class="card-icon">
-                        <i class="fa-solid fa-right-to-bracket"></i>
-                    </div>
-
-                    <h2>Logga in</h2>
-
-                    <p>
-                        Välj kontotyp och logga in för att fortsätta.
-                    </p>
-                </div>
-
-                <div class="card-body">
-
-                    <div class="login-tabs" role="tablist" aria-label="Kontotyp">
-                        <button type="button" id="tabPrivate" class="tab-btn active" data-account-type="Privat" role="tab" aria-selected="true">
-                            <i class="fa-solid fa-user"></i>
-                            Privatperson
-                        </button>
-
-                        <button type="button" id="tabBusiness" class="tab-btn" data-account-type="Foretag" role="tab" aria-selected="false">
-                            <i class="fa-solid fa-building"></i>
-                            Företag
-                        </button>
-                    </div>
-
-                    <div class="disclaimer-box">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>
-                            <strong>Säkerhet först:</strong>
-                            BILHK ansvarar inte för annonsernas innehåll eller privata affärer.
-                            Betala aldrig i förskott och dela inte känslig information.
-                        </span>
-                    </div>
-
-                    <label class="terms-container" for="termsCheck">
-                        <input type="checkbox" id="termsCheck">
-                        <span>
-                            Jag godkänner <a href="terms.html">villkoren</a> och bekräftar ansvarsfriskrivningen.
-                        </span>
-                    </label>
-
-                    <div id="googleSection">
-                        <button type="button" class="btn btn-google" id="googleLoginBtn" disabled>
-                            <img
-                                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                                alt=""
-                                class="google-icon"
-                                referrerpolicy="no-referrer"
-                            >
-                            Logga in med Google
-                        </button>
-
-                        <div class="divider">
-                            <span>eller</span>
-                        </div>
-                    </div>
-
-                    <form id="loginForm" novalidate>
-                        <div class="form-group" id="emailGroup">
-                            <label for="email" class="field-label">
-                                <span id="emailLabel">E-postadress</span>
-                                <span class="hint">Obligatoriskt</span>
-                            </label>
-
-                            <div class="input-wrap">
-                                <i class="fa-solid fa-envelope left-icon"></i>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    autocomplete="email"
-                                    inputmode="email"
-                                    placeholder="din@epost.se"
-                                    maxlength="254"
-                                    required
-                                >
-                            </div>
-
-                            <div class="field-error" id="emailError">
-                                Ange en giltig e-postadress.
-                            </div>
-                        </div>
-
-                        <div class="form-group" id="passwordGroup">
-                            <label for="password" class="field-label">
-                                <span>Lösenord</span>
-                                <span class="hint">Obligatoriskt</span>
-                            </label>
-
-                            <div class="input-wrap">
-                                <i class="fa-solid fa-lock left-icon"></i>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    autocomplete="current-password"
-                                    placeholder="Ditt lösenord"
-                                    minlength="6"
-                                    maxlength="128"
-                                    required
-                                >
-
-                                <button type="button" class="password-toggle" id="passwordToggle" aria-label="Visa lösenord">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                            </div>
-
-                            <div class="field-error" id="passwordError">
-                                Ange ditt lösenord.
-                            </div>
-                        </div>
-
-                        <div class="helper-row">
-                            <span id="selectedAccountText">Vald kontotyp: Privatperson</span>
-                            <a href="forgot-password.html">Glömt lösenord?</a>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary" id="loginBtn" disabled>
-                            <i class="fa-solid fa-right-to-bracket"></i>
-                            Logga in
-                        </button>
-
-                        <div class="message-box" id="messageBox" role="status" aria-live="polite"></div>
-                    </form>
-
-                    <div class="register-section">
-                        <p>Saknar du ett konto?</p>
-
-                        <a href="register.html" class="btn btn-outline">
-                            <i class="fa-solid fa-user-plus"></i>
-                            Skapa nytt konto
-                        </a>
-                    </div>
-
-                    <p class="tiny-text">
-                        BILHK frågar aldrig efter lösenord, kortuppgifter, BankID-koder eller engångskoder via meddelanden.
-                    </p>
-
-                </div>
+            <div class="form-group">
+                <label>Lösenord</label>
+                <input type="password" id="pass" placeholder="Ditt lösenord" required autocomplete="current-password">
             </div>
-        </section>
+            <button type="submit" class="btn-primary" id="loginBtn" disabled>Logga in</button>
+        </form>
 
-    </main>
+        <div class="register-section">
+            <p>Saknar du ett konto?</p>
+            <a href="register.html" class="btn-outline">Skapa nytt konto</a>
+        </div>
+    </div>
+</div>
 
-    <script type="module">
-        import {
-            auth,
-            googleProvider,
-            db
-        } from "./firebase-config.js";
+<script type="module">
+    import { auth, googleProvider, db } from './firebase-config.js';
+    import {
+        signInWithEmailAndPassword,
+        signInWithPopup,
+        sendEmailVerification,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        import {
-            signInWithEmailAndPassword,
-            signInWithPopup,
-            onAuthStateChanged
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    const termsCheck = document.getElementById('termsCheck');
+    const loginBtn = document.getElementById('loginBtn');
+    const googleBtn = document.getElementById('googleLoginBtn');
+    const loginForm = document.getElementById('loginForm');
+    const verifyBox = document.getElementById('verifyBox');
+    const resendVerificationBtn = document.getElementById('resendVerificationBtn');
+    const hideVerifyBoxBtn = document.getElementById('hideVerifyBoxBtn');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('pass');
 
-        import {
-            doc,
-            getDoc,
-            setDoc,
-            serverTimestamp
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    let selectedType = 'private';
+    let lastUnverifiedEmail = '';
+    let lastUnverifiedPassword = '';
+    let resendInProgress = false;
 
-        const LOGIN_CONFIG = {
-            ROUTES: {
-                HOME: "index.html",
-                ACCOUNT: "my-account.html",
-                TERMS: "terms.html",
-                REGISTER: "register.html",
-                FORGOT_PASSWORD: "forgot-password.html"
-            },
+    termsCheck.onchange = () => {
+        loginBtn.disabled = !termsCheck.checked;
+        googleBtn.disabled = !termsCheck.checked;
+    };
 
-            COLLECTIONS: {
-                USERS: "users"
-            },
+    window.switchTab = (type) => {
+        selectedType = type;
+        document.getElementById('tabPrivate').classList.toggle('active', type === 'private');
+        document.getElementById('tabBusiness').classList.toggle('active', type === 'business');
+        document.getElementById('emailLabel').innerText = type === 'private' ? 'E-postadress' : 'Företags-e-post';
+        document.getElementById('googleSection').style.display = type === 'private' ? 'block' : 'none';
+    };
 
-            ACCOUNT_TYPES: {
-                PRIVATE: "Privat",
-                BUSINESS: "Foretag"
-            },
+    loginForm.onsubmit = async (event) => {
+        event.preventDefault();
 
-            LIMITS: {
-                EMAIL_MAX_LENGTH: 254,
-                PASSWORD_MIN_LENGTH: 6,
-                PASSWORD_MAX_LENGTH: 128,
-                MIN_VISIBLE_DELAY_MS: 600
-            },
-
-            MESSAGES: {
-                TERMS_REQUIRED:
-                    "Du måste godkänna villkoren och ansvarsfriskrivningen innan du loggar in.",
-
-                INVALID_EMAIL:
-                    "Ange en giltig e-postadress.",
-
-                INVALID_PASSWORD:
-                    "Ange ditt lösenord.",
-
-                GENERIC_LOGIN_FAILED:
-                    "Fel e-post eller lösenord. Kontrollera uppgifterna och försök igen.",
-
-                NETWORK_ERROR:
-                    "Det gick inte att kontakta tjänsten just nu. Kontrollera internetanslutningen och försök igen.",
-
-                TOO_MANY_REQUESTS:
-                    "För många försök. Vänta en stund innan du försöker igen.",
-
-                ACCOUNT_TYPE_WARNING_PRIVATE:
-                    "Kontot verkar vara registrerat som privatperson. Du kan fortsätta, men kontrollera att du valt rätt kontotyp.",
-
-                ACCOUNT_TYPE_WARNING_BUSINESS:
-                    "Kontot verkar vara registrerat som företag. Du kan fortsätta, men kontrollera att du valt rätt kontotyp.",
-
-                GOOGLE_FOR_PRIVATE_ONLY:
-                    "Google-inloggning är aktiverad för privatpersoner på denna sida. Företagskonton loggar in med e-post och lösenord.",
-
-                LOGIN_SUCCESS:
-                    "Inloggningen lyckades. Du skickas vidare..."
-            }
-        };
-
-        const state = {
-            selectedAccountType: LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE,
-            isSubmitting: false,
-            authChecked: false
-        };
-
-        const elements = {
-            tabPrivate: document.getElementById("tabPrivate"),
-            tabBusiness: document.getElementById("tabBusiness"),
-
-            termsCheck: document.getElementById("termsCheck"),
-
-            googleSection: document.getElementById("googleSection"),
-            googleLoginBtn: document.getElementById("googleLoginBtn"),
-
-            form: document.getElementById("loginForm"),
-
-            emailGroup: document.getElementById("emailGroup"),
-            emailLabel: document.getElementById("emailLabel"),
-            email: document.getElementById("email"),
-            emailError: document.getElementById("emailError"),
-
-            passwordGroup: document.getElementById("passwordGroup"),
-            password: document.getElementById("password"),
-            passwordError: document.getElementById("passwordError"),
-            passwordToggle: document.getElementById("passwordToggle"),
-
-            selectedAccountText: document.getElementById("selectedAccountText"),
-
-            loginBtn: document.getElementById("loginBtn"),
-
-            messageBox: document.getElementById("messageBox")
-        };
-
-        initializeLoginPage();
-
-        function initializeLoginPage() {
-            attachGlobalErrorHandlers();
-            attachEventListeners();
-            updateAccountTypeUI();
-            updateButtonAvailability();
-            observeExistingSession();
+        if (!termsCheck.checked) {
+            alert('Du måste godkänna villkoren innan du loggar in.');
+            return;
         }
 
-        function attachEventListeners() {
-            elements.tabPrivate.addEventListener("click", () => {
-                setAccountType(LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE);
-            });
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
 
-            elements.tabBusiness.addEventListener("click", () => {
-                setAccountType(LOGIN_CONFIG.ACCOUNT_TYPES.BUSINESS);
-            });
-
-            elements.termsCheck.addEventListener("change", () => {
-                hideMessage();
-                updateButtonAvailability();
-            });
-
-            elements.email.addEventListener("input", () => {
-                clearFieldError("email");
-                hideMessage();
-            });
-
-            elements.email.addEventListener("blur", () => {
-                const email = normalizeEmail(elements.email.value);
-
-                if (email && !isValidEmail(email)) {
-                    setFieldError("email", LOGIN_CONFIG.MESSAGES.INVALID_EMAIL);
-                }
-            });
-
-            elements.password.addEventListener("input", () => {
-                clearFieldError("password");
-                hideMessage();
-            });
-
-            elements.passwordToggle.addEventListener("click", togglePasswordVisibility);
-
-            elements.form.addEventListener("submit", handleEmailPasswordLogin);
-
-            elements.googleLoginBtn.addEventListener("click", handleGoogleLogin);
+        if (!email || !password) {
+            alert('Ange e-postadress och lösenord.');
+            return;
         }
 
-        function observeExistingSession() {
-            onAuthStateChanged(auth, (user) => {
-                state.authChecked = true;
+        setLoginLoading(true, 'Kontrollerar...');
+        verifyBox.classList.remove('active');
 
-                if (user) {
-                    window.location.href = LOGIN_CONFIG.ROUTES.ACCOUNT;
-                }
-            });
-        }
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
 
-        function setAccountType(accountType) {
-            if (!Object.values(LOGIN_CONFIG.ACCOUNT_TYPES).includes(accountType)) {
+            await user.reload();
+
+            if (!user.emailVerified) {
+                lastUnverifiedEmail = email;
+                lastUnverifiedPassword = password;
+                await signOut(auth);
+                verifyBox.classList.add('active');
+                alert('Du måste verifiera din e-postadress innan du kan logga in.');
                 return;
             }
 
-            state.selectedAccountType = accountType;
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDoc = await getDoc(userDocRef);
 
-            clearAllFieldErrors();
-            hideMessage();
-            updateAccountTypeUI();
-            updateButtonAvailability();
-        }
-
-        function updateAccountTypeUI() {
-            const isPrivate = state.selectedAccountType === LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE;
-            const isBusiness = state.selectedAccountType === LOGIN_CONFIG.ACCOUNT_TYPES.BUSINESS;
-
-            elements.tabPrivate.classList.toggle("active", isPrivate);
-            elements.tabPrivate.setAttribute("aria-selected", String(isPrivate));
-
-            elements.tabBusiness.classList.toggle("active", isBusiness);
-            elements.tabBusiness.setAttribute("aria-selected", String(isBusiness));
-
-            elements.emailLabel.textContent = isPrivate ? "E-postadress" : "Företags-e-post";
-
-            elements.selectedAccountText.textContent = isPrivate
-                ? "Vald kontotyp: Privatperson"
-                : "Vald kontotyp: Företag";
-
-            elements.googleSection.style.display = isPrivate ? "block" : "none";
-
-            if (isBusiness) {
-                elements.googleLoginBtn.disabled = true;
-            }
-        }
-
-        function updateButtonAvailability() {
-            const acceptedTerms = elements.termsCheck.checked;
-
-            elements.loginBtn.disabled = !acceptedTerms || state.isSubmitting;
-
-            const isPrivate = state.selectedAccountType === LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE;
-            elements.googleLoginBtn.disabled = !acceptedTerms || state.isSubmitting || !isPrivate;
-        }
-
-        async function handleEmailPasswordLogin(event) {
-            event.preventDefault();
-
-            if (state.isSubmitting) {
-                return;
+            if (userDoc.exists() && userDoc.data().userType !== selectedType) {
+                alert(`Obs: Detta konto är registrerat som ${userDoc.data().userType === 'business' ? 'Företag' : 'Privat'}.`);
             }
 
-            clearAllFieldErrors();
-            hideMessage();
-
-            if (!elements.termsCheck.checked) {
-                showMessage("info", LOGIN_CONFIG.MESSAGES.TERMS_REQUIRED);
-                return;
-            }
-
-            const email = normalizeEmail(elements.email.value);
-            const password = String(elements.password.value || "");
-
-            const validation = validateEmailPasswordInput(email, password);
-
-            if (!validation.valid) {
-                focusFirstInvalidField();
-                return;
-            }
-
-            await submitEmailPasswordLogin(email, password);
-        }
-
-        async function submitEmailPasswordLogin(email, password) {
-            setSubmitting(true, "email");
-
-            const startedAt = Date.now();
-
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
-                const profile = await getUserProfile(userCredential.user.uid);
-
-                const warning = getAccountTypeWarning(profile);
-
-                await waitMinimumVisibleDelay(startedAt);
-
-                if (warning) {
-                    showMessage("info", warning);
-
-                    window.setTimeout(() => {
-                        window.location.href = LOGIN_CONFIG.ROUTES.ACCOUNT;
-                    }, 1100);
-
-                    return;
-                }
-
-                showMessage("success", LOGIN_CONFIG.MESSAGES.LOGIN_SUCCESS);
-
-                window.setTimeout(() => {
-                    window.location.href = LOGIN_CONFIG.ROUTES.ACCOUNT;
-                }, 650);
-            } catch (error) {
-                console.warn("[BILHK] Email login failed:", {
-                    code: error?.code,
-                    name: error?.name
-                });
-
-                await waitMinimumVisibleDelay(startedAt);
-
-                showSafeAuthError(error);
-            } finally {
-                setSubmitting(false, "email");
-            }
-        }
-
-        async function handleGoogleLogin() {
-            if (state.isSubmitting) {
-                return;
-            }
-
-            clearAllFieldErrors();
-            hideMessage();
-
-            if (state.selectedAccountType !== LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE) {
-                showMessage("info", LOGIN_CONFIG.MESSAGES.GOOGLE_FOR_PRIVATE_ONLY);
-                return;
-            }
-
-            if (!elements.termsCheck.checked) {
-                showMessage("info", LOGIN_CONFIG.MESSAGES.TERMS_REQUIRED);
-                return;
-            }
-
-            setSubmitting(true, "google");
-
-            const startedAt = Date.now();
-
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-
-                await ensureGoogleUserProfile(result.user);
-
-                await waitMinimumVisibleDelay(startedAt);
-
-                showMessage("success", LOGIN_CONFIG.MESSAGES.LOGIN_SUCCESS);
-
-                window.setTimeout(() => {
-                    window.location.href = LOGIN_CONFIG.ROUTES.ACCOUNT;
-                }, 650);
-            } catch (error) {
-                console.warn("[BILHK] Google login failed:", {
-                    code: error?.code,
-                    name: error?.name
-                });
-
-                await waitMinimumVisibleDelay(startedAt);
-
-                showSafeAuthError(error);
-            } finally {
-                setSubmitting(false, "google");
-            }
-        }
-
-        async function getUserProfile(uid) {
-            if (!uid) {
-                return null;
-            }
-
-            const userRef = doc(db, LOGIN_CONFIG.COLLECTIONS.USERS, uid);
-            const userSnap = await getDoc(userRef);
-
-            if (!userSnap.exists()) {
-                return null;
-            }
-
-            return userSnap.data();
-        }
-
-        async function ensureGoogleUserProfile(user) {
-            if (!user || !user.uid) {
-                return;
-            }
-
-            const userRef = doc(db, LOGIN_CONFIG.COLLECTIONS.USERS, user.uid);
-            const userSnap = await getDoc(userRef);
-
-            if (userSnap.exists()) {
-                await setDoc(
-                    userRef,
-                    {
-                        lastLoginAt: serverTimestamp(),
-                        lastProvider: "google.com"
-                    },
-                    { merge: true }
-                );
-
-                return;
-            }
-
-            await setDoc(
-                userRef,
-                {
-                    uid: user.uid,
-                    email: user.email || "",
-                    name: normalizeDisplayName(user.displayName || ""),
-                    photoURL: sanitizeURL(user.photoURL || ""),
-                    userType: LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE,
-                    provider: "google.com",
-                    acceptedTerms: true,
+            if (!userDoc.exists()) {
+                await setDoc(userDocRef, {
+                    name: user.displayName || '',
+                    email: user.email || email,
+                    userType: selectedType,
+                    provider: 'password',
+                    emailVerified: true,
                     createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp(),
+                    legalAccepted: true
+                }, { merge: true });
+            } else {
+                await setDoc(userDocRef, {
+                    emailVerified: true,
+                    updatedAt: serverTimestamp(),
                     lastLoginAt: serverTimestamp()
-                },
-                { merge: true }
-            );
-        }
-
-        function getAccountTypeWarning(profile) {
-            if (!profile || !profile.userType) {
-                return "";
+                }, { merge: true });
             }
 
-            const storedType = String(profile.userType);
+            window.location.href = 'index.html';
+        } catch (error) {
+            console.error('Login error:', error);
+            alert(getFriendlyAuthError(error));
+        } finally {
+            setLoginLoading(false, 'Logga in');
+        }
+    };
 
-            if (storedType === state.selectedAccountType) {
-                return "";
-            }
-
-            if (storedType === LOGIN_CONFIG.ACCOUNT_TYPES.PRIVATE) {
-                return LOGIN_CONFIG.MESSAGES.ACCOUNT_TYPE_WARNING_PRIVATE;
-            }
-
-            if (storedType === LOGIN_CONFIG.ACCOUNT_TYPES.BUSINESS) {
-                return LOGIN_CONFIG.MESSAGES.ACCOUNT_TYPE_WARNING_BUSINESS;
-            }
-
-            return "";
+    resendVerificationBtn.onclick = async () => {
+        if (resendInProgress) {
+            return;
         }
 
-        function validateEmailPasswordInput(email, password) {
-            let valid = true;
+        const email = lastUnverifiedEmail || emailInput.value.trim();
+        const password = lastUnverifiedPassword || passwordInput.value;
 
-            if (!isValidEmail(email)) {
-                setFieldError("email", LOGIN_CONFIG.MESSAGES.INVALID_EMAIL);
-                valid = false;
-            }
-
-            if (!isValidPasswordInput(password)) {
-                setFieldError("password", LOGIN_CONFIG.MESSAGES.INVALID_PASSWORD);
-                valid = false;
-            }
-
-            return { valid };
+        if (!email || !password) {
+            alert('Skriv e-post och lösenord igen för att skicka en ny verifieringslänk.');
+            return;
         }
 
-        function setSubmitting(isSubmitting, mode) {
-            state.isSubmitting = isSubmitting;
+        resendInProgress = true;
+        resendVerificationBtn.disabled = true;
+        resendVerificationBtn.textContent = 'Skickar...';
 
-            elements.email.disabled = isSubmitting;
-            elements.password.disabled = isSubmitting;
-            elements.termsCheck.disabled = isSubmitting;
-            elements.tabPrivate.disabled = isSubmitting;
-            elements.tabBusiness.disabled = isSubmitting;
-            elements.passwordToggle.disabled = isSubmitting;
-
-            if (isSubmitting && mode === "google") {
-                replaceButtonContent(elements.googleLoginBtn, "fa-solid fa-circle-notch fa-spin", "Loggar in...");
-            } else {
-                replaceGoogleButtonDefault();
-            }
-
-            if (isSubmitting && mode === "email") {
-                replaceButtonContent(elements.loginBtn, "fa-solid fa-circle-notch fa-spin", "Loggar in...");
-            } else {
-                replaceButtonContent(elements.loginBtn, "fa-solid fa-right-to-bracket", "Logga in");
-            }
-
-            updateButtonAvailability();
-        }
-
-        function showSafeAuthError(error) {
-            if (isNetworkLikeError(error)) {
-                showMessage("error", LOGIN_CONFIG.MESSAGES.NETWORK_ERROR);
-                return;
-            }
-
-            if (isRateLimitError(error)) {
-                showMessage("info", LOGIN_CONFIG.MESSAGES.TOO_MANY_REQUESTS);
-                return;
-            }
-
-            showMessage("error", LOGIN_CONFIG.MESSAGES.GENERIC_LOGIN_FAILED);
-        }
-
-        function isNetworkLikeError(error) {
-            const code = String(error?.code || "");
-
-            return [
-                "auth/network-request-failed",
-                "auth/internal-error",
-                "unavailable",
-                "deadline-exceeded"
-            ].includes(code);
-        }
-
-        function isRateLimitError(error) {
-            const code = String(error?.code || "");
-
-            return [
-                "auth/too-many-requests",
-                "resource-exhausted"
-            ].includes(code);
-        }
-
-        function togglePasswordVisibility() {
-            const currentlyPassword = elements.password.type === "password";
-
-            elements.password.type = currentlyPassword ? "text" : "password";
-
-            elements.passwordToggle.setAttribute(
-                "aria-label",
-                currentlyPassword ? "Dölj lösenord" : "Visa lösenord"
-            );
-
-            const icon = elements.passwordToggle.querySelector("i");
-
-            if (icon) {
-                icon.className = currentlyPassword
-                    ? "fa-solid fa-eye-slash"
-                    : "fa-solid fa-eye";
-            }
-        }
-
-        function setFieldError(field, message) {
-            const group = field === "email" ? elements.emailGroup : elements.passwordGroup;
-            const errorBox = field === "email" ? elements.emailError : elements.passwordError;
-
-            group.classList.add("invalid");
-            errorBox.textContent = message;
-        }
-
-        function clearFieldError(field) {
-            const group = field === "email" ? elements.emailGroup : elements.passwordGroup;
-
-            group.classList.remove("invalid");
-        }
-
-        function clearAllFieldErrors() {
-            elements.emailGroup.classList.remove("invalid");
-            elements.passwordGroup.classList.remove("invalid");
-        }
-
-        function focusFirstInvalidField() {
-            const firstInvalid = document.querySelector(".form-group.invalid input");
-
-            if (firstInvalid) {
-                firstInvalid.focus();
-            }
-        }
-
-        function showMessage(type, text) {
-            elements.messageBox.className = `message-box show ${type}`;
-            elements.messageBox.textContent = "";
-
-            const icon = document.createElement("i");
-
-            if (type === "success") {
-                icon.className = "fa-solid fa-circle-check";
-            } else if (type === "error") {
-                icon.className = "fa-solid fa-triangle-exclamation";
-            } else {
-                icon.className = "fa-solid fa-circle-info";
-            }
-
-            const span = document.createElement("span");
-            span.textContent = text;
-
-            elements.messageBox.appendChild(icon);
-            elements.messageBox.appendChild(span);
-        }
-
-        function hideMessage() {
-            elements.messageBox.className = "message-box";
-            elements.messageBox.textContent = "";
-        }
-
-        function replaceButtonContent(button, iconClass, text) {
-            button.textContent = "";
-
-            const icon = document.createElement("i");
-            icon.className = iconClass;
-
-            button.appendChild(icon);
-            button.appendChild(document.createTextNode(` ${text}`));
-        }
-
-        function replaceGoogleButtonDefault() {
-            elements.googleLoginBtn.textContent = "";
-
-            const image = document.createElement("img");
-            image.src = "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
-            image.alt = "";
-            image.className = "google-icon";
-            image.referrerPolicy = "no-referrer";
-
-            elements.googleLoginBtn.appendChild(image);
-            elements.googleLoginBtn.appendChild(document.createTextNode("Logga in med Google"));
-        }
-
-        function normalizeEmail(value) {
-            return String(value ?? "")
-                .trim()
-                .toLowerCase()
-                .slice(0, LOGIN_CONFIG.LIMITS.EMAIL_MAX_LENGTH);
-        }
-
-        function normalizeDisplayName(value) {
-            return String(value ?? "")
-                .replace(/\s+/g, " ")
-                .trim()
-                .slice(0, 100);
-        }
-
-        function isValidEmail(email) {
-            if (!email || email.length > LOGIN_CONFIG.LIMITS.EMAIL_MAX_LENGTH) {
-                return false;
-            }
-
-            return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-        }
-
-        function isValidPasswordInput(password) {
-            if (!password) {
-                return false;
-            }
-
-            if (password.length < LOGIN_CONFIG.LIMITS.PASSWORD_MIN_LENGTH) {
-                return false;
-            }
-
-            if (password.length > LOGIN_CONFIG.LIMITS.PASSWORD_MAX_LENGTH) {
-                return false;
-            }
-
-            return true;
-        }
-
-        function sanitizeURL(value) {
-            const clean = String(value || "").trim();
-
-            if (!clean) {
-                return "";
-            }
-
-            if (clean.startsWith("javascript:")) {
-                return "";
-            }
-
-            if (clean.startsWith("data:text/html")) {
-                return "";
-            }
-
-            return clean.slice(0, 1000);
-        }
-
-        function waitMinimumVisibleDelay(startedAt) {
-            const elapsed = Date.now() - startedAt;
-            const remaining = LOGIN_CONFIG.LIMITS.MIN_VISIBLE_DELAY_MS - elapsed;
-
-            if (remaining <= 0) {
-                return Promise.resolve();
-            }
-
-            return new Promise((resolve) => {
-                window.setTimeout(resolve, remaining);
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            await sendEmailVerification(userCredential.user, {
+                url: `${window.location.origin}${window.location.pathname.replace('login.html', 'login.html')}`,
+                handleCodeInApp: false
             });
+            await signOut(auth);
+            alert('En ny verifieringslänk har skickats. Kontrollera inkorgen och skräpposten.');
+        } catch (error) {
+            console.error('Resend verification error:', error);
+            alert(getFriendlyAuthError(error));
+        } finally {
+            resendInProgress = false;
+            resendVerificationBtn.disabled = false;
+            resendVerificationBtn.textContent = 'Skicka ny verifieringslänk';
+        }
+    };
+
+    hideVerifyBoxBtn.onclick = () => {
+        verifyBox.classList.remove('active');
+    };
+
+    googleBtn.onclick = async () => {
+        if (!termsCheck.checked) {
+            alert('Du måste godkänna villkoren innan du loggar in.');
+            return;
         }
 
-        function attachGlobalErrorHandlers() {
-            window.addEventListener("unhandledrejection", (event) => {
-                console.error("[BILHK] Unhandled promise rejection:", event.reason);
-            });
+        googleBtn.disabled = true;
 
-            window.addEventListener("error", (event) => {
-                console.error("[BILHK] Global login page error:", event.error || event.message);
-            });
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            await setDoc(doc(db, 'users', result.user.uid), {
+                name: result.user.displayName || '',
+                email: result.user.email || '',
+                userType: 'private',
+                provider: 'google',
+                emailVerified: Boolean(result.user.emailVerified),
+                updatedAt: serverTimestamp(),
+                lastLoginAt: serverTimestamp(),
+                legalAccepted: true
+            }, { merge: true });
+            window.location.href = 'index.html';
+        } catch (error) {
+            console.error('Google login error:', error);
+            alert('Kunde inte logga in med Google. Försök igen.');
+            googleBtn.disabled = !termsCheck.checked;
         }
-    </script>
+    };
 
+    function setLoginLoading(isLoading, text) {
+        loginBtn.disabled = isLoading || !termsCheck.checked;
+        loginBtn.textContent = text;
+        emailInput.disabled = isLoading;
+        passwordInput.disabled = isLoading;
+    }
+
+    function getFriendlyAuthError(error) {
+        const code = error && error.code ? error.code : '';
+
+        if (code === 'auth/invalid-credential' || code === 'auth/user-not-found' || code === 'auth/wrong-password') {
+            return 'Fel e-post eller lösenord.';
+        }
+
+        if (code === 'auth/too-many-requests') {
+            return 'För många försök. Vänta en stund och försök igen.';
+        }
+
+        if (code === 'auth/invalid-email') {
+            return 'E-postadressen är inte giltig.';
+        }
+
+        if (code === 'auth/network-request-failed') {
+            return 'Nätverksfel. Kontrollera internetanslutningen och försök igen.';
+        }
+
+        return 'Kunde inte logga in. Försök igen.';
+    }
+</script>
 </body>
 </html>
