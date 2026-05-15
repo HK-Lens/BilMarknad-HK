@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logga in | BilMarknad-HK</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -19,20 +19,48 @@
             --danger: #ef4444;
             --warning-bg: #fff7ed;
             --warning-text: #9a3412;
-            --success-bg: #ecfdf5;
-            --success-text: #166534;
-            --info-bg: #eff6ff;
-            --info-text: #1d4ed8;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--light); display: flex; flex-direction: column; min-height: 100vh; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-        header { background: var(--white); padding: 15px 6%; border-bottom: 1px solid var(--border); text-align: center; }
-        .logo { font-size: 1.8rem; font-weight: 900; color: var(--dark); text-decoration: none; }
-        .logo span { color: var(--primary); }
+        body {
+            background-color: var(--light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-        .auth-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        header {
+            background: var(--white);
+            padding: 15px 6%;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--dark);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .auth-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
         .auth-card {
             background: var(--white);
             padding: 40px;
@@ -43,7 +71,12 @@
             border: 1px solid var(--border);
         }
 
-        h2 { text-align: center; margin-bottom: 25px; font-weight: 800; color: var(--dark); }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 800;
+            color: var(--dark);
+        }
 
         .login-tabs {
             display: flex;
@@ -52,6 +85,7 @@
             padding: 5px;
             margin-bottom: 25px;
         }
+
         .tab-btn {
             flex: 1;
             border: none;
@@ -64,7 +98,11 @@
             background: transparent;
             transition: 0.3s;
         }
-        .tab-btn.active { background: var(--primary); color: white; }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
 
         .disclaimer-box {
             background: var(--warning-bg);
@@ -79,29 +117,19 @@
 
         .verify-box {
             display: none;
-            background: var(--info-bg);
+            background: #eff6ff;
             border: 1px solid #bfdbfe;
             padding: 15px;
             border-radius: 12px;
             margin-bottom: 20px;
             font-size: 12px;
-            color: var(--info-text);
-            line-height: 1.55;
+            color: #1e40af;
+            line-height: 1.6;
         }
-        .verify-box.active { display: block; }
-        .verify-box strong { display: block; margin-bottom: 6px; font-size: 13px; }
-        .verify-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-        .verify-actions button {
-            border: none;
-            border-radius: 999px;
-            padding: 9px 12px;
-            font-size: 12px;
-            font-weight: 800;
-            cursor: pointer;
+
+        .verify-box.show {
+            display: block;
         }
-        .btn-resend { background: var(--primary); color: white; }
-        .btn-resend:disabled { background: #cbd5e1; cursor: not-allowed; }
-        .btn-clear { background: white; color: var(--info-text); border: 1px solid #bfdbfe !important; }
 
         .terms-container {
             display: flex;
@@ -112,11 +140,26 @@
             color: #475569;
             cursor: pointer;
         }
-        .terms-container input { width: 18px; height: 18px; margin-top: 2px; cursor: pointer; }
 
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 8px; }
-        
+        .terms-container input {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
         input {
             width: 100%;
             padding: 14px;
@@ -126,7 +169,11 @@
             outline: none;
             font-size: 15px;
         }
-        input:focus { border-color: var(--primary); background: white; }
+
+        input:focus {
+            border-color: var(--primary);
+            background: white;
+        }
 
         .btn-primary {
             width: 100%;
@@ -140,8 +187,15 @@
             cursor: pointer;
             transition: 0.3s;
         }
-        .btn-primary:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-1px); }
-        .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
 
         .btn-google {
             width: 100%;
@@ -158,10 +212,27 @@
             justify-content: center;
             gap: 12px;
         }
-        .btn-google:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .divider { margin: 25px 0; display: flex; align-items: center; color: #94a3b8; font-size: 13px; gap: 10px; }
-        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
+        .btn-google:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 13px;
+            gap: 10px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
 
         .register-section {
             margin-top: 30px;
@@ -169,7 +240,13 @@
             padding-top: 20px;
             border-top: 1px dashed var(--border);
         }
-        .register-section p { font-size: 14px; color: #64748b; margin-bottom: 10px; }
+
+        .register-section p {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
         .btn-outline {
             display: inline-block;
             width: 100%;
@@ -181,9 +258,14 @@
             font-weight: 800;
             transition: 0.3s;
         }
-        .btn-outline:hover { background: var(--primary); color: white; }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
     </style>
 </head>
+
 <body>
 
 <header>
@@ -195,258 +277,4 @@
         <h2>Logga in</h2>
 
         <div class="login-tabs">
-            <button type="button" id="tabPrivate" class="tab-btn active" onclick="window.switchTab('private')">Privatperson</button>
-            <button type="button" id="tabBusiness" class="tab-btn" onclick="window.switchTab('business')">Företag</button>
-        </div>
-
-        <div class="disclaimer-box">
-            <i class="fa-solid fa-shield-halved"></i>
-            <strong>Säkerhet först:</strong> Vi ansvarar inte för annonsernas innehåll. Betala aldrig i förskott och dela inte personlig information. All handel sker på egen risk.
-        </div>
-
-        <div class="verify-box" id="verifyBox">
-            <strong><i class="fa-solid fa-envelope-circle-check"></i> E-postadressen är inte verifierad</strong>
-            Kontrollera inkorgen och skräpposten. Du måste verifiera e-postadressen innan kontot får använda webbplatsen.
-            <div class="verify-actions">
-                <button type="button" class="btn-resend" id="resendVerificationBtn">Skicka ny verifieringslänk</button>
-                <button type="button" class="btn-clear" id="hideVerifyBoxBtn">Stäng</button>
-            </div>
-        </div>
-
-        <label class="terms-container">
-            <input type="checkbox" id="termsCheck">
-            <span>Jag godkänner villkoren och bekräftar ansvarsfriskrivningen.</span>
-        </label>
-
-        <div id="googleSection">
-            <button type="button" class="btn-google" id="googleLoginBtn" disabled>
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google">
-                Logga in med Google
-            </button>
-            <div class="divider"><span>eller</span></div>
-        </div>
-
-        <form id="loginForm">
-            <div class="form-group">
-                <label id="emailLabel">E-postadress</label>
-                <input type="email" id="email" placeholder="din@epost.se" required autocomplete="email">
-            </div>
-            <div class="form-group">
-                <label>Lösenord</label>
-                <input type="password" id="pass" placeholder="Ditt lösenord" required autocomplete="current-password">
-            </div>
-            <button type="submit" class="btn-primary" id="loginBtn" disabled>Logga in</button>
-        </form>
-
-        <div class="register-section">
-            <p>Saknar du ett konto?</p>
-            <a href="register.html" class="btn-outline">Skapa nytt konto</a>
-        </div>
-    </div>
-</div>
-
-<script type="module">
-    import { auth, googleProvider, db } from './firebase-config.js';
-    import {
-        signInWithEmailAndPassword,
-        signInWithPopup,
-        sendEmailVerification,
-        signOut
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const termsCheck = document.getElementById('termsCheck');
-    const loginBtn = document.getElementById('loginBtn');
-    const googleBtn = document.getElementById('googleLoginBtn');
-    const loginForm = document.getElementById('loginForm');
-    const verifyBox = document.getElementById('verifyBox');
-    const resendVerificationBtn = document.getElementById('resendVerificationBtn');
-    const hideVerifyBoxBtn = document.getElementById('hideVerifyBoxBtn');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('pass');
-
-    let selectedType = 'private';
-    let lastUnverifiedEmail = '';
-    let lastUnverifiedPassword = '';
-    let resendInProgress = false;
-
-    termsCheck.onchange = () => {
-        loginBtn.disabled = !termsCheck.checked;
-        googleBtn.disabled = !termsCheck.checked;
-    };
-
-    window.switchTab = (type) => {
-        selectedType = type;
-        document.getElementById('tabPrivate').classList.toggle('active', type === 'private');
-        document.getElementById('tabBusiness').classList.toggle('active', type === 'business');
-        document.getElementById('emailLabel').innerText = type === 'private' ? 'E-postadress' : 'Företags-e-post';
-        document.getElementById('googleSection').style.display = type === 'private' ? 'block' : 'none';
-    };
-
-    loginForm.onsubmit = async (event) => {
-        event.preventDefault();
-
-        if (!termsCheck.checked) {
-            alert('Du måste godkänna villkoren innan du loggar in.');
-            return;
-        }
-
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
-
-        if (!email || !password) {
-            alert('Ange e-postadress och lösenord.');
-            return;
-        }
-
-        setLoginLoading(true, 'Kontrollerar...');
-        verifyBox.classList.remove('active');
-
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-
-            await user.reload();
-
-            if (!user.emailVerified) {
-                lastUnverifiedEmail = email;
-                lastUnverifiedPassword = password;
-                await signOut(auth);
-                verifyBox.classList.add('active');
-                alert('Du måste verifiera din e-postadress innan du kan logga in.');
-                return;
-            }
-
-            const userDocRef = doc(db, 'users', user.uid);
-            const userDoc = await getDoc(userDocRef);
-
-            if (userDoc.exists() && userDoc.data().userType !== selectedType) {
-                alert(`Obs: Detta konto är registrerat som ${userDoc.data().userType === 'business' ? 'Företag' : 'Privat'}.`);
-            }
-
-            if (!userDoc.exists()) {
-                await setDoc(userDocRef, {
-                    name: user.displayName || '',
-                    email: user.email || email,
-                    userType: selectedType,
-                    provider: 'password',
-                    emailVerified: true,
-                    createdAt: serverTimestamp(),
-                    updatedAt: serverTimestamp(),
-                    legalAccepted: true
-                }, { merge: true });
-            } else {
-                await setDoc(userDocRef, {
-                    emailVerified: true,
-                    updatedAt: serverTimestamp(),
-                    lastLoginAt: serverTimestamp()
-                }, { merge: true });
-            }
-
-            window.location.href = 'index.html';
-        } catch (error) {
-            console.error('Login error:', error);
-            alert(getFriendlyAuthError(error));
-        } finally {
-            setLoginLoading(false, 'Logga in');
-        }
-    };
-
-    resendVerificationBtn.onclick = async () => {
-        if (resendInProgress) {
-            return;
-        }
-
-        const email = lastUnverifiedEmail || emailInput.value.trim();
-        const password = lastUnverifiedPassword || passwordInput.value;
-
-        if (!email || !password) {
-            alert('Skriv e-post och lösenord igen för att skicka en ny verifieringslänk.');
-            return;
-        }
-
-        resendInProgress = true;
-        resendVerificationBtn.disabled = true;
-        resendVerificationBtn.textContent = 'Skickar...';
-
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            await sendEmailVerification(userCredential.user, {
-                url: `${window.location.origin}${window.location.pathname.replace('login.html', 'login.html')}`,
-                handleCodeInApp: false
-            });
-            await signOut(auth);
-            alert('En ny verifieringslänk har skickats. Kontrollera inkorgen och skräpposten.');
-        } catch (error) {
-            console.error('Resend verification error:', error);
-            alert(getFriendlyAuthError(error));
-        } finally {
-            resendInProgress = false;
-            resendVerificationBtn.disabled = false;
-            resendVerificationBtn.textContent = 'Skicka ny verifieringslänk';
-        }
-    };
-
-    hideVerifyBoxBtn.onclick = () => {
-        verifyBox.classList.remove('active');
-    };
-
-    googleBtn.onclick = async () => {
-        if (!termsCheck.checked) {
-            alert('Du måste godkänna villkoren innan du loggar in.');
-            return;
-        }
-
-        googleBtn.disabled = true;
-
-        try {
-            const result = await signInWithPopup(auth, googleProvider);
-            await setDoc(doc(db, 'users', result.user.uid), {
-                name: result.user.displayName || '',
-                email: result.user.email || '',
-                userType: 'private',
-                provider: 'google',
-                emailVerified: Boolean(result.user.emailVerified),
-                updatedAt: serverTimestamp(),
-                lastLoginAt: serverTimestamp(),
-                legalAccepted: true
-            }, { merge: true });
-            window.location.href = 'index.html';
-        } catch (error) {
-            console.error('Google login error:', error);
-            alert('Kunde inte logga in med Google. Försök igen.');
-            googleBtn.disabled = !termsCheck.checked;
-        }
-    };
-
-    function setLoginLoading(isLoading, text) {
-        loginBtn.disabled = isLoading || !termsCheck.checked;
-        loginBtn.textContent = text;
-        emailInput.disabled = isLoading;
-        passwordInput.disabled = isLoading;
-    }
-
-    function getFriendlyAuthError(error) {
-        const code = error && error.code ? error.code : '';
-
-        if (code === 'auth/invalid-credential' || code === 'auth/user-not-found' || code === 'auth/wrong-password') {
-            return 'Fel e-post eller lösenord.';
-        }
-
-        if (code === 'auth/too-many-requests') {
-            return 'För många försök. Vänta en stund och försök igen.';
-        }
-
-        if (code === 'auth/invalid-email') {
-            return 'E-postadressen är inte giltig.';
-        }
-
-        if (code === 'auth/network-request-failed') {
-            return 'Nätverksfel. Kontrollera internetanslutningen och försök igen.';
-        }
-
-        return 'Kunde inte logga in. Försök igen.';
-    }
-</script>
-</body>
-</html>
+            <button type="button"
