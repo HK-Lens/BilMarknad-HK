@@ -2,112 +2,674 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sökresultat | BILHK</title>
+    <meta name="description" content="Sökresultat för bilannonser på BILHK med säkra kort, favoriter och kompatibla filter från avancerad sökning.">
+    <meta name="robots" content="index, follow">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; padding: 20px; }
-        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: auto; }
-        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; position: relative; }
-        .favorite-btn { position:absolute; top:12px; right:12px; width:42px; height:42px; border:none; border-radius:50%; background:rgba(255,255,255,.95); color:#94a3b8; box-shadow:0 8px 20px rgba(15,23,42,.18); cursor:pointer; font-size:18px; z-index:5; }
-        .favorite-btn.saved { color:#ef4444; }
-        .no-results { text-align: center; padding: 100px; grid-column: 1/-1; }
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e67312;
+            --dark: #0f172a;
+            --muted: #64748b;
+            --muted-light: #94a3b8;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-soft: #f1f5f9;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --shadow-sm: 0 6px 18px rgba(15,23,42,.08);
+            --shadow-md: 0 16px 34px rgba(15,23,42,.12);
+            --radius-card: 20px;
+            --max-width: 1200px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding: 20px; }
+        a { color: inherit; text-decoration: none; }
+        button { font-family: inherit; }
+
+        .page-header { max-width: var(--max-width); margin: 0 auto 30px; text-align: center; }
+        .page-header h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 900; letter-spacing: -.05em; margin-bottom: 10px; }
+        .page-header p { color: var(--muted); font-size: 14px; font-weight: 700; }
+
+        .summary-bar {
+            max-width: var(--max-width);
+            margin: 0 auto 20px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .summary-bar strong { font-size: 13px; font-weight: 900; color: var(--dark); }
+        .summary-bar span { font-size: 12px; color: var(--muted); font-weight: 700; }
+        .summary-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .summary-link {
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 9px 13px;
+            font-size: 12px;
+            font-weight: 900;
+            background: white;
+            color: var(--dark);
+            transition: .25s;
+        }
+        .summary-link:hover { border-color: var(--primary); color: var(--primary-hover); transform: translateY(-1px); }
+
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: var(--max-width); margin: auto; }
+        .car-card { background: white; border-radius: var(--radius-card); overflow: hidden; border: 1px solid var(--border); cursor: pointer; position: relative; box-shadow: var(--shadow-sm); transition: .25s; }
+        .car-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .car-card:focus-within { outline: 3px solid rgba(245,130,32,.22); }
+        .image-wrap { position: relative; width: 100%; height: 200px; background: var(--surface-soft); overflow: hidden; }
+        .image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; }
+        .car-card:hover .image-wrap img { transform: scale(1.04); }
+        .favorite-btn { position:absolute; top:12px; right:12px; width:42px; height:42px; border:none; border-radius:50%; background:rgba(255,255,255,.95); color:#94a3b8; box-shadow:0 8px 20px rgba(15,23,42,.18); cursor:pointer; font-size:18px; z-index:5; display: grid; place-items: center; transition: .25s; }
+        .favorite-btn:hover { color: var(--danger); transform: scale(1.06); }
+        .favorite-btn.saved { color: var(--danger); }
+        .favorite-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+        .card-content { padding: 15px; }
+        .card-price { color: var(--primary); font-size: 22px; font-weight: 900; margin-bottom: 5px; }
+        .card-title { color: var(--dark); font-size: 15px; font-weight: 900; margin-bottom: 8px; line-height: 1.4; }
+        .card-meta { font-size: 12px; color: var(--muted); font-weight: 800; line-height: 1.6; }
+        .card-extra { margin-top: 9px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .mini-tag { padding: 5px 8px; border-radius: 999px; background: #fff5eb; color: var(--primary-hover); font-size: 10px; font-weight: 900; text-transform: uppercase; }
+        .no-results { text-align: center; padding: 80px 24px; grid-column: 1/-1; background: white; border: 1px solid var(--border); border-radius: 24px; color: var(--muted); font-weight: 800; }
+        .no-results i { display: block; color: var(--primary); font-size: 34px; margin-bottom: 14px; }
+        .error-box { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+
+        @media (max-width: 640px) {
+            body { padding: 14px; }
+            .results-grid { grid-template-columns: 1fr; }
+            .summary-bar { align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
-    <h2 style="text-align:center; margin-bottom:30px;">Hittade fordon</h2>
-    <div id="resultsGrid" class="results-grid"></div>
+    <header class="page-header">
+        <h2>Hittade fordon</h2>
+        <p id="resultSubtitle">Säkra sökresultat med filter som matchar BILHK:s annonsdata.</p>
+    </header>
+
+    <section class="summary-bar" aria-live="polite">
+        <div>
+            <strong id="resultCountText">Förbereder sökning...</strong><br>
+            <span id="activeFiltersText">Filter kontrolleras.</span>
+        </div>
+        <div class="summary-actions">
+            <a href="filter.html" class="summary-link"><i class="fa-solid fa-sliders"></i> Ändra filter</a>
+            <a href="index.html" class="summary-link"><i class="fa-solid fa-house"></i> Hem</a>
+        </div>
+    </section>
+
+    <main id="resultsGrid" class="results-grid"></main>
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
     import { collection, getDocs, query, where, doc, getDoc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+    const CONFIG = {
+        PLACEHOLDER_IMAGE: 'placeholder.jpg',
+        LIMITS: {
+            MIN_YEAR: 1900,
+            MAX_YEAR: 2030,
+            MIN_PRICE: 0,
+            MAX_PRICE: 20000000,
+            MIN_MILEAGE: 0,
+            MAX_MILEAGE: 2000000,
+            MAX_TEXT_LENGTH: 120
+        }
+    };
+
     const urlParams = new URLSearchParams(window.location.search);
     const grid = document.getElementById('resultsGrid');
+    const resultCountText = document.getElementById('resultCountText');
+    const activeFiltersText = document.getElementById('activeFiltersText');
+    const resultSubtitle = document.getElementById('resultSubtitle');
+
     let currentUser = null;
     let savedFavoriteIds = new Set();
-    let favoriteCarCache = {};
+    const favoriteCarCache = new Map();
 
     onAuthStateChanged(auth, async (user) => {
-        currentUser = user;
-        if (user) await loadUserFavorites();
-        else savedFavoriteIds = new Set();
+        currentUser = user || null;
+        if (currentUser) {
+            await loadUserFavorites();
+        } else {
+            savedFavoriteIds = new Set();
+        }
         updateFavoriteButtons();
     });
 
     async function loadUserFavorites() {
-        const qFav = query(collection(db, "favorites"), where("userId", "==", currentUser.uid));
-        const snap = await getDocs(qFav);
-        savedFavoriteIds = new Set(snap.docs.map(d => d.data().carId));
+        try {
+            const qFav = query(collection(db, 'favorites'), where('userId', '==', currentUser.uid));
+            const snap = await getDocs(qFav);
+            savedFavoriteIds = new Set(
+                snap.docs
+                    .map((favoriteDoc) => normalizeText(favoriteDoc.data()?.carId))
+                    .filter(Boolean)
+            );
+        } catch (error) {
+            console.warn('Favorites could not be loaded:', error);
+            savedFavoriteIds = new Set();
+        }
     }
 
     function updateFavoriteButtons() {
-        document.querySelectorAll('.favorite-btn').forEach(btn => {
-            const isSaved = savedFavoriteIds.has(btn.dataset.carId);
-            btn.classList.toggle('saved', isSaved);
-            btn.title = isSaved ? 'Ta bort från sparade' : 'Spara bilen';
-            btn.innerHTML = `<i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-heart"></i>`;
+        document.querySelectorAll('.favorite-btn').forEach((button) => {
+            const carId = button.dataset.carId || '';
+            const isSaved = savedFavoriteIds.has(carId);
+            button.classList.toggle('saved', isSaved);
+            button.title = isSaved ? 'Ta bort från sparade' : 'Spara bilen';
+            button.setAttribute('aria-label', isSaved ? 'Ta bort från sparade' : 'Spara bilen');
+            button.replaceChildren(createIcon(isSaved ? 'fa-solid fa-heart' : 'fa-regular fa-heart'));
         });
     }
 
-    window.toggleFavorite = async (event, carId) => {
+    async function toggleFavorite(event, carId) {
         event.stopPropagation();
-        if (!currentUser) { window.location.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`; return; }
-        const car = favoriteCarCache[carId] || {};
-        const favRef = doc(db, "favorites", `${currentUser.uid}_${carId}`);
-        const favSnap = await getDoc(favRef);
-        if (favSnap.exists()) {
-            await deleteDoc(favRef);
-            savedFavoriteIds.delete(carId);
-        } else {
-            await setDoc(favRef, { userId: currentUser.uid, carId, brand: car.brand || '', model: car.model || '', price: Number(car.price) || 0, image: car.images?.[0] || 'placeholder.jpg', createdAt: serverTimestamp() });
-            savedFavoriteIds.add(carId);
+        event.preventDefault();
+
+        const safeCarId = normalizeDocumentId(carId);
+        if (!safeCarId) return;
+
+        if (!currentUser) {
+            window.location.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`;
+            return;
         }
-        updateFavoriteButtons();
-    };
 
-    async function loadResults() {
-        grid.innerHTML = "<p class='no-results'>Söker efter matchningar...</p>";
-        
+        const button = event.currentTarget;
+        button.disabled = true;
+
         try {
-            const snapshot = await getDocs(collection(db, "cars"));
-            grid.innerHTML = "";
-            let foundCount = 0;
+            const car = favoriteCarCache.get(safeCarId) || {};
+            const favRef = doc(db, 'favorites', `${currentUser.uid}_${safeCarId}`);
+            const favSnap = await getDoc(favRef);
 
-            snapshot.forEach(doc => {
-                const car = doc.data();
-                favoriteCarCache[doc.id] = car;
-                
-                // 💡 منطق الفلترة المطابق لصفحة البيع
-                const matchesBrand = urlParams.get('brand') === 'all' || !urlParams.get('brand') || car.brand === urlParams.get('brand');
-                const matchesKar = urlParams.get('kar') === 'all' || car.karosseri === urlParams.get('kar');
-                const matchesFuel = urlParams.get('fuel') === 'all' || !urlParams.get('fuel') || car.fuel === urlParams.get('fuel');
-                
-                // فلترة السعر
-                const price = Number(car.price);
-                const minP = Number(urlParams.get('minP')) || 0;
-                const maxP = Number(urlParams.get('maxP')) || Infinity;
-
-                if (matchesBrand && matchesKar && matchesFuel && price >= minP && price <= maxP) {
-                    foundCount++;
-                    grid.innerHTML += `
-                        <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
-                            <button class="favorite-btn" data-car-id="${doc.id}" onclick="toggleFavorite(event, '${doc.id}')" title="Spara bilen">
-                                <i class="fa-regular fa-heart"></i>
-                            </button>
-                            <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:200px; object-fit:cover;">
-                            <div style="padding:15px;">
-                                <h3 style="color:#f58220;">${price.toLocaleString()} kr</h3>
-                                <p><strong>${car.brand} ${car.model}</strong></p>
-                                <p style="font-size:12px; color:#64748b;">${car.year} | ${car.mileage} mil | ${car.fuel}</p>
-                            </div>
-                        </div>`;
-                }
-            });
+            if (favSnap.exists()) {
+                await deleteDoc(favRef);
+                savedFavoriteIds.delete(safeCarId);
+            } else {
+                await setDoc(favRef, buildFavoriteData(currentUser.uid, safeCarId, car));
+                savedFavoriteIds.add(safeCarId);
+            }
 
             updateFavoriteButtons();
-            if (foundCount === 0) grid.innerHTML = "<div class='no-results'>Inga fordon matchade din sökning. Prova bredare filter!</div>";
-        } catch (err) { console.error(err); }
+        } catch (error) {
+            console.error('Favorite could not be updated:', error);
+            alert('Kunde inte uppdatera sparade bilar just nu. Kontrollera Firebase-reglerna för favorites.');
+        } finally {
+            button.disabled = false;
+        }
+    }
+
+    function buildFavoriteData(userId, carId, car) {
+        const image = getFirstSafeImage(car);
+        return {
+            userId,
+            carId,
+            sellerId: car.sellerId || '',
+            brand: car.brand || '',
+            model: car.model || '',
+            year: Number(car.year) || null,
+            mileage: Number(car.mileage) || null,
+            price: Number(car.price) || 0,
+            image,
+            createdAt: serverTimestamp()
+        };
+    }
+
+    async function loadResults() {
+        renderStatus('Söker efter matchningar...', 'Filter och annonser laddas säkert.');
+
+        try {
+            const snapshot = await getDocs(collection(db, 'cars'));
+            const filters = extractFiltersFromParams(urlParams);
+            const normalizedCars = snapshot.docs
+                .map((documentSnapshot) => normalizeCarDocument(documentSnapshot.id, documentSnapshot.data()))
+                .filter(shouldDisplayCar);
+
+            normalizedCars.forEach((car) => favoriteCarCache.set(car.id, car));
+
+            const results = normalizedCars.filter((car) => doesCarMatchFilters(car, filters));
+
+            renderResults(results, filters);
+            updateFavoriteButtons();
+        } catch (error) {
+            console.error('Results could not be loaded:', error);
+            renderError('Ett fel uppstod när annonserna skulle laddas. Försök igen senare.');
+        }
+    }
+
+    function renderResults(cars, filters) {
+        grid.replaceChildren();
+
+        resultCountText.textContent = `${cars.length} fordon hittades`;
+        activeFiltersText.textContent = buildActiveFiltersText(filters);
+        resultSubtitle.textContent = cars.length === 1 ? 'En annons matchar din sökning.' : 'Resultaten visas med kompatibla filter från filter.html och äldre länkar.';
+
+        if (cars.length === 0) {
+            renderEmptyState('Inga fordon matchade din sökning. Prova bredare filter!');
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        cars.forEach((car) => fragment.appendChild(createCarCard(car)));
+        grid.appendChild(fragment);
+    }
+
+    function createCarCard(car) {
+        const card = document.createElement('article');
+        card.className = 'car-card';
+        card.tabIndex = 0;
+        card.dataset.carId = car.id;
+        card.setAttribute('aria-label', `Visa annons för ${car.title}`);
+        card.addEventListener('click', () => openDetailsPage(car.id));
+        card.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openDetailsPage(car.id);
+            }
+        });
+
+        const favoriteButton = document.createElement('button');
+        favoriteButton.type = 'button';
+        favoriteButton.className = 'favorite-btn';
+        favoriteButton.dataset.carId = car.id;
+        favoriteButton.title = 'Spara bilen';
+        favoriteButton.setAttribute('aria-label', 'Spara bilen');
+        favoriteButton.addEventListener('click', (event) => toggleFavorite(event, car.id));
+        favoriteButton.appendChild(createIcon('fa-regular fa-heart'));
+
+        const imageWrap = document.createElement('div');
+        imageWrap.className = 'image-wrap';
+
+        const image = document.createElement('img');
+        image.src = getFirstSafeImage(car);
+        image.alt = car.title || 'Bilannons';
+        image.loading = 'lazy';
+        image.referrerPolicy = 'no-referrer';
+        image.addEventListener('error', () => {
+            image.src = CONFIG.PLACEHOLDER_IMAGE;
+        }, { once: true });
+
+        imageWrap.appendChild(image);
+
+        const content = document.createElement('div');
+        content.className = 'card-content';
+
+        const price = document.createElement('h3');
+        price.className = 'card-price';
+        price.textContent = `${formatNumber(car.price)} kr`;
+
+        const title = document.createElement('p');
+        title.className = 'card-title';
+        title.textContent = car.title;
+
+        const meta = document.createElement('p');
+        meta.className = 'card-meta';
+        meta.textContent = [formatYear(car.year), formatMileage(car.mileage), car.fuelType].filter(Boolean).join(' | ');
+
+        const extra = createExtraTags(car);
+
+        content.append(price, title, meta);
+        if (extra) content.appendChild(extra);
+
+        card.append(favoriteButton, imageWrap, content);
+        return card;
+    }
+
+    function createExtraTags(car) {
+        const values = [car.transmission, car.bodyType, car.location, car.condition].filter(Boolean).slice(0, 4);
+        if (!values.length) return null;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'card-extra';
+        values.forEach((value) => {
+            const tag = document.createElement('span');
+            tag.className = 'mini-tag';
+            tag.textContent = value;
+            wrapper.appendChild(tag);
+        });
+        return wrapper;
+    }
+
+    function renderStatus(title, subtitle) {
+        resultCountText.textContent = title;
+        activeFiltersText.textContent = subtitle;
+        grid.replaceChildren();
+        const status = document.createElement('div');
+        status.className = 'no-results';
+        status.append(createIcon('fa-solid fa-spinner fa-spin'), document.createTextNode(title));
+        grid.appendChild(status);
+    }
+
+    function renderEmptyState(message) {
+        grid.replaceChildren();
+        const box = document.createElement('div');
+        box.className = 'no-results';
+        box.append(createIcon('fa-solid fa-magnifying-glass'), document.createTextNode(message));
+        grid.appendChild(box);
+    }
+
+    function renderError(message) {
+        resultCountText.textContent = 'Sökningen misslyckades';
+        activeFiltersText.textContent = 'Kontrollera internetanslutning eller Firebase-regler.';
+        grid.replaceChildren();
+        const box = document.createElement('div');
+        box.className = 'no-results error-box';
+        box.append(createIcon('fa-solid fa-triangle-exclamation'), document.createTextNode(message));
+        grid.appendChild(box);
+    }
+
+    function openDetailsPage(carId) {
+        const safeCarId = normalizeDocumentId(carId);
+        if (!safeCarId) return;
+        const params = new URLSearchParams({ id: safeCarId });
+        window.location.href = `details.html?${params.toString()}`;
+    }
+
+    function extractFiltersFromParams(params) {
+        return {
+            brand: getFirstParam(params, ['brand']),
+            model: getFirstParam(params, ['model']),
+            bodyType: getFirstParam(params, ['bodyType', 'karosseri', 'kar']),
+            county: getFirstParam(params, ['county', 'lan', 'län']),
+            location: getFirstParam(params, ['location', 'city', 'stad']),
+            fuelType: getFirstParam(params, ['fuelType', 'fuel']),
+            transmission: getFirstParam(params, ['transmission', 'gear', 'gearbox']),
+            drive: getFirstParam(params, ['drive', 'drivetrain']),
+            condition: getFirstParam(params, ['condition']),
+            doors: getFirstParam(params, ['doors']),
+            seats: getFirstParam(params, ['seats']),
+            color: getFirstParam(params, ['color']),
+            owners: getNumberParam(params, ['owners'], null),
+            minPrice: getNumberParam(params, ['minPrice', 'minP'], CONFIG.LIMITS.MIN_PRICE),
+            maxPrice: getNumberParam(params, ['maxPrice', 'maxP'], Infinity),
+            minYear: getNumberParam(params, ['minYear', 'minY'], CONFIG.LIMITS.MIN_YEAR),
+            maxYear: getNumberParam(params, ['maxYear', 'maxY'], CONFIG.LIMITS.MAX_YEAR),
+            minMileage: getNumberParam(params, ['minMileage', 'minM'], CONFIG.LIMITS.MIN_MILEAGE),
+            maxMileage: getNumberParam(params, ['maxMileage', 'maxM'], CONFIG.LIMITS.MAX_MILEAGE),
+            minHp: getNumberParam(params, ['minHp', 'minHorsepower'], null),
+            maxHp: getNumberParam(params, ['maxHp', 'maxHorsepower'], null),
+            features: getFeatureParams(params),
+            text: normalizeSearchText(getFirstParam(params, ['text', 'q', 'query']))
+        };
+    }
+
+    function doesCarMatchFilters(car, filters) {
+        return matchesText(car.brand, filters.brand) &&
+            matchesText(car.model, filters.model) &&
+            matchesText(car.bodyType, filters.bodyType) &&
+            matchesText(car.county, filters.county) &&
+            matchesContains(car.location, filters.location) &&
+            matchesText(car.fuelType, filters.fuelType) &&
+            matchesText(car.transmission, filters.transmission) &&
+            matchesText(car.drive, filters.drive) &&
+            matchesText(car.condition, filters.condition) &&
+            matchesText(car.doors, filters.doors) &&
+            matchesText(car.seats, filters.seats) &&
+            matchesText(car.color, filters.color) &&
+            matchesMaxOnly(car.owners, filters.owners) &&
+            isNumberInRange(car.price, filters.minPrice, filters.maxPrice) &&
+            isNumberInRange(car.year, filters.minYear, filters.maxYear) &&
+            isNumberInRange(car.mileage, filters.minMileage, filters.maxMileage) &&
+            isNullableNumberInRange(car.hp, filters.minHp, filters.maxHp) &&
+            matchesFeatures(car, filters.features) &&
+            matchesSearchText(car, filters.text);
+    }
+
+    function normalizeCarDocument(id, data) {
+        const brand = normalizeText(data?.brand);
+        const model = normalizeText(data?.model);
+        const year = toSafeNumber(data?.year, null);
+        const images = normalizeImageList(data?.images, data?.mainImage);
+        const features = normalizeArray(data?.features)
+            .concat(normalizeArray(data?.comfortFeatures), normalizeArray(data?.safetyFeatures), normalizeArray(data?.equipmentFeatures))
+            .filter(Boolean);
+
+        return {
+            id: normalizeDocumentId(id),
+            brand,
+            model,
+            title: normalizeText(data?.title) || [brand, model, year].filter(Boolean).join(' ') || 'Bilannons',
+            year,
+            price: toSafeNumber(data?.price, 0),
+            mileage: toSafeNumber(data?.mileage, 0),
+            fuelType: normalizeText(data?.fuelType || data?.fuel),
+            transmission: normalizeText(data?.transmission || data?.gearbox || data?.gear),
+            bodyType: normalizeText(data?.bodyType || data?.karosseri || data?.kar),
+            county: normalizeText(data?.county || data?.lan || data?.län),
+            location: normalizeText(data?.location || data?.city || data?.stad),
+            drive: normalizeText(data?.drivetrain || data?.drive),
+            hp: toSafeNumber(data?.horsepower ?? data?.hp, null),
+            condition: normalizeText(data?.condition),
+            color: normalizeText(data?.color),
+            doors: normalizeText(data?.doors),
+            seats: normalizeText(data?.seats),
+            owners: toSafeNumber(data?.owners, null),
+            description: normalizeText(data?.description),
+            features: Array.from(new Set(features)),
+            searchKeywords: normalizeArray(data?.searchKeywords),
+            images,
+            sellerId: normalizeText(data?.sellerId),
+            active: data?.active !== false,
+            status: normalizeText(data?.status || 'active'),
+            isDeleted: data?.isDeleted === true
+        };
+    }
+
+    function shouldDisplayCar(car) {
+        return Boolean(car && car.id && car.active && !car.isDeleted && car.status !== 'deleted' && car.status !== 'inactive');
+    }
+
+    function getFirstParam(params, keys) {
+        for (const key of keys) {
+            const raw = params.get(key);
+            const clean = normalizeText(raw);
+            if (clean && !isWildcard(clean)) return clean;
+        }
+        return '';
+    }
+
+    function getNumberParam(params, keys, fallback) {
+        for (const key of keys) {
+            const raw = params.get(key);
+            if (raw === null || String(raw).trim() === '') continue;
+            const number = Number(raw);
+            if (Number.isFinite(number)) return number;
+        }
+        return fallback;
+    }
+
+    function getFeatureParams(params) {
+        const features = getFirstParam(params, ['features', 'feature']);
+        if (!features) return [];
+        return features
+            .split(',')
+            .map((value) => normalizeText(value))
+            .filter(Boolean);
+    }
+
+    function matchesText(value, filter) {
+        if (!filter) return true;
+        return normalizeForCompare(value) === normalizeForCompare(filter);
+    }
+
+    function matchesContains(value, filter) {
+        if (!filter) return true;
+        return normalizeForCompare(value).includes(normalizeForCompare(filter));
+    }
+
+    function matchesMaxOnly(value, maxValue) {
+        if (maxValue === null || maxValue === undefined || maxValue === '') return true;
+        const numeric = Number(value);
+        return Number.isFinite(numeric) && numeric <= Number(maxValue);
+    }
+
+    function isNumberInRange(value, min, max) {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return false;
+        const safeMin = min === null || min === undefined ? -Infinity : Number(min);
+        const safeMax = max === null || max === undefined ? Infinity : Number(max);
+        return numeric >= safeMin && numeric <= safeMax;
+    }
+
+    function isNullableNumberInRange(value, min, max) {
+        if ((min === null || min === undefined) && (max === null || max === undefined)) return true;
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return false;
+        const safeMin = min === null || min === undefined ? -Infinity : Number(min);
+        const safeMax = max === null || max === undefined ? Infinity : Number(max);
+        return numeric >= safeMin && numeric <= safeMax;
+    }
+
+    function matchesFeatures(car, features) {
+        if (!Array.isArray(features) || features.length === 0) return true;
+        const carFeatures = new Set((car.features || []).map(normalizeForCompare));
+        return features.every((feature) => carFeatures.has(normalizeForCompare(feature)));
+    }
+
+    function matchesSearchText(car, text) {
+        if (!text) return true;
+        const haystack = [
+            car.brand,
+            car.model,
+            car.title,
+            car.fuelType,
+            car.transmission,
+            car.bodyType,
+            car.location,
+            car.county,
+            car.condition,
+            car.description,
+            ...(car.features || []),
+            ...(car.searchKeywords || [])
+        ].map(normalizeForCompare).join(' ');
+        return haystack.includes(normalizeForCompare(text));
+    }
+
+    function buildActiveFiltersText(filters) {
+        const labels = [];
+        addFilterLabel(labels, 'Märke', filters.brand);
+        addFilterLabel(labels, 'Modell', filters.model);
+        addFilterLabel(labels, 'Karosstyp', filters.bodyType);
+        addFilterLabel(labels, 'Län', filters.county);
+        addFilterLabel(labels, 'Plats', filters.location);
+        addFilterLabel(labels, 'Bränsle', filters.fuelType);
+        addFilterLabel(labels, 'Växellåda', filters.transmission);
+        addFilterLabel(labels, 'Drivning', filters.drive);
+        addFilterLabel(labels, 'Skick', filters.condition);
+        addFilterLabel(labels, 'Färg', filters.color);
+        addRangeLabel(labels, 'Pris', filters.minPrice, filters.maxPrice, 'kr');
+        addRangeLabel(labels, 'År', filters.minYear, filters.maxYear, '');
+        addRangeLabel(labels, 'Miltal', filters.minMileage, filters.maxMileage, 'km');
+        addRangeLabel(labels, 'Hästkrafter', filters.minHp, filters.maxHp, 'hk');
+        addFilterLabel(labels, 'Utrustning', filters.features.join(', '));
+        addFilterLabel(labels, 'Text', filters.text);
+        return labels.length ? labels.join(' • ') : 'Inga aktiva filter.';
+    }
+
+    function addFilterLabel(labels, label, value) {
+        if (String(value || '').trim()) labels.push(`${label}: ${value}`);
+    }
+
+    function addRangeLabel(labels, label, min, max, suffix) {
+        const hasMin = min !== null && min !== undefined && Number.isFinite(Number(min)) && Number(min) !== -Infinity;
+        const hasMax = max !== null && max !== undefined && Number.isFinite(Number(max)) && Number(max) !== Infinity;
+        if (!hasMin && !hasMax) return;
+        if (hasMin && hasMax) labels.push(`${label}: ${formatNumber(min)}–${formatNumber(max)}${suffix ? ' ' + suffix : ''}`);
+        else if (hasMin) labels.push(`${label}: från ${formatNumber(min)}${suffix ? ' ' + suffix : ''}`);
+        else labels.push(`${label}: till ${formatNumber(max)}${suffix ? ' ' + suffix : ''}`);
+    }
+
+    function normalizeImageList(images, mainImage) {
+        const rawImages = [];
+        if (mainImage) rawImages.push(mainImage);
+        if (Array.isArray(images)) rawImages.push(...images);
+        const safeImages = rawImages.map((url) => normalizeSafeURL(url)).filter(Boolean);
+        return Array.from(new Set(safeImages));
+    }
+
+    function getFirstSafeImage(car) {
+        return Array.isArray(car.images) && car.images.length ? car.images[0] : CONFIG.PLACEHOLDER_IMAGE;
+    }
+
+    function normalizeSafeURL(value) {
+        const raw = String(value || '').trim();
+        if (!raw) return '';
+        if (/^(javascript|data|vbscript):/i.test(raw)) return '';
+        if (/^https?:\/\//i.test(raw)) return raw;
+        if (/^(\.\/|\/)?[a-zA-Z0-9_./%+-]+\.(jpg|jpeg|png|webp|avif)$/i.test(raw)) return raw;
+        return '';
+    }
+
+    function normalizeDocumentId(value) {
+        const id = String(value || '').trim();
+        return /^[A-Za-z0-9_-]{1,160}$/.test(id) ? id : '';
+    }
+
+    function normalizeArray(value) {
+        if (!Array.isArray(value)) return [];
+        return value.map((item) => normalizeText(item)).filter(Boolean);
+    }
+
+    function normalizeText(value) {
+        return String(value ?? '')
+            .replace(/[\u0000-\u001F\u007F]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    function normalizeSearchText(value) {
+        return normalizeText(value).slice(0, CONFIG.LIMITS.MAX_TEXT_LENGTH);
+    }
+
+    function normalizeForCompare(value) {
+        return normalizeText(value)
+            .toLocaleLowerCase('sv-SE')
+            .normalize('NFKD')
+            .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function isWildcard(value) {
+        const normalized = normalizeForCompare(value);
+        return normalized === 'all' || normalized === 'alla' || normalized === 'any' || normalized === '*';
+    }
+
+    function toSafeNumber(value, fallback) {
+        const number = Number(value);
+        return Number.isFinite(number) ? number : fallback;
+    }
+
+    function formatNumber(value) {
+        return new Intl.NumberFormat('sv-SE').format(Number(value) || 0);
+    }
+
+    function formatYear(value) {
+        const year = Number(value);
+        return Number.isFinite(year) && year > 0 ? String(year) : '';
+    }
+
+    function formatMileage(value) {
+        const mileage = Number(value);
+        return Number.isFinite(mileage) ? `${formatNumber(mileage)} mil` : '';
+    }
+
+    function createIcon(className) {
+        const icon = document.createElement('i');
+        className.split(' ').filter(Boolean).forEach((classPart) => icon.classList.add(classPart));
+        return icon;
     }
 
     loadResults();
