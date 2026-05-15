@@ -17,24 +17,16 @@ import {
  * ============================================================
  * BILHK - app.js
  * ------------------------------------------------------------
- * الملف المركزي لعرض إعلانات السيارات، البحث، الفلترة،
- * وتحديث واجهة المستخدم حسب حالة تسجيل الدخول.
+ * Central file for car listing display, filtering, search,
+ * safe navigation, and header state.
  *
- * أهداف هذا الإصلاح:
- * 1. منع XSS بعدم استخدام innerHTML مع بيانات المستخدمين.
- * 2. تنظيف وتوحيد بيانات السيارات القادمة من Firestore.
- * 3. جعل الفلترة أكثر أمانًا ولا تتعطل بسبب الحقول الناقصة.
- * 4. مراقبة الرسائل غير المقروءة مع إلغاء الاشتراك بشكل صحيح.
- * 5. تحسين حالات التحميل، الخطأ، وعدم وجود نتائج.
- * 6. إبقاء التوافق مع صفحات المشروع الحالية مثل:
- *    index.html, results.html, details.html, my-account.html.
- * ============================================================
- */
-
-
-/**
- * ============================================================
- * 1. إعدادات عامة
+ * Security and consistency goals:
+ * 1. Do not inject Firestore user data through innerHTML.
+ * 2. Normalize modern and legacy car schema names safely.
+ * 3. Support old and new query parameter names.
+ * 4. Keep existing routes and visual classes used by pages.
+ * 5. Handle missing/invalid data without breaking the page.
+ * 6. Clean up Firestore listeners correctly.
  * ============================================================
  */
 
@@ -55,32 +47,44 @@ const APP_CONFIG = {
     },
 
     QUERY_KEYS: {
-        BRAND: "brand",
-        MODEL: "model",
-        BODY_TYPE_SHORT: "kar",
-        BODY_TYPE: "bodyType",
-        MIN_PRICE: "minP",
-        MAX_PRICE: "maxP",
-        MIN_YEAR: "minY",
-        MAX_YEAR: "maxY",
-        MIN_MILEAGE: "minM",
-        MAX_MILEAGE: "maxM",
-        FUEL_SHORT: "fuel",
-        FUEL_TYPE: "fuelType",
-        TRANSMISSION_SHORT: "gear",
-        TRANSMISSION: "transmission",
-        TEXT: "text"
+        BRAND: ["brand"],
+        MODEL: ["model"],
+        BODY_TYPE: ["bodyType", "karosseri", "kar", "body"],
+        FUEL_TYPE: ["fuelType", "fuel", "drivmedel"],
+        TRANSMISSION: ["transmission", "gear", "gearbox", "vaxellada", "växellåda"],
+        DRIVETRAIN: ["drivetrain", "drive", "drivning"],
+        COUNTY: ["county", "lan", "län"],
+        LOCATION: ["location", "city", "stad", "place"],
+        CONDITION: ["condition", "skick"],
+        COLOR: ["color", "farg", "färg"],
+        DOORS: ["doors", "dorrar", "dörrar"],
+        SEATS: ["seats", "saten", "säten"],
+        FEATURES: ["features", "feature", "equipment", "utrustning"],
+        TEXT: ["text", "q", "query", "search"],
+        MIN_PRICE: ["minPrice", "minP", "priceMin"],
+        MAX_PRICE: ["maxPrice", "maxP", "priceMax"],
+        MIN_YEAR: ["minYear", "minY", "yearMin"],
+        MAX_YEAR: ["maxYear", "maxY", "yearMax"],
+        MIN_MILEAGE: ["minMileage", "minM", "mileageMin"],
+        MAX_MILEAGE: ["maxMileage", "maxM", "mileageMax"],
+        MIN_HP: ["minHp", "minHorsepower", "hpMin"],
+        MAX_HP: ["maxHp", "maxHorsepower", "hpMax"]
     },
 
     LIMITS: {
         SEARCH_TEXT_MAX_LENGTH: 120,
+        FILTER_TEXT_MAX_LENGTH: 100,
         CARD_DESCRIPTION_MAX_LENGTH: 120,
         MIN_YEAR: 1900,
         MAX_YEAR: 2030,
         MIN_PRICE: 0,
         MAX_PRICE: 20000000,
         MIN_MILEAGE: 0,
-        MAX_MILEAGE: 2000000
+        MAX_MILEAGE: 2000000,
+        MIN_HP: 0,
+        MAX_HP: 2500,
+        MAX_FEATURES_FILTERS: 30,
+        MAX_CARDS_RENDERED: 500
     },
 
     UI: {
@@ -89,15 +93,11 @@ const APP_CONFIG = {
         AUTH_BUTTON_ID: "authButton",
         MESSAGE_LINK_ID: "msgLink",
         MESSAGE_BADGE_ID: "msgBadge"
-    }
+    },
+
+    SAFE_IMAGE_PROTOCOLS: ["http:", "https:"],
+    SAFE_IMAGE_EXTENSIONS: ["jpg", "jpeg", "png", "webp", "avif", "gif"]
 };
-
-
-/**
- * ============================================================
- * 2. حالة التطبيق
- * ============================================================
- */
 
 const appState = {
     allCars: [],
@@ -105,15 +105,9 @@ const appState = {
     currentUser: null,
     unreadMessagesUnsubscribe: null,
     hasLoadedCars: false,
-    isLoadingCars: false
+    isLoadingCars: false,
+    lastFilters: null
 };
-
-
-/**
- * ============================================================
- * 3. عناصر الصفحة
- * ============================================================
- */
 
 const elements = {
     get carsGrid() {
@@ -137,27 +131,13 @@ const elements = {
     }
 };
 
-
-/**
- * ============================================================
- * 4. تشغيل التطبيق
- * ============================================================
- */
-
 initializeApplication();
 
 function initializeApplication() {
-    attachAuthObserver();
     attachGlobalErrorProtection();
+    attachAuthObserver();
     initApp();
 }
-
-
-/**
- * ============================================================
- * 5. مراقبة تسجيل الدخول والهيدر
- * ============================================================
- */
 
 function attachAuthObserver() {
     onAuthStateChanged(auth, (user) => {
@@ -165,7 +145,7 @@ function attachAuthObserver() {
 
         if (user) {
             appState.currentUser = user;
-            updateHeaderForLoggedInUser(user);
+            updateHeaderForLoggedInUser();
             startUnreadMessagesListener(user.uid);
             return;
         }
@@ -175,7 +155,7 @@ function attachAuthObserver() {
     });
 }
 
-function updateHeaderForLoggedInUser(user) {
+function updateHeaderForLoggedInUser() {
     const authBtn = elements.authButton;
     const msgLink = elements.msgLink;
 
@@ -206,13 +186,16 @@ function updateHeaderForGuestUser() {
 
     if (msgLink) {
         msgLink.style.display = "none";
+        msgLink.removeAttribute("href");
     }
 
     updateUnreadBadge(0);
 }
 
 function startUnreadMessagesListener(userId) {
-    if (!userId) {
+    const safeUserId = normalizePlainId(userId);
+
+    if (!safeUserId) {
         updateUnreadBadge(0);
         return;
     }
@@ -220,7 +203,7 @@ function startUnreadMessagesListener(userId) {
     try {
         const unreadMessagesQuery = query(
             collection(db, APP_CONFIG.COLLECTIONS.MESSAGES),
-            where("receiverId", "==", userId),
+            where("receiverId", "==", safeUserId),
             where("read", "==", false)
         );
 
@@ -254,8 +237,7 @@ function updateUnreadBadge(count) {
         return;
     }
 
-    const safeCount = Number.isFinite(Number(count)) ? Number(count) : 0;
-
+    const safeCount = clampNumber(toSafeNumber(count, 0), 0, 9999);
     msgBadge.textContent = "";
 
     if (safeCount > 0) {
@@ -268,13 +250,6 @@ function updateUnreadBadge(count) {
     }
 }
 
-
-/**
- * ============================================================
- * 6. جلب السيارات من Firestore
- * ============================================================
- */
-
 async function initApp() {
     const grid = elements.carsGrid;
 
@@ -282,25 +257,19 @@ async function initApp() {
         return;
     }
 
-    setLoadingState("Laddar fordon...");
+    if (appState.isLoadingCars) {
+        return;
+    }
 
+    setLoadingState("Laddar fordon...");
     appState.isLoadingCars = true;
 
     try {
-        const carsQuery = query(
-            collection(db, APP_CONFIG.COLLECTIONS.CARS),
-            orderBy("createdAt", "desc")
-        );
-
-        const snapshot = await getDocs(carsQuery);
+        const snapshot = await fetchCarsSnapshot();
 
         const cars = snapshot.docs
-            .map((documentSnapshot) => {
-                return normalizeCarDocument(documentSnapshot.id, documentSnapshot.data());
-            })
-            .filter((car) => {
-                return shouldDisplayCar(car);
-            });
+            .map((documentSnapshot) => normalizeCarDocument(documentSnapshot.id, documentSnapshot.data()))
+            .filter((car) => shouldDisplayCar(car));
 
         appState.allCars = cars;
         appState.hasLoadedCars = true;
@@ -316,7 +285,6 @@ async function initApp() {
         }
     } catch (error) {
         console.error("Error fetching cars:", error);
-
         setErrorState({
             title: "Kunde inte ladda bilar",
             message: "Kontrollera anslutningen och försök igen.",
@@ -328,78 +296,146 @@ async function initApp() {
     }
 }
 
+async function fetchCarsSnapshot() {
+    try {
+        const carsQuery = query(
+            collection(db, APP_CONFIG.COLLECTIONS.CARS),
+            orderBy("createdAt", "desc")
+        );
+
+        return await getDocs(carsQuery);
+    } catch (error) {
+        console.warn("Ordered cars query failed; falling back to unordered query:", error);
+        return await getDocs(collection(db, APP_CONFIG.COLLECTIONS.CARS));
+    }
+}
+
 function normalizeCarDocument(id, data) {
-    const rawImages = Array.isArray(data?.images) ? data.images : [];
+    const source = isPlainObject(data) ? data : {};
+    const rawImages = getImageArray(source);
+    const imageUrls = rawImages.map((url) => normalizeURL(url)).filter(Boolean);
 
-    const imageUrls = rawImages
-        .map((url) => normalizeURL(url))
-        .filter(Boolean);
+    const brand = normalizeText(source.brand);
+    const model = normalizeText(source.model);
+    const year = clampNumber(toSafeNumber(source.year, 0), 0, APP_CONFIG.LIMITS.MAX_YEAR);
+    const price = clampNumber(toSafeNumber(source.price, 0), APP_CONFIG.LIMITS.MIN_PRICE, APP_CONFIG.LIMITS.MAX_PRICE);
+    const mileage = clampNumber(toSafeNumber(source.mileage, 0), APP_CONFIG.LIMITS.MIN_MILEAGE, APP_CONFIG.LIMITS.MAX_MILEAGE);
 
-    const price = toSafeNumber(data?.price, 0);
-    const mileage = toSafeNumber(data?.mileage, 0);
-    const year = toSafeNumber(data?.year, 0);
+    const fuelType = normalizeText(firstDefined(source.fuelType, source.fuel, source.drivmedel));
+    const transmission = normalizeText(firstDefined(source.transmission, source.gearbox, source.gear, source.vaxellada, source["växellåda"]));
+    const drivetrain = normalizeText(firstDefined(source.drivetrain, source.drive, source.drivning));
+    const bodyType = normalizeText(firstDefined(source.bodyType, source.karosseri, source.kar, source.body));
+    const horsepower = clampNullableNumber(firstDefined(source.horsepower, source.hp, source.hastkrafter, source["hästkrafter"]), APP_CONFIG.LIMITS.MIN_HP, APP_CONFIG.LIMITS.MAX_HP);
+    const inspectionUntil = normalizeText(firstDefined(source.inspectionUntil, source.besiktning, source.inspection));
 
-    const brand = normalizeText(data?.brand);
-    const model = normalizeText(data?.model);
+    const comfortFeatures = normalizeTextArray(source.comfortFeatures);
+    const safetyFeatures = normalizeTextArray(source.safetyFeatures);
+    const equipmentFeatures = normalizeTextArray(source.equipmentFeatures);
+    const genericFeatures = normalizeTextArray(source.features);
+    const features = uniqueStrings([...genericFeatures, ...comfortFeatures, ...safetyFeatures, ...equipmentFeatures]);
+
+    const normalizedId = normalizeDocumentId(id);
 
     return {
-        id: normalizeDocumentId(id),
+        id: normalizedId,
+        rawId: String(id ?? ""),
+        schemaVersion: toSafeNumber(source.schemaVersion, 1),
 
         brand,
         model,
-        title: normalizeText(data?.title) || buildCarTitle(brand, model, year),
+        title: normalizeText(source.title) || buildCarTitle(brand, model, year),
 
         year,
         price,
         mileage,
 
-        fuelType: normalizeText(data?.fuelType || data?.fuel),
-        transmission: normalizeText(data?.transmission || data?.gear),
-        bodyType: normalizeText(data?.bodyType || data?.karosseri || data?.kar),
-        color: normalizeText(data?.color),
-        condition: normalizeText(data?.condition),
-        location: normalizeText(data?.location),
+        fuelType,
+        fuel: fuelType,
+        transmission,
+        gearbox: transmission,
+        drivetrain,
+        drive: drivetrain,
+        bodyType,
+        karosseri: bodyType,
+        horsepower,
+        hp: horsepower,
+        inspectionUntil,
+        besiktning: inspectionUntil,
 
-        description: normalizeText(data?.description),
+        color: normalizeText(source.color),
+        condition: normalizeText(source.condition),
+        county: normalizeText(firstDefined(source.county, source.lan, source["län"])),
+        location: normalizeText(firstDefined(source.location, source.city, source.stad, source.place)),
+        owners: clampNullableNumber(source.owners, 0, 100),
+        doors: normalizeText(source.doors),
+        seats: normalizeText(source.seats),
+        engineSize: clampNullableNumber(source.engineSize, 0, 30),
+        batteryRange: clampNullableNumber(source.batteryRange, 0, 2000),
+        interiorColor: normalizeText(source.interiorColor),
+        upholstery: normalizeText(source.upholstery),
+        tax: clampNullableNumber(source.tax, 0, 1000000),
+
+        description: normalizeText(source.description),
+
+        comfortFeatures,
+        safetyFeatures,
+        equipmentFeatures,
+        features,
+        featureKeywords: normalizeTextArray(source.featureKeywords).map(normalizeForSearch).filter(Boolean),
 
         images: imageUrls,
-        mainImage: normalizeURL(data?.mainImage) || imageUrls[0] || APP_CONFIG.ROUTES.PLACEHOLDER_IMAGE,
+        imageFiles: Array.isArray(source.imageFiles) ? source.imageFiles : [],
+        mainImage: normalizeURL(source.mainImage) || imageUrls[0] || APP_CONFIG.ROUTES.PLACEHOLDER_IMAGE,
 
-        sellerId: normalizeText(data?.sellerId),
-        sellerEmail: normalizeText(data?.sellerEmail),
-        sellerName: normalizeText(data?.sellerName),
+        sellerId: normalizePlainId(source.sellerId),
+        sellerEmail: normalizeText(source.sellerEmail),
+        sellerName: normalizeText(source.sellerName),
 
-        active: data?.active !== false,
-        status: normalizeText(data?.status || "active"),
-        isDeleted: data?.isDeleted === true,
+        active: source.active !== false,
+        status: normalizeText(source.status || "active"),
+        isDeleted: source.isDeleted === true,
 
-        createdAt: data?.createdAt || null,
-        updatedAt: data?.updatedAt || null,
+        views: toSafeNumber(source.views, 0),
+        favoritesCount: toSafeNumber(source.favoritesCount, 0),
+        createdAt: source.createdAt || null,
+        updatedAt: source.updatedAt || null,
 
-        searchKeywords: Array.isArray(data?.searchKeywords)
-            ? data.searchKeywords.map((item) => normalizeForSearch(item)).filter(Boolean)
-            : []
+        searchKeywords: normalizeTextArray(source.searchKeywords).map(normalizeForSearch).filter(Boolean)
     };
 }
 
+function getImageArray(source) {
+    if (Array.isArray(source.images)) {
+        return source.images;
+    }
+
+    if (Array.isArray(source.imageUrls)) {
+        return source.imageUrls;
+    }
+
+    if (source.image) {
+        return [source.image];
+    }
+
+    if (source.mainImage) {
+        return [source.mainImage];
+    }
+
+    return [];
+}
+
 function shouldDisplayCar(car) {
-    if (!car) {
+    if (!car || !car.id) {
         return false;
     }
 
-    if (!car.id) {
+    if (car.isDeleted === true || car.active === false) {
         return false;
     }
 
-    if (car.isDeleted === true) {
-        return false;
-    }
+    const status = normalizeForSearch(car.status || "active");
 
-    if (car.active === false) {
-        return false;
-    }
-
-    if (car.status && !["active", "published"].includes(normalizeForSearch(car.status))) {
+    if (status && !["active", "published", "publicerad"].includes(status)) {
         return false;
     }
 
@@ -410,29 +446,19 @@ function shouldDisplayCar(car) {
     return true;
 }
 
-
-/**
- * ============================================================
- * 7. البحث والفلترة
- * ============================================================
- */
-
 function hasSearchParameters(params) {
-    const supportedKeys = Object.values(APP_CONFIG.QUERY_KEYS);
-
+    const supportedKeys = Object.values(APP_CONFIG.QUERY_KEYS).flat();
     return supportedKeys.some((key) => {
         const value = params.get(key);
-        return value !== null && String(value).trim() !== "";
+        return value !== null && normalizeText(value) !== "";
     });
 }
 
 function applyDeepSearch(params) {
     const filters = extractFiltersFromParams(params);
+    appState.lastFilters = filters;
 
-    const filtered = appState.allCars.filter((car) => {
-        return doesCarMatchFilters(car, filters);
-    });
-
+    const filtered = appState.allCars.filter((car) => doesCarMatchFilters(car, filters));
     appState.filteredCars = filtered;
 
     render(filtered);
@@ -440,79 +466,77 @@ function applyDeepSearch(params) {
 }
 
 function extractFiltersFromParams(params) {
-    const brand = normalizeFilterValue(params.get(APP_CONFIG.QUERY_KEYS.BRAND));
-    const model = normalizeFilterValue(params.get(APP_CONFIG.QUERY_KEYS.MODEL));
-
-    const bodyType =
-        normalizeFilterValue(params.get(APP_CONFIG.QUERY_KEYS.BODY_TYPE)) ||
-        normalizeFilterValue(params.get(APP_CONFIG.QUERY_KEYS.BODY_TYPE_SHORT));
-
-    const fuelType =
-        normalizeFilterValue(params.get(APP_CONFIG.QUERY_KEYS.FUEL_TYPE)) ||
-        normalizeFilterValue(params.get(APP_CONFIG.QUERY_KEYS.FUEL_SHORT));
-
-    const transmission =
-        normalizeFilterValue(params.get(APP_CONFIG.QUERY_KEYS.TRANSMISSION)) ||
-        normalizeFilterValue(params.get(APP_CONFIG.QUERY_KEYS.TRANSMISSION_SHORT));
-
-    const text = normalizeSearchText(params.get(APP_CONFIG.QUERY_KEYS.TEXT));
+    const features = getAllParamValues(params, APP_CONFIG.QUERY_KEYS.FEATURES)
+        .flatMap((value) => splitFilterList(value))
+        .map(normalizeFilterValue)
+        .filter(Boolean)
+        .slice(0, APP_CONFIG.LIMITS.MAX_FEATURES_FILTERS);
 
     return {
-        brand,
-        model,
-        bodyType,
-        fuelType,
-        transmission,
+        brand: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.BRAND)),
+        model: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.MODEL)),
+        bodyType: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.BODY_TYPE)),
+        fuelType: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.FUEL_TYPE)),
+        transmission: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.TRANSMISSION)),
+        drivetrain: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.DRIVETRAIN)),
+        county: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.COUNTY)),
+        location: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.LOCATION)),
+        condition: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.CONDITION)),
+        color: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.COLOR)),
+        doors: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.DOORS)),
+        seats: normalizeFilterValue(getFirstParam(params, APP_CONFIG.QUERY_KEYS.SEATS)),
+        features,
 
-        minPrice: normalizeNumericFilter(params.get(APP_CONFIG.QUERY_KEYS.MIN_PRICE), APP_CONFIG.LIMITS.MIN_PRICE),
-        maxPrice: normalizeNumericFilter(params.get(APP_CONFIG.QUERY_KEYS.MAX_PRICE), Infinity),
+        minPrice: normalizeNumericFilter(getFirstParam(params, APP_CONFIG.QUERY_KEYS.MIN_PRICE), APP_CONFIG.LIMITS.MIN_PRICE, APP_CONFIG.LIMITS.MIN_PRICE, APP_CONFIG.LIMITS.MAX_PRICE),
+        maxPrice: normalizeNumericFilter(getFirstParam(params, APP_CONFIG.QUERY_KEYS.MAX_PRICE), APP_CONFIG.LIMITS.MAX_PRICE, APP_CONFIG.LIMITS.MIN_PRICE, APP_CONFIG.LIMITS.MAX_PRICE),
+        minYear: normalizeNumericFilter(getFirstParam(params, APP_CONFIG.QUERY_KEYS.MIN_YEAR), APP_CONFIG.LIMITS.MIN_YEAR, APP_CONFIG.LIMITS.MIN_YEAR, APP_CONFIG.LIMITS.MAX_YEAR),
+        maxYear: normalizeNumericFilter(getFirstParam(params, APP_CONFIG.QUERY_KEYS.MAX_YEAR), APP_CONFIG.LIMITS.MAX_YEAR, APP_CONFIG.LIMITS.MIN_YEAR, APP_CONFIG.LIMITS.MAX_YEAR),
+        minMileage: normalizeNumericFilter(getFirstParam(params, APP_CONFIG.QUERY_KEYS.MIN_MILEAGE), APP_CONFIG.LIMITS.MIN_MILEAGE, APP_CONFIG.LIMITS.MIN_MILEAGE, APP_CONFIG.LIMITS.MAX_MILEAGE),
+        maxMileage: normalizeNumericFilter(getFirstParam(params, APP_CONFIG.QUERY_KEYS.MAX_MILEAGE), APP_CONFIG.LIMITS.MAX_MILEAGE, APP_CONFIG.LIMITS.MIN_MILEAGE, APP_CONFIG.LIMITS.MAX_MILEAGE),
+        minHp: normalizeNumericFilter(getFirstParam(params, APP_CONFIG.QUERY_KEYS.MIN_HP), APP_CONFIG.LIMITS.MIN_HP, APP_CONFIG.LIMITS.MIN_HP, APP_CONFIG.LIMITS.MAX_HP),
+        maxHp: normalizeNumericFilter(getFirstParam(params, APP_CONFIG.QUERY_KEYS.MAX_HP), APP_CONFIG.LIMITS.MAX_HP, APP_CONFIG.LIMITS.MIN_HP, APP_CONFIG.LIMITS.MAX_HP),
 
-        minYear: normalizeNumericFilter(params.get(APP_CONFIG.QUERY_KEYS.MIN_YEAR), APP_CONFIG.LIMITS.MIN_YEAR),
-        maxYear: normalizeNumericFilter(params.get(APP_CONFIG.QUERY_KEYS.MAX_YEAR), APP_CONFIG.LIMITS.MAX_YEAR),
-
-        minMileage: normalizeNumericFilter(params.get(APP_CONFIG.QUERY_KEYS.MIN_MILEAGE), APP_CONFIG.LIMITS.MIN_MILEAGE),
-        maxMileage: normalizeNumericFilter(params.get(APP_CONFIG.QUERY_KEYS.MAX_MILEAGE), APP_CONFIG.LIMITS.MAX_MILEAGE),
-
-        text
+        text: normalizeSearchText(getFirstParam(params, APP_CONFIG.QUERY_KEYS.TEXT))
     };
 }
 
 function doesCarMatchFilters(car, filters) {
-    const brandMatch = matchesExactFilter(car.brand, filters.brand);
-    const modelMatch = matchesExactFilter(car.model, filters.model);
-    const bodyTypeMatch = matchesExactFilter(car.bodyType, filters.bodyType);
-    const fuelMatch = matchesExactFilter(car.fuelType, filters.fuelType);
-    const transmissionMatch = matchesExactFilter(car.transmission, filters.transmission);
-
-    const priceMatch = isNumberInRange(car.price, filters.minPrice, filters.maxPrice);
-    const yearMatch = isNumberInRange(car.year, filters.minYear, filters.maxYear);
-    const mileageMatch = isNumberInRange(car.mileage, filters.minMileage, filters.maxMileage);
-
-    const textMatch = matchesFreeTextSearch(car, filters.text);
-
     return (
-        brandMatch &&
-        modelMatch &&
-        bodyTypeMatch &&
-        fuelMatch &&
-        transmissionMatch &&
-        priceMatch &&
-        yearMatch &&
-        mileageMatch &&
-        textMatch
+        matchesExactFilter(car.brand, filters.brand) &&
+        matchesExactFilter(car.model, filters.model) &&
+        matchesExactFilter(car.bodyType, filters.bodyType) &&
+        matchesExactFilter(car.fuelType, filters.fuelType) &&
+        matchesExactFilter(car.transmission, filters.transmission) &&
+        matchesExactFilter(car.drivetrain, filters.drivetrain) &&
+        matchesExactFilter(car.county, filters.county) &&
+        matchesPartialFilter(car.location, filters.location) &&
+        matchesExactFilter(car.condition, filters.condition) &&
+        matchesExactFilter(car.color, filters.color) &&
+        matchesExactFilter(car.doors, filters.doors) &&
+        matchesExactFilter(car.seats, filters.seats) &&
+        isNumberInRange(car.price, filters.minPrice, filters.maxPrice) &&
+        isNumberInRange(car.year, filters.minYear, filters.maxYear) &&
+        isNumberInRange(car.mileage, filters.minMileage, filters.maxMileage) &&
+        isNullableNumberInRange(car.horsepower, filters.minHp, filters.maxHp) &&
+        matchesFeatureFilters(car, filters.features) &&
+        matchesFreeTextSearch(car, filters.text)
     );
 }
 
 function matchesExactFilter(value, filterValue) {
-    if (!filterValue) {
-        return true;
-    }
-
-    if (filterValue === "all") {
+    if (!filterValue || filterValue === "all") {
         return true;
     }
 
     return normalizeForSearch(value) === normalizeForSearch(filterValue);
+}
+
+function matchesPartialFilter(value, filterValue) {
+    if (!filterValue || filterValue === "all") {
+        return true;
+    }
+
+    return normalizeForSearch(value).includes(normalizeForSearch(filterValue));
 }
 
 function isNumberInRange(value, min, max) {
@@ -523,6 +547,30 @@ function isNumberInRange(value, min, max) {
     }
 
     return number >= min && number <= max;
+}
+
+function isNullableNumberInRange(value, min, max) {
+    if (value === null || value === undefined || value === "") {
+        return min <= 0;
+    }
+
+    return isNumberInRange(value, min, max);
+}
+
+function matchesFeatureFilters(car, featureFilters) {
+    if (!Array.isArray(featureFilters) || featureFilters.length === 0) {
+        return true;
+    }
+
+    const carFeatureSet = new Set([
+        ...normalizeTextArray(car.features),
+        ...normalizeTextArray(car.comfortFeatures),
+        ...normalizeTextArray(car.safetyFeatures),
+        ...normalizeTextArray(car.equipmentFeatures),
+        ...normalizeTextArray(car.featureKeywords)
+    ].map(normalizeForSearch));
+
+    return featureFilters.every((feature) => carFeatureSet.has(normalizeForSearch(feature)));
 }
 
 function matchesFreeTextSearch(car, searchText) {
@@ -543,25 +591,21 @@ function matchesFreeTextSearch(car, searchText) {
         car.description,
         car.fuelType,
         car.transmission,
+        car.drivetrain,
         car.bodyType,
         car.color,
         car.condition,
+        car.county,
         car.location,
-        String(car.year),
-        ...car.searchKeywords
+        String(car.year || ""),
+        String(car.price || ""),
+        String(car.mileage || ""),
+        ...normalizeTextArray(car.features),
+        ...normalizeTextArray(car.searchKeywords)
     ];
 
-    return searchableValues.some((value) => {
-        return normalizeForSearch(value).includes(normalizedSearchText);
-    });
+    return searchableValues.some((value) => normalizeForSearch(value).includes(normalizedSearchText));
 }
-
-
-/**
- * ============================================================
- * 8. عرض السيارات في الصفحة
- * ============================================================
- */
 
 function render(data) {
     const grid = elements.carsGrid;
@@ -578,13 +622,18 @@ function render(data) {
     }
 
     const fragment = document.createDocumentFragment();
+    const visibleCars = data.slice(0, APP_CONFIG.LIMITS.MAX_CARDS_RENDERED);
 
-    data.forEach((car) => {
+    visibleCars.forEach((car) => {
         const card = createCarCard(car);
         fragment.appendChild(card);
     });
 
     grid.appendChild(fragment);
+
+    if (data.length > visibleCars.length) {
+        renderLimitNotice(grid, data.length, visibleCars.length);
+    }
 }
 
 function createCarCard(car) {
@@ -594,10 +643,7 @@ function createCarCard(car) {
     card.setAttribute("role", "link");
     card.setAttribute("aria-label", `Visa detaljer för ${buildCarTitle(car.brand, car.model, car.year)}`);
 
-    card.addEventListener("click", () => {
-        navigateToDetails(car.id);
-    });
-
+    card.addEventListener("click", () => navigateToDetails(car.id));
     card.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
@@ -616,7 +662,9 @@ function createCarCard(car) {
     image.src = getSafeImageURL(car.mainImage);
 
     image.addEventListener("error", () => {
-        image.src = APP_CONFIG.ROUTES.PLACEHOLDER_IMAGE;
+        if (image.src !== APP_CONFIG.ROUTES.PLACEHOLDER_IMAGE) {
+            image.src = APP_CONFIG.ROUTES.PLACEHOLDER_IMAGE;
+        }
     });
 
     imageWrapper.appendChild(image);
@@ -636,25 +684,15 @@ function createCarCard(car) {
     meta.className = "car-meta";
     meta.textContent = buildCarMeta(car);
 
-    content.appendChild(priceTag);
-    content.appendChild(title);
-    content.appendChild(meta);
+    content.append(priceTag, title, meta);
 
     const extraMeta = createExtraMetaRow(car);
-
-    if (extraMeta) {
-        content.appendChild(extraMeta);
-    }
+    if (extraMeta) content.appendChild(extraMeta);
 
     const description = createDescriptionElement(car.description);
+    if (description) content.appendChild(description);
 
-    if (description) {
-        content.appendChild(description);
-    }
-
-    card.appendChild(imageWrapper);
-    card.appendChild(content);
-
+    card.append(imageWrapper, content);
     return card;
 }
 
@@ -662,6 +700,7 @@ function createExtraMetaRow(car) {
     const values = [
         car.transmission,
         car.bodyType,
+        car.drivetrain,
         car.location
     ].filter(Boolean);
 
@@ -672,7 +711,6 @@ function createExtraMetaRow(car) {
     const row = document.createElement("div");
     row.className = "car-extra-meta";
     row.textContent = values.join(" • ");
-
     return row;
 }
 
@@ -686,7 +724,6 @@ function createDescriptionElement(descriptionText) {
     const description = document.createElement("p");
     description.className = "car-short-description";
     description.textContent = truncateText(cleanDescription, APP_CONFIG.LIMITS.CARD_DESCRIPTION_MAX_LENGTH);
-
     return description;
 }
 
@@ -730,27 +767,25 @@ function renderEmptyState(container) {
     link.style.fontWeight = "900";
     link.style.textDecoration = "none";
 
-    empty.appendChild(icon);
-    empty.appendChild(title);
-    empty.appendChild(message);
-    empty.appendChild(link);
-
+    empty.append(icon, title, message, link);
     container.appendChild(empty);
 }
 
-
-/**
- * ============================================================
- * 9. حالات التحميل والخطأ
- * ============================================================
- */
+function renderLimitNotice(container, totalCount, visibleCount) {
+    const notice = document.createElement("div");
+    notice.className = "result-limit-notice";
+    notice.style.gridColumn = "1 / -1";
+    notice.style.textAlign = "center";
+    notice.style.padding = "18px";
+    notice.style.color = "#64748b";
+    notice.style.fontWeight = "700";
+    notice.textContent = `Visar ${visibleCount} av ${totalCount} annonser. Förfina sökningen för snabbare resultat.`;
+    container.appendChild(notice);
+}
 
 function setLoadingState(message) {
     const grid = elements.carsGrid;
-
-    if (!grid) {
-        return;
-    }
+    if (!grid) return;
 
     clearElement(grid);
 
@@ -770,18 +805,13 @@ function setLoadingState(message) {
     const text = document.createElement("p");
     text.textContent = message || "Laddar...";
 
-    loading.appendChild(spinner);
-    loading.appendChild(text);
-
+    loading.append(spinner, text);
     grid.appendChild(loading);
 }
 
 function setErrorState({ title, message, actionText, onAction }) {
     const grid = elements.carsGrid;
-
-    if (!grid) {
-        return;
-    }
+    if (!grid) return;
 
     clearElement(grid);
 
@@ -810,9 +840,7 @@ function setErrorState({ title, message, actionText, onAction }) {
     paragraph.style.lineHeight = "1.7";
     paragraph.style.marginBottom = "18px";
 
-    errorBox.appendChild(icon);
-    errorBox.appendChild(heading);
-    errorBox.appendChild(paragraph);
+    errorBox.append(icon, heading, paragraph);
 
     if (typeof onAction === "function") {
         const button = document.createElement("button");
@@ -825,9 +853,7 @@ function setErrorState({ title, message, actionText, onAction }) {
         button.style.padding = "12px 18px";
         button.style.fontWeight = "900";
         button.style.cursor = "pointer";
-
         button.addEventListener("click", onAction);
-
         errorBox.appendChild(button);
     }
 
@@ -836,63 +862,29 @@ function setErrorState({ title, message, actionText, onAction }) {
 
 function updateResultTitleForSearch(count) {
     const resultTitle = elements.resultTitle;
+    if (!resultTitle) return;
 
-    if (!resultTitle) {
-        return;
-    }
-
-    if (count > 0) {
-        resultTitle.textContent = `Hittade ${count} ${count === 1 ? "bil" : "bilar"} som matchar din sökning`;
-    } else {
-        resultTitle.textContent = "Inga bilar matchade din sökning";
-    }
+    resultTitle.textContent = count > 0
+        ? `Hittade ${count} ${count === 1 ? "bil" : "bilar"} som matchar din sökning`
+        : "Inga bilar matchade din sökning";
 }
 
 function updateResultTitleForDefaultView(count) {
     const resultTitle = elements.resultTitle;
+    if (!resultTitle) return;
 
-    if (!resultTitle) {
-        return;
-    }
-
-    if (count > 0) {
-        resultTitle.textContent = `Senaste annonserna`;
-    } else {
-        resultTitle.textContent = "Inga annonser finns just nu";
-    }
+    resultTitle.textContent = count > 0 ? "Senaste annonserna" : "Inga annonser finns just nu";
 }
-
-
-/**
- * ============================================================
- * 10. تنقل آمن
- * ============================================================
- */
 
 function navigateToDetails(carId) {
     const safeId = normalizeDocumentId(carId);
+    if (!safeId) return;
 
-    if (!safeId) {
-        return;
-    }
-
-    const encodedId = encodeURIComponent(safeId);
-    window.location.href = `${APP_CONFIG.ROUTES.DETAILS}?id=${encodedId}`;
+    window.location.href = `${APP_CONFIG.ROUTES.DETAILS}?id=${encodeURIComponent(safeId)}`;
 }
 
-
-/**
- * ============================================================
- * 11. تنسيق النصوص والأرقام
- * ============================================================
- */
-
 function buildCarTitle(brand, model, year) {
-    const parts = [
-        normalizeText(brand),
-        normalizeText(model)
-    ].filter(Boolean);
-
+    const parts = [normalizeText(brand), normalizeText(model)].filter(Boolean);
     const baseTitle = parts.length > 0 ? parts.join(" ") : "Okänd bil";
 
     if (Number.isFinite(Number(year)) && Number(year) > 0) {
@@ -903,16 +895,9 @@ function buildCarTitle(brand, model, year) {
 }
 
 function buildCarMeta(car) {
-    const year = Number.isFinite(Number(car.year)) && Number(car.year) > 0
-        ? String(car.year)
-        : "År saknas";
-
-    const mileage = Number.isFinite(Number(car.mileage))
-        ? `${formatNumber(car.mileage)} mil`
-        : "Miltal saknas";
-
+    const year = Number.isFinite(Number(car.year)) && Number(car.year) > 0 ? String(car.year) : "År saknas";
+    const mileage = Number.isFinite(Number(car.mileage)) ? `${formatNumber(car.mileage)} mil` : "Miltal saknas";
     const fuel = car.fuelType || "Bränsle saknas";
-
     return `${year} • ${mileage} • ${fuel}`;
 }
 
@@ -932,26 +917,23 @@ function formatPrice(price) {
 
 function formatNumber(value) {
     const number = Number(value);
-
-    if (!Number.isFinite(number)) {
-        return "";
-    }
-
-    return number.toLocaleString("sv-SE");
+    return Number.isFinite(number) ? number.toLocaleString("sv-SE") : "";
 }
 
 function truncateText(value, maxLength) {
     const text = normalizeText(value);
+    const safeMaxLength = Math.max(0, Number(maxLength) || 0);
 
-    if (text.length <= maxLength) {
+    if (text.length <= safeMaxLength) {
         return text;
     }
 
-    return `${text.slice(0, maxLength).trim()}...`;
+    return `${text.slice(0, safeMaxLength).trim()}...`;
 }
 
 function normalizeText(value) {
     return String(value ?? "")
+        .replace(/[\u0000-\u001F\u007F]/g, " ")
         .replace(/\s+/g, " ")
         .trim();
 }
@@ -964,56 +946,70 @@ function normalizeForSearch(value) {
 }
 
 function normalizeSearchText(value) {
-    return normalizeForSearch(value)
-        .slice(0, APP_CONFIG.LIMITS.SEARCH_TEXT_MAX_LENGTH);
+    return normalizeForSearch(value).slice(0, APP_CONFIG.LIMITS.SEARCH_TEXT_MAX_LENGTH);
 }
 
 function normalizeFilterValue(value) {
-    const normalized = normalizeText(value);
+    const normalized = normalizeText(value).slice(0, APP_CONFIG.LIMITS.FILTER_TEXT_MAX_LENGTH);
 
     if (!normalized) {
         return "";
     }
 
-    if (normalized.toLowerCase() === "all") {
+    if (normalizeForSearch(normalized) === "all") {
         return "all";
     }
 
     return normalized;
 }
 
-function normalizeNumericFilter(value, fallback) {
+function normalizeNumericFilter(value, fallback, min, max) {
     const number = Number(value);
 
     if (!Number.isFinite(number)) {
         return fallback;
     }
 
-    return number;
+    return clampNumber(number, min, max);
 }
 
 function toSafeNumber(value, fallback = 0) {
     const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+}
 
-    if (!Number.isFinite(number)) {
-        return fallback;
+function clampNumber(value, min, max) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return min;
+    return Math.min(Math.max(number, min), max);
+}
+
+function clampNullableNumber(value, min, max) {
+    if (value === null || value === undefined || normalizeText(value) === "") {
+        return null;
     }
 
-    return number;
+    const number = Number(value);
+    if (!Number.isFinite(number)) return null;
+    return clampNumber(number, min, max);
 }
 
 function normalizeDocumentId(value) {
-    return String(value ?? "")
-        .trim()
-        .replace(/[^\w.-]/g, "");
+    const id = String(value ?? "").trim();
+
+    if (!/^[A-Za-z0-9_-]{1,160}$/.test(id)) {
+        return "";
+    }
+
+    return id;
 }
 
-
-/**
- * ============================================================
- * 12. حماية روابط الصور
- * ============================================================
- */
+function normalizePlainId(value) {
+    return String(value ?? "")
+        .trim()
+        .replace(/[^A-Za-z0-9_.:@-]/g, "")
+        .slice(0, 200);
+}
 
 function normalizeURL(value) {
     const url = normalizeText(value);
@@ -1026,12 +1022,18 @@ function normalizeURL(value) {
         return url;
     }
 
+    if (isSafeRelativeImagePath(url)) {
+        return url;
+    }
+
     try {
         const parsedUrl = new URL(url, window.location.origin);
 
-        const allowedProtocols = ["http:", "https:"];
+        if (!APP_CONFIG.SAFE_IMAGE_PROTOCOLS.includes(parsedUrl.protocol)) {
+            return "";
+        }
 
-        if (!allowedProtocols.includes(parsedUrl.protocol)) {
+        if (["javascript:", "data:", "vbscript:", "file:"].includes(parsedUrl.protocol)) {
             return "";
         }
 
@@ -1041,22 +1043,26 @@ function normalizeURL(value) {
     }
 }
 
-function getSafeImageURL(value) {
-    const normalized = normalizeURL(value);
+function isSafeRelativeImagePath(value) {
+    const text = normalizeText(value);
 
-    if (!normalized) {
-        return APP_CONFIG.ROUTES.PLACEHOLDER_IMAGE;
+    if (!text || /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(text)) {
+        return false;
     }
 
-    return normalized;
+    if (text.includes("\\") || text.includes("..")) {
+        return false;
+    }
+
+    const lower = text.toLowerCase().split(/[?#]/)[0];
+    const extension = lower.includes(".") ? lower.split(".").pop() : "";
+
+    return APP_CONFIG.SAFE_IMAGE_EXTENSIONS.includes(extension);
 }
 
-
-/**
- * ============================================================
- * 13. أدوات DOM آمنة
- * ============================================================
- */
+function getSafeImageURL(value) {
+    return normalizeURL(value) || APP_CONFIG.ROUTES.PLACEHOLDER_IMAGE;
+}
 
 function clearElement(element) {
     while (element.firstChild) {
@@ -1064,17 +1070,76 @@ function clearElement(element) {
     }
 }
 
+function getFirstParam(params, keys) {
+    const keyList = Array.isArray(keys) ? keys : [keys];
 
-/**
- * ============================================================
- * 14. حماية عامة من أخطاء الصفحة
- * ============================================================
- */
+    for (const key of keyList) {
+        const value = params.get(key);
+        if (value !== null && normalizeText(value) !== "") {
+            return value;
+        }
+    }
+
+    return "";
+}
+
+function getAllParamValues(params, keys) {
+    const keyList = Array.isArray(keys) ? keys : [keys];
+    const values = [];
+
+    keyList.forEach((key) => {
+        params.getAll(key).forEach((value) => {
+            if (normalizeText(value)) {
+                values.push(value);
+            }
+        });
+    });
+
+    return values;
+}
+
+function splitFilterList(value) {
+    return normalizeText(value)
+        .split(/[|,;]/g)
+        .map((item) => item.trim())
+        .filter(Boolean);
+}
+
+function normalizeTextArray(value) {
+    if (!Array.isArray(value)) {
+        return [];
+    }
+
+    return uniqueStrings(value.map(normalizeText).filter(Boolean));
+}
+
+function uniqueStrings(values) {
+    const seen = new Set();
+    const result = [];
+
+    values.forEach((value) => {
+        const cleanValue = normalizeText(value);
+        const key = normalizeForSearch(cleanValue);
+
+        if (cleanValue && !seen.has(key)) {
+            seen.add(key);
+            result.push(cleanValue);
+        }
+    });
+
+    return result;
+}
+
+function firstDefined(...values) {
+    return values.find((value) => value !== undefined && value !== null && normalizeText(value) !== "") ?? "";
+}
+
+function isPlainObject(value) {
+    return Object.prototype.toString.call(value) === "[object Object]";
+}
 
 function attachGlobalErrorProtection() {
-    window.addEventListener("beforeunload", () => {
-        cleanupUnreadMessagesListener();
-    });
+    window.addEventListener("beforeunload", () => cleanupUnreadMessagesListener());
 
     window.addEventListener("error", (event) => {
         console.error("Global script error:", event.error || event.message);
@@ -1085,19 +1150,11 @@ function attachGlobalErrorProtection() {
     });
 }
 
-
-/**
- * ============================================================
- * 15. إتاحة بعض الدوال للاختبار اليدوي من Console
- * ------------------------------------------------------------
- * مفيد أثناء التطوير فقط.
- * لا يعطي صلاحيات إضافية ولا يتجاوز Firebase Rules.
- * ============================================================
- */
-
 window.BILHK_APP = Object.freeze({
     getAllCars: () => [...appState.allCars],
     getFilteredCars: () => [...appState.filteredCars],
+    getLastFilters: () => ({ ...(appState.lastFilters || {}) }),
     reloadCars: () => initApp(),
-    applyCurrentUrlSearch: () => applyDeepSearch(new URLSearchParams(window.location.search))
+    applyCurrentUrlSearch: () => applyDeepSearch(new URLSearchParams(window.location.search)),
+    normalizeCarDocument: (id, data) => normalizeCarDocument(id, data)
 });
