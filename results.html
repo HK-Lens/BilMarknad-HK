@@ -2,283 +2,115 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sökresultat | BILHK</title>
-    <meta name="description" content="Sökresultat för bilannonser på BILHK.">
-    <meta name="robots" content="index, follow">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root{--primary:#f58220;--primary-hover:#e67312;--primary-soft:rgba(245,130,32,.12);--dark:#0f172a;--muted:#64748b;--bg:#f8fafc;--surface:#fff;--border:#e2e8f0;--danger:#dc2626;--success:#16a34a;--shadow:0 18px 50px rgba(15,23,42,.10);--radius:24px;--max-width:1200px}*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,sans-serif;background:linear-gradient(180deg,#f8fafc,#eef2f7);color:var(--dark);min-height:100vh}a{text-decoration:none;color:inherit}button,input,select{font-family:inherit}.top-bar{background:linear-gradient(90deg,#0f172a,#1e293b,#2b1d12);color:#fff;padding:10px 24px;text-align:center;font-size:13px;font-weight:800}.top-bar i{color:var(--primary);margin-right:8px}.site-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);border-bottom:1px solid var(--border);backdrop-filter:blur(18px)}.header-inner{max-width:var(--max-width);margin:auto;padding:17px 24px;display:flex;align-items:center;justify-content:space-between;gap:22px}.logo{display:inline-flex;align-items:center;gap:10px;font-size:1.8rem;font-weight:900;letter-spacing:-.06em}.logo-icon{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),#ffb15c);color:#fff;box-shadow:0 10px 25px rgba(245,130,32,.35)}.logo span{color:var(--primary)}.nav-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.nav-link,.nav-button{min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:999px;border:none;background:transparent;color:var(--dark);font-size:14px;font-weight:850;cursor:pointer;transition:.25s}.nav-link:hover,.nav-button:hover,.nav-link.active{background:var(--primary-soft);color:var(--primary-hover);transform:translateY(-1px)}.nav-link.primary{background:var(--primary);color:#fff;box-shadow:0 12px 25px rgba(245,130,32,.25)}.page-shell{max-width:var(--max-width);margin:auto;padding:38px 24px 70px}.page-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:24px}.eyebrow{width:max-content;display:inline-flex;gap:8px;align-items:center;padding:8px 13px;border-radius:999px;background:var(--primary-soft);color:var(--primary-hover);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin-bottom:13px}.page-heading h1{font-size:clamp(30px,4vw,48px);line-height:1.05;font-weight:900;letter-spacing:-.055em;margin-bottom:10px}.page-heading p{max-width:720px;color:var(--muted);line-height:1.75;font-weight:550}.toolbar{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;margin-bottom:24px}.search-box{position:relative}.search-box i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#94a3b8}.search-box input,.toolbar select{width:100%;min-height:50px;border:1px solid var(--border);border-radius:16px;padding:12px 15px;background:#fff;font-weight:750;outline:none}.search-box input{padding-left:42px}.toolbar select:focus,.search-box input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(245,130,32,.12)}.status-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;color:var(--muted);font-size:13px;font-weight:800}.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}.car-card{background:#fff;border:1px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 12px 32px rgba(15,23,42,.07);cursor:pointer;transition:.25s}.car-card:hover{transform:translateY(-4px);box-shadow:0 18px 46px rgba(15,23,42,.13)}.card-image{height:205px;background:#e2e8f0;position:relative;overflow:hidden}.card-image img{width:100%;height:100%;object-fit:cover;display:block}.badge{position:absolute;left:12px;top:12px;background:rgba(15,23,42,.82);color:#fff;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:900}.card-body{padding:16px}.price{color:var(--primary);font-size:22px;font-weight:900;margin-bottom:8px}.title{font-size:17px;font-weight:900;margin-bottom:8px}.meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}.meta span{background:#f1f5f9;color:#475569;border-radius:999px;padding:6px 8px;font-size:11px;font-weight:850}.location{color:var(--muted);font-size:13px;font-weight:750;display:flex;gap:7px;align-items:center}.empty,.loading,.error{grid-column:1/-1;background:#fff;border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow);padding:60px 22px;text-align:center}.empty i,.loading i,.error i{font-size:34px;color:var(--primary);margin-bottom:15px}.empty h3,.loading h3,.error h3{font-size:22px;font-weight:900;margin-bottom:8px}.empty p,.loading p,.error p{color:var(--muted);font-weight:650;line-height:1.7}.error i{color:var(--danger)}@media(max-width:760px){.header-inner{flex-direction:column;align-items:flex-start;padding:14px 18px}.nav-actions{width:100%;overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start}.nav-link,.nav-button{white-space:nowrap}.page-shell{padding:30px 18px 60px}.page-heading{display:block}.toolbar{grid-template-columns:1fr}.logo{font-size:1.55rem}.logo-icon{width:38px;height:38px}}
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; padding: 20px; }
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: auto; }
+        .car-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; position: relative; }
+        .favorite-btn { position:absolute; top:12px; right:12px; width:42px; height:42px; border:none; border-radius:50%; background:rgba(255,255,255,.95); color:#94a3b8; box-shadow:0 8px 20px rgba(15,23,42,.18); cursor:pointer; font-size:18px; z-index:5; }
+        .favorite-btn.saved { color:#ef4444; }
+        .no-results { text-align: center; padding: 100px; grid-column: 1/-1; }
     </style>
 </head>
 <body>
-    <div class="top-bar"><i class="fa-solid fa-shield-halved"></i> Kontrollera alltid bilen och säljaren innan du genomför en affär.</div>
-    <header class="site-header">
-        <div class="header-inner">
-            <a href="index.html" class="logo" aria-label="Gå till startsidan"><span class="logo-icon"><i class="fa-solid fa-car-side"></i></span>BIL<span>HK</span></a>
-            <nav class="nav-actions" aria-label="Huvudmeny">
-                <a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Hem</a>
-                <a href="my-account.html" class="nav-link"><i class="fa-solid fa-user"></i> Mitt konto</a>
-                <a href="sell.html" class="nav-link primary"><i class="fa-solid fa-plus"></i> Lägg till annons</a>
-                <a href="login.html" class="nav-link" id="loginLink"><i class="fa-solid fa-right-to-bracket"></i> Logga in</a>
-                <button type="button" class="nav-button" id="logoutBtn" hidden><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
-            </nav>
-        </div>
-    </header>
-    <main class="page-shell">
-        <section class="page-heading">
-            <div><div class="eyebrow"><i class="fa-solid fa-list"></i> Sökresultat</div><h1>Hittade fordon</h1><p id="resultSubtitle">Annonser som matchar dina valda filter visas här.</p></div>
-        </section>
-        <section class="toolbar" aria-label="Resultatverktyg">
-            <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i><input type="search" id="freeTextSearch" placeholder="Sök i resultaten... märke, modell, plats"></div>
-            <select id="sortSelect" aria-label="Sortering"><option value="newest">Nyast först</option><option value="priceAsc">Pris: lägst först</option><option value="priceDesc">Pris: högst först</option><option value="yearDesc">År: nyast först</option><option value="mileageAsc">Miltal: lägst först</option></select>
-            <a href="filter.html" class="nav-link active"><i class="fa-solid fa-sliders"></i> Ändra filter</a>
-        </section>
-        <div class="status-row"><span id="resultCountText">Laddar resultat...</span><span id="activeFiltersText"></span></div>
-        <section id="resultsGrid" class="results-grid" aria-live="polite"></section>
-    </main>
-    <script type="module">
-        import { auth, db } from './firebase-config.js';
-        import { collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    <h2 style="text-align:center; margin-bottom:30px;">Hittade fordon</h2>
+    <div id="resultsGrid" class="results-grid"></div>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const elements = {
-            grid: document.getElementById('resultsGrid'),
-            resultCountText: document.getElementById('resultCountText'),
-            activeFiltersText: document.getElementById('activeFiltersText'),
-            resultSubtitle: document.getElementById('resultSubtitle'),
-            freeTextSearch: document.getElementById('freeTextSearch'),
-            sortSelect: document.getElementById('sortSelect'),
-            loginLink: document.getElementById('loginLink'),
-            logoutBtn: document.getElementById('logoutBtn')
-        };
+<script type="module">
+    import { db, auth } from './firebase-config.js';
+    import { collection, getDocs, query, where, doc, getDoc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        const state = { allCars: [], visibleCars: [], currentUser: null };
+    const urlParams = new URLSearchParams(window.location.search);
+    const grid = document.getElementById('resultsGrid');
+    let currentUser = null;
+    let savedFavoriteIds = new Set();
+    let favoriteCarCache = {};
 
-        initializePage();
+    onAuthStateChanged(auth, async (user) => {
+        currentUser = user;
+        if (user) await loadUserFavorites();
+        else savedFavoriteIds = new Set();
+        updateFavoriteButtons();
+    });
 
-        function initializePage() {
-            observeAuth();
-            attachEvents();
-            loadResults();
+    async function loadUserFavorites() {
+        const qFav = query(collection(db, "favorites"), where("userId", "==", currentUser.uid));
+        const snap = await getDocs(qFav);
+        savedFavoriteIds = new Set(snap.docs.map(d => d.data().carId));
+    }
+
+    function updateFavoriteButtons() {
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            const isSaved = savedFavoriteIds.has(btn.dataset.carId);
+            btn.classList.toggle('saved', isSaved);
+            btn.title = isSaved ? 'Ta bort från sparade' : 'Spara bilen';
+            btn.innerHTML = `<i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-heart"></i>`;
+        });
+    }
+
+    window.toggleFavorite = async (event, carId) => {
+        event.stopPropagation();
+        if (!currentUser) { window.location.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`; return; }
+        const car = favoriteCarCache[carId] || {};
+        const favRef = doc(db, "favorites", `${currentUser.uid}_${carId}`);
+        const favSnap = await getDoc(favRef);
+        if (favSnap.exists()) {
+            await deleteDoc(favRef);
+            savedFavoriteIds.delete(carId);
+        } else {
+            await setDoc(favRef, { userId: currentUser.uid, carId, brand: car.brand || '', model: car.model || '', price: Number(car.price) || 0, image: car.images?.[0] || 'placeholder.jpg', createdAt: serverTimestamp() });
+            savedFavoriteIds.add(carId);
         }
+        updateFavoriteButtons();
+    };
 
-        function observeAuth() {
-            onAuthStateChanged(auth, (user) => {
-                state.currentUser = user;
-                elements.loginLink.hidden = Boolean(user);
-                elements.logoutBtn.hidden = !user;
-            });
-        }
+    async function loadResults() {
+        grid.innerHTML = "<p class='no-results'>Söker efter matchningar...</p>";
+        
+        try {
+            const snapshot = await getDocs(collection(db, "cars"));
+            grid.innerHTML = "";
+            let foundCount = 0;
 
-        function attachEvents() {
-            elements.logoutBtn.addEventListener('click', async () => {
-                await signOut(auth);
-                window.location.href = 'index.html';
-            });
-            elements.freeTextSearch.addEventListener('input', applyFiltersAndRender);
-            elements.sortSelect.addEventListener('change', applyFiltersAndRender);
-        }
+            snapshot.forEach(doc => {
+                const car = doc.data();
+                favoriteCarCache[doc.id] = car;
+                
+                // 💡 منطق الفلترة المطابق لصفحة البيع
+                const matchesBrand = urlParams.get('brand') === 'all' || !urlParams.get('brand') || car.brand === urlParams.get('brand');
+                const matchesKar = urlParams.get('kar') === 'all' || car.karosseri === urlParams.get('kar');
+                const matchesFuel = urlParams.get('fuel') === 'all' || !urlParams.get('fuel') || car.fuel === urlParams.get('fuel');
+                
+                // فلترة السعر
+                const price = Number(car.price);
+                const minP = Number(urlParams.get('minP')) || 0;
+                const maxP = Number(urlParams.get('maxP')) || Infinity;
 
-        async function loadResults() {
-            renderLoading();
-            try {
-                const carsQuery = query(collection(db, "cars"), where("active", "==", true), limit(300));
-                const snapshot = await getDocs(carsQuery);
-                state.allCars = snapshot.docs.map((documentSnapshot) => normalizeCarDocument(documentSnapshot));
-                applyFiltersAndRender();
-            } catch (firstError) {
-                console.warn("Primary active query failed, trying fallback:", firstError);
-                try {
-                    const snapshot = await getDocs(collection(db, "cars"));
-                    state.allCars = snapshot.docs.map((documentSnapshot) => normalizeCarDocument(documentSnapshot)).filter((car) => car.active !== false && car.status !== "deleted" && car.isDeleted !== true);
-                    applyFiltersAndRender();
-                } catch (error) {
-                    console.error("Could not load results:", error);
-                    renderError();
+                if (matchesBrand && matchesKar && matchesFuel && price >= minP && price <= maxP) {
+                    foundCount++;
+                    grid.innerHTML += `
+                        <div class="car-card" onclick="window.location.href='details.html?id=${doc.id}'">
+                            <button class="favorite-btn" data-car-id="${doc.id}" onclick="toggleFavorite(event, '${doc.id}')" title="Spara bilen">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                            <img src="${car.images?.[0] || 'placeholder.jpg'}" style="width:100%; height:200px; object-fit:cover;">
+                            <div style="padding:15px;">
+                                <h3 style="color:#f58220;">${price.toLocaleString()} kr</h3>
+                                <p><strong>${car.brand} ${car.model}</strong></p>
+                                <p style="font-size:12px; color:#64748b;">${car.year} | ${car.mileage} mil | ${car.fuel}</p>
+                            </div>
+                        </div>`;
                 }
-            }
-        }
-
-        function normalizeCarDocument(documentSnapshot) {
-            const data = documentSnapshot.data() || {};
-            const brand = normalizeText(data.brand);
-            const model = normalizeText(data.model);
-            return {
-                id: documentSnapshot.id,
-                brand,
-                model,
-                title: normalizeText(data.title) || `${brand} ${model}`.trim(),
-                year: normalizeNumber(data.year),
-                price: normalizeNumber(data.price),
-                mileage: normalizeNumber(data.mileage),
-                fuelType: normalizeText(data.fuelType || data.fuel),
-                transmission: normalizeText(data.transmission),
-                bodyType: normalizeText(data.bodyType || data.karosseri || data.kar),
-                condition: normalizeText(data.condition),
-                location: normalizeText(data.location),
-                description: normalizeText(data.description, 5000),
-                images: Array.isArray(data.images) ? data.images.filter(Boolean) : [],
-                mainImage: normalizeText(data.mainImage || (Array.isArray(data.images) ? data.images[0] : ""), 1000),
-                sellerId: normalizeText(data.sellerId),
-                active: data.active,
-                status: normalizeText(data.status),
-                isDeleted: data.isDeleted === true,
-                createdAtMs: getTimestampMs(data.createdAt)
-            };
-        }
-
-        function applyFiltersAndRender() {
-            const filters = getFiltersFromURL();
-            const localSearch = normalizeForSearch(elements.freeTextSearch.value);
-            let cars = state.allCars.filter((car) => matchesURLFilters(car, filters));
-            if (localSearch) cars = cars.filter((car) => normalizeForSearch(`${car.brand} ${car.model} ${car.title} ${car.location} ${car.description}`).includes(localSearch));
-            cars = sortCars(cars, elements.sortSelect.value);
-            state.visibleCars = cars;
-            updateStatus(filters, cars.length);
-            renderCars(cars);
-        }
-
-        function getFiltersFromURL() {
-            return {
-                brand: getParam("brand"),
-                model: getParam("model"),
-                bodyType: getParam("bodyType") || getParam("kar") || getParam("karosseri"),
-                fuelType: getParam("fuelType") || getParam("fuel"),
-                transmission: getParam("transmission"),
-                condition: getParam("condition"),
-                location: getParam("location"),
-                minPrice: getNumberParam("minPrice") || getNumberParam("minP"),
-                maxPrice: getNumberParam("maxPrice") || getNumberParam("maxP"),
-                minYear: getNumberParam("minYear"),
-                maxYear: getNumberParam("maxYear"),
-                maxMileage: getNumberParam("maxMileage")
-            };
-        }
-
-        function matchesURLFilters(car, filters) {
-            if (!matchesTextFilter(car.brand, filters.brand)) return false;
-            if (!matchesTextFilter(car.model, filters.model)) return false;
-            if (!matchesTextFilter(car.bodyType, filters.bodyType)) return false;
-            if (!matchesTextFilter(car.fuelType, filters.fuelType)) return false;
-            if (!matchesTextFilter(car.transmission, filters.transmission)) return false;
-            if (!matchesTextFilter(car.condition, filters.condition)) return false;
-            if (filters.location && !normalizeForSearch(car.location).includes(normalizeForSearch(filters.location))) return false;
-            if (filters.minPrice && car.price < filters.minPrice) return false;
-            if (filters.maxPrice && car.price > filters.maxPrice) return false;
-            if (filters.minYear && car.year < filters.minYear) return false;
-            if (filters.maxYear && car.year > filters.maxYear) return false;
-            if (filters.maxMileage && car.mileage > filters.maxMileage) return false;
-            return true;
-        }
-
-        function matchesTextFilter(value, filterValue) {
-            if (!filterValue || filterValue === "all") return true;
-            return normalizeForSearch(value) === normalizeForSearch(filterValue);
-        }
-
-        function sortCars(cars, sortValue) {
-            const sorted = [...cars];
-            const comparators = {
-                newest: (a, b) => b.createdAtMs - a.createdAtMs,
-                priceAsc: (a, b) => a.price - b.price,
-                priceDesc: (a, b) => b.price - a.price,
-                yearDesc: (a, b) => b.year - a.year,
-                mileageAsc: (a, b) => a.mileage - b.mileage
-            };
-            sorted.sort(comparators[sortValue] || comparators.newest);
-            return sorted;
-        }
-
-        function renderCars(cars) {
-            elements.grid.textContent = "";
-            if (!cars.length) {
-                const empty = document.createElement("div");
-                empty.className = "empty";
-                empty.innerHTML = `<i class="fa-solid fa-car-side"></i><h3>Inga fordon matchade din sökning</h3><p>Prova bredare filter eller kontrollera att annonser finns publicerade i databasen.</p>`;
-                elements.grid.appendChild(empty);
-                return;
-            }
-            const fragment = document.createDocumentFragment();
-            cars.forEach((car) => fragment.appendChild(createCarCard(car)));
-            elements.grid.appendChild(fragment);
-        }
-
-        function createCarCard(car) {
-            const card = document.createElement("article");
-            card.className = "car-card";
-            card.tabIndex = 0;
-            card.addEventListener("click", () => { window.location.href = `details.html?id=${encodeURIComponent(car.id)}`; });
-            card.addEventListener("keydown", (event) => { if (event.key === "Enter") window.location.href = `details.html?id=${encodeURIComponent(car.id)}`; });
-
-            const imageWrapper = document.createElement("div");
-            imageWrapper.className = "card-image";
-            const img = document.createElement("img");
-            img.src = car.mainImage || car.images[0] || "placeholder.jpg";
-            img.alt = car.title || "Bilannons";
-            img.loading = "lazy";
-            imageWrapper.appendChild(img);
-            const badge = document.createElement("span");
-            badge.className = "badge";
-            badge.textContent = car.condition || "Annons";
-            imageWrapper.appendChild(badge);
-
-            const body = document.createElement("div");
-            body.className = "card-body";
-            const price = document.createElement("div");
-            price.className = "price";
-            price.textContent = car.price > 0 ? `${formatNumber(car.price)} kr` : "Pris saknas";
-            const title = document.createElement("div");
-            title.className = "title";
-            title.textContent = car.title || `${car.brand} ${car.model}`;
-            const meta = document.createElement("div");
-            meta.className = "meta";
-            [car.year || "År saknas", car.mileage ? `${formatNumber(car.mileage)} km` : "Miltal saknas", car.fuelType || "Bränsle saknas", car.transmission || "Växellåda saknas"].forEach((text) => {
-                const span = document.createElement("span");
-                span.textContent = text;
-                meta.appendChild(span);
             });
-            const location = document.createElement("div");
-            location.className = "location";
-            location.innerHTML = `<i class="fa-solid fa-location-dot"></i>`;
-            const locationText = document.createElement("span");
-            locationText.textContent = car.location || "Plats saknas";
-            location.appendChild(locationText);
-            body.append(price, title, meta, location);
-            card.append(imageWrapper, body);
-            return card;
-        }
 
-        function updateStatus(filters, count) {
-            elements.resultCountText.textContent = `${count} annons${count === 1 ? "" : "er"} hittades`;
-            const active = Object.entries(filters).filter(([, value]) => value !== "" && value !== 0 && value !== null && value !== undefined && value !== "all");
-            elements.activeFiltersText.textContent = active.length ? `${active.length} aktiva filter` : "Inga filter valda";
-            elements.resultSubtitle.textContent = active.length ? "Resultaten är filtrerade enligt dina val." : "Alla aktiva annonser visas här.";
-        }
+            updateFavoriteButtons();
+            if (foundCount === 0) grid.innerHTML = "<div class='no-results'>Inga fordon matchade din sökning. Prova bredare filter!</div>";
+        } catch (err) { console.error(err); }
+    }
 
-        function renderLoading() {
-            elements.grid.innerHTML = `<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i><h3>Laddar annonser...</h3><p>Vänta medan annonser hämtas från databasen.</p></div>`;
-        }
-
-        function renderError() {
-            elements.resultCountText.textContent = "Kunde inte ladda resultat";
-            elements.grid.innerHTML = `<div class="error"><i class="fa-solid fa-triangle-exclamation"></i><h3>Ett fel uppstod</h3><p>Kontrollera Firebase-regler, internetanslutning och att cars-samlingen finns.</p></div>`;
-        }
-
-        function getParam(name) { return String(urlParams.get(name) || "").trim(); }
-        function getNumberParam(name) { const value = Number(urlParams.get(name)); return Number.isFinite(value) && value > 0 ? value : 0; }
-        function normalizeText(value, maxLength = 300) { return String(value ?? "").replace(/\s+/g, " ").trim().slice(0, maxLength); }
-        function normalizeForSearch(value) { return normalizeText(value, 1000).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
-        function normalizeNumber(value) { const number = Number(value); return Number.isFinite(number) ? Math.floor(number) : 0; }
-        function formatNumber(value) { return new Intl.NumberFormat("sv-SE").format(Number(value) || 0); }
-        function getTimestampMs(value) {
-            if (!value) return 0;
-            if (typeof value.toMillis === "function") return value.toMillis();
-            if (value instanceof Date) return value.getTime();
-            return Number(value) || 0;
-        }
-    </script>
+    loadResults();
+</script>
 </body>
 </html>

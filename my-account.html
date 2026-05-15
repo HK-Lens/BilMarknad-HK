@@ -8,34 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --primary: #f58220; --primary-hover: #e67312; --primary-soft: rgba(245,130,32,.12); --dark: #0f172a; --muted:#64748b; --bg: #f8fafc; --border: #e2e8f0; --danger: #ef4444; --danger-soft: rgba(239,68,68,.10); --success:#16a34a; --surface:#ffffff; --radius-full:999px; }
-        body { background: var(--bg); font-family: 'Inter', sans-serif; padding: 20px; color: var(--dark); }
+        :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --danger: #ef4444; }
+        body { background: var(--bg); font-family: 'Inter', sans-serif; padding: 20px; }
         .wrapper { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 250px 1fr; gap: 30px; }
         @media (max-width: 768px) { .wrapper { grid-template-columns: 1fr; } }
-        .tab-btn { width: 100%; text-align: left; padding: 15px; cursor: pointer; border-radius: 12px; margin-bottom: 10px; font-weight: 700; background: white; border: 1px solid var(--border); transition:.25s ease; }
+        .tab-btn { width: 100%; text-align: left; padding: 15px; cursor: pointer; border-radius: 12px; margin-bottom: 10px; font-weight: 700; background: white; border: 1px solid var(--border); }
         .tab-btn.active { background: var(--primary); color: white; }
-        .tab-btn:hover { border-color: rgba(245,130,32,.45); transform: translateY(-1px); }
-        .tab-btn.danger { color: var(--danger); border-color: rgba(239,68,68,.25); background: var(--danger-soft); }
-        .tab-btn.danger:hover { background: var(--danger); color: white; }
-        .panel-card { background:white; border:1px solid var(--border); border-radius:18px; padding:22px; margin-bottom:18px; }
-        .panel-card h2 { margin-bottom:10px; font-size:24px; font-weight:900; }
-        .panel-card p { color:var(--muted); line-height:1.7; font-weight:600; margin-bottom:12px; }
-        .danger-zone { border:1px solid rgba(239,68,68,.35); background:linear-gradient(180deg,#fff,#fff7f7); }
-        .danger-zone h2 { color:var(--danger); }
-        .btn-danger { min-height:48px; border:none; border-radius:14px; background:var(--danger); color:white; padding:12px 18px; font-size:14px; font-weight:900; display:inline-flex; align-items:center; gap:9px; cursor:pointer; }
-        .btn-danger:disabled { background:#cbd5e1; cursor:not-allowed; }
-        .btn-light { min-height:44px; border:1px solid var(--border); border-radius:14px; background:white; color:var(--dark); padding:10px 15px; font-weight:900; cursor:pointer; }
-        .account-line { display:grid; gap:8px; color:var(--muted); font-size:14px; font-weight:700; }
-        .account-line strong { color:var(--dark); }
-        .profile-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:18px; }
-        .profile-item { border:1px solid var(--border); background:var(--surface); border-radius:16px; padding:14px; }
-        .profile-item span { display:block; color:var(--muted); font-size:12px; font-weight:800; margin-bottom:6px; }
-        .profile-item strong { display:block; color:var(--dark); font-size:14px; font-weight:900; word-break:break-word; }
-        .profile-avatar { width:70px; height:70px; border-radius:24px; display:grid; place-items:center; background:var(--primary-soft); color:var(--primary); font-size:28px; margin-bottom:14px; }
-        @media (max-width: 640px) { .profile-grid { grid-template-columns:1fr; } }
         .ad-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; cursor: pointer; }
         .ad-card img { width: 100px; height: 75px; object-fit: cover; border-radius: 10px; }
         .btn-del { margin-left: auto; color: var(--danger); border: none; background: none; font-size: 20px; cursor: pointer; }
+        .btn-fav-remove { margin-left: auto; color: #ef4444; border: none; background: #fff1f2; width: 38px; height: 38px; border-radius: 50%; font-size: 16px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -46,7 +28,6 @@
     <div class="sidebar">
         <button class="tab-btn active" id="btnAds" onclick="switchTab('ads')">Mina Annonser</button>
         <button class="tab-btn" id="btnFavs" onclick="switchTab('favs')">Sparade Bilar</button>
-        <button class="tab-btn" id="btnProfile" onclick="switchTab('profile')">Min profil</button>
         <button class="tab-btn" onclick="window.location.href='messages.html'">Meddelanden</button>
         <button class="tab-btn" onclick="window.location.href='dashboard.html'">Dashboard</button>
     </div>
@@ -54,54 +35,17 @@
 </div>
 
 <script type="module">
-    import { auth, db, storage } from './firebase-config.js';
-    import {
-        onAuthStateChanged,
-        deleteUser,
-        EmailAuthProvider,
-        GoogleAuthProvider,
-        reauthenticateWithCredential,
-        reauthenticateWithPopup,
-        signOut
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import {
-        collection,
-        query,
-        where,
-        getDocs,
-        deleteDoc,
-        doc,
-        writeBatch
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import {
-        ref,
-        deleteObject
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { collection, query, where, getDocs, deleteDoc, doc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let user = null;
-    let isDeletingAccount = false;
-
-    onAuthStateChanged(auth, u => {
-        if (u) {
-            user = u;
-            switchTab('ads');
-        } else {
-            window.location.href = "login.html";
-        }
-    });
+    onAuthStateChanged(auth, u => { if(u) { user = u; switchTab('ads'); } else { window.location.href="login.html"; } });
 
     window.switchTab = async (tab) => {
         document.getElementById('btnAds').classList.toggle('active', tab === 'ads');
         document.getElementById('btnFavs').classList.toggle('active', tab === 'favs');
-        document.getElementById('btnProfile').classList.toggle('active', tab === 'profile');
-
         const container = document.getElementById('mainContent');
-
-        if (tab === 'profile') {
-            renderProfilePanel(container);
-            return;
-        }
-
         container.innerHTML = "Söker...";
 
         const col = tab === 'ads' ? 'cars' : 'favorites';
@@ -110,417 +54,53 @@
         const snap = await getDocs(q);
 
         container.innerHTML = `<h2>${tab === 'ads' ? 'Mina Annonser' : 'Sparade Bilar'}</h2>`;
-        if (snap.empty) {
-            container.innerHTML += "<p>Hittade inget här.</p>";
-            return;
-        }
-
+        if (snap.empty) { container.innerHTML += "<p>Hittade inget här.</p>"; return; }
+        
         snap.forEach(d => {
             const data = d.data();
             const carId = tab === 'ads' ? d.id : data.carId;
-            const img = tab === 'ads' ? (Array.isArray(data.images) ? data.images[0] : data.mainImage) : data.image;
+            const img = tab === 'ads' ? (data.images?.[0] || 'placeholder.jpg') : (data.image || 'placeholder.jpg');
             const div = document.createElement('div');
             div.className = "ad-card";
             div.onclick = () => window.location.href = `details.html?id=${carId}`;
-            div.innerHTML = `<img src="${escapeHTML(img || '')}" alt="Bilbild"><div><h4>${escapeHTML(data.brand || data.title || 'Annons')}</h4><p>${escapeHTML(String(data.price || ''))} kr</p></div>
-                ${tab === 'ads' ? `<button class="btn-del" onclick="event.stopPropagation(); deleteAd('${d.id}')"><i class="fa-solid fa-trash"></i></button>` : ''}`;
+            div.innerHTML = `<img src="${img || 'placeholder.jpg'}"><div><h4>${data.brand || ''} ${data.model || ''}</h4><p>${Number(data.price || 0).toLocaleString()} kr</p></div>
+                ${tab === 'ads' ? `<button class="btn-del" onclick="event.stopPropagation(); deleteAd('${d.id}')"><i class="fa-solid fa-trash"></i></button>` : `<button class="btn-fav-remove" onclick="event.stopPropagation(); removeFavorite('${d.id}')" title="Ta bort från sparade"><i class="fa-solid fa-heart-crack"></i></button>`}`;
             container.appendChild(div);
         });
     };
 
-    window.deleteAd = async (id) => {
-        const res = await Swal.fire({
-            title: 'Radera annons?',
-            text: 'Annonsen och kopplade konversationer tas bort.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ja, radera',
-            cancelButtonText: 'Avbryt',
-            confirmButtonColor: '#ef4444'
-        });
 
+    window.removeFavorite = async (favoriteId) => {
+        const res = await Swal.fire({
+            title: 'Ta bort från sparade?',
+            text: 'Bilen tas bara bort från din sparade lista. Annonsen raderas inte.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ja, ta bort',
+            cancelButtonText: 'Avbryt'
+        });
         if (res.isConfirmed) {
-            await deleteCarWithRelatedData(id);
-            location.reload();
+            await deleteDoc(doc(db, "favorites", favoriteId));
+            switchTab('favs');
         }
     };
 
-    function renderProfilePanel(container) {
-        const providerLabels = getCurrentUserProviderLabels();
-        const emailVerifiedText = user?.emailVerified ? 'Verifierad' : 'Inte verifierad';
-        const createdAtText = user?.metadata?.creationTime ? formatDateTime(user.metadata.creationTime) : 'Okänt';
-        const lastLoginText = user?.metadata?.lastSignInTime ? formatDateTime(user.metadata.lastSignInTime) : 'Okänt';
-        const displayName = user?.displayName || 'Inte angivet';
-        const email = user?.email || 'Ingen e-post registrerad';
-
-        container.innerHTML = `
-            <div class="panel-card">
-                <div class="profile-avatar">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-                <h2>Min profil</h2>
-                <p>Här visas kontouppgifter för den inloggade användaren. Alternativet för permanent radering finns längst ned i profilen.</p>
-                <div class="profile-grid">
-                    <div class="profile-item">
-                        <span>E-post</span>
-                        <strong>${escapeHTML(email)}</strong>
-                    </div>
-                    <div class="profile-item">
-                        <span>Namn</span>
-                        <strong>${escapeHTML(displayName)}</strong>
-                    </div>
-                    <div class="profile-item">
-                        <span>Verifiering</span>
-                        <strong>${escapeHTML(emailVerifiedText)}</strong>
-                    </div>
-                    <div class="profile-item">
-                        <span>Inloggningsmetod</span>
-                        <strong>${escapeHTML(providerLabels)}</strong>
-                    </div>
-                    <div class="profile-item">
-                        <span>Skapad</span>
-                        <strong>${escapeHTML(createdAtText)}</strong>
-                    </div>
-                    <div class="profile-item">
-                        <span>Senaste inloggning</span>
-                        <strong>${escapeHTML(lastLoginText)}</strong>
-                    </div>
-                </div>
-            </div>
-
-            <div class="panel-card danger-zone">
-                <h2><i class="fa-solid fa-triangle-exclamation"></i> Ta bort konto permanent</h2>
-                <p>Det här alternativet finns inne i profilen för att användaren tydligt ska se vilket konto som raderas.</p>
-                <p>När du trycker på knappen visas en varning först. Efter det måste du bekräfta med din e-postadress. Om kontot är skapat med e-post och lösenord måste lösenordet anges igen. Om kontot är skapat med Google måste Google-bekräftelse genomföras.</p>
-                <p><strong>Viktigt:</strong> raderingen försöker ta bort dina annonser, sparade bilar och konversationer kopplade till kontot innan själva Firebase-kontot tas bort. Detta går inte att ångra.</p>
-                <div class="account-line">
-                    <span><strong>Inloggad användare:</strong> ${escapeHTML(user?.email || 'Okänd användare')}</span>
-                    <span><strong>Användar-ID:</strong> ${escapeHTML(user?.uid || '')}</span>
-                </div>
-                <br>
-                <button class="btn-danger" id="deleteAccountPermanentBtn">
-                    <i class="fa-solid fa-user-xmark"></i>
-                    Ta bort mitt konto permanent
-                </button>
-            </div>
-        `;
-
-        document.getElementById('deleteAccountPermanentBtn').addEventListener('click', handlePermanentAccountDeletion);
-    }
-
-    async function handlePermanentAccountDeletion() {
-        if (isDeletingAccount || !user) {
-            return;
-        }
-
-        const firstConfirm = await Swal.fire({
-            icon: 'warning',
-            title: 'Ta bort konto permanent?',
-            html: 'Kontot, dina annonser och dina konversationer kommer att tas bort. <b>Detta går inte att ångra.</b>',
-            showCancelButton: true,
-            confirmButtonText: 'Fortsätt',
-            cancelButtonText: 'Avbryt',
-            confirmButtonColor: '#ef4444'
-        });
-
-        if (!firstConfirm.isConfirmed) {
-            return;
-        }
-
-        const expectedEmail = String(user?.email || '').trim().toLowerCase();
-
-        const typedConfirm = await Swal.fire({
-            icon: 'error',
-            title: 'Bekräfta med e-post',
-            input: 'email',
-            inputLabel: 'Skriv kontots e-postadress för att bekräfta permanent radering',
-            inputPlaceholder: expectedEmail || 'din e-postadress',
-            showCancelButton: true,
-            confirmButtonText: 'Bekräfta och fortsätt',
-            cancelButtonText: 'Avbryt',
-            confirmButtonColor: '#ef4444',
-            inputValidator: (value) => {
-                const typedEmail = String(value || '').trim().toLowerCase();
-
-                if (!typedEmail) {
-                    return 'E-postadress krävs.';
-                }
-
-                if (expectedEmail && typedEmail !== expectedEmail) {
-                    return 'E-postadressen matchar inte kontot som är inloggat.';
-                }
-
-                return null;
+    window.deleteAd = async (id) => {
+        const res = await Swal.fire({ title: 'Radera annons?', showCancelButton: true });
+        if(res.isConfirmed) {
+            await deleteDoc(doc(db, "cars", id));
+            const q = query(collection(db, "chats"), where("carId", "==", id));
+            const cSnap = await getDocs(q);
+            const batch = writeBatch(db);
+            for(let c of cSnap.docs) {
+                const ms = await getDocs(collection(db, `chats/${c.id}/messages`));
+                ms.forEach(m => batch.delete(m.ref));
+                batch.delete(c.ref);
             }
-        });
-
-        if (!typedConfirm.isConfirmed) {
-            return;
-        }
-
-        try {
-            isDeletingAccount = true;
-            const deleteBtn = document.getElementById('deleteAccountPermanentBtn');
-            if (deleteBtn) {
-                deleteBtn.disabled = true;
-                deleteBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Raderar konto...';
-            }
-
-            await reauthenticateCurrentUser();
-            await deleteAllUserRelatedData(user.uid);
-            await deleteUser(user);
-
-            await Swal.fire({
-                icon: 'success',
-                title: 'Kontot är borttaget',
-                text: 'Ditt konto har raderats permanent.',
-                confirmButtonColor: '#f58220'
-            });
-
-            window.location.href = 'index.html';
-        } catch (error) {
-            console.error('Permanent account deletion error:', error);
-            isDeletingAccount = false;
-
-            const deleteBtn = document.getElementById('deleteAccountPermanentBtn');
-            if (deleteBtn) {
-                deleteBtn.disabled = false;
-                deleteBtn.innerHTML = '<i class="fa-solid fa-user-xmark"></i> Ta bort mitt konto permanent';
-            }
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Kunde inte ta bort kontot',
-                text: getReadableDeleteAccountError(error),
-                confirmButtonColor: '#f58220'
-            });
-        }
-    }
-
-    async function reauthenticateCurrentUser() {
-        const currentUser = auth.currentUser;
-
-        if (!currentUser) {
-            throw new Error('Du är inte inloggad. Logga in igen och försök på nytt.');
-        }
-
-        const providers = currentUser.providerData.map(provider => provider.providerId);
-
-        if (providers.includes('password')) {
-            const passwordPrompt = await Swal.fire({
-                icon: 'question',
-                title: 'Bekräfta lösenord',
-                input: 'password',
-                inputLabel: 'Ange ditt lösenord för att fortsätta',
-                inputPlaceholder: 'Lösenord',
-                showCancelButton: true,
-                confirmButtonText: 'Bekräfta',
-                cancelButtonText: 'Avbryt',
-                confirmButtonColor: '#f58220',
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'Lösenord krävs.';
-                    }
-                    return null;
-                }
-            });
-
-            if (!passwordPrompt.isConfirmed) {
-                throw new Error('Åtgärden avbröts.');
-            }
-
-            const credential = EmailAuthProvider.credential(currentUser.email, passwordPrompt.value);
-            await reauthenticateWithCredential(currentUser, credential);
-            return;
-        }
-
-        if (providers.includes('google.com')) {
-            const googleProvider = new GoogleAuthProvider();
-            await reauthenticateWithPopup(currentUser, googleProvider);
-            return;
-        }
-
-        throw new Error('Logga ut och logga in igen innan du tar bort kontot.');
-    }
-
-    async function deleteAllUserRelatedData(uid) {
-        await deleteUserCars(uid);
-        await deleteUserFavorites(uid);
-        await deleteUserChats(uid);
-        await safeDeleteDoc('users', uid);
-    }
-
-    async function deleteUserCars(uid) {
-        const carsQuery = query(collection(db, 'cars'), where('sellerId', '==', uid));
-        const carsSnapshot = await getDocs(carsQuery);
-
-        for (const carDoc of carsSnapshot.docs) {
-            await deleteCarWithRelatedData(carDoc.id, carDoc.data());
-        }
-    }
-
-    async function deleteCarWithRelatedData(carId, existingCarData = null) {
-        const carData = existingCarData || {};
-        await deleteCarImagesFromStorage(carData);
-        await deleteChatsByCarId(carId);
-        await deleteDoc(doc(db, 'cars', carId));
-    }
-
-    async function deleteCarImagesFromStorage(carData) {
-        const imagePaths = new Set();
-
-        if (Array.isArray(carData.imageFiles)) {
-            carData.imageFiles.forEach(image => {
-                if (image && image.path) {
-                    imagePaths.add(image.path);
-                }
-            });
-        }
-
-        if (Array.isArray(carData.imagesPaths)) {
-            carData.imagesPaths.forEach(path => imagePaths.add(path));
-        }
-
-        for (const imagePath of imagePaths) {
-            try {
-                await deleteObject(ref(storage, imagePath));
-            } catch (error) {
-                console.warn('Could not delete storage image:', imagePath, error);
-            }
-        }
-    }
-
-    async function deleteChatsByCarId(carId) {
-        const chatsQuery = query(collection(db, 'chats'), where('carId', '==', carId));
-        const chatsSnapshot = await getDocs(chatsQuery);
-
-        for (const chatDoc of chatsSnapshot.docs) {
-            await deleteChatWithMessages(chatDoc.id);
-        }
-    }
-
-    async function deleteUserChats(uid) {
-        const participantQueries = [
-            query(collection(db, 'chats'), where('participants', 'array-contains', uid)),
-            query(collection(db, 'chats'), where('buyerId', '==', uid)),
-            query(collection(db, 'chats'), where('sellerId', '==', uid))
-        ];
-
-        const chatIds = new Set();
-
-        for (const chatQuery of participantQueries) {
-            try {
-                const snapshot = await getDocs(chatQuery);
-                snapshot.forEach(chatDoc => chatIds.add(chatDoc.id));
-            } catch (error) {
-                console.warn('Could not fetch chat query during account deletion:', error);
-            }
-        }
-
-        for (const chatId of chatIds) {
-            await deleteChatWithMessages(chatId);
-        }
-    }
-
-    async function deleteChatWithMessages(chatId) {
-        const messagesSnapshot = await getDocs(collection(db, `chats/${chatId}/messages`));
-        const batch = writeBatch(db);
-        let operationCount = 0;
-
-        messagesSnapshot.forEach(messageDoc => {
-            batch.delete(messageDoc.ref);
-            operationCount += 1;
-        });
-
-        batch.delete(doc(db, 'chats', chatId));
-        operationCount += 1;
-
-        if (operationCount > 0) {
             await batch.commit();
+            location.reload();
         }
-    }
-
-    async function deleteUserFavorites(uid) {
-        const favoritesQuery = query(collection(db, 'favorites'), where('userId', '==', uid));
-        const favoritesSnapshot = await getDocs(favoritesQuery);
-        const batch = writeBatch(db);
-        let operationCount = 0;
-
-        favoritesSnapshot.forEach(favoriteDoc => {
-            batch.delete(favoriteDoc.ref);
-            operationCount += 1;
-        });
-
-        if (operationCount > 0) {
-            await batch.commit();
-        }
-    }
-
-    async function safeDeleteDoc(collectionName, documentId) {
-        try {
-            await deleteDoc(doc(db, collectionName, documentId));
-        } catch (error) {
-            console.warn(`Could not delete ${collectionName}/${documentId}:`, error);
-        }
-    }
-
-    function getReadableDeleteAccountError(error) {
-        const code = error?.code || '';
-
-        if (code === 'auth/requires-recent-login') {
-            return 'Firebase kräver ny inloggning. Logga ut, logga in igen och försök sedan ta bort kontot.';
-        }
-
-        if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
-            return 'Lösenordet stämmer inte. Försök igen.';
-        }
-
-        if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
-            return 'Google-bekräftelsen avbröts. Försök igen.';
-        }
-
-        return error?.message || 'Ett oväntat fel uppstod. Försök igen.';
-    }
-
-    function getCurrentUserProviderLabels() {
-        const providers = (user?.providerData || []).map(provider => provider.providerId);
-        const labels = providers.map(providerId => {
-            if (providerId === 'password') {
-                return 'E-post och lösenord';
-            }
-
-            if (providerId === 'google.com') {
-                return 'Google';
-            }
-
-            return providerId;
-        });
-
-        return labels.length ? labels.join(', ') : 'Okänd';
-    }
-
-    function formatDateTime(value) {
-        try {
-            return new Intl.DateTimeFormat('sv-SE', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            }).format(new Date(value));
-        } catch (error) {
-            return 'Okänt';
-        }
-    }
-
-    function escapeHTML(value) {
-        return String(value || '')
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#039;');
-    }
+    };
 </script>
 </body>
 </html>
