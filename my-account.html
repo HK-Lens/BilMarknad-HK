@@ -2,1419 +2,442 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Mitt Konto | BILHK</title>
-
-    <meta name="description" content="Hantera dina annonser, sparade bilar, meddelanden och kontoinformation på BILHK.">
-    <meta name="robots" content="noindex, nofollow">
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <style>
-        :root {
-            --primary: #f58220;
-            --primary-hover: #e67312;
-            --primary-soft: rgba(245, 130, 32, 0.12);
-
-            --dark: #0f172a;
-            --dark-soft: #1e293b;
-
-            --text: #0f172a;
-            --muted: #64748b;
-            --muted-light: #94a3b8;
-
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --surface-soft: #f1f5f9;
-
-            --border: #e2e8f0;
-            --border-strong: #cbd5e1;
-
-            --danger: #dc2626;
-            --danger-soft: rgba(220, 38, 38, 0.10);
-
-            --success: #16a34a;
-            --success-soft: rgba(22, 163, 74, 0.10);
-
-            --warning: #f59e0b;
-            --warning-soft: rgba(245, 158, 11, 0.12);
-
-            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
-            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
-
-            --radius-sm: 12px;
-            --radius-md: 18px;
-            --radius-lg: 28px;
-            --radius-full: 999px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            min-height: 100vh;
-            font-family: 'Inter', sans-serif;
-            background:
-                radial-gradient(circle at 12% 12%, rgba(245, 130, 32, 0.13), transparent 28%),
-                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
-            color: var(--text);
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        button {
-            font-family: inherit;
-            cursor: pointer;
-        }
-
-        .topbar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 6%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 26px;
-            font-weight: 900;
-            letter-spacing: -0.06em;
-            color: var(--dark);
-        }
-
-        .logo-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 15px;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, var(--primary), #ffb15c);
-            color: white;
-            box-shadow: 0 12px 28px rgba(245, 130, 32, 0.28);
-        }
-
-        .logo span {
-            color: var(--primary);
-        }
-
-        .top-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .top-link {
-            min-height: 42px;
-            padding: 10px 15px;
-            border-radius: var(--radius-full);
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--dark);
-            font-size: 13px;
-            font-weight: 850;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s ease;
-        }
-
-        .top-link:hover {
-            border-color: rgba(245, 130, 32, 0.45);
-            color: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        .top-link.primary {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .top-link.danger {
-            color: var(--danger);
-        }
-
-        .page {
-            width: min(1180px, calc(100% - 32px));
-            margin: 34px auto 70px;
-        }
-
-        .account-hero {
-            background:
-                linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.96)),
-                radial-gradient(circle at 18% 15%, rgba(245, 130, 32, 0.35), transparent 30%);
-            color: white;
-            border-radius: 34px;
-            padding: 32px;
-            box-shadow: var(--shadow-md);
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 20px;
-            align-items: center;
-            margin-bottom: 28px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .account-hero::after {
-            content: "";
-            position: absolute;
-            right: -120px;
-            bottom: -140px;
-            width: 340px;
-            height: 340px;
-            border-radius: 999px;
-            background: rgba(245, 130, 32, 0.18);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-badge {
-            width: fit-content;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.10);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #e2e8f0;
-            border-radius: var(--radius-full);
-            padding: 8px 12px;
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 12px;
-        }
-
-        .hero-badge i {
-            color: var(--primary);
-        }
-
-        .account-hero h1 {
-            font-size: clamp(28px, 4vw, 42px);
-            font-weight: 900;
-            letter-spacing: -0.06em;
-            margin-bottom: 8px;
-        }
-
-        .account-hero p {
-            color: #cbd5e1;
-            font-size: 14px;
-            line-height: 1.7;
-            font-weight: 650;
-        }
-
-        .hero-user {
-            position: relative;
-            z-index: 1;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 24px;
-            padding: 18px;
-            min-width: 230px;
-        }
-
-        .hero-user small {
-            display: block;
-            color: #94a3b8;
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-
-        .hero-user strong {
-            display: block;
-            color: white;
-            font-size: 14px;
-            font-weight: 850;
-            word-break: break-word;
-        }
-
-        .wrapper {
-            display: grid;
-            grid-template-columns: 280px minmax(0, 1fr);
-            gap: 26px;
-            align-items: start;
-        }
-
-        .sidebar {
-            position: sticky;
-            top: 96px;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            padding: 14px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .tab-btn {
-            width: 100%;
-            min-height: 54px;
-            padding: 14px 16px;
-            border: 1px solid transparent;
-            border-radius: 17px;
-            background: transparent;
-            color: var(--muted);
-            font-size: 14px;
-            font-weight: 900;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            transition: 0.2s ease;
-            margin-bottom: 6px;
-        }
-
-        .tab-btn i {
-            width: 22px;
-            text-align: center;
-        }
-
-        .tab-btn:hover {
-            background: var(--surface-soft);
-            color: var(--dark);
-        }
-
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 12px 24px rgba(245, 130, 32, 0.20);
-        }
-
-        .content {
-            min-height: 360px;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            box-shadow: var(--shadow-sm);
-            padding: 24px;
-        }
-
-        .content-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 22px;
-            padding-bottom: 18px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .content-header h2 {
-            color: var(--dark);
-            font-size: 25px;
-            font-weight: 900;
-            letter-spacing: -0.04em;
-            margin-bottom: 5px;
-        }
-
-        .content-header p {
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 650;
-            line-height: 1.6;
-        }
-
-        .counter-pill {
-            flex: 0 0 auto;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 14px;
-            border-radius: var(--radius-full);
-            background: var(--primary-soft);
-            color: var(--primary-hover);
-            font-size: 12px;
-            font-weight: 900;
-        }
-
-        .ads-list {
-            display: grid;
-            gap: 14px;
-        }
-
-        .ad-card {
-            display: grid;
-            grid-template-columns: 150px minmax(0, 1fr) auto;
-            gap: 16px;
-            align-items: center;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 22px;
-            padding: 14px;
-            transition: 0.2s ease;
-            cursor: pointer;
-        }
-
-        .ad-card:hover {
-            border-color: rgba(245, 130, 32, 0.45);
-            transform: translateY(-1px);
-            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
-        }
-
-        .ad-image {
-            width: 150px;
-            height: 105px;
-            border-radius: 17px;
-            object-fit: cover;
-            background: var(--surface-soft);
-            border: 1px solid var(--border);
-        }
-
-        .ad-info {
-            min-width: 0;
-        }
-
-        .ad-title {
-            color: var(--dark);
-            font-size: 17px;
-            font-weight: 900;
-            margin-bottom: 7px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        .ad-price {
-            color: var(--primary);
-            font-size: 21px;
-            font-weight: 900;
-            margin-bottom: 7px;
-        }
-
-        .ad-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 750;
-        }
-
-        .ad-meta span {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: var(--surface-soft);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-full);
-            padding: 6px 9px;
-        }
-
-        .ad-actions {
-            display: grid;
-            gap: 8px;
-        }
-
-        .icon-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: white;
-            display: grid;
-            place-items: center;
-            color: var(--muted);
-            transition: 0.2s ease;
-        }
-
-        .icon-btn:hover {
-            background: var(--surface-soft);
-            color: var(--primary);
-        }
-
-        .icon-btn.danger:hover {
-            background: var(--danger-soft);
-            border-color: rgba(220, 38, 38, 0.25);
-            color: var(--danger);
-        }
-
-        .empty-state,
-        .loading-state,
-        .error-state {
-            min-height: 260px;
-            display: grid;
-            place-items: center;
-            text-align: center;
-            padding: 40px 20px;
-            border: 1px dashed var(--border-strong);
-            border-radius: 24px;
-            background: var(--surface-soft);
-        }
-
-        .state-box i {
-            font-size: 42px;
-            color: var(--primary);
-            margin-bottom: 14px;
-        }
-
-        .state-box h3 {
-            font-size: 20px;
-            font-weight: 900;
-            color: var(--dark);
-            margin-bottom: 8px;
-        }
-
-        .state-box p {
-            max-width: 520px;
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 650;
-            line-height: 1.7;
-            margin: 0 auto 16px;
-        }
-
-        .state-box .btn-small {
-            width: fit-content;
-            min-height: 42px;
-            padding: 10px 16px;
-            border: none;
-            border-radius: var(--radius-full);
-            background: var(--primary);
-            color: white;
-            font-size: 13px;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .profile-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-        }
-
-        .profile-box {
-            border: 1px solid var(--border);
-            background: white;
-            border-radius: 20px;
-            padding: 16px;
-        }
-
-        .profile-box small {
-            display: block;
-            color: var(--muted-light);
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 8px;
-        }
-
-        .profile-box strong {
-            color: var(--dark);
-            font-size: 14px;
-            font-weight: 850;
-            word-break: break-word;
-        }
-
-        @media (max-width: 900px) {
-            .account-hero {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-user {
-                min-width: 0;
-            }
-
-            .wrapper {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                position: static;
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-
-        @media (max-width: 640px) {
-            .topbar {
-                padding: 14px 16px;
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .top-actions {
-                width: 100%;
-            }
-
-            .top-link {
-                flex: 1;
-                justify-content: center;
-            }
-
-            .page {
-                width: calc(100% - 24px);
-                margin-top: 20px;
-            }
-
-            .account-hero {
-                padding: 24px;
-                border-radius: 26px;
-            }
-
-            .content {
-                padding: 18px;
-                border-radius: 24px;
-            }
-
-            .sidebar {
-                grid-template-columns: 1fr;
-            }
-
-            .ad-card {
-                grid-template-columns: 1fr;
-            }
-
-            .ad-image {
-                width: 100%;
-                height: 190px;
-            }
-
-            .ad-actions {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .icon-btn {
-                width: 100%;
-            }
-
-            .profile-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        :root { --primary: #f58220; --primary-hover: #e67312; --primary-soft: rgba(245,130,32,.12); --dark: #0f172a; --muted:#64748b; --bg: #f8fafc; --border: #e2e8f0; --danger: #ef4444; --danger-soft: rgba(239,68,68,.10); --success:#16a34a; --surface:#ffffff; --radius-full:999px; }
+        body { background: var(--bg); font-family: 'Inter', sans-serif; padding: 20px; color: var(--dark); }
+        .wrapper { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 250px 1fr; gap: 30px; }
+        @media (max-width: 768px) { .wrapper { grid-template-columns: 1fr; } }
+        .tab-btn { width: 100%; text-align: left; padding: 15px; cursor: pointer; border-radius: 12px; margin-bottom: 10px; font-weight: 700; background: white; border: 1px solid var(--border); transition:.25s ease; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-btn:hover { border-color: rgba(245,130,32,.45); transform: translateY(-1px); }
+        .tab-btn.danger { color: var(--danger); border-color: rgba(239,68,68,.25); background: var(--danger-soft); }
+        .tab-btn.danger:hover { background: var(--danger); color: white; }
+        .panel-card { background:white; border:1px solid var(--border); border-radius:18px; padding:22px; margin-bottom:18px; }
+        .panel-card h2 { margin-bottom:10px; font-size:24px; font-weight:900; }
+        .panel-card p { color:var(--muted); line-height:1.7; font-weight:600; margin-bottom:12px; }
+        .danger-zone { border:1px solid rgba(239,68,68,.35); background:linear-gradient(180deg,#fff,#fff7f7); }
+        .danger-zone h2 { color:var(--danger); }
+        .btn-danger { min-height:48px; border:none; border-radius:14px; background:var(--danger); color:white; padding:12px 18px; font-size:14px; font-weight:900; display:inline-flex; align-items:center; gap:9px; cursor:pointer; }
+        .btn-danger:disabled { background:#cbd5e1; cursor:not-allowed; }
+        .btn-light { min-height:44px; border:1px solid var(--border); border-radius:14px; background:white; color:var(--dark); padding:10px 15px; font-weight:900; cursor:pointer; }
+        .account-line { display:grid; gap:8px; color:var(--muted); font-size:14px; font-weight:700; }
+        .account-line strong { color:var(--dark); }
+        .ad-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; cursor: pointer; }
+        .ad-card img { width: 100px; height: 75px; object-fit: cover; border-radius: 10px; }
+        .btn-del { margin-left: auto; color: var(--danger); border: none; background: none; font-size: 20px; cursor: pointer; }
     </style>
 </head>
-
 <body>
+<header style="margin-bottom:30px; display:flex; justify-content:space-between; align-items:center;">
+    <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark); font-size:24px;">BIL<span>HK</span></a>
+</header>
+<div class="wrapper">
+    <div class="sidebar">
+        <button class="tab-btn active" id="btnAds" onclick="switchTab('ads')">Mina Annonser</button>
+        <button class="tab-btn" id="btnFavs" onclick="switchTab('favs')">Sparade Bilar</button>
+        <button class="tab-btn" onclick="window.location.href='messages.html'">Meddelanden</button>
+        <button class="tab-btn" onclick="window.location.href='dashboard.html'">Dashboard</button>
+        <button class="tab-btn danger" id="btnDeleteAccount" onclick="switchTab('deleteAccount')">Ta bort konto permanent</button>
+    </div>
+    <div class="content" id="mainContent">Laddar...</div>
+</div>
 
-    <header class="topbar">
-        <a href="index.html" class="logo" aria-label="Gå till startsidan">
-            <span class="logo-icon">
-                <i class="fa-solid fa-car-side"></i>
-            </span>
-            BIL<span>HK</span>
-        </a>
+<script type="module">
+    import { auth, db, storage } from './firebase-config.js';
+    import {
+        onAuthStateChanged,
+        deleteUser,
+        EmailAuthProvider,
+        GoogleAuthProvider,
+        reauthenticateWithCredential,
+        reauthenticateWithPopup,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import {
+        collection,
+        query,
+        where,
+        getDocs,
+        deleteDoc,
+        doc,
+        writeBatch
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import {
+        ref,
+        deleteObject
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-        <div class="top-actions">
-            <a href="index.html" class="top-link">
-                <i class="fa-solid fa-house"></i>
-                Hem
-            </a>
+    let user = null;
+    let isDeletingAccount = false;
 
-            <a href="sell.html" class="top-link primary">
-                <i class="fa-solid fa-plus"></i>
-                Ny annons
-            </a>
+    onAuthStateChanged(auth, u => {
+        if (u) {
+            user = u;
+            switchTab('ads');
+        } else {
+            window.location.href = "login.html";
+        }
+    });
 
-            <button type="button" class="top-link danger" id="logoutBtn">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                Logga ut
-            </button>
-        </div>
-    </header>
+    window.switchTab = async (tab) => {
+        document.getElementById('btnAds').classList.toggle('active', tab === 'ads');
+        document.getElementById('btnFavs').classList.toggle('active', tab === 'favs');
+        document.getElementById('btnDeleteAccount').classList.toggle('active', tab === 'deleteAccount');
 
-    <main class="page">
-        <section class="account-hero">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <i class="fa-solid fa-user-shield"></i>
-                    Mitt konto
-                </div>
+        const container = document.getElementById('mainContent');
 
-                <h1 id="welcomeTitle">Hej...</h1>
+        if (tab === 'deleteAccount') {
+            renderDeleteAccountPanel(container);
+            return;
+        }
 
-                <p>
-                    Här kan du hantera dina publicerade annonser, öppna meddelanden,
-                    kontrollera sparade bilar och administrera ditt konto.
-                </p>
-            </div>
+        container.innerHTML = "Söker...";
 
-            <div class="hero-user">
-                <small>Inloggad som</small>
-                <strong id="userEmail">...</strong>
-            </div>
-        </section>
+        const col = tab === 'ads' ? 'cars' : 'favorites';
+        const key = tab === 'ads' ? 'sellerId' : 'userId';
+        const q = query(collection(db, col), where(key, "==", user.uid));
+        const snap = await getDocs(q);
 
-        <section class="wrapper">
-            <aside class="sidebar">
-                <button class="tab-btn active" type="button" id="btnAds" data-tab="ads">
-                    <i class="fa-solid fa-car"></i>
-                    Mina Annonser
-                </button>
+        container.innerHTML = `<h2>${tab === 'ads' ? 'Mina Annonser' : 'Sparade Bilar'}</h2>`;
+        if (snap.empty) {
+            container.innerHTML += "<p>Hittade inget här.</p>";
+            return;
+        }
 
-                <button class="tab-btn" type="button" id="btnFavs" data-tab="favs">
-                    <i class="fa-solid fa-heart"></i>
-                    Sparade Bilar
-                </button>
+        snap.forEach(d => {
+            const data = d.data();
+            const carId = tab === 'ads' ? d.id : data.carId;
+            const img = tab === 'ads' ? (Array.isArray(data.images) ? data.images[0] : data.mainImage) : data.image;
+            const div = document.createElement('div');
+            div.className = "ad-card";
+            div.onclick = () => window.location.href = `details.html?id=${carId}`;
+            div.innerHTML = `<img src="${escapeHTML(img || '')}" alt="Bilbild"><div><h4>${escapeHTML(data.brand || data.title || 'Annons')}</h4><p>${escapeHTML(String(data.price || ''))} kr</p></div>
+                ${tab === 'ads' ? `<button class="btn-del" onclick="event.stopPropagation(); deleteAd('${d.id}')"><i class="fa-solid fa-trash"></i></button>` : ''}`;
+            container.appendChild(div);
+        });
+    };
 
-                <button class="tab-btn" type="button" id="btnMessages">
-                    <i class="fa-solid fa-comments"></i>
-                    Meddelanden
-                </button>
-
-                <button class="tab-btn" type="button" id="btnDashboard">
-                    <i class="fa-solid fa-chart-line"></i>
-                    Dashboard
-                </button>
-
-                <button class="tab-btn" type="button" id="btnProfile" data-tab="profile">
-                    <i class="fa-solid fa-id-card"></i>
-                    Profil
-                </button>
-            </aside>
-
-            <section class="content" id="mainContent">
-                <div class="loading-state">
-                    <div class="state-box">
-                        <i class="fa-solid fa-circle-notch fa-spin"></i>
-                        <h3>Laddar konto...</h3>
-                        <p>Vänta medan vi hämtar dina uppgifter.</p>
-                    </div>
-                </div>
-            </section>
-        </section>
-    </main>
-
-    <script type="module">
-        import {
-            auth,
-            db
-        } from "./firebase-config.js";
-
-        import {
-            onAuthStateChanged,
-            signOut
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        import {
-            collection,
-            query,
-            where,
-            getDocs,
-            getDoc,
-            deleteDoc,
-            doc,
-            writeBatch,
-            orderBy,
-            limit
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const ACCOUNT_CONFIG = Object.freeze({
-            ROUTES: {
-                HOME: "index.html",
-                LOGIN: "login.html",
-                SELL: "sell.html",
-                DETAILS: "details.html",
-                EDIT: "edit-car.html",
-                MESSAGES: "messages.html",
-                DASHBOARD: "dashboard.html"
-            },
-
-            COLLECTIONS: {
-                USERS: "users",
-                CARS: "cars",
-                FAVORITES: "favorites",
-                CHATS: "chats"
-            },
-
-            PLACEHOLDER_IMAGE:
-                "data:image/svg+xml;charset=UTF-8," +
-                encodeURIComponent(`
-                    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520">
-                        <rect width="800" height="520" fill="#f1f5f9"/>
-                        <circle cx="400" cy="230" r="72" fill="#e2e8f0"/>
-                        <path d="M230 370h340c18 0 31-17 25-34l-40-109c-8-22-29-37-52-37H297c-23 0-44 15-52 37l-40 109c-6 17 7 34 25 34z" fill="#cbd5e1"/>
-                        <text x="400" y="430" text-anchor="middle" font-family="Arial" font-size="28" font-weight="700" fill="#64748b">BILHK</text>
-                    </svg>
-                `)
+    window.deleteAd = async (id) => {
+        const res = await Swal.fire({
+            title: 'Radera annons?',
+            text: 'Annonsen och kopplade konversationer tas bort.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ja, radera',
+            cancelButtonText: 'Avbryt',
+            confirmButtonColor: '#ef4444'
         });
 
-        const state = {
-            user: null,
-            profile: null,
-            activeTab: "ads",
-            ads: [],
-            favorites: []
-        };
+        if (res.isConfirmed) {
+            await deleteCarWithRelatedData(id);
+            location.reload();
+        }
+    };
 
-        const elements = {
-            mainContent: document.getElementById("mainContent"),
-            welcomeTitle: document.getElementById("welcomeTitle"),
-            userEmail: document.getElementById("userEmail"),
+    function renderDeleteAccountPanel(container) {
+        container.innerHTML = `
+            <div class="panel-card danger-zone">
+                <h2><i class="fa-solid fa-triangle-exclamation"></i> Ta bort konto permanent</h2>
+                <p>Den här åtgärden tar bort ditt konto permanent från BILHK. Dina egna annonser, sparade bilar och konversationer kopplade till kontot försöker tas bort innan kontot raderas.</p>
+                <p>Detta går inte att ångra. För säkerhet krävs ny bekräftelse av inloggningen innan kontot kan raderas.</p>
+                <div class="account-line">
+                    <span><strong>Inloggad användare:</strong> ${escapeHTML(user?.email || 'Okänd användare')}</span>
+                    <span><strong>Användar-ID:</strong> ${escapeHTML(user?.uid || '')}</span>
+                </div>
+                <br>
+                <button class="btn-danger" id="deleteAccountPermanentBtn">
+                    <i class="fa-solid fa-user-xmark"></i>
+                    Ta bort mitt konto permanent
+                </button>
+            </div>
+            <div class="panel-card">
+                <h2>Säkerhetsinformation</h2>
+                <p>Om kontot är skapat med e-post och lösenord måste lösenordet anges igen. Om kontot är skapat med Google öppnas Google-inloggning igen för bekräftelse.</p>
+                <button class="btn-light" onclick="switchTab('ads')">Tillbaka till mina annonser</button>
+            </div>
+        `;
 
-            btnAds: document.getElementById("btnAds"),
-            btnFavs: document.getElementById("btnFavs"),
-            btnMessages: document.getElementById("btnMessages"),
-            btnDashboard: document.getElementById("btnDashboard"),
-            btnProfile: document.getElementById("btnProfile"),
-            logoutBtn: document.getElementById("logoutBtn")
-        };
+        document.getElementById('deleteAccountPermanentBtn').addEventListener('click', handlePermanentAccountDeletion);
+    }
 
-        initializeAccountPage();
+    async function handlePermanentAccountDeletion() {
+        if (isDeletingAccount || !user) {
+            return;
+        }
 
-        function initializeAccountPage() {
-            attachEventListeners();
+        const firstConfirm = await Swal.fire({
+            icon: 'warning',
+            title: 'Ta bort konto permanent?',
+            html: 'Kontot, dina annonser och dina konversationer kommer att tas bort. <b>Detta går inte att ångra.</b>',
+            showCancelButton: true,
+            confirmButtonText: 'Fortsätt',
+            cancelButtonText: 'Avbryt',
+            confirmButtonColor: '#ef4444'
+        });
 
-            onAuthStateChanged(auth, async (firebaseUser) => {
-                if (!firebaseUser) {
-                    window.location.href = ACCOUNT_CONFIG.ROUTES.LOGIN;
-                    return;
+        if (!firstConfirm.isConfirmed) {
+            return;
+        }
+
+        const typedConfirm = await Swal.fire({
+            icon: 'error',
+            title: 'Sista bekräftelse',
+            input: 'text',
+            inputLabel: 'Skriv RADERA för att bekräfta',
+            inputPlaceholder: 'RADERA',
+            showCancelButton: true,
+            confirmButtonText: 'Ta bort permanent',
+            cancelButtonText: 'Avbryt',
+            confirmButtonColor: '#ef4444',
+            inputValidator: (value) => {
+                if (String(value || '').trim().toUpperCase() !== 'RADERA') {
+                    return 'Du måste skriva RADERA exakt.';
                 }
+                return null;
+            }
+        });
 
-                state.user = firebaseUser;
+        if (!typedConfirm.isConfirmed) {
+            return;
+        }
 
-                elements.userEmail.textContent = firebaseUser.email || "Ingen e-post";
+        try {
+            isDeletingAccount = true;
+            const deleteBtn = document.getElementById('deleteAccountPermanentBtn');
+            if (deleteBtn) {
+                deleteBtn.disabled = true;
+                deleteBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Raderar konto...';
+            }
 
-                await loadUserProfile();
+            await reauthenticateCurrentUser();
+            await deleteAllUserRelatedData(user.uid);
+            await deleteUser(user);
 
-                renderUserHeader();
+            await Swal.fire({
+                icon: 'success',
+                title: 'Kontot är borttaget',
+                text: 'Ditt konto har raderats permanent.',
+                confirmButtonColor: '#f58220'
+            });
 
-                await switchTab("ads");
+            window.location.href = 'index.html';
+        } catch (error) {
+            console.error('Permanent account deletion error:', error);
+            isDeletingAccount = false;
+
+            const deleteBtn = document.getElementById('deleteAccountPermanentBtn');
+            if (deleteBtn) {
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = '<i class="fa-solid fa-user-xmark"></i> Ta bort mitt konto permanent';
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Kunde inte ta bort kontot',
+                text: getReadableDeleteAccountError(error),
+                confirmButtonColor: '#f58220'
             });
         }
+    }
 
-        function attachEventListeners() {
-            elements.btnAds.addEventListener("click", () => switchTab("ads"));
-            elements.btnFavs.addEventListener("click", () => switchTab("favs"));
-            elements.btnProfile.addEventListener("click", () => switchTab("profile"));
+    async function reauthenticateCurrentUser() {
+        const currentUser = auth.currentUser;
 
-            elements.btnMessages.addEventListener("click", () => {
-                window.location.href = ACCOUNT_CONFIG.ROUTES.MESSAGES;
-            });
-
-            elements.btnDashboard.addEventListener("click", () => {
-                window.location.href = ACCOUNT_CONFIG.ROUTES.DASHBOARD;
-            });
-
-            elements.logoutBtn.addEventListener("click", handleLogout);
+        if (!currentUser) {
+            throw new Error('Du är inte inloggad. Logga in igen och försök på nytt.');
         }
 
-        async function loadUserProfile() {
-            try {
-                const userRef = doc(db, ACCOUNT_CONFIG.COLLECTIONS.USERS, state.user.uid);
-                const userSnap = await getDoc(userRef);
+        const providers = currentUser.providerData.map(provider => provider.providerId);
 
-                state.profile = userSnap.exists() ? userSnap.data() : null;
-            } catch (error) {
-                console.warn("[BILHK] Could not load user profile:", error);
-                state.profile = null;
-            }
-        }
-
-        function renderUserHeader() {
-            const displayName =
-                normalizeText(state.profile?.name, 80) ||
-                normalizeText(state.user.displayName, 80) ||
-                "Användare";
-
-            elements.welcomeTitle.textContent = `Hej, ${displayName}`;
-        }
-
-        async function switchTab(tab) {
-            state.activeTab = tab;
-
-            updateActiveTabUI(tab);
-
-            if (tab === "ads") {
-                await loadMyAds();
-                renderAds();
-                return;
-            }
-
-            if (tab === "favs") {
-                await loadFavorites();
-                renderFavorites();
-                return;
-            }
-
-            if (tab === "profile") {
-                renderProfile();
-            }
-        }
-
-        function updateActiveTabUI(tab) {
-            const buttons = document.querySelectorAll(".tab-btn[data-tab]");
-
-            buttons.forEach((button) => {
-                button.classList.toggle("active", button.dataset.tab === tab);
-            });
-        }
-
-        async function loadMyAds() {
-            renderLoading("Laddar dina annonser...", "Vi hämtar annonser kopplade till ditt konto.");
-
-            try {
-                const adsQuery = query(
-                    collection(db, ACCOUNT_CONFIG.COLLECTIONS.CARS),
-                    where("sellerId", "==", state.user.uid)
-                );
-
-                const adsSnapshot = await getDocs(adsQuery);
-
-                state.ads = adsSnapshot.docs.map((item) => {
-                    return {
-                        id: item.id,
-                        ...item.data()
-                    };
-                });
-
-                state.ads.sort((a, b) => {
-                    const aTime = getMillisFromTimestamp(a.createdAt);
-                    const bTime = getMillisFromTimestamp(b.createdAt);
-                    return bTime - aTime;
-                });
-            } catch (error) {
-                console.error("[BILHK] Failed loading my ads:", error);
-                renderError(
-                    "Kunde inte hämta annonser",
-                    "Kontrollera Firestore Security Rules och att varje annons har sellerId som matchar ditt konto."
-                );
-            }
-        }
-
-        async function loadFavorites() {
-            renderLoading("Laddar sparade bilar...", "Vi hämtar dina favoriter.");
-
-            try {
-                const favQuery = query(
-                    collection(db, ACCOUNT_CONFIG.COLLECTIONS.FAVORITES),
-                    where("userId", "==", state.user.uid)
-                );
-
-                const favSnapshot = await getDocs(favQuery);
-
-                state.favorites = favSnapshot.docs.map((item) => {
-                    return {
-                        id: item.id,
-                        ...item.data()
-                    };
-                });
-            } catch (error) {
-                console.error("[BILHK] Failed loading favorites:", error);
-                renderError(
-                    "Kunde inte hämta sparade bilar",
-                    "Kontrollera att favorites-samlingen och säkerhetsreglerna är korrekt inställda."
-                );
-            }
-        }
-
-        function renderAds() {
-            const title = "Mina Annonser";
-            const description = "Här visas annonser där sellerId matchar ditt inloggade användar-ID.";
-
-            if (!state.ads.length) {
-                elements.mainContent.innerHTML = `
-                    ${buildContentHeader(title, description, 0)}
-                    <div class="empty-state">
-                        <div class="state-box">
-                            <i class="fa-solid fa-car-burst"></i>
-                            <h3>Inga annonser hittades</h3>
-                            <p>
-                                Det finns inga annonser kopplade till detta konto ännu.
-                                Kontrollera att nya annonser sparas med fältet <strong>sellerId</strong>
-                                och att värdet är samma som ditt Firebase Auth UID.
-                            </p>
-                            <a class="btn-small" href="${ACCOUNT_CONFIG.ROUTES.SELL}">
-                                <i class="fa-solid fa-plus"></i>
-                                Publicera annons
-                            </a>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            const cards = state.ads.map((car) => buildAdCard(car, "ads")).join("");
-
-            elements.mainContent.innerHTML = `
-                ${buildContentHeader(title, description, state.ads.length)}
-                <div class="ads-list">
-                    ${cards}
-                </div>
-            `;
-
-            bindAdCardEvents();
-        }
-
-        function renderFavorites() {
-            const title = "Sparade Bilar";
-            const description = "Här visas bilar som du har sparat som favoriter.";
-
-            if (!state.favorites.length) {
-                elements.mainContent.innerHTML = `
-                    ${buildContentHeader(title, description, 0)}
-                    <div class="empty-state">
-                        <div class="state-box">
-                            <i class="fa-regular fa-heart"></i>
-                            <h3>Inga sparade bilar</h3>
-                            <p>Du har inte sparat några bilar ännu.</p>
-                            <a class="btn-small" href="${ACCOUNT_CONFIG.ROUTES.HOME}">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                Sök bilar
-                            </a>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            const cards = state.favorites.map((fav) => buildFavoriteCard(fav)).join("");
-
-            elements.mainContent.innerHTML = `
-                ${buildContentHeader(title, description, state.favorites.length)}
-                <div class="ads-list">
-                    ${cards}
-                </div>
-            `;
-
-            bindAdCardEvents();
-        }
-
-        function renderProfile() {
-            const name =
-                normalizeText(state.profile?.name, 80) ||
-                normalizeText(state.user.displayName, 80) ||
-                "Ej angivet";
-
-            const email =
-                normalizeText(state.profile?.email, 120) ||
-                normalizeText(state.user.email, 120) ||
-                "Ej angivet";
-
-            const userType =
-                normalizeText(state.profile?.userType, 40) ||
-                "Ej angivet";
-
-            const phone =
-                normalizeText(state.profile?.phone, 40) ||
-                "Ej angivet";
-
-            const address =
-                normalizeText(state.profile?.address, 160) ||
-                "Ej angivet";
-
-            const taxId =
-                normalizeText(state.profile?.taxId, 40) ||
-                "Ej angivet";
-
-            elements.mainContent.innerHTML = `
-                ${buildContentHeader("Profil", "Grundläggande information om ditt konto.", 0, false)}
-                <div class="profile-grid">
-                    <div class="profile-box">
-                        <small>Namn</small>
-                        <strong>${escapeHTML(name)}</strong>
-                    </div>
-
-                    <div class="profile-box">
-                        <small>E-post</small>
-                        <strong>${escapeHTML(email)}</strong>
-                    </div>
-
-                    <div class="profile-box">
-                        <small>Kontotyp</small>
-                        <strong>${escapeHTML(userType)}</strong>
-                    </div>
-
-                    <div class="profile-box">
-                        <small>Telefon</small>
-                        <strong>${escapeHTML(phone)}</strong>
-                    </div>
-
-                    <div class="profile-box">
-                        <small>Organisationsnummer</small>
-                        <strong>${escapeHTML(taxId)}</strong>
-                    </div>
-
-                    <div class="profile-box">
-                        <small>Adress</small>
-                        <strong>${escapeHTML(address)}</strong>
-                    </div>
-                </div>
-            `;
-        }
-
-        function buildContentHeader(title, description, count, showCounter = true) {
-            return `
-                <div class="content-header">
-                    <div>
-                        <h2>${escapeHTML(title)}</h2>
-                        <p>${escapeHTML(description)}</p>
-                    </div>
-
-                    ${
-                        showCounter
-                            ? `
-                                <div class="counter-pill">
-                                    <i class="fa-solid fa-database"></i>
-                                    ${Number(count || 0)} st
-                                </div>
-                            `
-                            : ""
-                    }
-                </div>
-            `;
-        }
-
-        function buildAdCard(car, source) {
-            const carId = normalizeText(car.id, 120);
-            const imageUrl = getPrimaryImage(car);
-
-            const brand = normalizeText(car.brand, 80) || "Okänt märke";
-            const model = normalizeText(car.model, 80) || "Okänd modell";
-            const title = `${brand} ${model}`.trim();
-
-            const price = formatPrice(car.price);
-            const year = formatValue(car.year, "År saknas");
-            const mileage = formatValue(car.mileage, "Miltal saknas");
-            const fuel = normalizeText(car.fuel || car.fuelType, 50) || "Drivmedel saknas";
-            const transmission = normalizeText(car.transmission || car.gearbox, 50) || "Växellåda saknas";
-
-            return `
-                <article class="ad-card" data-action="open" data-car-id="${escapeAttribute(carId)}">
-                    <img
-                        class="ad-image"
-                        src="${escapeAttribute(imageUrl)}"
-                        alt="${escapeAttribute(title)}"
-                        loading="lazy"
-                        onerror="this.src='${ACCOUNT_CONFIG.PLACEHOLDER_IMAGE}'"
-                    >
-
-                    <div class="ad-info">
-                        <h3 class="ad-title">${escapeHTML(title)}</h3>
-                        <div class="ad-price">${escapeHTML(price)}</div>
-
-                        <div class="ad-meta">
-                            <span><i class="fa-solid fa-calendar"></i>${escapeHTML(year)}</span>
-                            <span><i class="fa-solid fa-road"></i>${escapeHTML(mileage)} mil</span>
-                            <span><i class="fa-solid fa-gas-pump"></i>${escapeHTML(fuel)}</span>
-                            <span><i class="fa-solid fa-gears"></i>${escapeHTML(transmission)}</span>
-                        </div>
-                    </div>
-
-                    <div class="ad-actions">
-                        <button
-                            class="icon-btn"
-                            type="button"
-                            title="Öppna"
-                            data-action="open"
-                            data-car-id="${escapeAttribute(carId)}"
-                        >
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-
-                        ${
-                            source === "ads"
-                                ? `
-                                    <button
-                                        class="icon-btn"
-                                        type="button"
-                                        title="Redigera"
-                                        data-action="edit"
-                                        data-car-id="${escapeAttribute(carId)}"
-                                    >
-                                        <i class="fa-solid fa-pen"></i>
-                                    </button>
-
-                                    <button
-                                        class="icon-btn danger"
-                                        type="button"
-                                        title="Radera"
-                                        data-action="delete"
-                                        data-car-id="${escapeAttribute(carId)}"
-                                    >
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                `
-                                : ""
-                        }
-                    </div>
-                </article>
-            `;
-        }
-
-        function buildFavoriteCard(fav) {
-            const carId = normalizeText(fav.carId || fav.id, 120);
-
-            const safeFavorite = {
-                id: carId,
-                brand: fav.brand || "Sparad bil",
-                model: fav.model || "",
-                price: fav.price || 0,
-                year: fav.year || "",
-                mileage: fav.mileage || "",
-                fuel: fav.fuel || fav.fuelType || "",
-                transmission: fav.transmission || "",
-                images: fav.image ? [fav.image] : []
-            };
-
-            return buildAdCard(safeFavorite, "favs");
-        }
-
-        function bindAdCardEvents() {
-            const clickableElements = elements.mainContent.querySelectorAll("[data-action]");
-
-            clickableElements.forEach((element) => {
-                element.addEventListener("click", async (event) => {
-                    event.stopPropagation();
-
-                    const action = element.dataset.action;
-                    const carId = element.dataset.carId;
-
-                    if (!carId) {
-                        return;
-                    }
-
-                    if (action === "open") {
-                        window.location.href = `${ACCOUNT_CONFIG.ROUTES.DETAILS}?id=${encodeURIComponent(carId)}`;
-                        return;
-                    }
-
-                    if (action === "edit") {
-                        window.location.href = `${ACCOUNT_CONFIG.ROUTES.EDIT}?id=${encodeURIComponent(carId)}`;
-                        return;
-                    }
-
-                    if (action === "delete") {
-                        await deleteAd(carId);
-                    }
-                });
-            });
-        }
-
-        async function deleteAd(carId) {
-            const result = await Swal.fire({
-                title: "Radera annons?",
-                text: "Annonsen och relaterade chattar tas bort. Detta går inte att ångra.",
-                icon: "warning",
+        if (providers.includes('password')) {
+            const passwordPrompt = await Swal.fire({
+                icon: 'question',
+                title: 'Bekräfta lösenord',
+                input: 'password',
+                inputLabel: 'Ange ditt lösenord för att fortsätta',
+                inputPlaceholder: 'Lösenord',
                 showCancelButton: true,
-                confirmButtonText: "Ja, radera",
-                cancelButtonText: "Avbryt",
-                confirmButtonColor: "#dc2626",
-                cancelButtonColor: "#64748b"
-            });
-
-            if (!result.isConfirmed) {
-                return;
-            }
-
-            try {
-                await deleteDoc(doc(db, ACCOUNT_CONFIG.COLLECTIONS.CARS, carId));
-
-                await deleteRelatedChats(carId);
-
-                await Swal.fire({
-                    title: "Raderad",
-                    text: "Annonsen har tagits bort.",
-                    icon: "success",
-                    timer: 1400,
-                    showConfirmButton: false
-                });
-
-                await switchTab("ads");
-            } catch (error) {
-                console.error("[BILHK] Failed deleting ad:", error);
-
-                Swal.fire({
-                    title: "Fel",
-                    text: "Kunde inte radera annonsen. Kontrollera behörighet och försök igen.",
-                    icon: "error",
-                    confirmButtonColor: "#f58220"
-                });
-            }
-        }
-
-        async function deleteRelatedChats(carId) {
-            try {
-                const chatsQuery = query(
-                    collection(db, ACCOUNT_CONFIG.COLLECTIONS.CHATS),
-                    where("carId", "==", carId),
-                    limit(100)
-                );
-
-                const chatSnapshot = await getDocs(chatsQuery);
-
-                if (chatSnapshot.empty) {
-                    return;
-                }
-
-                const batch = writeBatch(db);
-                let operations = 0;
-
-                for (const chatDoc of chatSnapshot.docs) {
-                    const messagesSnapshot = await getDocs(
-                        collection(db, `${ACCOUNT_CONFIG.COLLECTIONS.CHATS}/${chatDoc.id}/messages`)
-                    );
-
-                    messagesSnapshot.forEach((messageDoc) => {
-                        if (operations < 450) {
-                            batch.delete(messageDoc.ref);
-                            operations++;
-                        }
-                    });
-
-                    if (operations < 450) {
-                        batch.delete(chatDoc.ref);
-                        operations++;
+                confirmButtonText: 'Bekräfta',
+                cancelButtonText: 'Avbryt',
+                confirmButtonColor: '#f58220',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Lösenord krävs.';
                     }
+                    return null;
                 }
-
-                if (operations > 0) {
-                    await batch.commit();
-                }
-            } catch (error) {
-                console.warn("[BILHK] Related chats could not be fully deleted:", error);
-            }
-        }
-
-        async function handleLogout() {
-            const result = await Swal.fire({
-                title: "Logga ut?",
-                text: "Vill du logga ut från ditt konto?",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonText: "Logga ut",
-                cancelButtonText: "Avbryt",
-                confirmButtonColor: "#f58220"
             });
 
-            if (!result.isConfirmed) {
-                return;
+            if (!passwordPrompt.isConfirmed) {
+                throw new Error('Åtgärden avbröts.');
             }
 
+            const credential = EmailAuthProvider.credential(currentUser.email, passwordPrompt.value);
+            await reauthenticateWithCredential(currentUser, credential);
+            return;
+        }
+
+        if (providers.includes('google.com')) {
+            const googleProvider = new GoogleAuthProvider();
+            await reauthenticateWithPopup(currentUser, googleProvider);
+            return;
+        }
+
+        throw new Error('Logga ut och logga in igen innan du tar bort kontot.');
+    }
+
+    async function deleteAllUserRelatedData(uid) {
+        await deleteUserCars(uid);
+        await deleteUserFavorites(uid);
+        await deleteUserChats(uid);
+        await safeDeleteDoc('users', uid);
+    }
+
+    async function deleteUserCars(uid) {
+        const carsQuery = query(collection(db, 'cars'), where('sellerId', '==', uid));
+        const carsSnapshot = await getDocs(carsQuery);
+
+        for (const carDoc of carsSnapshot.docs) {
+            await deleteCarWithRelatedData(carDoc.id, carDoc.data());
+        }
+    }
+
+    async function deleteCarWithRelatedData(carId, existingCarData = null) {
+        const carData = existingCarData || {};
+        await deleteCarImagesFromStorage(carData);
+        await deleteChatsByCarId(carId);
+        await deleteDoc(doc(db, 'cars', carId));
+    }
+
+    async function deleteCarImagesFromStorage(carData) {
+        const imagePaths = new Set();
+
+        if (Array.isArray(carData.imageFiles)) {
+            carData.imageFiles.forEach(image => {
+                if (image && image.path) {
+                    imagePaths.add(image.path);
+                }
+            });
+        }
+
+        if (Array.isArray(carData.imagesPaths)) {
+            carData.imagesPaths.forEach(path => imagePaths.add(path));
+        }
+
+        for (const imagePath of imagePaths) {
             try {
-                await signOut(auth);
-                window.location.href = ACCOUNT_CONFIG.ROUTES.LOGIN;
+                await deleteObject(ref(storage, imagePath));
             } catch (error) {
-                console.error("[BILHK] Logout failed:", error);
-                Swal.fire("Fel", "Kunde inte logga ut just nu.", "error");
+                console.warn('Could not delete storage image:', imagePath, error);
+            }
+        }
+    }
+
+    async function deleteChatsByCarId(carId) {
+        const chatsQuery = query(collection(db, 'chats'), where('carId', '==', carId));
+        const chatsSnapshot = await getDocs(chatsQuery);
+
+        for (const chatDoc of chatsSnapshot.docs) {
+            await deleteChatWithMessages(chatDoc.id);
+        }
+    }
+
+    async function deleteUserChats(uid) {
+        const participantQueries = [
+            query(collection(db, 'chats'), where('participants', 'array-contains', uid)),
+            query(collection(db, 'chats'), where('buyerId', '==', uid)),
+            query(collection(db, 'chats'), where('sellerId', '==', uid))
+        ];
+
+        const chatIds = new Set();
+
+        for (const chatQuery of participantQueries) {
+            try {
+                const snapshot = await getDocs(chatQuery);
+                snapshot.forEach(chatDoc => chatIds.add(chatDoc.id));
+            } catch (error) {
+                console.warn('Could not fetch chat query during account deletion:', error);
             }
         }
 
-        function renderLoading(title, description) {
-            elements.mainContent.innerHTML = `
-                <div class="loading-state">
-                    <div class="state-box">
-                        <i class="fa-solid fa-circle-notch fa-spin"></i>
-                        <h3>${escapeHTML(title)}</h3>
-                        <p>${escapeHTML(description)}</p>
-                    </div>
-                </div>
-            `;
+        for (const chatId of chatIds) {
+            await deleteChatWithMessages(chatId);
+        }
+    }
+
+    async function deleteChatWithMessages(chatId) {
+        const messagesSnapshot = await getDocs(collection(db, `chats/${chatId}/messages`));
+        const batch = writeBatch(db);
+        let operationCount = 0;
+
+        messagesSnapshot.forEach(messageDoc => {
+            batch.delete(messageDoc.ref);
+            operationCount += 1;
+        });
+
+        batch.delete(doc(db, 'chats', chatId));
+        operationCount += 1;
+
+        if (operationCount > 0) {
+            await batch.commit();
+        }
+    }
+
+    async function deleteUserFavorites(uid) {
+        const favoritesQuery = query(collection(db, 'favorites'), where('userId', '==', uid));
+        const favoritesSnapshot = await getDocs(favoritesQuery);
+        const batch = writeBatch(db);
+        let operationCount = 0;
+
+        favoritesSnapshot.forEach(favoriteDoc => {
+            batch.delete(favoriteDoc.ref);
+            operationCount += 1;
+        });
+
+        if (operationCount > 0) {
+            await batch.commit();
+        }
+    }
+
+    async function safeDeleteDoc(collectionName, documentId) {
+        try {
+            await deleteDoc(doc(db, collectionName, documentId));
+        } catch (error) {
+            console.warn(`Could not delete ${collectionName}/${documentId}:`, error);
+        }
+    }
+
+    function getReadableDeleteAccountError(error) {
+        const code = error?.code || '';
+
+        if (code === 'auth/requires-recent-login') {
+            return 'Firebase kräver ny inloggning. Logga ut, logga in igen och försök sedan ta bort kontot.';
         }
 
-        function renderError(title, description) {
-            elements.mainContent.innerHTML = `
-                <div class="error-state">
-                    <div class="state-box">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        <h3>${escapeHTML(title)}</h3>
-                        <p>${escapeHTML(description)}</p>
-                    </div>
-                </div>
-            `;
+        if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+            return 'Lösenordet stämmer inte. Försök igen.';
         }
 
-        function getPrimaryImage(car) {
-            if (Array.isArray(car.images) && car.images.length > 0 && car.images[0]) {
-                return String(car.images[0]);
-            }
-
-            if (car.image) {
-                return String(car.image);
-            }
-
-            if (car.photoURL) {
-                return String(car.photoURL);
-            }
-
-            return ACCOUNT_CONFIG.PLACEHOLDER_IMAGE;
+        if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+            return 'Google-bekräftelsen avbröts. Försök igen.';
         }
 
-        function formatPrice(value) {
-            const number = Number(value);
+        return error?.message || 'Ett oväntat fel uppstod. Försök igen.';
+    }
 
-            if (!Number.isFinite(number) || number <= 0) {
-                return "Pris saknas";
-            }
-
-            return `${number.toLocaleString("sv-SE")} kr`;
-        }
-
-        function formatValue(value, fallback) {
-            if (value === null || value === undefined || value === "") {
-                return fallback;
-            }
-
-            return String(value);
-        }
-
-        function normalizeText(value, maxLength = 300) {
-            return String(value ?? "")
-                .replace(/\s+/g, " ")
-                .trim()
-                .slice(0, maxLength);
-        }
-
-        function getMillisFromTimestamp(value) {
-            if (!value) {
-                return 0;
-            }
-
-            if (typeof value.toMillis === "function") {
-                return value.toMillis();
-            }
-
-            if (typeof value.toDate === "function") {
-                return value.toDate().getTime();
-            }
-
-            const parsed = Date.parse(value);
-
-            return Number.isFinite(parsed) ? parsed : 0;
-        }
-
-        function escapeHTML(value) {
-            return String(value ?? "")
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replaceAll("'", "&#039;");
-        }
-
-        function escapeAttribute(value) {
-            return escapeHTML(value).replaceAll("`", "&#096;");
-        }
-    </script>
-
+    function escapeHTML(value) {
+        return String(value || '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+</script>
 </body>
 </html>
