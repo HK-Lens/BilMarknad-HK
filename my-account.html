@@ -27,6 +27,12 @@
         .btn-light { min-height:44px; border:1px solid var(--border); border-radius:14px; background:white; color:var(--dark); padding:10px 15px; font-weight:900; cursor:pointer; }
         .account-line { display:grid; gap:8px; color:var(--muted); font-size:14px; font-weight:700; }
         .account-line strong { color:var(--dark); }
+        .profile-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:18px; }
+        .profile-item { border:1px solid var(--border); background:var(--surface); border-radius:16px; padding:14px; }
+        .profile-item span { display:block; color:var(--muted); font-size:12px; font-weight:800; margin-bottom:6px; }
+        .profile-item strong { display:block; color:var(--dark); font-size:14px; font-weight:900; word-break:break-word; }
+        .profile-avatar { width:70px; height:70px; border-radius:24px; display:grid; place-items:center; background:var(--primary-soft); color:var(--primary); font-size:28px; margin-bottom:14px; }
+        @media (max-width: 640px) { .profile-grid { grid-template-columns:1fr; } }
         .ad-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; cursor: pointer; }
         .ad-card img { width: 100px; height: 75px; object-fit: cover; border-radius: 10px; }
         .btn-del { margin-left: auto; color: var(--danger); border: none; background: none; font-size: 20px; cursor: pointer; }
@@ -40,9 +46,9 @@
     <div class="sidebar">
         <button class="tab-btn active" id="btnAds" onclick="switchTab('ads')">Mina Annonser</button>
         <button class="tab-btn" id="btnFavs" onclick="switchTab('favs')">Sparade Bilar</button>
+        <button class="tab-btn" id="btnProfile" onclick="switchTab('profile')">Min profil</button>
         <button class="tab-btn" onclick="window.location.href='messages.html'">Meddelanden</button>
         <button class="tab-btn" onclick="window.location.href='dashboard.html'">Dashboard</button>
-        <button class="tab-btn danger" id="btnDeleteAccount" onclick="switchTab('deleteAccount')">Ta bort konto permanent</button>
     </div>
     <div class="content" id="mainContent">Laddar...</div>
 </div>
@@ -87,12 +93,12 @@
     window.switchTab = async (tab) => {
         document.getElementById('btnAds').classList.toggle('active', tab === 'ads');
         document.getElementById('btnFavs').classList.toggle('active', tab === 'favs');
-        document.getElementById('btnDeleteAccount').classList.toggle('active', tab === 'deleteAccount');
+        document.getElementById('btnProfile').classList.toggle('active', tab === 'profile');
 
         const container = document.getElementById('mainContent');
 
-        if (tab === 'deleteAccount') {
-            renderDeleteAccountPanel(container);
+        if (tab === 'profile') {
+            renderProfilePanel(container);
             return;
         }
 
@@ -139,12 +145,54 @@
         }
     };
 
-    function renderDeleteAccountPanel(container) {
+    function renderProfilePanel(container) {
+        const providerLabels = getCurrentUserProviderLabels();
+        const emailVerifiedText = user?.emailVerified ? 'Verifierad' : 'Inte verifierad';
+        const createdAtText = user?.metadata?.creationTime ? formatDateTime(user.metadata.creationTime) : 'Okänt';
+        const lastLoginText = user?.metadata?.lastSignInTime ? formatDateTime(user.metadata.lastSignInTime) : 'Okänt';
+        const displayName = user?.displayName || 'Inte angivet';
+        const email = user?.email || 'Ingen e-post registrerad';
+
         container.innerHTML = `
+            <div class="panel-card">
+                <div class="profile-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h2>Min profil</h2>
+                <p>Här visas kontouppgifter för den inloggade användaren. Alternativet för permanent radering finns längst ned i profilen.</p>
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <span>E-post</span>
+                        <strong>${escapeHTML(email)}</strong>
+                    </div>
+                    <div class="profile-item">
+                        <span>Namn</span>
+                        <strong>${escapeHTML(displayName)}</strong>
+                    </div>
+                    <div class="profile-item">
+                        <span>Verifiering</span>
+                        <strong>${escapeHTML(emailVerifiedText)}</strong>
+                    </div>
+                    <div class="profile-item">
+                        <span>Inloggningsmetod</span>
+                        <strong>${escapeHTML(providerLabels)}</strong>
+                    </div>
+                    <div class="profile-item">
+                        <span>Skapad</span>
+                        <strong>${escapeHTML(createdAtText)}</strong>
+                    </div>
+                    <div class="profile-item">
+                        <span>Senaste inloggning</span>
+                        <strong>${escapeHTML(lastLoginText)}</strong>
+                    </div>
+                </div>
+            </div>
+
             <div class="panel-card danger-zone">
                 <h2><i class="fa-solid fa-triangle-exclamation"></i> Ta bort konto permanent</h2>
-                <p>Den här åtgärden tar bort ditt konto permanent från BILHK. Dina egna annonser, sparade bilar och konversationer kopplade till kontot försöker tas bort innan kontot raderas.</p>
-                <p>Detta går inte att ångra. För säkerhet krävs ny bekräftelse av inloggningen innan kontot kan raderas.</p>
+                <p>Det här alternativet finns inne i profilen för att användaren tydligt ska se vilket konto som raderas.</p>
+                <p>När du trycker på knappen visas en varning först. Efter det måste du bekräfta med din e-postadress. Om kontot är skapat med e-post och lösenord måste lösenordet anges igen. Om kontot är skapat med Google måste Google-bekräftelse genomföras.</p>
+                <p><strong>Viktigt:</strong> raderingen försöker ta bort dina annonser, sparade bilar och konversationer kopplade till kontot innan själva Firebase-kontot tas bort. Detta går inte att ångra.</p>
                 <div class="account-line">
                     <span><strong>Inloggad användare:</strong> ${escapeHTML(user?.email || 'Okänd användare')}</span>
                     <span><strong>Användar-ID:</strong> ${escapeHTML(user?.uid || '')}</span>
@@ -154,11 +202,6 @@
                     <i class="fa-solid fa-user-xmark"></i>
                     Ta bort mitt konto permanent
                 </button>
-            </div>
-            <div class="panel-card">
-                <h2>Säkerhetsinformation</h2>
-                <p>Om kontot är skapat med e-post och lösenord måste lösenordet anges igen. Om kontot är skapat med Google öppnas Google-inloggning igen för bekräftelse.</p>
-                <button class="btn-light" onclick="switchTab('ads')">Tillbaka till mina annonser</button>
             </div>
         `;
 
@@ -184,20 +227,29 @@
             return;
         }
 
+        const expectedEmail = String(user?.email || '').trim().toLowerCase();
+
         const typedConfirm = await Swal.fire({
             icon: 'error',
-            title: 'Sista bekräftelse',
-            input: 'text',
-            inputLabel: 'Skriv RADERA för att bekräfta',
-            inputPlaceholder: 'RADERA',
+            title: 'Bekräfta med e-post',
+            input: 'email',
+            inputLabel: 'Skriv kontots e-postadress för att bekräfta permanent radering',
+            inputPlaceholder: expectedEmail || 'din e-postadress',
             showCancelButton: true,
-            confirmButtonText: 'Ta bort permanent',
+            confirmButtonText: 'Bekräfta och fortsätt',
             cancelButtonText: 'Avbryt',
             confirmButtonColor: '#ef4444',
             inputValidator: (value) => {
-                if (String(value || '').trim().toUpperCase() !== 'RADERA') {
-                    return 'Du måste skriva RADERA exakt.';
+                const typedEmail = String(value || '').trim().toLowerCase();
+
+                if (!typedEmail) {
+                    return 'E-postadress krävs.';
                 }
+
+                if (expectedEmail && typedEmail !== expectedEmail) {
+                    return 'E-postadressen matchar inte kontot som är inloggat.';
+                }
+
                 return null;
             }
         });
@@ -428,6 +480,37 @@
         }
 
         return error?.message || 'Ett oväntat fel uppstod. Försök igen.';
+    }
+
+    function getCurrentUserProviderLabels() {
+        const providers = (user?.providerData || []).map(provider => provider.providerId);
+        const labels = providers.map(providerId => {
+            if (providerId === 'password') {
+                return 'E-post och lösenord';
+            }
+
+            if (providerId === 'google.com') {
+                return 'Google';
+            }
+
+            return providerId;
+        });
+
+        return labels.length ? labels.join(', ') : 'Okänd';
+    }
+
+    function formatDateTime(value) {
+        try {
+            return new Intl.DateTimeFormat('sv-SE', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(new Date(value));
+        } catch (error) {
+            return 'Okänt';
+        }
     }
 
     function escapeHTML(value) {
