@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BilMarknad HK | Köp och sälj bilar i Sverige</title>
+    <meta name="description" content="BILHK är en svensk bilmarknad där användare kan söka, spara, köpa och sälja bilar.">
+    <meta name="robots" content="index, follow">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" referrerpolicy="no-referrer">
+
+    <style>
+        :root {
+            --primary: #f58220;
+            --primary-hover: #e07210;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --danger: #ef4444;
+            --muted: #64748b;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
+        a { color: inherit; }
+        button, input, select { font-family: inherit; }
+
+        .dev-banner {
+            background: var(--danger); color: white; padding: 12px; text-align: center;
+            font-weight: 800; font-size: 14px; text-transform: uppercase;
+            animation: pulse-danger 2s infinite; position: relative; z-index: 2000;
+        }
+        @keyframes pulse-danger {
+            0% { background-color: #ef4444; } 50% { background-color: #b91c1c; } 100% { background-color: #ef4444; }
+        }
+
+        header {
+            background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .logo { font-size: 1.8rem; font-weight: 900; color: var(--dark); text-decoration: none; white-space: nowrap; }
+        .logo span { color: var(--primary); }
+        .nav-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-end; }
+        .nav-links a, .nav-links button { text-decoration: none; color: var(--dark); font-weight: 700; font-size: 14px; transition: 0.3s; border: none; background: transparent; cursor: pointer; }
+        .nav-links a:hover, .nav-links button:hover { color: var(--primary); }
+        .btn-sell { background: var(--primary) !important; color: white !important; padding: 10px 25px; border-radius: 50px; transition: 0.3s; }
+        .btn-sell:hover { background: var(--primary-hover) !important; color: white !important; }
+        .account-link { color: var(--primary) !important; font-weight: 800 !important; }
+        .logout-btn { color: var(--danger) !important; font-size: 12px !important; margin-left: 10px; }
+
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 50px 6% 90px; text-align: center; color: white;
+        }
+        .hero h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; font-weight: 900; letter-spacing: -0.05em; }
+
+        .car-types-container { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 25px; }
+        .type-btn {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: white; padding: 12px 20px; border-radius: 50px; cursor: pointer;
+            font-size: 13px; font-weight: 700; transition: 0.3s;
+        }
+        .type-btn:hover, .type-btn.active { background: var(--primary); border-color: var(--primary); transform: translateY(-2px); }
+
+        .filter-wrapper { max-width: 1200px; margin: -45px auto 40px; padding: 0 20px; width: 100%; }
+        .filter-card { background: var(--white); padding: 35px; border-radius: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .filter-group { display: flex; flex-direction: column; }
+        .filter-group label { font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; }
+
+        input, select { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f1f5f9; font-size: 14px; outline: none; width: 100%; transition: .25s; }
+        input:focus, select:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(245,130,32,.10); }
+
+        .search-actions { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
+        .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; }
+        .btn-results:hover { background: var(--primary-hover); }
+        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 800; cursor: pointer; }
+        .btn-deep:hover { background: #cbd5e1; }
+
+        .container { flex: 1; padding: 0 6% 80px; }
+        .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
+        .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+
+        .car-card {
+            position: relative; background: white; border-radius: 20px; overflow: hidden;
+            border: 1px solid #e2e8f0; cursor: pointer; transition: 0.25s;
+        }
+        .car-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+        .car-card img { width: 100%; height: 190px; object-fit: cover; display: block; background: #e2e8f0; }
+        .car-content { padding: 20px; }
+        .car-price { color: var(--primary); font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+        .car-title { font-weight: 800; margin-bottom: 7px; }
+        .car-meta { color: var(--muted); font-size: 13px; font-weight: 650; }
+
+        .favorite-btn {
+            position: absolute; top: 12px; right: 12px; width: 42px; height: 42px;
+            border: none; border-radius: 50%; background: rgba(255,255,255,0.95);
+            color: #94a3b8; box-shadow: 0 8px 20px rgba(15,23,42,0.18);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; z-index: 50; transition: 0.2s; touch-action: manipulation;
+        }
+        .favorite-btn:hover { transform: scale(1.08); color: var(--primary); }
+        .favorite-btn.saved { color: #ef4444; }
+        .favorite-btn:disabled { opacity: 0.6; cursor: wait; }
+
+        .state-message { grid-column: 1/-1; text-align: center; color: var(--muted); font-weight: 700; padding: 28px; background: white; border: 1px solid var(--border); border-radius: 18px; }
+        .state-message.error { color: var(--danger); }
+
+        footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; border-top: 1px solid #1e293b; }
+        .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+        .footer-section h4 { color: white; margin-bottom: 14px; font-size: 15px; }
+        .footer-section p { line-height: 1.7; font-size: 13px; }
+        .footer-links { list-style: none; display: grid; gap: 9px; }
+        .footer-links a { color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 700; }
+        .footer-links a:hover { color: var(--primary); }
+        .legal-box { margin-top: 50px; padding-top: 30px; border-top: 1px solid #1e293b; text-align: center; font-size: 12px; }
+
+        @media (max-width: 900px) {
+            .filter-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            header { padding: 1rem 4%; align-items: flex-start; gap: 12px; }
+            .logo { font-size: 1.55rem; }
+            .nav-links { gap: 10px; }
+            .nav-links a, .nav-links button { font-size: 13px; }
+            .btn-sell { padding: 9px 16px; }
+            .filter-grid { grid-template-columns: 1fr; }
+            .search-actions { flex-direction: column; }
+            .footer-content { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            header { flex-direction: column; }
+            .nav-links { justify-content: flex-start; }
+            .filter-card { padding: 24px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dev-banner">Sidan är under uppbyggnad - Funktioner och annonser är begränsade just nu</div>
+
+<header>
+    <a href="index.html" class="logo" aria-label="BILHK startsida">BIL<span>HK</span></a>
+    <nav class="nav-links" aria-label="Huvudmeny">
+        <a href="sell.html" class="btn-sell">Sälj din bil</a>
+        <div id="authStatusContainer" style="display:flex;align-items:center;gap:15px;"></div>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Hitta din nästa bil snabbt och enkelt</h1>
+    <div class="car-types-container" id="carTypeButtons" aria-label="Karosstyp-filter">
+        <button type="button" class="type-btn active" data-type="">Alla bilar</button>
+        <button type="button" class="type-btn" data-type="SUV">SUV / 4x4</button>
+        <button type="button" class="type-btn" data-type="Transportbil">Skåpbil</button>
+        <button type="button" class="type-btn" data-type="Sedan">Sedan</button>
+        <button type="button" class="type-btn" data-type="Kombi">Kombi</button>
+        <button type="button" class="type-btn" data-type="Halvkombi">Småbil</button>
+        <button type="button" class="type-btn" data-type="Cabriolet">Cabriolet</button>
+    </div>
+</section>
+
+<div class="filter-wrapper">
+    <div class="filter-card">
+        <div class="filter-grid">
+            <div class="filter-group"><label for="brandSelect">Märke</label><select id="brandSelect"><option value="">Alla märken</option></select></div>
+            <div class="filter-group"><label for="modelSelect">Modell</label><select id="modelSelect"><option value="">Välj märke först</option></select></div>
+            <div class="filter-group"><label for="maxPrice">Högsta Pris</label><input type="number" id="maxPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 300000"></div>
+            <div class="filter-group"><label for="minPrice">Lägsta Pris</label><input type="number" id="minPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 50000"></div>
+            <div class="filter-group"><label for="maxMil">Mest Mil</label><input type="number" id="maxMil" min="0" max="2000000" inputmode="numeric" placeholder="Ex. 15000"></div>
+            <div class="filter-group"><label for="minMil">Minst Mil</label><input type="number" id="minMil" min="0" max="2000000" inputmode="numeric" placeholder="Ex. 0"></div>
+            <div class="filter-group"><label for="maxYear">Nyaste Årsmodell</label><input type="number" id="maxYear" min="1900" max="2027" inputmode="numeric" placeholder="Ex. 2026"></div>
+            <div class="filter-group"><label for="minYear">Äldsta Årsmodell</label><input type="number" id="minYear" min="1900" max="2027" inputmode="numeric" placeholder="Ex. 2015"></div>
+        </div>
+        <div class="search-actions">
+            <button type="button" class="btn-deep" id="deepSearchBtn">Djup Sökning</button>
+            <button type="button" class="btn-results" id="searchBtn">Visa Resultat</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h2 class="section-title">De senaste toppmodellerna</h2>
+    <div id="carsGrid" class="cars-grid" aria-live="polite"></div>
+</div>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>Ansvarsfriskrivning</h4>
+            <p>BilMarknad-HK är en öppen marknadsplats. Vi tar inget ansvar för tvister mellan parter.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Information</h4>
+            <ul class="footer-links">
+                <li><a href="terms.html">Användarvillkor</a></li>
+                <li><a href="privacy.html">Integritetspolicy</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Juridisk Info</h4>
+            <ul class="footer-links">
+                <li><a href="terms.html">Villkor</a></li>
+                <li><a href="privacy.html">GDPR</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="legal-box">&copy; 2026 BilMarknad-HK.</div>
+</footer>
+
+<script type="module">
+    import { db, auth, escapeHTML } from './firebase-config.js';
+    import {
+        collection,
+        query,
+        orderBy,
+        limit,
+        getDocs,
+        where,
+        doc,
+        setDoc,
+        deleteDoc,
+        serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import {
+        onAuthStateChanged,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { attachBrandModelSelects } from './cars-data.js';
+
+    const CONFIG = Object.freeze({
+        MAX_PRICE: 20000000,
+        MAX_MILEAGE: 2000000,
+        MIN_YEAR: 1900,
+        MAX_YEAR: 2027,
+        MAX_HOME_RESULTS: 20,
+        PLACEHOLDER_IMAGE: 'placeholder.jpg'
+    });
+
+    const elements = {
+        brandSelect: document.getElementById('brandSelect'),
+        modelSelect: document.getElementById('modelSelect'),
+        grid: document.getElementById('carsGrid'),
+        authContainer: document.getElementById('authStatusContainer'),
+        searchBtn: document.getElementById('searchBtn'),
+        deepSearchBtn: document.getElementById('deepSearchBtn'),
+        carTypeButtons: document.getElementById('carTypeButtons'),
+        minPrice: document.getElementById('minPrice'),
+        maxPrice: document.getElementById('maxPrice'),
+        minMil: document.getElementById('minMil'),
+        maxMil: document.getElementById('maxMil'),
+        minYear: document.getElementById('minYear'),
+        maxYear: document.getElementById('maxYear')
+    };
+
+    const state = {
+        selectedBodyType: '',
+        currentUser: null,
+        savedFavoriteIds: new Set(),
+        favoriteCarCache: new Map(),
+        isLoadingCars: false
+    };
+
+    initializePage();
+
+    function initializePage() {
+        attachBrandModelSelects(elements.brandSelect, elements.modelSelect, {
+            includeOther: true,
+            includeOtherModel: true
+        });
+
+        attachEvents();
+        observeAuth();
+        fetchCars();
+    }
+
+    function attachEvents() {
+        elements.searchBtn.addEventListener('click', fetchCars);
+        elements.deepSearchBtn.addEventListener('click', () => {
+            window.location.href = 'filter.html';
+        });
+
+        elements.carTypeButtons.addEventListener('click', (event) => {
+            const button = event.target.closest('.type-btn');
+            if (!button) return;
+
+            document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            state.selectedBodyType = String(button.dataset.type || '').trim();
+            fetchCars();
+        });
+
+        elements.grid.addEventListener('click', handleGridClick);
+    }
+
+    function observeAuth() {
+        onAuthStateChanged(auth, async (user) => {
+            state.currentUser = user;
+
+            if (user) {
+                renderLoggedInNav(user);
+                await loadUserFavorites();
+            } else {
+                state.savedFavoriteIds = new Set();
+                renderLoggedOutNav();
+            }
+
+            updateFavoriteButtons();
+        });
+    }
+
+    function renderLoggedInNav(user) {
+        elements.authContainer.textContent = '';
+
+        const accountLink = document.createElement('a');
+        accountLink.href = 'my-account.html';
+        accountLink.className = 'account-link';
+        accountLink.innerHTML = '<i class="fa-solid fa-circle-user"></i> Mitt Konto';
+        accountLink.title = user.email || 'Mitt konto';
+
+        const logoutButton = document.createElement('button');
+        logoutButton.type = 'button';
+        logoutButton.className = 'logout-btn';
+        logoutButton.textContent = 'Logga ut';
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.reload();
+            } catch (error) {
+                console.error('Fel vid utloggning:', error);
+                alert('Kunde inte logga ut just nu.');
+            }
+        });
+
+        elements.authContainer.append(accountLink, logoutButton);
+    }
+
+    function renderLoggedOutNav() {
+        elements.authContainer.textContent = '';
+        const loginLink = document.createElement('a');
+        loginLink.href = 'login.html';
+        loginLink.textContent = 'Logga in';
+        elements.authContainer.appendChild(loginLink);
+    }
+
+    async function loadUserFavorites() {
+        if (!state.currentUser) {
+            state.savedFavoriteIds = new Set();
+            return;
+        }
+
+        try {
+            const favoritesQuery = query(
+                collection(db, 'favorites'),
+                where('userId', '==', state.currentUser.uid)
+            );
+
+            const snapshot = await getDocs(favoritesQuery);
+            state.savedFavoriteIds = new Set(
+                snapshot.docs
+                    .map(docSnap => normalizeId(docSnap.data().carId))
+                    .filter(Boolean)
+            );
+        } catch (error) {
+            console.error('Fel vid laddning av sparade bilar från index.html:', error);
+            state.savedFavoriteIds = new Set();
+        }
+    }
+
+    async function toggleFavoriteById(carId, buttonElement = null) {
+        const cleanCarId = normalizeId(carId);
+
+        if (!cleanCarId) {
+            alert('Annonsen kunde inte identifieras.');
+            return;
+        }
+
+        if (!state.currentUser) {
+            window.location.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`;
+            return;
+        }
+
+        if (buttonElement) buttonElement.disabled = true;
+
+        try {
+            const car = state.favoriteCarCache.get(cleanCarId) || {};
+            const favoriteRef = doc(db, 'favorites', `${state.currentUser.uid}_${cleanCarId}`);
+            const isSaved = state.savedFavoriteIds.has(cleanCarId);
+
+            if (isSaved) {
+                await deleteDoc(favoriteRef);
+                state.savedFavoriteIds.delete(cleanCarId);
+            } else {
+                await setDoc(favoriteRef, {
+                    userId: state.currentUser.uid,
+                    carId: cleanCarId,
+                    brand: normalizeText(car.brand, 80),
+                    model: normalizeText(car.model, 80),
+                    year: normalizeNumber(car.year, 0),
+                    mileage: normalizeNumber(car.mileage, 0),
+                    price: normalizeNumber(car.price, 0),
+                    image: getCarImage(car),
+                    createdAt: serverTimestamp()
+                });
+                state.savedFavoriteIds.add(cleanCarId);
+            }
+
+            updateFavoriteButtons();
+        } catch (error) {
+            console.error('Favorite error from index.html:', error);
+            alert(error?.code === 'permission-denied'
+                ? 'Kunde inte spara bilen. Kontrollera Firebase-reglerna för favorites.'
+                : 'Kunde inte spara bilen just nu. Försök igen.');
+        } finally {
+            if (buttonElement) buttonElement.disabled = false;
+        }
+    }
+
+    async function fetchCars() {
+        if (state.isLoadingCars) return;
+
+        state.isLoadingCars = true;
+        renderStateMessage('Söker...');
+
+        try {
+            const carsQuery = query(
+                collection(db, 'cars'),
+                orderBy('createdAt', 'desc'),
+                limit(CONFIG.MAX_HOME_RESULTS)
+            );
+
+            const snapshot = await getDocs(carsQuery);
+            elements.grid.textContent = '';
+            state.favoriteCarCache = new Map();
+
+            if (snapshot.empty) {
+                renderStateMessage('Inga annonser hittades.');
+                return;
+            }
+
+            let visibleCount = 0;
+
+            snapshot.forEach((carDoc) => {
+                const car = carDoc.data() || {};
+                const carId = normalizeId(carDoc.id);
+
+                if (!carId || car.isDeleted === true || car.active === false || car.status === 'deleted') {
+                    return;
+                }
+
+                state.favoriteCarCache.set(carId, car);
+
+                if (!matchesCurrentFilters(car)) {
+                    return;
+                }
+
+                visibleCount += 1;
+                elements.grid.appendChild(buildCarCard(carId, car));
+            });
+
+            if (visibleCount === 0) {
+                renderStateMessage('Inga annonser matchar din sökning.');
+            }
+
+            updateFavoriteButtons();
+        } catch (error) {
+            console.error('Fel vid hämtning av bilar:', error);
+            renderStateMessage(
+                error?.code === 'permission-denied'
+                    ? 'Kunde inte läsa annonser. Kontrollera Firebase Rules för cars.'
+                    : 'Ett fel uppstod vid laddning av annonser.',
+                true
+            );
+        } finally {
+            state.isLoadingCars = false;
+        }
+    }
+
+    function buildCarCard(carId, car) {
+        const card = document.createElement('article');
+        card.className = 'car-card';
+        card.dataset.carId = carId;
+        card.tabIndex = 0;
+        card.setAttribute('role', 'link');
+        card.setAttribute('aria-label', `Visa annons för ${normalizeText(car.brand)} ${normalizeText(car.model)}`);
+
+        const favoriteButton = document.createElement('button');
+        favoriteButton.type = 'button';
+        favoriteButton.className = 'favorite-btn';
+        favoriteButton.dataset.carId = carId;
+
+        const image = document.createElement('img');
+        image.src = getCarImage(car);
+        image.alt = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Bilbild';
+        image.loading = 'lazy';
+        image.referrerPolicy = 'no-referrer';
+        image.addEventListener('error', () => {
+            image.src = CONFIG.PLACEHOLDER_IMAGE;
+        }, { once: true });
+
+        const content = document.createElement('div');
+        content.className = 'car-content';
+
+        const price = document.createElement('h3');
+        price.className = 'car-price';
+        price.textContent = `${formatPrice(car.price)} kr`;
+
+        const title = document.createElement('p');
+        title.className = 'car-title';
+        title.textContent = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Bilannons';
+
+        const meta = document.createElement('p');
+        meta.className = 'car-meta';
+        meta.textContent = `${normalizeText(car.year, '-')} | ${normalizeText(car.mileage, '0')} mil`;
+
+        content.append(price, title, meta);
+        card.append(favoriteButton, image, content);
+
+        card.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                window.location.href = `details.html?id=${encodeURIComponent(carId)}`;
+            }
+        });
+
+        return card;
+    }
+
+    function matchesCurrentFilters(car) {
+        const brand = elements.brandSelect.value;
+        const model = elements.modelSelect.value;
+
+        const carBodyType = normalizeText(car.bodyType || car.karosseri || car.type, 60);
+        const selectedType = normalizeText(state.selectedBodyType, 60);
+
+        const minPrice = boundedNumber(elements.minPrice.value, 0, CONFIG.MAX_PRICE, 0);
+        const maxPrice = boundedNumber(elements.maxPrice.value, 0, CONFIG.MAX_PRICE, 0);
+        const minMileage = boundedNumber(elements.minMil.value, 0, CONFIG.MAX_MILEAGE, 0);
+        const maxMileage = boundedNumber(elements.maxMil.value, 0, CONFIG.MAX_MILEAGE, 0);
+        const minYear = boundedNumber(elements.minYear.value, CONFIG.MIN_YEAR, CONFIG.MAX_YEAR, 0);
+        const maxYear = boundedNumber(elements.maxYear.value, CONFIG.MIN_YEAR, CONFIG.MAX_YEAR, 0);
+
+        const carPrice = normalizeNumber(car.price, 0);
+        const carMileage = normalizeNumber(car.mileage, 0);
+        const carYear = normalizeNumber(car.year, 0);
+
+        return (!brand || car.brand === brand) &&
+            (!model || car.model === model) &&
+            (!selectedType || carBodyType === selectedType) &&
+            (!minPrice || carPrice >= minPrice) &&
+            (!maxPrice || carPrice <= maxPrice) &&
+            (!minMileage || carMileage >= minMileage) &&
+            (!maxMileage || carMileage <= maxMileage) &&
+            (!minYear || carYear >= minYear) &&
+            (!maxYear || carYear <= maxYear);
+    }
+
+    function handleGridClick(event) {
+        const favoriteButton = event.target.closest('.favorite-btn');
+
+        if (favoriteButton) {
+            event.preventDefault();
+            event.stopPropagation();
+            toggleFavoriteById(favoriteButton.dataset.carId, favoriteButton);
+            return;
+        }
+
+        const card = event.target.closest('.car-card');
+        if (!card) return;
+
+        const carId = normalizeId(card.dataset.carId);
+        if (carId) {
+            window.location.href = `details.html?id=${encodeURIComponent(carId)}`;
+        }
+    }
+
+    function updateFavoriteButtons() {
+        document.querySelectorAll('.favorite-btn').forEach(button => {
+            const carId = normalizeId(button.dataset.carId);
+            const isSaved = state.savedFavoriteIds.has(carId);
+
+            button.classList.toggle('saved', isSaved);
+            button.title = isSaved ? 'Ta bort från sparade' : 'Spara bilen';
+            button.setAttribute('aria-label', isSaved ? 'Ta bort från sparade' : 'Spara bilen');
+            button.innerHTML = `<i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-heart"></i>`;
+        });
+    }
+
+    function renderStateMessage(message, isError = false) {
+        elements.grid.textContent = '';
+        const paragraph = document.createElement('p');
+        paragraph.className = `state-message${isError ? ' error' : ''}`;
+        paragraph.textContent = message;
+        elements.grid.appendChild(paragraph);
+    }
+
+    function getCarImage(car) {
+        const possibleImage = Array.isArray(car?.images) && car.images.length > 0
+            ? car.images[0]
+            : (car?.mainImage || car?.image || '');
+
+        const cleanImage = normalizeText(possibleImage, 700);
+        if (!cleanImage) return CONFIG.PLACEHOLDER_IMAGE;
+
+        try {
+            const url = new URL(cleanImage, window.location.href);
+            if (!['http:', 'https:'].includes(url.protocol) && !cleanImage.startsWith('./') && !cleanImage.startsWith('/')) {
+                return CONFIG.PLACEHOLDER_IMAGE;
+            }
+            return cleanImage;
+        } catch (_) {
+            return CONFIG.PLACEHOLDER_IMAGE;
+        }
+    }
+
+    function formatPrice(price) {
+        return normalizeNumber(price, 0).toLocaleString('sv-SE');
+    }
+
+    function normalizeId(value) {
+        return String(value || '').trim().slice(0, 180);
+    }
+
+    function normalizeText(value, maxLength = 160) {
+        return String(value ?? '').replace(/\s+/g, ' ').trim().slice(0, maxLength);
+    }
+
+    function normalizeNumber(value, fallback = 0) {
+        const number = Number(value);
+        return Number.isFinite(number) ? Math.floor(number) : fallback;
+    }
+
+    function boundedNumber(value, min, max, fallback = 0) {
+        const number = normalizeNumber(value, fallback);
+        if (!number) return fallback;
+        return Math.min(max, Math.max(min, number));
+    }
+</script>
+</body>
+</html>
