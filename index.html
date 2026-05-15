@@ -106,7 +106,10 @@
 
         @media (max-width: 768px) {
             header { padding: 1rem 4%; }
-            .nav-links { gap: 12px; }
+            .logo { font-size: 1.55rem; }
+            .nav-links { gap: 10px; }
+            .nav-links a { font-size: 13px; }
+            .btn-sell { padding: 9px 16px; }
             .filter-grid { grid-template-columns: 1fr; }
             .footer-content { grid-template-columns: 1fr; }
         }
@@ -195,7 +198,6 @@
         getDocs,
         where,
         doc,
-        getDoc,
         setDoc,
         deleteDoc,
         serverTimestamp
@@ -216,7 +218,6 @@
     let currentUser = null;
     let savedFavoriteIds = new Set();
     let favoriteCarCache = {};
-    let favoritesLoaded = false;
 
     function safeText(value, fallback = '') {
         if (value === undefined || value === null || value === '') return fallback;
@@ -229,12 +230,14 @@
     }
 
     function getCarImage(car) {
-        if (Array.isArray(car.images) && car.images.length > 0 && car.images[0]) {
+        if (car && Array.isArray(car.images) && car.images.length > 0 && car.images[0]) {
             return car.images[0];
         }
-        if (car.image) {
+
+        if (car && car.image) {
             return car.image;
         }
+
         return 'placeholder.jpg';
     }
 
@@ -250,7 +253,6 @@
     async function loadUserFavorites() {
         if (!currentUser) {
             savedFavoriteIds = new Set();
-            favoritesLoaded = false;
             return;
         }
 
@@ -261,17 +263,15 @@
             );
 
             const snap = await getDocs(qFav);
+
             savedFavoriteIds = new Set(
                 snap.docs
                     .map(d => normalizeId(d.data().carId))
                     .filter(Boolean)
             );
-
-            favoritesLoaded = true;
         } catch (error) {
-            console.error("Fel vid laddning av sparade bilar:", error);
+            console.error("Fel vid laddning av sparade bilar från index.html:", error);
             savedFavoriteIds = new Set();
-            favoritesLoaded = false;
         }
     }
 
@@ -307,9 +307,9 @@
         try {
             const car = favoriteCarCache[carId] || {};
             const favRef = doc(db, "favorites", `${currentUser.uid}_${carId}`);
-            const favSnap = await getDoc(favRef);
+            const isSaved = savedFavoriteIds.has(carId);
 
-            if (favSnap.exists()) {
+            if (isSaved) {
                 await deleteDoc(favRef);
                 savedFavoriteIds.delete(carId);
             } else {
@@ -330,10 +330,10 @@
 
             updateFavoriteButtons();
         } catch (error) {
-            console.error("Fel vid sparande av favorit:", error);
+            console.error("Favorite error from index.html:", error);
 
             if (error && error.code === "permission-denied") {
-                alert("Kunde inte spara bilen. Kontrollera Firebase Rules för favorites.");
+                alert("Kunde inte spara bilen från startsidan. Försök från annonssidan eller kontrollera index.html.");
             } else {
                 alert("Kunde inte spara bilen just nu. Försök igen.");
             }
@@ -354,9 +354,11 @@
             `;
 
             const logoutAction = document.getElementById('logoutAction');
+
             if (logoutAction) {
                 logoutAction.onclick = async (e) => {
                     e.preventDefault();
+
                     try {
                         await signOut(auth);
                         window.location.reload();
@@ -370,7 +372,6 @@
             await loadUserFavorites();
         } else {
             savedFavoriteIds = new Set();
-            favoritesLoaded = false;
             authContainer.innerHTML = `<a href="login.html">Logga in</a>`;
         }
 
@@ -378,6 +379,7 @@
     });
 
     const brands = Object.keys(carData).sort();
+
     brands.forEach(b => {
         brandSelect.innerHTML += `<option value="${b}">${b}</option>`;
     });
@@ -416,6 +418,8 @@
             snapshot.forEach((carDoc) => {
                 const car = carDoc.data();
                 const carId = normalizeId(carDoc.id);
+
+                if (!carId) return;
 
                 favoriteCarCache[carId] = car;
 
@@ -512,7 +516,8 @@
         const card = event.target.closest('.car-card');
 
         if (card) {
-            const carId = card.dataset.carId;
+            const carId = normalizeId(card.dataset.carId);
+
             if (carId) {
                 window.location.href = `details.html?id=${encodeURIComponent(carId)}`;
             }
