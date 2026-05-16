@@ -1,4 +1,4 @@
-const CACHE_NAME = "bilhk-pwa-v3-bell-messages";
+const CACHE_NAME = "bilhk-pwa-v4-bell-notifications";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -35,5 +35,20 @@ self.addEventListener("fetch", (event) => {
         return response;
       })
       .catch(() => caches.match(event.request).then((cached) => cached || caches.match("./offline.html")))
+  );
+});
+
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const targetUrl = event.notification?.data?.url || "./index.html";
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if ("focus" in client) return client.focus();
+      }
+      if (clients.openWindow) return clients.openWindow(targetUrl);
+      return null;
+    })
   );
 });

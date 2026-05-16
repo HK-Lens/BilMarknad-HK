@@ -59,7 +59,12 @@
         .account-link { color: var(--primary) !important; font-weight: 800 !important; }
         .logout-btn { color: var(--danger) !important; font-size: 12px !important; margin-left: 10px; }
 
-        .notification-link {
+        .notification-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .notification-button {
             position: relative;
             width: 46px;
             height: 46px;
@@ -71,9 +76,10 @@
             color: var(--dark) !important;
             border: 1px solid rgba(15, 23, 42, 0.08);
             box-shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
+            cursor: pointer;
         }
-        .notification-link:hover { color: var(--primary) !important; transform: translateY(-1px); }
-        .notification-link i { font-size: 1rem; }
+        .notification-button:hover { color: var(--primary) !important; transform: translateY(-1px); }
+        .notification-button i { font-size: 1rem; }
         .notification-badge {
             position: absolute;
             top: 6px;
@@ -89,6 +95,43 @@
             line-height: 17px;
             text-align: center;
             border: 2px solid white;
+        }
+        .notification-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: min(320px, calc(100vw - 24px));
+            background: var(--white);
+            border: 1px solid rgba(15,23,42,.10);
+            border-radius: 18px;
+            box-shadow: 0 20px 55px rgba(15,23,42,.18);
+            padding: 14px;
+            z-index: 2500;
+            text-align: left;
+        }
+        .notification-panel[hidden] { display: none !important; }
+        .notification-panel h3 {
+            margin: 0 0 8px;
+            font-size: .95rem;
+            color: var(--dark);
+            font-weight: 900;
+        }
+        .notification-panel p {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: .88rem;
+            line-height: 1.45;
+            font-weight: 500;
+        }
+        .notify-action {
+            width: 100%;
+            border: 0;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: var(--primary) !important;
+            color: #fff !important;
+            font-weight: 900 !important;
+            cursor: pointer;
         }
         .install-app-btn {
             background: var(--primary) !important;
@@ -377,13 +420,43 @@
             if (window.BILHKInstallApp) window.BILHKInstallApp();
         });
 
-        const notificationLink = document.createElement('a');
-        // الجرس يجب أن يفتح صفحة الرسائل/الإشعارات وليس صفحة الحساب
-        notificationLink.href = 'messages.html';
-        notificationLink.className = 'notification-link';
-        notificationLink.setAttribute('aria-label', 'Aviseringar');
-        notificationLink.title = 'Aviseringar';
-        notificationLink.innerHTML = '<i class="fa-regular fa-bell"></i><span class="notification-badge" id="notificationBadge" hidden>0</span>';
+        const notificationWrap = document.createElement('div');
+        notificationWrap.className = 'notification-wrap';
+
+        const notificationButton = document.createElement('button');
+        notificationButton.type = 'button';
+        notificationButton.className = 'notification-button';
+        notificationButton.setAttribute('aria-label', 'Aviseringar');
+        notificationButton.setAttribute('aria-expanded', 'false');
+        notificationButton.title = 'Aviseringar';
+        notificationButton.innerHTML = '<i class="fa-regular fa-bell"></i><span class="notification-badge" id="notificationBadge" hidden>0</span>';
+
+        const notificationPanel = document.createElement('div');
+        notificationPanel.className = 'notification-panel';
+        notificationPanel.hidden = true;
+        notificationPanel.innerHTML = `
+            <h3>Aviseringar</h3>
+            <p id="notificationPanelText">Du har inga nya aviseringar just nu.</p>
+            <button type="button" class="notify-action" id="enableNotificationsBtn">Aktivera aviseringar</button>
+        `;
+
+        notificationButton.addEventListener('click', async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            notificationPanel.hidden = !notificationPanel.hidden;
+            notificationButton.setAttribute('aria-expanded', String(!notificationPanel.hidden));
+            updateNotificationPanel(notificationPanel);
+            if ('Notification' in window && Notification.permission === 'granted') {
+                await showBilHKNotification('Du har inga nya aviseringar just nu.');
+            }
+        });
+
+        notificationPanel.addEventListener('click', (event) => event.stopPropagation());
+        notificationPanel.querySelector('#enableNotificationsBtn').addEventListener('click', async () => {
+            await enableBilHKNotifications(notificationPanel);
+        });
+
+        notificationWrap.append(notificationButton, notificationPanel);
 
         const accountLink = document.createElement('a');
         accountLink.href = 'my-account.html';
@@ -405,7 +478,7 @@
             }
         });
 
-        elements.authContainer.append(installButton, notificationLink, accountLink, logoutButton);
+        elements.authContainer.append(installButton, notificationWrap, accountLink, logoutButton);
     }
 
     function renderLoggedOutNav() {
@@ -707,6 +780,69 @@
         if (!number) return fallback;
         return Math.min(max, Math.max(min, number));
     }
+
+
+    function updateNotificationPanel(panel) {
+        const text = panel.querySelector('#notificationPanelText');
+        const button = panel.querySelector('#enableNotificationsBtn');
+        if (!('Notification' in window)) {
+            text.textContent = 'Din webbläsare stöder inte aviseringar.';
+            button.hidden = true;
+            return;
+        }
+        if (Notification.permission === 'granted') {
+            text.textContent = 'Aviseringar är aktiverade. Nya händelser visas här och som appaviseringar.';
+            button.hidden = true;
+        } else if (Notification.permission === 'denied') {
+            text.textContent = 'Aviseringar är blockerade. Tillåt aviseringar i webbläsarens inställningar för den här sidan.';
+            button.hidden = true;
+        } else {
+            text.textContent = 'Aktivera aviseringar för att få besked om nya händelser i BILHK.';
+            button.hidden = false;
+        }
+    }
+
+    async function enableBilHKNotifications(panel) {
+        if (!('Notification' in window)) {
+            updateNotificationPanel(panel);
+            return;
+        }
+        const permission = await Notification.requestPermission();
+        updateNotificationPanel(panel);
+        if (permission === 'granted') {
+            await showBilHKNotification('Aviseringar är nu aktiverade.');
+        }
+    }
+
+    async function showBilHKNotification(body) {
+        if (!('Notification' in window) || Notification.permission !== 'granted') return;
+        const options = {
+            body,
+            icon: './icons/icon-192.png',
+            badge: './icons/icon-192.png',
+            tag: 'bilhk-avisering',
+            renotify: false,
+            data: { url: './index.html' }
+        };
+        try {
+            if ('serviceWorker' in navigator) {
+                const registration = await navigator.serviceWorker.ready;
+                await registration.showNotification('BILHK', options);
+            } else {
+                new Notification('BILHK', options);
+            }
+        } catch (error) {
+            console.warn('Kunde inte visa avisering:', error);
+        }
+    }
+
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.notification-panel').forEach((panel) => {
+            panel.hidden = true;
+            const button = panel.closest('.notification-wrap')?.querySelector('.notification-button');
+            if (button) button.setAttribute('aria-expanded', 'false');
+        });
+    });
 </script>
   <script src="./pwa-register.js" defer></script>
 </body>
