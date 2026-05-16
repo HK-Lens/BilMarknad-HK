@@ -162,7 +162,7 @@
             ...car,
             images: images.length ? images : [fallbackImage],
             features,
-            sellerId: safeString(car.sellerId),
+            sellerId: getSellerIdFromCar(car),
             brand: safeString(car.brand),
             model: safeString(car.model),
             year: valueOrDash(car.year),
@@ -201,10 +201,8 @@
 
     function renderCarDetails(car) {
         const images = car.images;
-        const sellerIdParam = encodeURIComponent(car.sellerId);
-        const carIdParam = encodeURIComponent(carId);
-        const messagesUrl = `messages.html?sellerId=${sellerIdParam}&carId=${carIdParam}`;
         const title = `${car.brand} ${car.model}`.trim() || 'Fordonsdetaljer';
+        const messagesUrl = buildMessagesUrl(car, title);
         const priceText = `${formatNumber(car.price)} kr`;
         const mileageText = `${formatNumber(car.mileage)} km`;
         const featureHTML = car.features.length
@@ -224,7 +222,7 @@
                 <div class="reg-plate"><i>S</i> ${escapeHTML(car.regNo.toUpperCase())}</div>
                 <div class="actions-row">
                     <button id="favoriteDetailBtn" class="btn-favorite-detail" type="button"><i class="fa-regular fa-heart"></i> Spara bilen</button>
-                    <a href="${escapeHTML(messagesUrl)}" class="btn-contact"><i class="fa-solid fa-comments"></i> Kontakta säljaren</a>
+                    <a href="${escapeHTML(messagesUrl)}" class="btn-contact" id="contactSellerBtn"><i class="fa-solid fa-comments"></i> Kontakta säljaren</a>
                 </div>
             </div>
 
@@ -286,7 +284,79 @@
         `;
 
         document.getElementById('favoriteDetailBtn')?.addEventListener('click', toggleFavoriteFromDetails);
-        document.getElementById('interestButton')?.addEventListener('click', () => { window.location.href = messagesUrl; });
+        document.getElementById('contactSellerBtn')?.addEventListener('click', handleContactSeller);
+        document.getElementById('interestButton')?.addEventListener('click', handleContactSeller);
+    }
+
+    function handleContactSeller(event) {
+        event?.preventDefault?.();
+
+        if (!currentCar || !carId) {
+            alert('Annonsen kunde inte laddas. Försök igen.');
+            return;
+        }
+
+        const messagesUrl = buildMessagesUrl(currentCar, `${currentCar.brand || ''} ${currentCar.model || ''}`.trim() || 'Bilannons');
+        const sellerId = getSellerIdFromCar(currentCar);
+
+        if (!currentUser) {
+            window.location.href = `login.html?redirect=${encodeURIComponent(messagesUrl)}`;
+            return;
+        }
+
+        if (!sellerId) {
+            alert('Annonsen saknar sellerId. Lägg till sellerId i annonsdokumentet för att kunna starta en ny chatt.');
+            return;
+        }
+
+        if (sellerId === currentUser.uid) {
+            alert('Du kan inte kontakta din egen annons från samma konto. Testa med ett annat köparkonto.');
+            return;
+        }
+
+        window.location.href = messagesUrl;
+    }
+
+    function buildMessagesUrl(car, titleText = 'Bilannons') {
+        const params = new URLSearchParams();
+        const sellerId = getSellerIdFromCar(car);
+        params.set('carId', carId);
+        params.set('id', carId);
+        if (sellerId) params.set('sellerId', sellerId);
+        params.set('title', safeString(`${titleText} ${car.year || ''}`.trim()));
+        const sellerName = safeString(car.sellerName || car.contactName || car.name || '');
+        const sellerEmail = safeString(car.sellerEmail || car.email || '');
+        if (sellerName) params.set('sellerName', sellerName);
+        if (sellerEmail) params.set('sellerEmail', sellerEmail);
+        return `messages.html?${params.toString()}`;
+    }
+
+    function getSellerIdFromCar(car) {
+        if (!car) return '';
+        return cleanId(
+            car.sellerId ||
+            car.sellerUid ||
+            car.sellerUID ||
+            car.ownerId ||
+            car.ownerUID ||
+            car.userId ||
+            car.userUID ||
+            car.uid ||
+            car.createdBy ||
+            car.createdById ||
+            car.createdByUID ||
+            car.postedBy ||
+            car.postedById ||
+            car.authorId ||
+            car.seller?.uid ||
+            car.seller?.id ||
+            car.owner?.uid ||
+            car.owner?.id ||
+            car.user?.uid ||
+            car.user?.id ||
+            car.createdByUser?.uid ||
+            car.createdByUser?.id
+        );
     }
 
     function galleryAnchor(src, className = '', alt = 'Fordonsbild') {
