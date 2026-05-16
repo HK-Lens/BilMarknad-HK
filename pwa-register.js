@@ -23,7 +23,7 @@
         border: none;
         border-radius: 999px;
         background: linear-gradient(135deg, #f58220, #ffad55);
-        color: white;
+        color: #ffffff;
         padding: 13px 18px;
         font-family: Inter, Arial, sans-serif;
         font-size: 14px;
@@ -35,15 +35,11 @@
         cursor: pointer;
       }
 
-      .bilhk-install-floating:hover {
-        transform: translateY(-1px);
-      }
-
       .bilhk-install-top {
         border: none;
         border-radius: 999px;
         background: #f58220;
-        color: white;
+        color: #ffffff;
         padding: 10px 14px;
         font-family: Inter, Arial, sans-serif;
         font-size: 13px;
@@ -53,17 +49,18 @@
         gap: 7px;
         cursor: pointer;
         box-shadow: 0 10px 24px rgba(245, 130, 32, 0.22);
+        margin-left: 10px;
       }
 
       .bilhk-install-modal {
         position: fixed;
         inset: 0;
         z-index: 1000000;
-        background: rgba(15, 23, 42, 0.48);
-        backdrop-filter: blur(10px);
         display: none;
         place-items: center;
         padding: 20px;
+        background: rgba(15, 23, 42, 0.48);
+        backdrop-filter: blur(10px);
       }
 
       .bilhk-install-modal.show {
@@ -72,11 +69,11 @@
 
       .bilhk-install-card {
         width: min(430px, 100%);
-        background: white;
-        color: #0f172a;
         border-radius: 26px;
-        padding: 24px;
+        background: #ffffff;
+        color: #0f172a;
         box-shadow: 0 30px 90px rgba(15, 23, 42, 0.28);
+        padding: 24px;
         font-family: Inter, Arial, sans-serif;
       }
 
@@ -109,7 +106,7 @@
         border: none;
         border-radius: 999px;
         background: #0f172a;
-        color: white;
+        color: #ffffff;
         font-weight: 900;
         cursor: pointer;
       }
@@ -119,6 +116,11 @@
           left: 12px;
           right: 12px;
           justify-content: center;
+        }
+
+        .bilhk-install-top {
+          padding: 9px 12px;
+          font-size: 12px;
         }
       }
     `;
@@ -134,9 +136,9 @@
     modal.innerHTML = `
       <div class="bilhk-install-card" role="dialog" aria-modal="true">
         <h3>Installera BILHK</h3>
-        <p>إذا لم تظهر نافذة تثبيت التطبيق تلقائيًا، ثبتيه من قائمة Chrome.</p>
+        <p>إذا لم تفتح نافذة التثبيت تلقائيًا، ثبّتي التطبيق من قائمة Chrome.</p>
         <ol>
-          <li>افتحي الموقع من Chrome على Android.</li>
+          <li>افتحي الموقع في Chrome على Android.</li>
           <li>اضغطي على القائمة ⋮ أعلى الشاشة.</li>
           <li>اختاري Install app أو Add to Home screen.</li>
         </ol>
@@ -155,7 +157,8 @@
 
   function showHelpModal() {
     createModal();
-    document.querySelector(".bilhk-install-modal")?.classList.add("show");
+    const modal = document.querySelector(".bilhk-install-modal");
+    if (modal) modal.classList.add("show");
   }
 
   async function installApp() {
@@ -196,8 +199,9 @@
 
     const header =
       document.querySelector(".header-actions") ||
-      document.querySelector("header") ||
-      document.querySelector(".site-header");
+      document.querySelector(".nav-actions") ||
+      document.querySelector("header nav") ||
+      document.querySelector("header");
 
     if (!header) return;
 
@@ -211,7 +215,7 @@
   }
 
   function initInstallUI() {
-    if (!document.body) return;
+    if (!document.body || isInstalled()) return;
 
     addInstallStyles();
     createModal();
