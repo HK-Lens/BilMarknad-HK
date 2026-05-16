@@ -45,13 +45,145 @@
         .disclaimer { font-size: 12px; color: #94a3b8; text-align: justify; line-height: 1.8; }
         .state-card { text-align:center; padding:80px; background:white; border-radius:24px; border:1px solid var(--border); }
         .state-card a { color:var(--primary); font-weight:800; text-decoration:none; }
+
+        .bilhk-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: grid;
+            place-items: center;
+            padding: 22px;
+            background: rgba(15, 23, 42, .62);
+            backdrop-filter: blur(10px);
+            animation: modalFadeIn .18s ease-out;
+        }
+        .bilhk-modal-card {
+            width: min(92vw, 430px);
+            background: rgba(255, 255, 255, .98);
+            border: 1px solid rgba(226, 232, 240, .95);
+            border-radius: 30px;
+            padding: 30px 26px 24px;
+            text-align: center;
+            box-shadow: 0 30px 90px rgba(15, 23, 42, .28);
+            animation: modalPopIn .2s ease-out;
+        }
+        .bilhk-modal-icon {
+            width: 84px;
+            height: 84px;
+            border-radius: 28px;
+            margin: 0 auto 18px;
+            display: grid;
+            place-items: center;
+            font-size: 34px;
+            color: var(--primary);
+            background: linear-gradient(135deg, rgba(245,130,32,.15), rgba(245,130,32,.06));
+            box-shadow: inset 0 0 0 1px rgba(245,130,32,.18);
+        }
+        .bilhk-modal-icon.error { color:#ef4444; background:linear-gradient(135deg, rgba(239,68,68,.13), rgba(239,68,68,.05)); box-shadow:inset 0 0 0 1px rgba(239,68,68,.18); }
+        .bilhk-modal-icon.warning { color:#f58220; background:linear-gradient(135deg, rgba(245,130,32,.16), rgba(245,130,32,.06)); }
+        .bilhk-modal-card h3 {
+            font-size: 25px;
+            line-height: 1.2;
+            letter-spacing: -.04em;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        .bilhk-modal-card p {
+            color: #64748b;
+            font-size: 15px;
+            line-height: 1.75;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .bilhk-modal-actions { display:flex; justify-content:center; gap:10px; }
+        .bilhk-modal-ok {
+            border: none;
+            min-width: 130px;
+            min-height: 48px;
+            border-radius: 999px;
+            padding: 12px 22px;
+            background: linear-gradient(135deg, var(--primary), #ff9c3d);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 16px 32px rgba(245, 130, 32, .26);
+            transition: .22s ease;
+        }
+        .bilhk-modal-ok:hover { transform: translateY(-1px); box-shadow: 0 20px 38px rgba(245,130,32,.32); }
+        @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes modalPopIn { from { opacity:0; transform: translateY(10px) scale(.96); } to { opacity:1; transform: translateY(0) scale(1); } }
+
         @media (max-width: 900px) { .gallery-container { grid-template-columns: 1fr; height: 350px; } .side-stack { display: none; } .details-grid { grid-template-columns: 1fr; } .header-bar { flex-direction: column; gap: 20px; text-align: center; } .price-text { font-size: 35px; } .info-card { padding:25px; } }
     </style>
 </head>
-<body>
+<body data-build="details-favorites-modal-v3">
 <div class="container" id="app">
     <div style="text-align:center; padding:100px;">Laddar fordonsdata...</div>
 </div>
+
+<script>
+    (function () {
+        function escapeHTML(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        window.showBILHKElegantModal = function ({ type = 'warning', title = 'Meddelande', message = '', confirmText = 'OK' } = {}) {
+            return new Promise((resolve) => {
+                const existing = document.querySelector('.bilhk-modal-overlay');
+                if (existing) existing.remove();
+
+                const overlay = document.createElement('div');
+                overlay.className = 'bilhk-modal-overlay';
+                overlay.setAttribute('role', 'dialog');
+                overlay.setAttribute('aria-modal', 'true');
+
+                const iconClass = type === 'error' ? 'fa-circle-xmark' : type === 'warning' ? 'fa-triangle-exclamation' : type === 'success' ? 'fa-circle-check' : 'fa-circle-info';
+                overlay.innerHTML = `
+                    <div class="bilhk-modal-card">
+                        <div class="bilhk-modal-icon ${escapeHTML(type)}"><i class="fa-solid ${iconClass}"></i></div>
+                        <h3>${escapeHTML(title)}</h3>
+                        <p>${escapeHTML(message)}</p>
+                        <div class="bilhk-modal-actions">
+                            <button type="button" class="bilhk-modal-ok">${escapeHTML(confirmText)}</button>
+                        </div>
+                    </div>
+                `;
+
+                const close = () => {
+                    document.removeEventListener('keydown', onKeyDown);
+                    overlay.remove();
+                    resolve();
+                };
+                const onKeyDown = (event) => {
+                    if (event.key === 'Escape' || event.key === 'Enter') close();
+                };
+
+                document.body.appendChild(overlay);
+                const okButton = overlay.querySelector('.bilhk-modal-ok');
+                okButton.addEventListener('click', close, { once: true });
+                overlay.addEventListener('click', (event) => { if (event.target === overlay) close(); });
+                document.addEventListener('keydown', onKeyDown);
+                setTimeout(() => okButton.focus(), 40);
+            });
+        };
+
+        window.alert = function (message) {
+            window.showBILHKElegantModal({
+                type: 'warning',
+                title: 'Meddelande',
+                message: String(message || ''),
+                confirmText: 'OK'
+            });
+        };
+    })();
+</script>
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
@@ -114,7 +246,6 @@
                 await setDoc(favRef, {
                     userId: currentUser.uid,
                     carId,
-                    sellerId: safeString(currentCar.sellerId),
                     brand: safeString(currentCar.brand),
                     model: safeString(currentCar.model),
                     year: safeString(currentCar.year),
@@ -128,7 +259,11 @@
             updateFavoriteButton();
         } catch (error) {
             console.error("Favorite could not be saved:", error);
-            alert("Kunde inte spara bilen just nu. Kontrollera Firebase-reglerna för favorites.");
+            await showElegantAlert({
+                type: "error",
+                title: "Kunde inte spara bilen",
+                message: "Bilen kunde inte sparas. Försök igen efter att sidan har uppdaterats."
+            });
         }
     }
 
@@ -288,11 +423,15 @@
         document.getElementById('interestButton')?.addEventListener('click', handleContactSeller);
     }
 
-    function handleContactSeller(event) {
+    async function handleContactSeller(event) {
         event?.preventDefault?.();
 
         if (!currentCar || !carId) {
-            alert('Annonsen kunde inte laddas. Försök igen.');
+            await showElegantAlert({
+                type: "error",
+                title: "Annonsen kunde inte laddas",
+                message: "Försök uppdatera sidan och öppna annonsen igen."
+            });
             return;
         }
 
@@ -305,27 +444,43 @@
         }
 
         if (!sellerId) {
-            alert('Annonsen saknar sellerId. Lägg till sellerId i annonsdokumentet för att kunna starta en ny chatt.');
+            await showElegantAlert({
+                type: "warning",
+                title: "Annonsen behöver publiceras igen",
+                message: "Den här annonsen saknar rätt sellerId för nya chattsystemet. Publicera en ny annons via Sälj bil."
+            });
             return;
         }
 
         if (sellerId === currentUser.uid) {
-            alert('Du kan inte kontakta din egen annons från samma konto. Testa med ett annat köparkonto.');
+            await showElegantAlert({
+                type: "warning",
+                title: "Det här är din egen annons",
+                message: "Du kan inte kontakta din egen annons från samma konto. Logga in med ett annat köparkonto för att testa chatten.",
+                confirmText: "Jag förstår"
+            });
             return;
         }
 
         window.location.href = messagesUrl;
     }
 
+
+    function showElegantAlert({ type = "info", title = "Meddelande", message = "", confirmText = "OK" } = {}) {
+        if (typeof window.showBILHKElegantModal === 'function') {
+            return window.showBILHKElegantModal({ type, title, message, confirmText });
+        }
+        return Promise.resolve();
+    }
+
     function buildMessagesUrl(car, titleText = 'Bilannons') {
         const params = new URLSearchParams();
         const sellerId = getSellerIdFromCar(car);
         params.set('carId', carId);
-        params.set('id', carId);
         if (sellerId) params.set('sellerId', sellerId);
         params.set('title', safeString(`${titleText} ${car.year || ''}`.trim()));
-        const sellerName = safeString(car.sellerName || car.contactName || car.name || '');
-        const sellerEmail = safeString(car.sellerEmail || car.email || '');
+        const sellerName = safeString(car.sellerName || '');
+        const sellerEmail = safeString(car.sellerEmail || '');
         if (sellerName) params.set('sellerName', sellerName);
         if (sellerEmail) params.set('sellerEmail', sellerEmail);
         return `messages.html?${params.toString()}`;
@@ -333,30 +488,7 @@
 
     function getSellerIdFromCar(car) {
         if (!car) return '';
-        return cleanId(
-            car.sellerId ||
-            car.sellerUid ||
-            car.sellerUID ||
-            car.ownerId ||
-            car.ownerUID ||
-            car.userId ||
-            car.userUID ||
-            car.uid ||
-            car.createdBy ||
-            car.createdById ||
-            car.createdByUID ||
-            car.postedBy ||
-            car.postedById ||
-            car.authorId ||
-            car.seller?.uid ||
-            car.seller?.id ||
-            car.owner?.uid ||
-            car.owner?.id ||
-            car.user?.uid ||
-            car.user?.id ||
-            car.createdByUser?.uid ||
-            car.createdByUser?.id
-        );
+        return cleanId(car.sellerId);
     }
 
     function galleryAnchor(src, className = '', alt = 'Fordonsbild') {
@@ -429,6 +561,19 @@
         }
     }
 
+
+    function installElegantAlertOverride() {
+        window.alert = function(message) {
+            showElegantAlert({
+                type: "warning",
+                title: "Meddelande",
+                message: String(message || ""),
+                confirmText: "OK"
+            });
+        };
+    }
+
+    installElegantAlertOverride();
     init();
 </script>
 </body>

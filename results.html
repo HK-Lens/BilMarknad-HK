@@ -207,10 +207,39 @@
             updateFavoriteButtons();
         } catch (error) {
             console.error('Favorite could not be updated:', error);
-            alert('Kunde inte uppdatera sparade bilar just nu. Kontrollera Firebase-reglerna för favorites.');
+            showResultNotice('Kunde inte uppdatera sparade bilar just nu. Försök igen efter att sidan har uppdaterats.');
         } finally {
             button.disabled = false;
         }
+    }
+
+    function showResultNotice(message, type = 'error') {
+        const existing = document.querySelector('.bilhk-result-notice');
+        if (existing) existing.remove();
+
+        const notice = document.createElement('div');
+        notice.className = 'bilhk-result-notice';
+        notice.style.cssText = `
+            position: fixed;
+            left: 50%;
+            bottom: 26px;
+            transform: translateX(-50%);
+            z-index: 9999;
+            max-width: min(92vw, 440px);
+            padding: 15px 18px;
+            border-radius: 18px;
+            background: ${type === 'error' ? '#fff1f2' : '#ecfdf5'};
+            color: ${type === 'error' ? '#991b1b' : '#065f46'};
+            border: 1px solid ${type === 'error' ? '#fecdd3' : '#a7f3d0'};
+            box-shadow: 0 18px 45px rgba(15, 23, 42, .18);
+            font-weight: 800;
+            font-size: 14px;
+            line-height: 1.5;
+            text-align: center;
+        `;
+        notice.textContent = message;
+        document.body.appendChild(notice);
+        setTimeout(() => notice.remove(), 3600);
     }
 
     function buildFavoriteData(userId, carId, car) {
@@ -218,7 +247,6 @@
         return {
             userId,
             carId,
-            sellerId: car.sellerId || '',
             brand: car.brand || '',
             model: car.model || '',
             year: Number(car.year) || null,
