@@ -312,36 +312,53 @@
         const buyerName = state.user.displayName || getNameFromEmail(state.user.email) || "Köpare";
         const buyerEmail = state.user.email || "";
         const roomRef = doc(db, "chats", roomId);
-        const roomSnapshot = await getDoc(roomRef);
+        const createPayload = {
+            carId,
+            carName: carTitle,
+            carTitle,
+            title: carTitle,
+            participants: uniqueArray([buyerId, sellerId]),
+            buyerId,
+            sellerId,
+            buyerName,
+            buyerEmail,
+            sellerName,
+            sellerEmail,
+            participantNames: {
+                [buyerId]: buyerName,
+                [sellerId]: sellerName
+            },
+            participantEmails: {
+                [buyerId]: buyerEmail,
+                [sellerId]: sellerEmail
+            },
+            lastMessage: "",
+            lastSenderId: "",
+            unreadBy: [],
+            hiddenFor: [],
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+        };
 
-        if (!roomSnapshot.exists()) {
-            await setDoc(roomRef, {
-                carId,
-                carName: carTitle,
-                carTitle,
-                title: carTitle,
-                participants: uniqueArray([buyerId, sellerId]),
-                buyerId,
-                sellerId,
-                buyerName,
-                buyerEmail,
-                sellerName,
-                sellerEmail,
-                participantNames: {
-                    [buyerId]: buyerName,
-                    [sellerId]: sellerName
-                },
-                participantEmails: {
-                    [buyerId]: buyerEmail,
-                    [sellerId]: sellerEmail
-                },
-                lastMessage: "",
-                lastSenderId: "",
-                unreadBy: [],
-                hiddenFor: [],
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp()
-            });
+        let roomSnapshot = null;
+
+        try {
+            roomSnapshot = await getDoc(roomRef);
+        } catch (readError) {
+            /*
+             * Some Firestore rules reject getDoc() for a deterministic chat ID that
+             * does not exist yet. In that case, try creating the chat directly.
+             */
+            console.warn("Could not pre-read chat. Trying to create it directly:", readError);
+        }
+
+        if (!roomSnapshot || !roomSnapshot.exists()) {
+            try {
+                await setDoc(roomRef, createPayload);
+            } catch (createError) {
+                console.error("Could not create new chat:", createError);
+                throw new Error("Missing or insufficient permissions. Kontrollera Firestore Rules för ny chatt.");
+            }
         } else {
             const room = roomSnapshot.data();
             const participants = getRoomParticipantIds(room);
