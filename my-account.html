@@ -343,7 +343,7 @@
 
         const result = await Swal.fire({
             title: 'Radera annons?',
-            text: 'Annonsen, kopplade favoriter och kopplade konversationer tas bort.',
+            text: 'Annonsen tas bort från dina annonser. Kopplade chattar och sparade listor lämnas orörda om Rules inte tillåter rensning.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Ja, radera',
@@ -660,9 +660,26 @@
         }
 
         await deleteCarImagesFromStorage(carData);
-        await deleteChatsByCarId(safeCarId);
-        await deleteFavoritesByCarId(safeCarId);
+
+        // Delete the actual ad first. Older logic tried to delete related chats and
+        // favorites before deleting the car, but Firestore Rules correctly block a
+        // seller from deleting other users' favorites and chat messages. That made
+        // the ad deletion fail even when the car belonged to the current seller.
         await deleteDoc(doc(db, CONFIG.COLLECTIONS.CARS, safeCarId));
+
+        // Best-effort cleanup only. These operations must never block deletion of
+        // the seller's own ad, because related docs may belong to other users.
+        try {
+            await deleteChatsByCarId(safeCarId);
+        } catch (error) {
+            console.warn('Related chats were not removed after deleting ad:', error);
+        }
+
+        try {
+            await deleteFavoritesByCarId(safeCarId);
+        } catch (error) {
+            console.warn('Related favorites were not removed after deleting ad:', error);
+        }
     }
 
     async function deleteCarImagesFromStorage(carData) {
