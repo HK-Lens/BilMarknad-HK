@@ -56,6 +56,51 @@
         .account-link { color: var(--primary) !important; font-weight: 800 !important; }
         .logout-btn { color: var(--danger) !important; font-size: 12px !important; margin-left: 10px; }
 
+
+        .notification-wrap { position: relative; display: inline-flex; align-items: center; }
+        .notification-bell {
+            position: relative; width: 44px; height: 44px; border: 1px solid var(--border);
+            border-radius: 999px; background: white; color: var(--dark); display: inline-flex;
+            align-items: center; justify-content: center; font-size: 17px; box-shadow: 0 8px 22px rgba(15,23,42,.07);
+        }
+        .notification-bell:hover { color: var(--primary); border-color: rgba(245,130,32,.45); transform: translateY(-1px); }
+        .notification-badge {
+            position: absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; padding: 0 6px;
+            border-radius: 999px; background: #ef4444; color: white; font-size: 11px; font-weight: 900;
+            display: none; align-items: center; justify-content: center; border: 2px solid white;
+        }
+        .notification-panel {
+            position: absolute; top: calc(100% + 12px); right: 0; width: min(380px, calc(100vw - 28px));
+            background: white; color: var(--dark); border: 1px solid var(--border); border-radius: 22px;
+            box-shadow: 0 24px 70px rgba(15,23,42,.20); display: none; overflow: hidden; z-index: 3000;
+        }
+        .notification-wrap.open .notification-panel { display: block; }
+        .notification-panel::before {
+            content: ""; position: absolute; top: -7px; right: 18px; width: 14px; height: 14px;
+            background: white; border-left: 1px solid var(--border); border-top: 1px solid var(--border); transform: rotate(45deg);
+        }
+        .notification-head { padding: 16px 18px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .notification-head strong { font-size: 16px; font-weight: 900; letter-spacing: -0.03em; }
+        .notification-head span { color: var(--muted); font-size: 12px; font-weight: 800; }
+        .notification-list { max-height: 390px; overflow: auto; padding: 8px; }
+        .notification-item {
+            width: 100%; border: none; background: transparent; color: inherit; text-align: left; padding: 12px;
+            border-radius: 16px; display: grid; grid-template-columns: 38px 1fr; gap: 11px; cursor: pointer;
+        }
+        .notification-item:hover { background: #f8fafc; }
+        .notification-icon {
+            width: 38px; height: 38px; border-radius: 14px; display: grid; place-items: center;
+            background: rgba(245,130,32,.12); color: var(--primary); font-size: 15px;
+        }
+        .notification-item.message .notification-icon { background: rgba(37,99,235,.10); color: #2563eb; }
+        .notification-item.sold .notification-icon { background: rgba(239,68,68,.10); color: #dc2626; }
+        .notification-item.system .notification-icon { background: rgba(15,23,42,.08); color: #0f172a; }
+        .notification-text strong { display: block; font-size: 13px; font-weight: 900; margin-bottom: 3px; }
+        .notification-text p { color: var(--muted); font-size: 12px; line-height: 1.45; font-weight: 650; }
+        .notification-empty { padding: 28px 18px; text-align: center; color: var(--muted); font-weight: 800; font-size: 13px; }
+        .notification-foot { padding: 11px 16px; border-top: 1px solid var(--border); background: #f8fafc; }
+        .notification-foot a { color: var(--primary); font-size: 12px; font-weight: 900; text-decoration: none; }
+
         .hero {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             padding: 50px 6% 90px; text-align: center; color: white;
@@ -224,10 +269,13 @@
         orderBy,
         limit,
         getDocs,
+        getDoc,
         where,
         doc,
         setDoc,
         deleteDoc,
+        updateDoc,
+        onSnapshot,
         serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import {
@@ -266,7 +314,16 @@
         currentUser: null,
         savedFavoriteIds: new Set(),
         favoriteCarCache: new Map(),
-        isLoadingCars: false
+        isLoadingCars: false,
+        notificationUnsubscribes: [],
+        favoriteSoldCheckToken: 0,
+        seenSystemNotificationIds: readSeenSystemNotificationIds(),
+        notifications: {
+            messages: [],
+            soldFavorites: [],
+            systemMessages: [],
+            userNotifications: []
+        }
     };
 
     initializePage();
@@ -299,6 +356,19 @@
         });
 
         elements.grid.addEventListener('click', handleGridClick);
+
+        document.addEventListener('click', (event) => {
+            const wrap = document.getElementById('notificationWrap');
+            if (wrap && !wrap.contains(event.target)) {
+                wrap.classList.remove('open');
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                document.getElementById('notificationWrap')?.classList.remove('open');
+            }
+        });
     }
 
     function observeAuth() {
@@ -307,9 +377,12 @@
 
             if (user) {
                 renderLoggedInNav(user);
+                startNotificationCenter(user);
                 await loadUserFavorites();
             } else {
+                cleanupNotificationListeners();
                 state.savedFavoriteIds = new Set();
+                state.notifications = { messages: [], soldFavorites: [], systemMessages: [], userNotifications: [] };
                 renderLoggedOutNav();
             }
 
@@ -340,7 +413,10 @@
             }
         });
 
-        elements.authContainer.append(accountLink, logoutButton);
+        const notificationCenter = buildNotificationCenter();
+
+        elements.authContainer.append(notificationCenter, accountLink, logoutButton);
+        renderNotificationPanel();
     }
 
     function renderLoggedOutNav() {
@@ -349,6 +425,357 @@
         loginLink.href = 'login.html';
         loginLink.textContent = 'Logga in';
         elements.authContainer.appendChild(loginLink);
+    }
+
+    function buildNotificationCenter() {
+        const wrap = document.createElement('div');
+        wrap.className = 'notification-wrap';
+        wrap.id = 'notificationWrap';
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'notification-bell';
+        button.id = 'notificationBell';
+        button.setAttribute('aria-label', 'Öppna notiser');
+        button.innerHTML = '<i class="fa-regular fa-bell"></i><span class="notification-badge" id="notificationBadge"></span>';
+
+        const panel = document.createElement('div');
+        panel.className = 'notification-panel';
+        panel.id = 'notificationPanel';
+        panel.setAttribute('role', 'dialog');
+        panel.setAttribute('aria-label', 'Notiser');
+
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const shouldOpen = !wrap.classList.contains('open');
+            wrap.classList.toggle('open', shouldOpen);
+            if (shouldOpen) {
+                markVisibleSystemMessagesAsSeen();
+            }
+        });
+
+        panel.addEventListener('click', handleNotificationPanelClick);
+        wrap.append(button, panel);
+        return wrap;
+    }
+
+    function startNotificationCenter(user) {
+        cleanupNotificationListeners();
+        if (!user?.uid) return;
+
+        listenForUnreadMessages(user.uid);
+        listenForSoldFavoriteCars(user.uid);
+        listenForSystemMessages();
+        listenForUserNotifications(user.uid);
+    }
+
+    function cleanupNotificationListeners() {
+        state.notificationUnsubscribes.forEach((unsubscribe) => {
+            if (typeof unsubscribe === 'function') unsubscribe();
+        });
+        state.notificationUnsubscribes = [];
+        state.favoriteSoldCheckToken += 1;
+    }
+
+    function listenForUnreadMessages(uid) {
+        try {
+            const chatsQuery = query(collection(db, 'chats'), where('participants', 'array-contains', uid));
+            const unsubscribe = onSnapshot(chatsQuery, (snapshot) => {
+                const unread = [];
+                snapshot.forEach((chatDoc) => {
+                    const chat = chatDoc.data() || {};
+                    const unreadBy = Array.isArray(chat.unreadBy) ? chat.unreadBy : [];
+                    if (!unreadBy.includes(uid) || chat.lastSenderId === uid) return;
+
+                    unread.push({
+                        id: chatDoc.id,
+                        type: 'message',
+                        title: 'Nytt meddelande',
+                        text: normalizeText(chat.lastMessage || chat.carTitle || chat.carName || 'Du har ett nytt meddelande.', 140),
+                        link: `messages.html?roomId=${encodeURIComponent(chatDoc.id)}`,
+                        createdAt: timestampToMillis(chat.updatedAt)
+                    });
+                });
+                state.notifications.messages = unread;
+                renderNotificationPanel();
+            }, (error) => {
+                console.error('Kunde inte läsa meddelandenotiser:', error);
+                state.notifications.messages = [];
+                renderNotificationPanel();
+            });
+            state.notificationUnsubscribes.push(unsubscribe);
+        } catch (error) {
+            console.error('Kunde inte starta meddelandenotiser:', error);
+        }
+    }
+
+    function listenForSoldFavoriteCars(uid) {
+        try {
+            const favoritesQuery = query(collection(db, 'favorites'), where('userId', '==', uid));
+            const unsubscribe = onSnapshot(favoritesQuery, async (snapshot) => {
+                const token = ++state.favoriteSoldCheckToken;
+                const favoriteDocs = snapshot.docs.map((favoriteDoc) => ({ id: favoriteDoc.id, ...favoriteDoc.data() }));
+                const soldItems = [];
+
+                await Promise.all(favoriteDocs.map(async (favorite) => {
+                    const carId = normalizeId(favorite.carId);
+                    if (!carId) return;
+
+                    try {
+                        const carSnapshot = await getDoc(doc(db, 'cars', carId));
+                        if (!carSnapshot.exists()) return;
+
+                        const car = carSnapshot.data() || {};
+                        const status = normalizeText(car.status || '', 40).toLowerCase();
+                        const isSold = status === 'sold' || status === 'såld' || car.active === false;
+                        if (!isSold) return;
+
+                        soldItems.push({
+                            id: carId,
+                            type: 'sold',
+                            title: 'Sparad annons är såld',
+                            text: `${normalizeText(car.brand || favorite.brand || 'Bil', 60)} ${normalizeText(car.model || favorite.model || '', 60)}`.trim(),
+                            link: `details.html?id=${encodeURIComponent(carId)}`,
+                            createdAt: timestampToMillis(car.updatedAt) || timestampToMillis(favorite.createdAt)
+                        });
+                    } catch (error) {
+                        console.error('Kunde inte kontrollera sparad annons:', error);
+                    }
+                }));
+
+                if (token !== state.favoriteSoldCheckToken) return;
+                state.notifications.soldFavorites = soldItems;
+                renderNotificationPanel();
+            }, (error) => {
+                console.error('Kunde inte läsa sparade annonser för notiser:', error);
+                state.notifications.soldFavorites = [];
+                renderNotificationPanel();
+            });
+            state.notificationUnsubscribes.push(unsubscribe);
+        } catch (error) {
+            console.error('Kunde inte starta favoritnotiser:', error);
+        }
+    }
+
+    function listenForSystemMessages() {
+        try {
+            const systemQuery = query(collection(db, 'systemMessages'), where('active', '==', true));
+            const unsubscribe = onSnapshot(systemQuery, (snapshot) => {
+                const messages = [];
+                snapshot.forEach((messageDoc) => {
+                    const data = messageDoc.data() || {};
+                    messages.push({
+                        id: messageDoc.id,
+                        type: 'system',
+                        title: normalizeText(data.title || 'Systemmeddelande', 80),
+                        text: normalizeText(data.message || data.text || 'Nytt meddelande från BILHK.', 180),
+                        link: normalizeInternalLink(data.link || ''),
+                        createdAt: timestampToMillis(data.createdAt)
+                    });
+                });
+                state.notifications.systemMessages = messages;
+                renderNotificationPanel();
+            }, (error) => {
+                console.error('Kunde inte läsa systemmeddelanden:', error);
+                state.notifications.systemMessages = [];
+                renderNotificationPanel();
+            });
+            state.notificationUnsubscribes.push(unsubscribe);
+        } catch (error) {
+            console.error('Kunde inte starta systemnotiser:', error);
+        }
+    }
+
+    function listenForUserNotifications(uid) {
+        try {
+            const notificationsQuery = query(collection(db, 'notifications'), where('userId', '==', uid));
+            const unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
+                const notifications = [];
+                snapshot.forEach((notificationDoc) => {
+                    const data = notificationDoc.data() || {};
+                    notifications.push({
+                        id: notificationDoc.id,
+                        type: 'system',
+                        title: normalizeText(data.title || 'Notis', 80),
+                        text: normalizeText(data.message || data.text || 'Du har en ny notis.', 180),
+                        link: normalizeInternalLink(data.link || ''),
+                        read: data.read === true,
+                        createdAt: timestampToMillis(data.createdAt)
+                    });
+                });
+                state.notifications.userNotifications = notifications;
+                renderNotificationPanel();
+            }, (error) => {
+                console.error('Kunde inte läsa användarnotiser:', error);
+                state.notifications.userNotifications = [];
+                renderNotificationPanel();
+            });
+            state.notificationUnsubscribes.push(unsubscribe);
+        } catch (error) {
+            console.error('Kunde inte starta användarnotiser:', error);
+        }
+    }
+
+    function renderNotificationPanel() {
+        const panel = document.getElementById('notificationPanel');
+        const badge = document.getElementById('notificationBadge');
+        if (!panel || !badge) return;
+
+        const items = getNotificationItems();
+        const unreadCount = getUnreadNotificationCount();
+
+        badge.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
+        badge.style.display = unreadCount > 0 ? 'inline-flex' : 'none';
+
+        panel.textContent = '';
+        const head = document.createElement('div');
+        head.className = 'notification-head';
+
+        const title = document.createElement('strong');
+        title.textContent = 'Notiser';
+
+        const count = document.createElement('span');
+        count.textContent = unreadCount > 0 ? `${unreadCount} nya` : 'Inga nya';
+        head.append(title, count);
+
+        const list = document.createElement('div');
+        list.className = 'notification-list';
+
+        if (items.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'notification-empty';
+            empty.textContent = 'Inga notiser just nu.';
+            list.appendChild(empty);
+        } else {
+            items.slice(0, 12).forEach((item) => list.appendChild(buildNotificationItem(item)));
+        }
+
+        const foot = document.createElement('div');
+        foot.className = 'notification-foot';
+        const messagesLink = document.createElement('a');
+        messagesLink.href = 'messages.html';
+        messagesLink.textContent = 'Öppna meddelanden';
+        foot.appendChild(messagesLink);
+
+        panel.append(head, list, foot);
+    }
+
+    function buildNotificationItem(item) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `notification-item ${item.type || 'system'}`;
+        if (item.link) button.dataset.link = item.link;
+        if (item.userNotificationId && !item.read) button.dataset.readNotificationId = item.userNotificationId;
+
+        const icon = document.createElement('span');
+        icon.className = 'notification-icon';
+        icon.innerHTML = item.type === 'message'
+            ? '<i class="fa-solid fa-comment-dots"></i>'
+            : item.type === 'sold'
+                ? '<i class="fa-solid fa-car-burst"></i>'
+                : '<i class="fa-solid fa-circle-info"></i>';
+
+        const textWrap = document.createElement('span');
+        textWrap.className = 'notification-text';
+        const title = document.createElement('strong');
+        title.textContent = item.title;
+        const text = document.createElement('p');
+        text.textContent = item.text;
+        textWrap.append(title, text);
+        button.append(icon, textWrap);
+        return button;
+    }
+
+    async function handleNotificationPanelClick(event) {
+        const item = event.target.closest('.notification-item');
+        if (!item) return;
+
+        const notificationId = item.dataset.readNotificationId;
+        if (notificationId) {
+            try {
+                await updateDoc(doc(db, 'notifications', notificationId), {
+                    read: true,
+                    readAt: serverTimestamp()
+                });
+            } catch (error) {
+                console.error('Kunde inte markera notis som läst:', error);
+            }
+        }
+
+        const link = normalizeInternalLink(item.dataset.link || '');
+        if (link) window.location.href = link;
+    }
+
+    function getNotificationItems() {
+        const messageItems = state.notifications.messages || [];
+        const soldItems = state.notifications.soldFavorites || [];
+        const systemItems = (state.notifications.systemMessages || []).map((item) => ({
+            ...item,
+            isSeenSystem: state.seenSystemNotificationIds.has(item.id)
+        }));
+        const userItems = (state.notifications.userNotifications || []).map((item) => ({
+            ...item,
+            userNotificationId: item.id
+        }));
+
+        return [...messageItems, ...soldItems, ...userItems, ...systemItems]
+            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    }
+
+    function getUnreadNotificationCount() {
+        const unreadMessages = (state.notifications.messages || []).length;
+        const soldFavorites = (state.notifications.soldFavorites || []).length;
+        const unreadUserNotifications = (state.notifications.userNotifications || []).filter(item => item.read !== true).length;
+        const unseenSystemMessages = (state.notifications.systemMessages || []).filter(item => !state.seenSystemNotificationIds.has(item.id)).length;
+        return unreadMessages + soldFavorites + unreadUserNotifications + unseenSystemMessages;
+    }
+
+    function markVisibleSystemMessagesAsSeen() {
+        const ids = (state.notifications.systemMessages || []).map(item => item.id).filter(Boolean);
+        if (ids.length === 0) return;
+
+        let changed = false;
+        ids.forEach((id) => {
+            if (!state.seenSystemNotificationIds.has(id)) {
+                state.seenSystemNotificationIds.add(id);
+                changed = true;
+            }
+        });
+
+        if (changed) {
+            saveSeenSystemNotificationIds();
+            renderNotificationPanel();
+        }
+    }
+
+    function readSeenSystemNotificationIds() {
+        try {
+            return new Set(JSON.parse(localStorage.getItem('bilhk_seen_system_notifications') || '[]'));
+        } catch (_) {
+            return new Set();
+        }
+    }
+
+    function saveSeenSystemNotificationIds() {
+        try {
+            localStorage.setItem('bilhk_seen_system_notifications', JSON.stringify([...state.seenSystemNotificationIds].slice(-100)));
+        } catch (_) {}
+    }
+
+    function normalizeInternalLink(value) {
+        const link = normalizeText(value, 220);
+        if (!link) return '';
+        if (/^(index|details|messages|my-account|results|filter|sell|terms|login)\.html(\?|#|$)/.test(link)) return link;
+        return '';
+    }
+
+    function timestampToMillis(value) {
+        if (!value) return 0;
+        if (typeof value.toMillis === 'function') return value.toMillis();
+        if (value instanceof Date) return value.getTime();
+        const number = Number(value);
+        return Number.isFinite(number) ? number : 0;
     }
 
     async function loadUserFavorites() {
