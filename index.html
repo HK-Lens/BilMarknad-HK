@@ -59,6 +59,18 @@
 
         .account-link { color: var(--primary) !important; font-weight: 800 !important; }
         .logout-btn { color: var(--danger) !important; font-size: 12px !important; margin-left: 10px; }
+        .notification-link {
+            width: 48px; height: 48px; border-radius: 50%; background: #fff; color: var(--dark) !important;
+            display: inline-flex; align-items: center; justify-content: center; position: relative;
+            box-shadow: 0 10px 25px rgba(15,23,42,.08); border: 1px solid #eef2f7; text-decoration: none;
+        }
+        .notification-link:hover { color: var(--primary) !important; transform: translateY(-1px); }
+        .notification-badge {
+            position: absolute; top: -3px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px;
+            border-radius: 999px; background: var(--danger); color: #fff; font-size: 11px; font-weight: 900;
+            display: none; align-items: center; justify-content: center; border: 2px solid #fff;
+        }
+        .notification-link.has-notifications .notification-badge { display: inline-flex; }
 
         .hero {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -151,7 +163,7 @@
     <meta name="theme-color" content="#f58220">
     <link rel="icon" href="icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
-    <script src="pwa-register.js?v=6" defer></script>
+    <script src="pwa-register.js?v=7" defer></script>
 </head>
 <body>
 
@@ -161,7 +173,7 @@
     <a href="index.html" class="logo" aria-label="BILHK startsida">BIL<span>HK</span></a>
     <nav class="nav-links" aria-label="Huvudmeny">
         <a href="sell.html" class="btn-sell">Sälj din bil</a>
-        <button id="bilhkInstallAppBtn" type="button" class="install-app-btn">📲 تثبيت التطبيق</button>
+        <button id="bilhkInstallAppBtn" type="button" class="install-app-btn"><i class="fa-solid fa-download" aria-hidden="true"></i> Installera app</button>
         <div id="authStatusContainer" style="display:flex;align-items:center;gap:15px;"></div>
     </nav>
 </header>
@@ -235,6 +247,7 @@
         orderBy,
         limit,
         getDocs,
+        onSnapshot,
         where,
         doc,
         setDoc,
@@ -277,6 +290,7 @@
         currentUser: null,
         savedFavoriteIds: new Set(),
         favoriteCarCache: new Map(),
+        notificationUnsubscribe: null,
         isLoadingCars: false
     };
 
@@ -331,6 +345,14 @@
     function renderLoggedInNav(user) {
         elements.authContainer.textContent = '';
 
+        const notificationLink = document.createElement('a');
+        notificationLink.href = 'my-account.html#notifications';
+        notificationLink.className = 'notification-link';
+        notificationLink.id = 'homeNotificationBell';
+        notificationLink.setAttribute('aria-label', 'Aviseringar');
+        notificationLink.title = 'Aviseringar';
+        notificationLink.innerHTML = '<i class="fa-regular fa-bell" aria-hidden="true"></i><span class="notification-badge" id="homeNotificationBadge">0</span>';
+
         const accountLink = document.createElement('a');
         accountLink.href = 'my-account.html';
         accountLink.className = 'account-link';
@@ -351,15 +373,62 @@
             }
         });
 
-        elements.authContainer.append(accountLink, logoutButton);
+        elements.authContainer.append(notificationLink, accountLink, logoutButton);
+        subscribeHomeNotifications(user.uid);
     }
 
     function renderLoggedOutNav() {
+        stopHomeNotificationListener();
         elements.authContainer.textContent = '';
         const loginLink = document.createElement('a');
         loginLink.href = 'login.html';
         loginLink.textContent = 'Logga in';
         elements.authContainer.appendChild(loginLink);
+    }
+
+
+    function stopHomeNotificationListener() {
+        if (typeof state.notificationUnsubscribe === 'function') {
+            state.notificationUnsubscribe();
+            state.notificationUnsubscribe = null;
+        }
+    }
+
+    function setHomeNotificationCount(count) {
+        const bell = document.getElementById('homeNotificationBell');
+        const badge = document.getElementById('homeNotificationBadge');
+        if (!bell || !badge) return;
+
+        const safeCount = Math.max(0, Number(count) || 0);
+        badge.textContent = safeCount > 9 ? '9+' : String(safeCount);
+        bell.classList.toggle('has-notifications', safeCount > 0);
+        bell.title = safeCount > 0 ? `${safeCount} nya aviseringar` : 'Aviseringar';
+    }
+
+    function subscribeHomeNotifications(uid) {
+        stopHomeNotificationListener();
+        setHomeNotificationCount(0);
+
+        const chatQuery = query(
+            collection(db, 'chats'),
+            where('participants', 'array-contains', uid),
+            orderBy('updatedAt', 'desc'),
+            limit(20)
+        );
+
+        state.notificationUnsubscribe = onSnapshot(chatQuery, (snapshot) => {
+            let count = 0;
+            snapshot.forEach((docSnap) => {
+                const chat = docSnap.data() || {};
+                if (chat.lastMessage && chat.lastSenderId && chat.lastSenderId !== uid) {
+                    count += 1;
+                }
+            });
+            setHomeNotificationCount(count);
+        }, (error) => {
+            console.warn('Kunde inte läsa aviseringar:', error);
+            setHomeNotificationCount(0);
+        });
     }
 
     async function loadUserFavorites() {

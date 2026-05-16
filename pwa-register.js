@@ -17,7 +17,7 @@
       button.id = INSTALL_BUTTON_ID;
       button.type = 'button';
       button.className = 'install-app-btn';
-      button.innerHTML = '<i class="fa-solid fa-download" aria-hidden="true"></i> تثبيت التطبيق';
+      button.innerHTML = '<i class="fa-solid fa-download" aria-hidden="true"></i> Installera app';
 
       const nav = document.querySelector('.nav-links');
       const sellButton = document.querySelector('.btn-sell');
@@ -70,10 +70,10 @@
 
   function showManualInstallHelp() {
     alert(
-      'زر تثبيت التطبيق جاهز.\n\n' +
-      'إذا لم يفتح مربع التثبيت تلقائيًا، افتح الموقع من Chrome ثم اضغط قائمة ⋮ واختر:\n' +
-      'Install app / تثبيت التطبيق\n' +
-      'أو Add to Home screen / إضافة إلى الشاشة الرئيسية.'
+      'Installationsknappen är klar.\n\n' +
+      'Om installationsrutan inte öppnas automatiskt: öppna webbplatsen i Chrome, tryck på menyn ⋮ och välj:\n' +
+      'Installera app\n' +
+      'eller Lägg till på startskärmen.'
     );
   }
 
@@ -93,12 +93,12 @@
 
     if (isStandalone()) {
       button.classList.add('installed');
-      button.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> التطبيق مثبت';
+      button.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Appen är installerad';
     }
 
     button.addEventListener('click', async () => {
       if (isStandalone()) {
-        alert(APP_NAME + ' مثبت بالفعل على الجهاز.');
+        alert(APP_NAME + ' är redan installerad på enheten.');
         return;
       }
 
@@ -128,7 +128,7 @@
     deferredPrompt = null;
     const button = getInstallButton();
     button.classList.add('installed');
-    button.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> التطبيق مثبت';
+    button.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Appen är installerad';
   });
 
   document.addEventListener('DOMContentLoaded', () => {
