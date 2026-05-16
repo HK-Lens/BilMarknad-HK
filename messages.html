@@ -247,17 +247,9 @@
     async function openRoomFromURLIfNeeded() {
         const params = new URLSearchParams(window.location.search);
         const directRoomId = sanitizeId(params.get("chatId") || params.get("roomId"));
-        const sellerIdFromURL = sanitizeId(
-            params.get("sellerId") ||
-            params.get("sellerUid") ||
-            params.get("sellerUID") ||
-            params.get("seller") ||
-            params.get("ownerId") ||
-            params.get("userId") ||
-            params.get("uid")
-        );
+        const sellerIdFromURL = sanitizeId(params.get("sellerId"));
         const buyerIdFromURL = sanitizeId(params.get("buyerId"));
-        const carId = sanitizeId(params.get("carId") || params.get("id") || params.get("adId") || params.get("listingId"));
+        const carId = sanitizeId(params.get("carId") || params.get("id"));
         const rawTitle = cleanText(params.get("title") || params.get("carName"));
         const sellerNameFromURL = cleanText(params.get("sellerName") || params.get("contactName"));
         const sellerEmailFromURL = cleanText(params.get("sellerEmail"));
@@ -272,12 +264,20 @@
         }
 
         const carData = await fetchCarData(carId);
+
+        if (!carData) {
+            showChatError("Annonsen hittades inte i nya cars-samlingen. Lägg upp en ny annons via sell.html och öppna chatten från den nya annonsen.");
+            lockInput("Ny annons krävs för chatt.");
+            openChatMobile();
+            return;
+        }
+
         const sellerIdFromCar = getSellerIdFromCar(carData);
         const sellerId = sellerIdFromCar || sellerIdFromURL;
 
         if (!sellerId) {
-            showChatError("Annonsen saknar säljar-ID. En ny chatt kan inte skapas förrän annonsdokumentet innehåller sellerId.");
-            lockInput("Annonsen saknar sellerId.");
+            showChatError("Den här annonsen är inte kompatibel med nya chattsystemet. Publicera en ny annons via sell.html så sparas sellerId korrekt.");
+            lockInput("Publicera en ny annons först.");
             openChatMobile();
             return;
         }
@@ -307,8 +307,8 @@
 
         const roomId = directRoomId || buildRoomId({ buyerId, sellerId, carId });
         const carTitle = rawTitle || buildCarTitle(carData) || "Bilannons";
-        const sellerName = sellerNameFromURL || cleanText(carData?.sellerName || carData?.contactName || carData?.contact || carData?.name) || "Säljare";
-        const sellerEmail = sellerEmailFromURL || cleanText(carData?.sellerEmail || carData?.email || "");
+        const sellerName = sellerNameFromURL || cleanText(carData?.sellerName) || "Säljare";
+        const sellerEmail = sellerEmailFromURL || cleanText(carData?.sellerEmail || "");
         const buyerName = state.user.displayName || getNameFromEmail(state.user.email) || "Köpare";
         const buyerEmail = state.user.email || "";
         const roomRef = doc(db, "chats", roomId);
@@ -316,7 +316,6 @@
             carId,
             carName: carTitle,
             carTitle,
-            title: carTitle,
             participants: uniqueArray([buyerId, sellerId]),
             buyerId,
             sellerId,
@@ -365,7 +364,6 @@
             const updatePayload = {
                 carName: room.carName || carTitle,
                 carTitle: room.carTitle || carTitle,
-                title: room.title || carTitle,
                 hiddenFor: arrayRemove(state.user.uid),
                 updatedAt: serverTimestamp()
             };
@@ -811,21 +809,17 @@
             return null;
         }
 
-        const possibleCollections = ["cars", "carListings", "listings", "ads", "vehicles"];
+        try {
+            const carSnapshot = await getDoc(doc(db, "cars", carId));
 
-        for (const collectionName of possibleCollections) {
-            try {
-                const carSnapshot = await getDoc(doc(db, collectionName, carId));
-
-                if (carSnapshot.exists()) {
-                    return {
-                        id: carSnapshot.id,
-                        ...carSnapshot.data()
-                    };
-                }
-            } catch (error) {
-                console.warn(`Could not read ${collectionName}/${carId}:`, error);
+            if (carSnapshot.exists()) {
+                return {
+                    id: carSnapshot.id,
+                    ...carSnapshot.data()
+                };
             }
+        } catch (error) {
+            console.warn(`Could not read cars/${carId}:`, error);
         }
 
         return null;
@@ -1024,30 +1018,7 @@
             return "";
         }
 
-        return sanitizeId(
-            carData.sellerId ||
-            carData.sellerUid ||
-            carData.sellerUID ||
-            carData.ownerId ||
-            carData.ownerUID ||
-            carData.userId ||
-            carData.userUID ||
-            carData.uid ||
-            carData.createdBy ||
-            carData.createdById ||
-            carData.createdByUID ||
-            carData.postedBy ||
-            carData.postedById ||
-            carData.authorId ||
-            carData.seller?.uid ||
-            carData.seller?.id ||
-            carData.owner?.uid ||
-            carData.owner?.id ||
-            carData.user?.uid ||
-            carData.user?.id ||
-            carData.createdByUser?.uid ||
-            carData.createdByUser?.id
-        );
+        return sanitizeId(carData.sellerId);
     }
 
     function buildCarTitle(carData) {

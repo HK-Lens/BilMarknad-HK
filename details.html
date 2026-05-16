@@ -305,7 +305,7 @@
         }
 
         if (!sellerId) {
-            alert('Annonsen saknar sellerId. Lägg till sellerId i annonsdokumentet för att kunna starta en ny chatt.');
+            alert('Den här annonsen är inte kompatibel med nya chattsystemet. Publicera en ny annons via sell.html så sparas sellerId korrekt.');
             return;
         }
 
@@ -321,11 +321,10 @@
         const params = new URLSearchParams();
         const sellerId = getSellerIdFromCar(car);
         params.set('carId', carId);
-        params.set('id', carId);
         if (sellerId) params.set('sellerId', sellerId);
         params.set('title', safeString(`${titleText} ${car.year || ''}`.trim()));
-        const sellerName = safeString(car.sellerName || car.contactName || car.name || '');
-        const sellerEmail = safeString(car.sellerEmail || car.email || '');
+        const sellerName = safeString(car.sellerName || '');
+        const sellerEmail = safeString(car.sellerEmail || '');
         if (sellerName) params.set('sellerName', sellerName);
         if (sellerEmail) params.set('sellerEmail', sellerEmail);
         return `messages.html?${params.toString()}`;
@@ -333,30 +332,7 @@
 
     function getSellerIdFromCar(car) {
         if (!car) return '';
-        return cleanId(
-            car.sellerId ||
-            car.sellerUid ||
-            car.sellerUID ||
-            car.ownerId ||
-            car.ownerUID ||
-            car.userId ||
-            car.userUID ||
-            car.uid ||
-            car.createdBy ||
-            car.createdById ||
-            car.createdByUID ||
-            car.postedBy ||
-            car.postedById ||
-            car.authorId ||
-            car.seller?.uid ||
-            car.seller?.id ||
-            car.owner?.uid ||
-            car.owner?.id ||
-            car.user?.uid ||
-            car.user?.id ||
-            car.createdByUser?.uid ||
-            car.createdByUser?.id
-        );
+        return cleanId(car.sellerId);
     }
 
     function galleryAnchor(src, className = '', alt = 'Fordonsbild') {

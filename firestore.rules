@@ -1,0 +1,94 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function chatPath(chatId) {
+      return /databases/$(database)/documents/chats/$(chatId);
+    }
+
+    function isParticipant(data) {
+      return signedIn()
+        && (
+          (data.participants is list && request.auth.uid in data.participants)
+          || data.buyerId == request.auth.uid
+          || data.sellerId == request.auth.uid
+        );
+    }
+
+    function existingChatParticipant(chatId) {
+      return signedIn()
+        && exists(chatPath(chatId))
+        && isParticipant(get(chatPath(chatId)).data);
+    }
+
+    function validNewChat() {
+      return signedIn()
+        && request.resource.data.carId is string
+        && request.resource.data.buyerId is string
+        && request.resource.data.sellerId is string
+        && request.resource.data.participants is list
+        && request.resource.data.buyerId == request.auth.uid
+        && request.resource.data.sellerId != request.auth.uid
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.sellerId in request.resource.data.participants;
+    }
+
+    function validChatUpdate() {
+      return isParticipant(resource.data)
+        && request.resource.data.carId == resource.data.carId
+        && request.resource.data.buyerId == resource.data.buyerId
+        && request.resource.data.sellerId == resource.data.sellerId
+        && request.resource.data.participants == resource.data.participants;
+    }
+
+    function validNewMessage() {
+      return signedIn()
+        && request.resource.data.senderId == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 1500;
+    }
+
+    match /cars/{carId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.sellerId == request.auth.uid;
+      allow update, delete: if signedIn()
+        && resource.data.sellerId == request.auth.uid;
+    }
+
+    match /favorites/{favoriteId} {
+      allow read: if signedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.carId is string;
+      allow update: if signedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid;
+      allow delete: if signedIn()
+        && resource.data.userId == request.auth.uid;
+    }
+
+    match /chats/{chatId} {
+      allow get: if isParticipant(resource.data);
+      allow list: if isParticipant(resource.data);
+      allow create: if validNewChat();
+      allow update: if validChatUpdate();
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if existingChatParticipant(chatId);
+        allow create: if existingChatParticipant(chatId)
+          && validNewMessage();
+        allow update: if false;
+        allow delete: if existingChatParticipant(chatId)
+          && resource.data.senderId == request.auth.uid;
+      }
+    }
+  }
+}
