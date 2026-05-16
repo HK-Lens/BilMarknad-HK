@@ -1,0 +1,20 @@
+BILHK PWA install fix report
+
+سبب عدم ظهور زر تثبيت التطبيق من الصور والملفات:
+1) index.html كان أقدم من ملفات PWA ولم يكن يحتوي على ربط manifest.webmanifest ولا تحميل pwa-register.js.
+2) ملف manifest.webmanifest كان يحتاج أيقونات 192x192 و512x512 قابلة للتحميل. في المشروع ظهر icon.svg في الجذر فقط، لذلك أضفت مجلد icons مع icon-192.png و icon-512.png.
+3) لكي لا يختفي الزر حتى لو لم يطلق Chrome حدث beforeinstallprompt، أضفت زر ثابت داخل index.html، وملف pwa-register.js يفعله ويعرض تعليمات يدوية عند الحاجة.
+4) service-worker.js يحتوي الآن على fetch handler ويسجل نفسه من pwa-register.js.
+
+الملفات التي يجب رفعها بنفس الأسماء:
+- index.html
+- manifest.webmanifest
+- pwa-register.js
+- service-worker.js
+- offline.html
+- icon.svg
+- icons/icon-192.png
+- icons/icon-512.png
+
+مهم:
+بعد الرفع على GitHub Pages افتحي الرابط ثم اعملي Refresh قوي أو امسحي cache. أحياناً Chrome ينتظر قليلاً قبل إظهار install prompt، لكن زر تثبيت التطبيق الآن يجب أن يظهر مباشرة في الهيدر.

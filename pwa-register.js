@@ -1,262 +1,138 @@
-(() => {
-  const APP_NAME = "BILHK";
+(function () {
+  'use strict';
+
+  const INSTALL_BUTTON_ID = 'bilhkInstallAppBtn';
+  const APP_NAME = 'BILHK';
   let deferredPrompt = null;
 
-  function isInstalled() {
-    return (
-      window.matchMedia("(display-mode: standalone)").matches ||
-      window.navigator.standalone === true
-    );
+  function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   }
 
-  function addInstallStyles() {
-    if (document.getElementById("bilhk-install-style")) return;
+  function getInstallButton() {
+    let button = document.getElementById(INSTALL_BUTTON_ID);
 
-    const style = document.createElement("style");
-    style.id = "bilhk-install-style";
+    if (!button) {
+      button = document.createElement('button');
+      button.id = INSTALL_BUTTON_ID;
+      button.type = 'button';
+      button.className = 'install-app-btn';
+      button.innerHTML = '<i class="fa-solid fa-download" aria-hidden="true"></i> تثبيت التطبيق';
+
+      const nav = document.querySelector('.nav-links');
+      const sellButton = document.querySelector('.btn-sell');
+      if (nav && sellButton) {
+        sellButton.insertAdjacentElement('afterend', button);
+      } else if (nav) {
+        nav.prepend(button);
+      } else {
+        document.body.appendChild(button);
+      }
+    }
+
+    return button;
+  }
+
+  function styleInstallButton() {
+    if (document.getElementById('bilhk-pwa-style')) return;
+
+    const style = document.createElement('style');
+    style.id = 'bilhk-pwa-style';
     style.textContent = `
-      .bilhk-install-floating {
-        position: fixed;
-        right: 16px;
-        bottom: calc(16px + env(safe-area-inset-bottom));
-        z-index: 999999;
-        border: none;
-        border-radius: 999px;
-        background: linear-gradient(135deg, #f58220, #ffad55);
-        color: #ffffff;
-        padding: 13px 18px;
-        font-family: Inter, Arial, sans-serif;
-        font-size: 14px;
-        font-weight: 900;
-        box-shadow: 0 18px 40px rgba(245, 130, 32, 0.35);
-        display: inline-flex;
+      .install-app-btn {
+        display: inline-flex !important;
         align-items: center;
-        gap: 9px;
+        justify-content: center;
+        gap: 8px;
+        border: 0;
         cursor: pointer;
-      }
-
-      .bilhk-install-top {
-        border: none;
-        border-radius: 999px;
-        background: #f58220;
-        color: #ffffff;
-        padding: 10px 14px;
-        font-family: Inter, Arial, sans-serif;
-        font-size: 13px;
-        font-weight: 900;
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        cursor: pointer;
-        box-shadow: 0 10px 24px rgba(245, 130, 32, 0.22);
-        margin-left: 10px;
-      }
-
-      .bilhk-install-modal {
-        position: fixed;
-        inset: 0;
-        z-index: 1000000;
-        display: none;
-        place-items: center;
-        padding: 20px;
-        background: rgba(15, 23, 42, 0.48);
-        backdrop-filter: blur(10px);
-      }
-
-      .bilhk-install-modal.show {
-        display: grid;
-      }
-
-      .bilhk-install-card {
-        width: min(430px, 100%);
-        border-radius: 26px;
-        background: #ffffff;
-        color: #0f172a;
-        box-shadow: 0 30px 90px rgba(15, 23, 42, 0.28);
-        padding: 24px;
-        font-family: Inter, Arial, sans-serif;
-      }
-
-      .bilhk-install-card h3 {
-        margin: 0 0 8px;
-        font-size: 21px;
-        font-weight: 950;
-      }
-
-      .bilhk-install-card p {
-        margin: 0 0 12px;
-        color: #64748b;
-        font-size: 14px;
-        line-height: 1.7;
-        font-weight: 650;
-      }
-
-      .bilhk-install-card ol {
-        margin: 12px 0 18px;
-        padding-left: 22px;
-        color: #334155;
-        font-size: 14px;
-        line-height: 1.8;
-        font-weight: 750;
-      }
-
-      .bilhk-install-card button {
-        width: 100%;
-        min-height: 44px;
-        border: none;
+        padding: 10px 18px;
         border-radius: 999px;
         background: #0f172a;
         color: #ffffff;
         font-weight: 900;
-        cursor: pointer;
+        font-size: 14px;
+        box-shadow: 0 12px 28px rgba(15,23,42,.18);
+        white-space: nowrap;
       }
-
-      @media (max-width: 520px) {
-        .bilhk-install-floating {
-          left: 12px;
-          right: 12px;
-          justify-content: center;
-        }
-
-        .bilhk-install-top {
-          padding: 9px 12px;
-          font-size: 12px;
+      .install-app-btn:hover { filter: brightness(1.06); }
+      .install-app-btn.installed { background: #16a34a; }
+      @media (max-width: 720px) {
+        .install-app-btn {
+          padding: 10px 14px;
+          font-size: 13px;
+          order: 2;
         }
       }
     `;
-
     document.head.appendChild(style);
   }
 
-  function createModal() {
-    if (document.querySelector(".bilhk-install-modal")) return;
-
-    const modal = document.createElement("div");
-    modal.className = "bilhk-install-modal";
-    modal.innerHTML = `
-      <div class="bilhk-install-card" role="dialog" aria-modal="true">
-        <h3>Installera BILHK</h3>
-        <p>إذا لم تفتح نافذة التثبيت تلقائيًا، ثبّتي التطبيق من قائمة Chrome.</p>
-        <ol>
-          <li>افتحي الموقع في Chrome على Android.</li>
-          <li>اضغطي على القائمة ⋮ أعلى الشاشة.</li>
-          <li>اختاري Install app أو Add to Home screen.</li>
-        </ol>
-        <button type="button">Stäng</button>
-      </div>
-    `;
-
-    modal.addEventListener("click", (event) => {
-      if (event.target === modal || event.target.closest("button")) {
-        modal.classList.remove("show");
-      }
-    });
-
-    document.body.appendChild(modal);
+  function showManualInstallHelp() {
+    alert(
+      'زر تثبيت التطبيق جاهز.\n\n' +
+      'إذا لم يفتح مربع التثبيت تلقائيًا، افتح الموقع من Chrome ثم اضغط قائمة ⋮ واختر:\n' +
+      'Install app / تثبيت التطبيق\n' +
+      'أو Add to Home screen / إضافة إلى الشاشة الرئيسية.'
+    );
   }
 
-  function showHelpModal() {
-    createModal();
-    const modal = document.querySelector(".bilhk-install-modal");
-    if (modal) modal.classList.add("show");
-  }
-
-  async function installApp() {
-    if (isInstalled()) return;
-
-    if (!deferredPrompt) {
-      showHelpModal();
-      return;
-    }
-
-    deferredPrompt.prompt();
+  async function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
 
     try {
-      await deferredPrompt.userChoice;
+      await navigator.serviceWorker.register('./service-worker.js', { scope: './' });
     } catch (error) {
-      console.warn("Install prompt closed:", error);
+      console.warn('BILHK service worker registration failed:', error);
+    }
+  }
+
+  function setupInstallButton() {
+    styleInstallButton();
+    const button = getInstallButton();
+
+    if (isStandalone()) {
+      button.classList.add('installed');
+      button.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> التطبيق مثبت';
     }
 
-    deferredPrompt = null;
-  }
+    button.addEventListener('click', async () => {
+      if (isStandalone()) {
+        alert(APP_NAME + ' مثبت بالفعل على الجهاز.');
+        return;
+      }
 
-  function createFloatingButton() {
-    if (isInstalled()) return;
-    if (document.querySelector(".bilhk-install-floating")) return;
+      if (!deferredPrompt) {
+        showManualInstallHelp();
+        return;
+      }
 
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "bilhk-install-floating";
-    btn.innerHTML = "⬇️ Installera app";
-    btn.addEventListener("click", installApp);
-
-    document.body.appendChild(btn);
-  }
-
-  function createHeaderButton() {
-    if (isInstalled()) return;
-    if (document.querySelector(".bilhk-install-top")) return;
-
-    const header =
-      document.querySelector(".header-actions") ||
-      document.querySelector(".nav-actions") ||
-      document.querySelector("header nav") ||
-      document.querySelector("header");
-
-    if (!header) return;
-
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "bilhk-install-top";
-    btn.innerHTML = "⬇️ Installera app";
-    btn.addEventListener("click", installApp);
-
-    header.appendChild(btn);
-  }
-
-  function initInstallUI() {
-    if (!document.body || isInstalled()) return;
-
-    addInstallStyles();
-    createModal();
-    createHeaderButton();
-    createFloatingButton();
-  }
-
-  function registerServiceWorker() {
-    if (!("serviceWorker" in navigator)) return;
-
-    window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("./service-worker.js")
-        .then(() => {
-          console.log(`${APP_NAME} service worker registered`);
-        })
-        .catch((error) => {
-          console.warn(`${APP_NAME} service worker failed`, error);
-        });
+      deferredPrompt.prompt();
+      try {
+        await deferredPrompt.userChoice;
+      } catch (error) {
+        console.warn('BILHK install prompt failed:', error);
+      }
+      deferredPrompt = null;
     });
   }
 
-  window.addEventListener("beforeinstallprompt", (event) => {
+  window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
     deferredPrompt = event;
-    initInstallUI();
+    const button = getInstallButton();
+    button.style.display = 'inline-flex';
   });
 
-  window.addEventListener("appinstalled", () => {
-    const floating = document.querySelector(".bilhk-install-floating");
-    const top = document.querySelector(".bilhk-install-top");
-
-    if (floating) floating.remove();
-    if (top) top.remove();
-
+  window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
+    const button = getInstallButton();
+    button.classList.add('installed');
+    button.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> التطبيق مثبت';
   });
 
-  document.addEventListener("DOMContentLoaded", initInstallUI);
-
-  registerServiceWorker();
-
-  window.BILHKInstallApp = installApp;
+  document.addEventListener('DOMContentLoaded', () => {
+    setupInstallButton();
+    registerServiceWorker();
+  });
 })();
