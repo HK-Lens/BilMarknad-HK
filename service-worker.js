@@ -1,50 +1,39 @@
-const CACHE_NAME = 'bilhk-pwa-v7';
+const CACHE_NAME = "bilhk-pwa-v3-bell-messages";
 const APP_SHELL = [
-  './',
-  './index.html',
-  './offline.html',
-  './manifest.webmanifest',
-  './pwa-register.js',
-  './icon.svg',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
+  "./",
+  "./index.html",
+  "./offline.html",
+  "./manifest.webmanifest",
+  "./icon.svg",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png"
 ];
 
-self.addEventListener('install', (event) => {
+self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL).catch(() => null))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).catch(() => undefined)
   );
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(
-      keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-    )).then(() => self.clients.claim())
+    caches.keys().then((keys) => Promise.all(keys.map((key) => {
+      if (key !== CACHE_NAME) return caches.delete(key);
+    }))).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
 
   event.respondWith(
     fetch(event.request)
       .then((response) => {
         const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => null);
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => undefined);
         return response;
       })
-      .catch(async () => {
-        const cached = await caches.match(event.request);
-        if (cached) return cached;
-
-        if (event.request.mode === 'navigate') {
-          const offline = await caches.match('./offline.html');
-          if (offline) return offline;
-        }
-
-        return new Response('Offline', { status: 503, statusText: 'Offline' });
-      })
+      .catch(() => caches.match(event.request).then((cached) => cached || caches.match("./offline.html")))
   );
 });

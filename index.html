@@ -8,6 +8,9 @@
     <meta name="robots" content="index, follow">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <meta name="theme-color" content="#f58220">
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,24 +56,54 @@
         .nav-links a:hover, .nav-links button:hover { color: var(--primary); }
         .btn-sell { background: var(--primary) !important; color: white !important; padding: 10px 25px; border-radius: 50px; transition: 0.3s; }
         .btn-sell:hover { background: var(--primary-hover) !important; color: white !important; }
-
-        .install-app-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#0f172a; color:#fff; border:0; padding:10px 18px; border-radius:50px; font-weight:900; cursor:pointer; box-shadow:0 12px 28px rgba(15,23,42,.18); white-space:nowrap; }
-        .install-app-btn:hover { filter:brightness(1.06); }
-
         .account-link { color: var(--primary) !important; font-weight: 800 !important; }
         .logout-btn { color: var(--danger) !important; font-size: 12px !important; margin-left: 10px; }
+
         .notification-link {
-            width: 48px; height: 48px; border-radius: 50%; background: #fff; color: var(--dark) !important;
-            display: inline-flex; align-items: center; justify-content: center; position: relative;
-            box-shadow: 0 10px 25px rgba(15,23,42,.08); border: 1px solid #eef2f7; text-decoration: none;
+            position: relative;
+            width: 46px;
+            height: 46px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--white);
+            color: var(--dark) !important;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
         }
         .notification-link:hover { color: var(--primary) !important; transform: translateY(-1px); }
+        .notification-link i { font-size: 1rem; }
         .notification-badge {
-            position: absolute; top: -3px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px;
-            border-radius: 999px; background: var(--danger); color: #fff; font-size: 11px; font-weight: 900;
-            display: none; align-items: center; justify-content: center; border: 2px solid #fff;
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            border-radius: 999px;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            line-height: 17px;
+            text-align: center;
+            border: 2px solid white;
         }
-        .notification-link.has-notifications .notification-badge { display: inline-flex; }
+        .install-app-btn {
+            background: var(--primary) !important;
+            color: white !important;
+            padding: 10px 18px;
+            border-radius: 50px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800 !important;
+            box-shadow: 0 10px 25px rgba(245,130,32,.22);
+        }
+        html.pwa-install-ready .install-app-btn { display: inline-flex; }
+        @media (display-mode: standalone) { .install-app-btn { display: none !important; } }
+
 
         .hero {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -158,12 +191,6 @@
             .filter-card { padding: 24px 18px; }
         }
     </style>
-
-    <link rel="manifest" href="manifest.webmanifest">
-    <meta name="theme-color" content="#f58220">
-    <link rel="icon" href="icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
-    <script src="pwa-register.js?v=7" defer></script>
 </head>
 <body>
 
@@ -173,7 +200,6 @@
     <a href="index.html" class="logo" aria-label="BILHK startsida">BIL<span>HK</span></a>
     <nav class="nav-links" aria-label="Huvudmeny">
         <a href="sell.html" class="btn-sell">Sälj din bil</a>
-        <button id="bilhkInstallAppBtn" type="button" class="install-app-btn"><i class="fa-solid fa-download" aria-hidden="true"></i> Installera app</button>
         <div id="authStatusContainer" style="display:flex;align-items:center;gap:15px;"></div>
     </nav>
 </header>
@@ -247,7 +273,6 @@
         orderBy,
         limit,
         getDocs,
-        onSnapshot,
         where,
         doc,
         setDoc,
@@ -290,7 +315,6 @@
         currentUser: null,
         savedFavoriteIds: new Set(),
         favoriteCarCache: new Map(),
-        notificationUnsubscribe: null,
         isLoadingCars: false
     };
 
@@ -345,13 +369,21 @@
     function renderLoggedInNav(user) {
         elements.authContainer.textContent = '';
 
+        const installButton = document.createElement('button');
+        installButton.type = 'button';
+        installButton.className = 'install-app-btn';
+        installButton.innerHTML = '<i class="fa-solid fa-download"></i> Installera app';
+        installButton.addEventListener('click', () => {
+            if (window.BILHKInstallApp) window.BILHKInstallApp();
+        });
+
         const notificationLink = document.createElement('a');
-        notificationLink.href = 'my-account.html#notifications';
+        // الجرس يجب أن يفتح صفحة الرسائل/الإشعارات وليس صفحة الحساب
+        notificationLink.href = 'messages.html';
         notificationLink.className = 'notification-link';
-        notificationLink.id = 'homeNotificationBell';
         notificationLink.setAttribute('aria-label', 'Aviseringar');
         notificationLink.title = 'Aviseringar';
-        notificationLink.innerHTML = '<i class="fa-regular fa-bell" aria-hidden="true"></i><span class="notification-badge" id="homeNotificationBadge">0</span>';
+        notificationLink.innerHTML = '<i class="fa-regular fa-bell"></i><span class="notification-badge" id="notificationBadge" hidden>0</span>';
 
         const accountLink = document.createElement('a');
         accountLink.href = 'my-account.html';
@@ -373,62 +405,15 @@
             }
         });
 
-        elements.authContainer.append(notificationLink, accountLink, logoutButton);
-        subscribeHomeNotifications(user.uid);
+        elements.authContainer.append(installButton, notificationLink, accountLink, logoutButton);
     }
 
     function renderLoggedOutNav() {
-        stopHomeNotificationListener();
         elements.authContainer.textContent = '';
         const loginLink = document.createElement('a');
         loginLink.href = 'login.html';
         loginLink.textContent = 'Logga in';
         elements.authContainer.appendChild(loginLink);
-    }
-
-
-    function stopHomeNotificationListener() {
-        if (typeof state.notificationUnsubscribe === 'function') {
-            state.notificationUnsubscribe();
-            state.notificationUnsubscribe = null;
-        }
-    }
-
-    function setHomeNotificationCount(count) {
-        const bell = document.getElementById('homeNotificationBell');
-        const badge = document.getElementById('homeNotificationBadge');
-        if (!bell || !badge) return;
-
-        const safeCount = Math.max(0, Number(count) || 0);
-        badge.textContent = safeCount > 9 ? '9+' : String(safeCount);
-        bell.classList.toggle('has-notifications', safeCount > 0);
-        bell.title = safeCount > 0 ? `${safeCount} nya aviseringar` : 'Aviseringar';
-    }
-
-    function subscribeHomeNotifications(uid) {
-        stopHomeNotificationListener();
-        setHomeNotificationCount(0);
-
-        const chatQuery = query(
-            collection(db, 'chats'),
-            where('participants', 'array-contains', uid),
-            orderBy('updatedAt', 'desc'),
-            limit(20)
-        );
-
-        state.notificationUnsubscribe = onSnapshot(chatQuery, (snapshot) => {
-            let count = 0;
-            snapshot.forEach((docSnap) => {
-                const chat = docSnap.data() || {};
-                if (chat.lastMessage && chat.lastSenderId && chat.lastSenderId !== uid) {
-                    count += 1;
-                }
-            });
-            setHomeNotificationCount(count);
-        }, (error) => {
-            console.warn('Kunde inte läsa aviseringar:', error);
-            setHomeNotificationCount(0);
-        });
     }
 
     async function loadUserFavorites() {
@@ -723,5 +708,6 @@
         return Math.min(max, Math.max(min, number));
     }
 </script>
+  <script src="./pwa-register.js" defer></script>
 </body>
 </html>
