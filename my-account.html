@@ -42,6 +42,18 @@
         .ad-info { min-width:0; flex:1; }
         .btn-del { margin-left: auto; color: var(--danger); border: none; background: none; font-size: 20px; cursor: pointer; width:42px; height:42px; border-radius:50%; display:grid; place-items:center; }
         .btn-del:hover { background: var(--danger-soft); }
+        .ad-status-line { color:#64748b; font-weight:900; }
+        .ad-status-line.sold { color:#b45309; }
+        .ad-status-line.inactive { color:#dc2626; }
+        .ad-actions { display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap; margin-left:auto; }
+        .ad-action-btn { min-height:38px; border:1px solid var(--border); border-radius:999px; background:white; color:var(--dark); padding:8px 11px; font-size:12px; font-weight:900; display:inline-flex; align-items:center; gap:7px; cursor:pointer; transition:.2s ease; }
+        .ad-action-btn:hover { border-color:rgba(245,130,32,.45); color:var(--primary-hover); transform:translateY(-1px); }
+        .ad-action-btn.edit { background:var(--primary-soft); color:var(--primary-hover); border-color:rgba(245,130,32,.25); }
+        .ad-action-btn.toggle { background:#f8fafc; }
+        .ad-action-btn.sold { background:#fff7ed; color:#b45309; border-color:#fed7aa; }
+        .ad-action-btn.delete { background:var(--danger-soft); color:var(--danger); border-color:rgba(239,68,68,.18); }
+        .ad-action-btn.delete:hover { background:var(--danger); color:white; border-color:var(--danger); }
+        @media (max-width: 640px) { .ad-card { align-items:flex-start; } .ad-card img { width:86px; height:68px; flex-basis:86px; } .ad-actions { width:100%; justify-content:flex-start; margin-left:101px; } .ad-action-btn { font-size:11px; padding:8px 10px; } }
         .state-box { background:white; border:1px solid var(--border); border-radius:18px; padding:26px; color:var(--muted); font-weight:800; line-height:1.7; }
     </style>
 </head>
@@ -79,7 +91,9 @@
         getDoc,
         deleteDoc,
         doc,
-        writeBatch
+        writeBatch,
+        updateDoc,
+        serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import {
         ref,
@@ -282,13 +296,14 @@
         card.setAttribute('role', 'link');
         card.setAttribute('aria-label', `Visa detaljer för ${buildCarTitle(car)}`);
 
-        const carId = normalizeDocumentId(car.id);
+        const carId = normalizeDocumentId(car.id || sourceDocId);
+        const documentId = normalizeDocumentId(sourceDocId || car.id);
 
-        card.addEventListener('click', () => navigateToDetails(carId));
+        card.addEventListener('click', () => navigateToDetails(carId || documentId));
         card.addEventListener('keydown', (event) => {
             if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
-                navigateToDetails(carId);
+                navigateToDetails(carId || documentId);
             }
         });
 
@@ -314,24 +329,181 @@
         meta.textContent = buildCarMeta(car);
 
         info.append(title, price, meta);
+
+        if (mode === 'ads') {
+            const statusLine = document.createElement('small');
+            statusLine.className = `ad-status-line ${getAdStatusClass(car)}`.trim();
+            statusLine.textContent = getAdStatusText(car);
+            info.appendChild(statusLine);
+        }
+
         card.append(image, info);
 
         if (mode === 'ads') {
-            const deleteButton = document.createElement('button');
-            deleteButton.type = 'button';
-            deleteButton.className = 'btn-del';
-            deleteButton.setAttribute('aria-label', 'Radera annons');
-            const icon = document.createElement('i');
-            icon.className = 'fa-solid fa-trash';
-            deleteButton.appendChild(icon);
-            deleteButton.addEventListener('click', (event) => {
-                event.stopPropagation();
-                handleDeleteAd(sourceDocId);
-            });
-            card.appendChild(deleteButton);
+            const actions = document.createElement('div');
+            actions.className = 'ad-actions';
+
+            actions.appendChild(createAdActionButton({
+                type: 'edit',
+                iconClass: 'fa-solid fa-pen-to-square',
+                label: 'Redigera',
+                ariaLabel: 'Redigera annons',
+                handler: () => handleEditAd(documentId || carId)
+            }));
+
+            actions.appendChild(createAdActionButton({
+                type: 'toggle',
+                iconClass: isAdActive(car) && !isAdSold(car) ? 'fa-solid fa-pause' : 'fa-solid fa-play',
+                label: isAdActive(car) && !isAdSold(car) ? 'Pausa' : 'Aktivera',
+                ariaLabel: isAdActive(car) && !isAdSold(car) ? 'Pausa annons' : 'Aktivera annons',
+                handler: () => handleToggleAdActive(documentId || carId, car)
+            }));
+
+            actions.appendChild(createAdActionButton({
+                type: 'sold',
+                iconClass: isAdSold(car) ? 'fa-solid fa-rotate-left' : 'fa-solid fa-circle-check',
+                label: isAdSold(car) ? 'Ej såld' : 'Såld',
+                ariaLabel: isAdSold(car) ? 'Ta bort såld-markering' : 'Markera annons som såld',
+                handler: () => handleToggleAdSold(documentId || carId, car)
+            }));
+
+            actions.appendChild(createAdActionButton({
+                type: 'delete',
+                iconClass: 'fa-solid fa-trash',
+                label: 'Radera',
+                ariaLabel: 'Radera annons',
+                handler: () => handleDeleteAd(documentId || carId)
+            }));
+
+            card.appendChild(actions);
         }
 
         return card;
+    }
+
+    function createAdActionButton({ type, iconClass, label, ariaLabel, handler }) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `ad-action-btn ${type}`;
+        button.setAttribute('aria-label', ariaLabel || label);
+        button.append(createIcon(iconClass), document.createTextNode(` ${label}`));
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            handler();
+        });
+        return button;
+    }
+
+    function handleEditAd(carId) {
+        const safeCarId = normalizeDocumentId(carId);
+
+        if (!safeCarId) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Kunde inte öppna redigering',
+                text: 'Annons-ID saknas.',
+                confirmButtonColor: '#f58220'
+            });
+            return;
+        }
+
+        safeNavigate(`edit-car.html?id=${encodeURIComponent(safeCarId)}`);
+    }
+
+    async function handleToggleAdActive(carId, car) {
+        const safeCarId = normalizeDocumentId(carId);
+
+        if (!safeCarId || !state.user) {
+            return;
+        }
+
+        const shouldActivate = !(isAdActive(car) && !isAdSold(car));
+        const result = await Swal.fire({
+            icon: 'question',
+            title: shouldActivate ? 'Aktivera annons?' : 'Pausa annons?',
+            text: shouldActivate
+                ? 'Annonsen blir aktiv igen och kan visas i sökresultaten.'
+                : 'Annonsen markeras som inaktiv och döljs från sökresultaten.',
+            showCancelButton: true,
+            confirmButtonText: shouldActivate ? 'Aktivera' : 'Pausa',
+            cancelButtonText: 'Avbryt',
+            confirmButtonColor: '#f58220'
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        await updateOwnAdFields(safeCarId, {
+            active: shouldActivate,
+            status: shouldActivate ? 'active' : 'inactive',
+            updatedAt: serverTimestamp()
+        }, shouldActivate ? 'Annonsen är aktiv igen' : 'Annonsen är pausad');
+    }
+
+    async function handleToggleAdSold(carId, car) {
+        const safeCarId = normalizeDocumentId(carId);
+
+        if (!safeCarId || !state.user) {
+            return;
+        }
+
+        const shouldMarkSold = !isAdSold(car);
+        const result = await Swal.fire({
+            icon: shouldMarkSold ? 'success' : 'question',
+            title: shouldMarkSold ? 'Markera som såld?' : 'Ta bort såld-markering?',
+            text: shouldMarkSold
+                ? 'Annonsen markeras som såld och döljs från aktiva sökresultat.'
+                : 'Annonsen blir aktiv igen och kan visas i sökresultaten.',
+            showCancelButton: true,
+            confirmButtonText: shouldMarkSold ? 'Markera som såld' : 'Aktivera igen',
+            cancelButtonText: 'Avbryt',
+            confirmButtonColor: '#f58220'
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        await updateOwnAdFields(safeCarId, {
+            active: !shouldMarkSold,
+            status: shouldMarkSold ? 'sold' : 'active',
+            updatedAt: serverTimestamp()
+        }, shouldMarkSold ? 'Annonsen är markerad som såld' : 'Annonsen är aktiv igen');
+    }
+
+    async function updateOwnAdFields(carId, payload, successTitle) {
+        try {
+            const carRef = doc(db, CONFIG.COLLECTIONS.CARS, carId);
+            const carSnap = await getDoc(carRef);
+
+            if (!carSnap.exists()) {
+                throw new Error('Annonsen hittades inte.');
+            }
+
+            if (carSnap.data()?.sellerId !== state.user?.uid) {
+                throw new Error('Du kan bara ändra dina egna annonser.');
+            }
+
+            await updateDoc(carRef, payload);
+
+            await Swal.fire({
+                icon: 'success',
+                title: successTitle || 'Annonsen är uppdaterad',
+                confirmButtonColor: '#f58220'
+            });
+
+            await switchTab('ads');
+        } catch (error) {
+            console.error('[BILHK] Update ad failed:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Kunde inte uppdatera annonsen',
+                text: getReadableDataError(error),
+                confirmButtonColor: '#f58220'
+            });
+        }
     }
 
     async function handleDeleteAd(carId) {
@@ -835,6 +1007,9 @@
             mileage: toNullableNumber(data?.mileage),
             fuelType: normalizeText(data?.fuelType || data?.fuel),
             location: normalizeText(data?.location || data?.city || data?.stad),
+            sellerId: normalizeText(data?.sellerId),
+            active: data?.active !== false,
+            status: normalizeText(data?.status || 'active'),
             image: data?.mainImage || images[0] || firstImageFromFiles || CONFIG.ROUTES.PLACEHOLDER_IMAGE
         };
     }
@@ -852,6 +1027,31 @@
             location: normalizeText(data?.location),
             image: data?.image || data?.mainImage || CONFIG.ROUTES.PLACEHOLDER_IMAGE
         };
+    }
+
+    function isAdSold(car) {
+        const status = normalizeText(car?.status).toLowerCase();
+        return status === 'sold' || status === 'såld' || status === 'sald';
+    }
+
+    function isAdActive(car) {
+        return car?.active !== false && !isAdSold(car);
+    }
+
+    function getAdStatusText(car) {
+        if (isAdSold(car)) {
+            return 'Status: Såld';
+        }
+
+        return isAdActive(car) ? 'Status: Aktiv' : 'Status: Inaktiv';
+    }
+
+    function getAdStatusClass(car) {
+        if (isAdSold(car)) {
+            return 'sold';
+        }
+
+        return isAdActive(car) ? 'active' : 'inactive';
     }
 
     function buildCarTitle(car) {
