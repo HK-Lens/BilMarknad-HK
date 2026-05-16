@@ -446,8 +446,9 @@
             notificationPanel.hidden = !notificationPanel.hidden;
             notificationButton.setAttribute('aria-expanded', String(!notificationPanel.hidden));
             updateNotificationPanel(notificationPanel);
-            if ('Notification' in window && Notification.permission === 'granted') {
-                await showBilHKNotification('Du har inga nya aviseringar just nu.');
+
+            if (!notificationPanel.hidden) {
+                await handleBellNotificationClick(notificationPanel);
             }
         });
 
@@ -785,54 +786,137 @@
     function updateNotificationPanel(panel) {
         const text = panel.querySelector('#notificationPanelText');
         const button = panel.querySelector('#enableNotificationsBtn');
+
         if (!('Notification' in window)) {
             text.textContent = 'Din webbläsare stöder inte aviseringar.';
             button.hidden = true;
             return;
         }
+
+        if (!window.isSecureContext) {
+            text.textContent = 'Webbläsaraviseringar kräver HTTPS eller localhost. Publicera sidan på en säker domän och prova igen.';
+            button.hidden = true;
+            return;
+        }
+
         if (Notification.permission === 'granted') {
-            text.textContent = 'Aviseringar är aktiverade. Nya händelser visas här och som appaviseringar.';
+            text.textContent = 'Aviseringar är aktiverade. Klicka på klockan för att testa en webbläsaravisering.';
             button.hidden = true;
         } else if (Notification.permission === 'denied') {
             text.textContent = 'Aviseringar är blockerade. Tillåt aviseringar i webbläsarens inställningar för den här sidan.';
             button.hidden = true;
         } else {
-            text.textContent = 'Aktivera aviseringar för att få besked om nya händelser i BILHK.';
+            text.textContent = 'Klicka på Aktivera aviseringar eller på klockan och godkänn webbläsarens fråga.';
             button.hidden = false;
         }
     }
 
-    async function enableBilHKNotifications(panel) {
+    async function handleBellNotificationClick(panel) {
         if (!('Notification' in window)) {
             updateNotificationPanel(panel);
-            return;
+            alert('Din webbläsare stöder inte aviseringar.');
+            return false;
         }
-        const permission = await Notification.requestPermission();
-        updateNotificationPanel(panel);
+
+        if (!window.isSecureContext) {
+            updateNotificationPanel(panel);
+            alert('Webbläsaraviseringar fungerar bara på HTTPS eller localhost.');
+            return false;
+        }
+
+        let permission = Notification.permission;
+
+        if (permission === 'default') {
+            permission = await requestNotificationPermissionSafely();
+            updateNotificationPanel(panel);
+        }
+
         if (permission === 'granted') {
-            await showBilHKNotification('Aviseringar är nu aktiverade.');
+            const shown = await showBilHKNotification('Testavisering: BILHK-aviseringar fungerar i webbläsaren.');
+            if (!shown) {
+                alert('Aviseringar är tillåtna, men webbläsaren kunde inte visa testaviseringen just nu.');
+            }
+            return shown;
+        }
+
+        if (permission === 'denied') {
+            alert('Aviseringar är blockerade. Öppna webbläsarens webbplatsinställningar och tillåt aviseringar för BILHK.');
+        }
+
+        return false;
+    }
+
+    async function enableBilHKNotifications(panel) {
+        await handleBellNotificationClick(panel);
+    }
+
+    function requestNotificationPermissionSafely() {
+        return new Promise((resolve) => {
+            try {
+                const result = Notification.requestPermission((permission) => resolve(permission));
+                if (result && typeof result.then === 'function') {
+                    result.then(resolve).catch(() => resolve(Notification.permission || 'denied'));
+                } else if (!result) {
+                    setTimeout(() => resolve(Notification.permission || 'default'), 0);
+                }
+            } catch (error) {
+                console.warn('Kunde inte begära aviseringstillstånd:', error);
+                resolve(Notification.permission || 'denied');
+            }
+        });
+    }
+
+    function delay(ms, value = null) {
+        return new Promise((resolve) => setTimeout(() => resolve(value), ms));
+    }
+
+    async function getReadyServiceWorkerRegistration(timeoutMs = 2200) {
+        if (!('serviceWorker' in navigator)) return null;
+
+        try {
+            const existingRegistration = await navigator.serviceWorker.getRegistration();
+            if (existingRegistration?.active) return existingRegistration;
+
+            return await Promise.race([
+                navigator.serviceWorker.ready,
+                delay(timeoutMs, null)
+            ]);
+        } catch (error) {
+            console.warn('Kunde inte läsa service worker-registrering:', error);
+            return null;
         }
     }
 
     async function showBilHKNotification(body) {
-        if (!('Notification' in window) || Notification.permission !== 'granted') return;
+        if (!('Notification' in window) || Notification.permission !== 'granted') return false;
+
         const options = {
             body,
-            icon: './icons/icon-192.png',
-            badge: './icons/icon-192.png',
-            tag: 'bilhk-avisering',
-            renotify: false,
+            tag: 'bilhk-browser-test',
+            renotify: true,
+            requireInteraction: false,
+            silent: false,
             data: { url: './index.html' }
         };
+
         try {
-            if ('serviceWorker' in navigator) {
-                const registration = await navigator.serviceWorker.ready;
+            const registration = await getReadyServiceWorkerRegistration();
+            if (registration && typeof registration.showNotification === 'function') {
                 await registration.showNotification('BILHK', options);
-            } else {
-                new Notification('BILHK', options);
+                return true;
             }
+
+            new Notification('BILHK', options);
+            return true;
         } catch (error) {
             console.warn('Kunde inte visa avisering:', error);
+            try {
+                new Notification('BILHK', options);
+                return true;
+            } catch (fallbackError) {
+                console.warn('Kunde inte visa fallback-avisering:', fallbackError);
+                return false;
+            }
         }
     }
 
