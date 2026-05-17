@@ -320,7 +320,8 @@
         doc,
         setDoc,
         deleteDoc,
-        serverTimestamp
+        serverTimestamp,
+        onSnapshot
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import {
         onAuthStateChanged,
@@ -358,7 +359,10 @@
         currentUser: null,
         savedFavoriteIds: new Set(),
         favoriteCarCache: new Map(),
-        isLoadingCars: false
+        isLoadingCars: false,
+        unreadChatsUnsubscribe: null,
+        unreadChatCount: 0,
+        unreadSnapshotReady: false
     };
 
     initializePage();
@@ -397,11 +401,16 @@
         onAuthStateChanged(auth, async (user) => {
             state.currentUser = user;
 
+            cleanupUnreadMessagesListener();
+
             if (user) {
                 renderLoggedInNav(user);
+                startUnreadMessagesListener(user.uid);
                 await loadUserFavorites();
             } else {
                 state.savedFavoriteIds = new Set();
+                state.unreadChatCount = 0;
+                state.unreadSnapshotReady = false;
                 renderLoggedOutNav();
             }
 
@@ -446,10 +455,6 @@
             notificationPanel.hidden = !notificationPanel.hidden;
             notificationButton.setAttribute('aria-expanded', String(!notificationPanel.hidden));
             updateNotificationPanel(notificationPanel);
-
-            if (!notificationPanel.hidden) {
-                await handleBellNotificationClick(notificationPanel);
-            }
         });
 
         notificationPanel.addEventListener('click', (event) => event.stopPropagation());
@@ -458,6 +463,7 @@
         });
 
         notificationWrap.append(notificationButton, notificationPanel);
+        renderNotificationBadge();
 
         const accountLink = document.createElement('a');
         accountLink.href = 'my-account.html';
@@ -783,140 +789,158 @@
     }
 
 
+    function startUnreadMessagesListener(userId) {
+        const safeUserId = normalizeId(userId);
+
+        if (!safeUserId) {
+            state.unreadChatCount = 0;
+            state.unreadSnapshotReady = false;
+            renderNotificationBadge();
+            updateOpenNotificationPanels();
+            return;
+        }
+
+        try {
+            const chatsQuery = query(
+                collection(db, 'chats'),
+                where('participants', 'array-contains', safeUserId)
+            );
+
+            state.unreadChatsUnsubscribe = onSnapshot(
+                chatsQuery,
+                (snapshot) => {
+                    let unreadCount = 0;
+                    let latestIncomingMessage = '';
+                    let shouldShowBrowserNotification = false;
+
+                    snapshot.forEach((chatDoc) => {
+                        const chat = chatDoc.data() || {};
+                        const unreadBy = Array.isArray(chat.unreadBy) ? chat.unreadBy : [];
+
+                        if (unreadBy.includes(safeUserId)) {
+                            unreadCount += 1;
+                        }
+                    });
+
+                    snapshot.docChanges().forEach((change) => {
+                        if (!state.unreadSnapshotReady || change.type === 'removed') return;
+
+                        const chat = change.doc.data() || {};
+                        const unreadBy = Array.isArray(chat.unreadBy) ? chat.unreadBy : [];
+                        const lastSenderId = normalizeId(chat.lastSenderId);
+
+                        if (unreadBy.includes(safeUserId) && lastSenderId && lastSenderId !== safeUserId) {
+                            shouldShowBrowserNotification = true;
+                            latestIncomingMessage = normalizeText(chat.lastMessage || 'Du har fått ett nytt meddelande.', 120);
+                        }
+                    });
+
+                    state.unreadChatCount = unreadCount;
+                    renderNotificationBadge();
+                    updateOpenNotificationPanels();
+
+                    if (shouldShowBrowserNotification) {
+                        const body = latestIncomingMessage || `Du har ${unreadCount} olästa meddelanden.`;
+                        showBilHKNotification(body, './messages.html');
+                    }
+
+                    state.unreadSnapshotReady = true;
+                },
+                (error) => {
+                    console.warn('Kunde inte lyssna på nya meddelanden:', error);
+                    state.unreadChatCount = 0;
+                    state.unreadSnapshotReady = true;
+                    renderNotificationBadge();
+                    updateOpenNotificationPanels();
+                }
+            );
+        } catch (error) {
+            console.warn('Meddelandeaviseringar kunde inte startas:', error);
+            state.unreadChatCount = 0;
+            state.unreadSnapshotReady = true;
+            renderNotificationBadge();
+            updateOpenNotificationPanels();
+        }
+    }
+
+    function cleanupUnreadMessagesListener() {
+        if (typeof state.unreadChatsUnsubscribe === 'function') {
+            state.unreadChatsUnsubscribe();
+        }
+
+        state.unreadChatsUnsubscribe = null;
+        state.unreadSnapshotReady = false;
+    }
+
+    function renderNotificationBadge() {
+        const badge = document.getElementById('notificationBadge');
+        if (!badge) return;
+
+        const count = Math.max(0, Math.min(999, normalizeNumber(state.unreadChatCount, 0)));
+        badge.textContent = count > 99 ? '99+' : String(count);
+        badge.hidden = count < 1;
+        badge.setAttribute('aria-label', count > 0 ? `${count} olästa meddelanden` : 'Inga olästa meddelanden');
+    }
+
+    function updateOpenNotificationPanels() {
+        document.querySelectorAll('.notification-panel').forEach((panel) => {
+            updateNotificationPanel(panel);
+        });
+    }
+
+
     function updateNotificationPanel(panel) {
         const text = panel.querySelector('#notificationPanelText');
         const button = panel.querySelector('#enableNotificationsBtn');
-
         if (!('Notification' in window)) {
             text.textContent = 'Din webbläsare stöder inte aviseringar.';
             button.hidden = true;
             return;
         }
-
-        if (!window.isSecureContext) {
-            text.textContent = 'Webbläsaraviseringar kräver HTTPS eller localhost. Publicera sidan på en säker domän och prova igen.';
-            button.hidden = true;
-            return;
-        }
-
         if (Notification.permission === 'granted') {
-            text.textContent = 'Aviseringar är aktiverade. Klicka på klockan för att testa en webbläsaravisering.';
+            const count = Math.max(0, normalizeNumber(state.unreadChatCount, 0));
+            text.textContent = count > 0
+                ? `Du har ${count} olästa meddelanden. Öppna Meddelanden för att läsa dem.`
+                : 'Aviseringar är aktiverade. Nya meddelanden visas här och som webbläsaraviseringar.';
             button.hidden = true;
         } else if (Notification.permission === 'denied') {
             text.textContent = 'Aviseringar är blockerade. Tillåt aviseringar i webbläsarens inställningar för den här sidan.';
             button.hidden = true;
         } else {
-            text.textContent = 'Klicka på Aktivera aviseringar eller på klockan och godkänn webbläsarens fråga.';
+            text.textContent = 'Aktivera aviseringar för att få besked när du får nya meddelanden i BILHK.';
             button.hidden = false;
         }
     }
 
-    async function handleBellNotificationClick(panel) {
+    async function enableBilHKNotifications(panel) {
         if (!('Notification' in window)) {
             updateNotificationPanel(panel);
-            alert('Din webbläsare stöder inte aviseringar.');
-            return false;
+            return;
         }
-
-        if (!window.isSecureContext) {
-            updateNotificationPanel(panel);
-            alert('Webbläsaraviseringar fungerar bara på HTTPS eller localhost.');
-            return false;
-        }
-
-        let permission = Notification.permission;
-
-        if (permission === 'default') {
-            permission = await requestNotificationPermissionSafely();
-            updateNotificationPanel(panel);
-        }
-
+        const permission = await Notification.requestPermission();
+        updateNotificationPanel(panel);
         if (permission === 'granted') {
-            const shown = await showBilHKNotification('Testavisering: BILHK-aviseringar fungerar i webbläsaren.');
-            if (!shown) {
-                alert('Aviseringar är tillåtna, men webbläsaren kunde inte visa testaviseringen just nu.');
-            }
-            return shown;
-        }
-
-        if (permission === 'denied') {
-            alert('Aviseringar är blockerade. Öppna webbläsarens webbplatsinställningar och tillåt aviseringar för BILHK.');
-        }
-
-        return false;
-    }
-
-    async function enableBilHKNotifications(panel) {
-        await handleBellNotificationClick(panel);
-    }
-
-    function requestNotificationPermissionSafely() {
-        return new Promise((resolve) => {
-            try {
-                const result = Notification.requestPermission((permission) => resolve(permission));
-                if (result && typeof result.then === 'function') {
-                    result.then(resolve).catch(() => resolve(Notification.permission || 'denied'));
-                } else if (!result) {
-                    setTimeout(() => resolve(Notification.permission || 'default'), 0);
-                }
-            } catch (error) {
-                console.warn('Kunde inte begära aviseringstillstånd:', error);
-                resolve(Notification.permission || 'denied');
-            }
-        });
-    }
-
-    function delay(ms, value = null) {
-        return new Promise((resolve) => setTimeout(() => resolve(value), ms));
-    }
-
-    async function getReadyServiceWorkerRegistration(timeoutMs = 2200) {
-        if (!('serviceWorker' in navigator)) return null;
-
-        try {
-            const existingRegistration = await navigator.serviceWorker.getRegistration();
-            if (existingRegistration?.active) return existingRegistration;
-
-            return await Promise.race([
-                navigator.serviceWorker.ready,
-                delay(timeoutMs, null)
-            ]);
-        } catch (error) {
-            console.warn('Kunde inte läsa service worker-registrering:', error);
-            return null;
+            await showBilHKNotification('Aviseringar är nu aktiverade.');
         }
     }
 
-    async function showBilHKNotification(body) {
-        if (!('Notification' in window) || Notification.permission !== 'granted') return false;
-
+    async function showBilHKNotification(body, targetUrl = './messages.html') {
+        if (!('Notification' in window) || Notification.permission !== 'granted') return;
         const options = {
             body,
-            tag: 'bilhk-browser-test',
-            renotify: true,
-            requireInteraction: false,
-            silent: false,
-            data: { url: './index.html' }
+            tag: `bilhk-meddelande-${Date.now()}`,
+            renotify: false,
+            data: { url: targetUrl }
         };
-
         try {
-            const registration = await getReadyServiceWorkerRegistration();
-            if (registration && typeof registration.showNotification === 'function') {
+            if ('serviceWorker' in navigator) {
+                const registration = await navigator.serviceWorker.ready;
                 await registration.showNotification('BILHK', options);
-                return true;
+            } else {
+                new Notification('BILHK', options);
             }
-
-            new Notification('BILHK', options);
-            return true;
         } catch (error) {
             console.warn('Kunde inte visa avisering:', error);
-            try {
-                new Notification('BILHK', options);
-                return true;
-            } catch (fallbackError) {
-                console.warn('Kunde inte visa fallback-avisering:', fallbackError);
-                return false;
-            }
         }
     }
 
