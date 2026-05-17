@@ -1,4 +1,4 @@
-const CACHE_NAME = "bilhk-pwa-v5-message-notifications";
+const CACHE_NAME = "bilhk-pwa-v6-scope-safe-notifications";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -42,13 +42,24 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const targetUrl = event.notification?.data?.url || "./messages.html";
-  const absoluteTargetUrl = new URL(targetUrl, self.location.origin).href;
+  const scopeUrl = self.registration?.scope || self.location.href;
+  const fallbackUrl = new URL("./messages.html", scopeUrl).href;
+  const rawTargetUrl = event.notification?.data?.url || "./messages.html";
+
+  let absoluteTargetUrl = fallbackUrl;
+  try {
+    const parsedTargetUrl = new URL(rawTargetUrl, scopeUrl);
+    if (parsedTargetUrl.origin === self.location.origin) {
+      absoluteTargetUrl = parsedTargetUrl.href;
+    }
+  } catch (error) {
+    absoluteTargetUrl = fallbackUrl;
+  }
 
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then(async (clientList) => {
       for (const client of clientList) {
-        if (client.url.startsWith(self.location.origin) && "focus" in client) {
+        if (client.url.startsWith(scopeUrl) && "focus" in client) {
           if ("navigate" in client && client.url !== absoluteTargetUrl) {
             await client.navigate(absoluteTargetUrl);
           }
