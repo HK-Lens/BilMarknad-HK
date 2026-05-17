@@ -24,7 +24,10 @@
         .danger-zone h2 { color:var(--danger); }
         .btn-danger { min-height:48px; border:none; border-radius:14px; background:var(--danger); color:white; padding:12px 18px; font-size:14px; font-weight:900; display:inline-flex; align-items:center; gap:9px; cursor:pointer; }
         .btn-danger:disabled { background:#cbd5e1; cursor:not-allowed; }
-        .btn-light { min-height:44px; border:1px solid var(--border); border-radius:14px; background:white; color:var(--dark); padding:10px 15px; font-weight:900; cursor:pointer; }
+        .btn-light { min-height:44px; border:1px solid var(--border); border-radius:14px; background:white; color:var(--dark); padding:10px 15px; font-weight:900; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+        .btn-primary { min-height:44px; border:none; border-radius:14px; background:var(--primary); color:white; padding:10px 15px; font-weight:900; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+        .btn-primary:hover { background:var(--primary-hover); }
+        .btn-primary:disabled, .btn-light:disabled { background:#cbd5e1; color:white; border-color:#cbd5e1; cursor:not-allowed; }
         .account-line { display:grid; gap:8px; color:var(--muted); font-size:14px; font-weight:700; }
         .account-line strong { color:var(--dark); }
         .profile-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:18px; }
@@ -33,7 +36,7 @@
         .profile-item strong { display:block; color:var(--dark); font-size:14px; font-weight:900; word-break:break-word; }
         .profile-avatar { width:70px; height:70px; border-radius:24px; display:grid; place-items:center; background:var(--primary-soft); color:var(--primary); font-size:28px; margin-bottom:14px; }
         @media (max-width: 640px) { .profile-grid { grid-template-columns:1fr; } }
-        .ad-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; cursor: pointer; transition:.25s ease; }
+        .ad-card { display: grid; grid-template-columns: 100px minmax(0,1fr) auto; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; cursor: pointer; transition:.25s ease; }
         .ad-card:hover { transform: translateY(-1px); border-color: rgba(245,130,32,.45); }
         .ad-card img { width: 100px; height: 75px; object-fit: cover; border-radius: 10px; background:#f1f5f9; flex:0 0 100px; }
         .ad-card h4 { margin:0 0 6px; font-size:15px; font-weight:900; color:var(--dark); }
@@ -42,6 +45,24 @@
         .ad-info { min-width:0; flex:1; }
         .btn-del { margin-left: auto; color: var(--danger); border: none; background: none; font-size: 20px; cursor: pointer; width:42px; height:42px; border-radius:50%; display:grid; place-items:center; }
         .btn-del:hover { background: var(--danger-soft); }
+        .ad-actions { display:grid; grid-template-columns:repeat(2,minmax(118px,1fr)); align-items:stretch; justify-content:flex-end; gap:8px; width:min(100%,310px); }
+        .ad-action-btn { min-height:38px; border:1px solid var(--border); border-radius:999px; background:white; color:var(--dark); padding:8px 11px; font-size:12px; font-weight:900; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; transition:.22s ease; white-space:nowrap; }
+        .ad-action-btn:hover { transform:translateY(-1px); border-color:rgba(245,130,32,.45); color:var(--primary-hover); }
+        .ad-action-btn.sold { background:#fff7ed; color:#c2410c; border-color:#fed7aa; }
+        .ad-action-btn.toggle { background:#f8fafc; }
+        .ad-action-btn.delete { color:var(--danger); background:var(--danger-soft); border-color:rgba(239,68,68,.20); }
+        .ad-action-btn.delete:hover { background:var(--danger); color:white; }
+        .status-chip { display:inline-flex; align-items:center; gap:6px; margin-top:8px; padding:6px 10px; border-radius:999px; font-size:11px; font-weight:900; width:fit-content; }
+        .status-chip.active { color:#166534; background:#dcfce7; }
+        .status-chip.inactive { color:#92400e; background:#fef3c7; }
+        .status-chip.sold { color:#991b1b; background:#fee2e2; }
+        .edit-form { display:grid; gap:14px; margin-top:18px; }
+        .form-row { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+        .form-field label { display:block; color:var(--muted); font-size:12px; font-weight:900; margin-bottom:7px; text-transform:uppercase; letter-spacing:.04em; }
+        .form-field input { width:100%; min-height:46px; border:1px solid var(--border); border-radius:14px; padding:11px 13px; font:inherit; font-weight:750; outline:none; }
+        .form-field input:focus { border-color:var(--primary); box-shadow:0 0 0 4px rgba(245,130,32,.12); }
+        .profile-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:4px; }
+        @media (max-width: 760px) { .ad-card { grid-template-columns: 88px minmax(0,1fr); align-items:start; } .ad-card img { width:88px; height:68px; flex-basis:88px; } .ad-actions { grid-column:1 / -1; width:100%; grid-template-columns:repeat(2,minmax(0,1fr)); justify-content:stretch; } .ad-action-btn { width:100%; min-height:42px; } .form-row { grid-template-columns:1fr; } }
         .state-box { background:white; border:1px solid var(--border); border-radius:18px; padding:26px; color:var(--muted); font-weight:800; line-height:1.7; }
     </style>
 </head>
@@ -69,7 +90,11 @@
         GoogleAuthProvider,
         reauthenticateWithCredential,
         reauthenticateWithPopup,
-        signOut
+        signOut,
+        updateProfile,
+        updateEmail,
+        updatePassword,
+        sendPasswordResetEmail
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import {
         collection,
@@ -79,7 +104,10 @@
         getDoc,
         deleteDoc,
         doc,
-        writeBatch
+        writeBatch,
+        updateDoc,
+        setDoc,
+        serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import {
         ref,
@@ -91,6 +119,7 @@
             HOME: 'index.html',
             LOGIN: 'login.html',
             DETAILS: 'details.html',
+            EDIT: 'edit-car.html',
             MESSAGES: 'messages.html',
             DASHBOARD: 'dashboard.html',
             PLACEHOLDER_IMAGE: 'placeholder.jpg'
@@ -111,7 +140,10 @@
         user: null,
         activeTab: 'ads',
         isDeletingAccount: false,
-        isDeletingAd: false
+        isDeletingAd: false,
+        isUpdatingAd: false,
+        isSavingProfile: false,
+        userProfile: null
     };
 
     const elements = {
@@ -159,7 +191,8 @@
         updateActiveTabUI(tab);
 
         if (tab === 'profile') {
-            renderProfilePanel(elements.mainContent);
+            setLoadingState('Laddar profilen...');
+            await renderProfilePanel(elements.mainContent);
             return;
         }
 
@@ -314,21 +347,43 @@
         meta.textContent = buildCarMeta(car);
 
         info.append(title, price, meta);
+
+        if (mode === 'ads') {
+            info.appendChild(createStatusChip(car));
+        }
+
         card.append(image, info);
 
         if (mode === 'ads') {
-            const deleteButton = document.createElement('button');
-            deleteButton.type = 'button';
-            deleteButton.className = 'btn-del';
-            deleteButton.setAttribute('aria-label', 'Radera annons');
-            const icon = document.createElement('i');
-            icon.className = 'fa-solid fa-trash';
-            deleteButton.appendChild(icon);
-            deleteButton.addEventListener('click', (event) => {
-                event.stopPropagation();
-                handleDeleteAd(sourceDocId);
-            });
-            card.appendChild(deleteButton);
+            const isSold = isCarSold(car);
+            const isVisible = isCarVisible(car);
+            const actions = document.createElement('div');
+            actions.className = 'ad-actions';
+            actions.appendChild(createAdActionButton({
+                className: 'sold',
+                iconClass: isSold ? 'fa-solid fa-rotate-left' : 'fa-solid fa-handshake',
+                label: isSold ? 'Återaktivera' : 'Markera såld',
+                handler: () => isSold ? handleSetAdActive(sourceDocId) : handleMarkAdSold(sourceDocId)
+            }));
+            actions.appendChild(createAdActionButton({
+                className: 'toggle',
+                iconClass: isVisible ? 'fa-solid fa-pause' : 'fa-solid fa-play',
+                label: isVisible ? 'Gör inaktiv' : 'Gör aktiv',
+                handler: () => isVisible ? handleSetAdInactive(sourceDocId) : handleSetAdActive(sourceDocId)
+            }));
+            actions.appendChild(createAdActionButton({
+                className: 'toggle',
+                iconClass: 'fa-solid fa-pen-to-square',
+                label: 'Redigera',
+                handler: () => safeNavigate(`${CONFIG.ROUTES.EDIT}?id=${encodeURIComponent(sourceDocId)}`)
+            }));
+            actions.appendChild(createAdActionButton({
+                className: 'delete',
+                iconClass: 'fa-solid fa-trash',
+                label: 'Radera',
+                handler: () => handleDeleteAd(sourceDocId)
+            }));
+            card.appendChild(actions);
         }
 
         if (mode === 'favs') {
@@ -349,6 +404,47 @@
 
         return card;
     }
+
+    function createAdActionButton({ className, iconClass, label, handler }) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `ad-action-btn ${className || ''}`.trim();
+        button.append(createIcon(iconClass), document.createTextNode(` ${label}`));
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            handler();
+        });
+        return button;
+    }
+
+    function createStatusChip(car) {
+        const chip = document.createElement('span');
+        const status = getDisplayAdStatus(car);
+        chip.className = `status-chip ${status.className}`;
+        chip.append(createIcon(status.icon), document.createTextNode(` ${status.label}`));
+        return chip;
+    }
+
+    function getDisplayAdStatus(car) {
+        if (isCarSold(car)) {
+            return { label: 'Såld', className: 'sold', icon: 'fa-solid fa-handshake' };
+        }
+        if (isCarVisible(car)) {
+            return { label: 'Aktiv', className: 'active', icon: 'fa-solid fa-circle-check' };
+        }
+        return { label: 'Inaktiv', className: 'inactive', icon: 'fa-solid fa-circle-pause' };
+    }
+
+    function isCarSold(car) {
+        const status = normalizeText(car?.status || '').toLowerCase();
+        return car?.sold === true || status === 'sold' || status === 'såld';
+    }
+
+    function isCarVisible(car) {
+        const status = normalizeText(car?.status || '').toLowerCase();
+        return car?.active !== false && !isCarSold(car) && !['inactive', 'paused', 'deleted'].includes(status);
+    }
+
 
     async function handleRemoveFavorite(favoriteId, carId) {
         if (!state.user) {
@@ -402,6 +498,115 @@
         }
     }
 
+    async function handleMarkAdSold(carId) {
+        const result = await Swal.fire({
+            icon: 'question',
+            title: 'Markera som såld?',
+            text: 'Annonsen döljs från den offentliga sökningen och visas som såld på ditt konto.',
+            showCancelButton: true,
+            confirmButtonText: 'Ja, markera som såld',
+            cancelButtonText: 'Avbryt',
+            confirmButtonColor: '#f58220'
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        await updateAdStatus(carId, {
+            active: false,
+            status: 'sold',
+            updatedAt: serverTimestamp()
+        });
+    }
+
+    async function handleSetAdInactive(carId) {
+        const result = await Swal.fire({
+            icon: 'question',
+            title: 'Göra annonsen inaktiv?',
+            text: 'Annonsen döljs från den offentliga sökningen tills du aktiverar den igen.',
+            showCancelButton: true,
+            confirmButtonText: 'Gör inaktiv',
+            cancelButtonText: 'Avbryt',
+            confirmButtonColor: '#f58220'
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        await updateAdStatus(carId, {
+            active: false,
+            status: 'inactive',
+            updatedAt: serverTimestamp()
+        });
+    }
+
+    async function handleSetAdActive(carId) {
+        const result = await Swal.fire({
+            icon: 'question',
+            title: 'Aktivera annonsen?',
+            text: 'Annonsen blir synlig igen i den offentliga sökningen.',
+            showCancelButton: true,
+            confirmButtonText: 'Aktivera',
+            cancelButtonText: 'Avbryt',
+            confirmButtonColor: '#f58220'
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        await updateAdStatus(carId, {
+            active: true,
+            status: 'active',
+            updatedAt: serverTimestamp()
+        });
+    }
+
+    async function updateAdStatus(carId, payload) {
+        const safeCarId = normalizeDocumentId(carId);
+
+        if (!safeCarId || state.isUpdatingAd || !state.user) {
+            return;
+        }
+
+        try {
+            state.isUpdatingAd = true;
+            const carRef = doc(db, CONFIG.COLLECTIONS.CARS, safeCarId);
+            const carSnap = await getDoc(carRef);
+
+            if (!carSnap.exists()) {
+                throw new Error('Annonsen hittades inte.');
+            }
+
+            if (carSnap.data()?.sellerId !== state.user.uid) {
+                throw new Error('Du kan bara ändra dina egna annonser.');
+            }
+
+            await updateDoc(carRef, payload);
+            await Swal.fire({
+                icon: 'success',
+                title: 'Sparat',
+                text: 'Annonsens status har uppdaterats.',
+                confirmButtonColor: '#f58220',
+                timer: 1300,
+                showConfirmButton: false
+            });
+            await switchTab('ads');
+        } catch (error) {
+            console.error('[BILHK] Update ad status failed:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Kunde inte uppdatera annonsen',
+                text: getReadableDataError(error),
+                confirmButtonColor: '#f58220'
+            });
+        } finally {
+            state.isUpdatingAd = false;
+        }
+    }
+
     async function handleDeleteAd(carId) {
         const safeCarId = normalizeDocumentId(carId);
 
@@ -445,15 +650,19 @@
         }
     }
 
-    function renderProfilePanel(container) {
+    async function renderProfilePanel(container) {
         clearElement(container);
+
+        const profile = await fetchUserProfile();
+        state.userProfile = profile;
 
         const providerLabels = getCurrentUserProviderLabels();
         const emailVerifiedText = state.user?.emailVerified ? 'Verifierad' : 'Inte verifierad';
         const createdAtText = state.user?.metadata?.creationTime ? formatDateTime(state.user.metadata.creationTime) : 'Okänt';
         const lastLoginText = state.user?.metadata?.lastSignInTime ? formatDateTime(state.user.metadata.lastSignInTime) : 'Okänt';
-        const displayName = state.user?.displayName || 'Inte angivet';
-        const email = state.user?.email || 'Ingen e-post registrerad';
+        const displayName = profile.name || state.user?.displayName || 'Inte angivet';
+        const email = state.user?.email || profile.email || 'Ingen e-post registrerad';
+        const phone = profile.phone || 'Inte angivet';
 
         const profileCard = document.createElement('section');
         profileCard.className = 'panel-card';
@@ -468,13 +677,14 @@
         title.textContent = 'Min profil';
 
         const intro = document.createElement('p');
-        intro.textContent = 'Här visas kontouppgifter för den inloggade användaren. Alternativet för permanent radering finns längst ned i profilen.';
+        intro.textContent = 'Här kan du kontrollera och uppdatera dina kontouppgifter. E-post och lösenord kräver ny bekräftelse av säkerhetsskäl.';
 
         const grid = document.createElement('div');
         grid.className = 'profile-grid';
 
         [
             ['E-post', email],
+            ['Telefon', phone],
             ['Namn', displayName],
             ['Verifiering', emailVerifiedText],
             ['Inloggningsmetod', providerLabels],
@@ -485,6 +695,56 @@
         });
 
         profileCard.append(avatar, title, intro, grid);
+
+        const editCard = document.createElement('section');
+        editCard.className = 'panel-card';
+        const editTitle = document.createElement('h2');
+        editTitle.append(createIcon('fa-solid fa-user-pen'), document.createTextNode(' Ändra mina uppgifter'));
+        const editIntro = document.createElement('p');
+        editIntro.textContent = 'Uppdatera namn, telefon och e-post. Om e-post ändras måste du bekräfta kontot igen.';
+
+        const form = document.createElement('form');
+        form.className = 'edit-form';
+        form.id = 'profileEditForm';
+        form.noValidate = true;
+
+        const row1 = document.createElement('div');
+        row1.className = 'form-row';
+        const nameInput = createTextInputField('profileName', 'Namn', displayName === 'Inte angivet' ? '' : displayName, 'Ditt namn', 80, 'text');
+        const phoneInput = createTextInputField('profilePhone', 'Telefon', profile.phone || '', '+46 ...', 30, 'tel');
+        row1.append(nameInput.wrapper, phoneInput.wrapper);
+
+        const row2 = document.createElement('div');
+        row2.className = 'form-row';
+        const emailInput = createTextInputField('profileEmail', 'E-post', state.user?.email || profile.email || '', 'namn@example.com', 120, 'email');
+        row2.append(emailInput.wrapper);
+
+        const actions = document.createElement('div');
+        actions.className = 'profile-actions';
+        const saveBtn = document.createElement('button');
+        saveBtn.type = 'submit';
+        saveBtn.className = 'btn-primary';
+        saveBtn.append(createIcon('fa-solid fa-floppy-disk'), document.createTextNode(' Spara uppgifter'));
+
+        const passwordBtn = document.createElement('button');
+        passwordBtn.type = 'button';
+        passwordBtn.className = 'btn-light';
+        passwordBtn.append(createIcon('fa-solid fa-key'), document.createTextNode(' Ändra lösenord'));
+        passwordBtn.addEventListener('click', handlePasswordChange);
+
+        actions.append(saveBtn, passwordBtn);
+        form.append(row1, row2, actions);
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            handleSaveProfile({
+                name: nameInput.input.value,
+                phone: phoneInput.input.value,
+                email: emailInput.input.value,
+                saveButton: saveBtn
+            });
+        });
+
+        editCard.append(editTitle, editIntro, form);
 
         const dangerCard = document.createElement('section');
         dangerCard.className = 'panel-card danger-zone';
@@ -517,8 +777,187 @@
         deleteButton.addEventListener('click', handlePermanentAccountDeletion);
 
         dangerCard.append(dangerTitle, p1, p2, p3, accountLine, br, deleteButton);
-        container.append(profileCard, dangerCard);
+        container.append(profileCard, editCard, dangerCard);
     }
+
+    async function fetchUserProfile() {
+        if (!state.user?.uid) {
+            return {};
+        }
+
+        try {
+            const profileSnap = await getDoc(doc(db, CONFIG.COLLECTIONS.USERS, state.user.uid));
+            if (!profileSnap.exists()) {
+                return {};
+            }
+            const data = profileSnap.data() || {};
+            return {
+                email: normalizeText(data.email || data.emailLower),
+                phone: normalizePhone(data.phone || data.phoneNumber),
+                name: normalizeText(data.name || data.displayName || data.sellerName)
+            };
+        } catch (error) {
+            console.warn('[BILHK] Could not read user profile:', error);
+            return {};
+        }
+    }
+
+    function createTextInputField(id, labelText, value, placeholder, maxLength, type = 'text') {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'form-field';
+        const label = document.createElement('label');
+        label.htmlFor = id;
+        label.textContent = labelText;
+        const input = document.createElement('input');
+        input.id = id;
+        input.type = type;
+        input.value = value || '';
+        input.placeholder = placeholder || '';
+        input.maxLength = maxLength;
+        input.autocomplete = type === 'email' ? 'email' : type === 'tel' ? 'tel' : 'name';
+        wrapper.append(label, input);
+        return { wrapper, input };
+    }
+
+    async function handleSaveProfile({ name, phone, email, saveButton }) {
+        if (state.isSavingProfile || !state.user) {
+            return;
+        }
+
+        const safeName = normalizeText(name).slice(0, 80);
+        const safePhone = normalizePhone(phone).slice(0, 30);
+        const safeEmail = normalizeEmailValue(email).slice(0, 120);
+        const currentEmail = normalizeEmailValue(state.user.email || '');
+
+        if (!safeEmail || !isValidEmail(safeEmail)) {
+            await Swal.fire({ icon: 'error', title: 'Ogiltig e-post', text: 'Ange en giltig e-postadress.', confirmButtonColor: '#f58220' });
+            return;
+        }
+
+        if (safePhone && !/^[0-9+\-()\s]{5,30}$/.test(safePhone)) {
+            await Swal.fire({ icon: 'error', title: 'Ogiltigt telefonnummer', text: 'Ange endast siffror, +, -, parenteser och mellanslag.', confirmButtonColor: '#f58220' });
+            return;
+        }
+
+        try {
+            state.isSavingProfile = true;
+            setProfileSaveLoading(saveButton, true);
+
+            if (safeName && safeName !== (state.user.displayName || '')) {
+                await updateProfile(state.user, { displayName: safeName });
+            }
+
+            if (safeEmail !== currentEmail) {
+                await reauthenticateCurrentUser();
+                await updateEmail(state.user, safeEmail);
+            }
+
+            await setDoc(doc(db, CONFIG.COLLECTIONS.USERS, state.user.uid), {
+                name: safeName,
+                email: safeEmail,
+                phone: safePhone,
+                accountUpdatedAt: serverTimestamp()
+            }, { merge: true });
+
+            if (typeof state.user.reload === 'function') {
+                await state.user.reload();
+            }
+            state.user = auth.currentUser || state.user;
+
+            await Swal.fire({ icon: 'success', title: 'Uppgifterna sparades', text: 'Dina kontouppgifter har uppdaterats.', confirmButtonColor: '#f58220' });
+            await renderProfilePanel(elements.mainContent);
+        } catch (error) {
+            console.error('[BILHK] Profile update failed:', error);
+            await Swal.fire({ icon: 'error', title: 'Kunde inte spara uppgifterna', text: getReadableProfileError(error), confirmButtonColor: '#f58220' });
+        } finally {
+            state.isSavingProfile = false;
+            setProfileSaveLoading(saveButton, false);
+        }
+    }
+
+    function setProfileSaveLoading(button, isLoading) {
+        if (!button) return;
+        button.disabled = isLoading;
+        clearElement(button);
+        button.append(createIcon(isLoading ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-floppy-disk'), document.createTextNode(isLoading ? ' Sparar...' : ' Spara uppgifter'));
+    }
+
+    async function handlePasswordChange() {
+        if (!state.user) {
+            return;
+        }
+
+        const providers = (state.user.providerData || []).map((provider) => provider.providerId);
+
+        if (!providers.includes('password')) {
+            const email = normalizeEmailValue(state.user.email || state.userProfile?.email || '');
+            if (!email) {
+                await Swal.fire({ icon: 'error', title: 'E-post saknas', text: 'Vi hittar ingen e-postadress för lösenordsändring.', confirmButtonColor: '#f58220' });
+                return;
+            }
+            const confirm = await Swal.fire({
+                icon: 'info',
+                title: 'Lösenord via e-post',
+                text: 'Det här kontot använder inte vanlig lösenordsinloggning. Vi kan skicka en återställningslänk till e-posten.',
+                showCancelButton: true,
+                confirmButtonText: 'Skicka länk',
+                cancelButtonText: 'Avbryt',
+                confirmButtonColor: '#f58220'
+            });
+            if (confirm.isConfirmed) {
+                await sendPasswordResetEmail(auth, email);
+                await Swal.fire({ icon: 'success', title: 'Länk skickad', text: 'Kontrollera din e-post.', confirmButtonColor: '#f58220' });
+            }
+            return;
+        }
+
+        const passwordPrompt = await Swal.fire({
+            icon: 'question',
+            title: 'Nytt lösenord',
+            showCancelButton: true,
+            confirmButtonText: 'Ändra lösenord',
+            cancelButtonText: 'Avbryt',
+            confirmButtonColor: '#f58220',
+            html: `
+                <input id="currentPassword" type="password" class="swal2-input" placeholder="Nuvarande lösenord" autocomplete="current-password">
+                <input id="newPassword" type="password" class="swal2-input" placeholder="Nytt lösenord, minst 8 tecken" autocomplete="new-password">
+                <input id="confirmPassword" type="password" class="swal2-input" placeholder="Bekräfta nytt lösenord" autocomplete="new-password">
+            `,
+            preConfirm: () => {
+                const currentPassword = document.getElementById('currentPassword')?.value || '';
+                const newPassword = document.getElementById('newPassword')?.value || '';
+                const confirmPassword = document.getElementById('confirmPassword')?.value || '';
+                if (!currentPassword) {
+                    Swal.showValidationMessage('Nuvarande lösenord krävs.');
+                    return false;
+                }
+                if (newPassword.length < 8) {
+                    Swal.showValidationMessage('Det nya lösenordet måste vara minst 8 tecken.');
+                    return false;
+                }
+                if (newPassword !== confirmPassword) {
+                    Swal.showValidationMessage('Lösenorden matchar inte.');
+                    return false;
+                }
+                return { currentPassword, newPassword };
+            }
+        });
+
+        if (!passwordPrompt.isConfirmed) {
+            return;
+        }
+
+        try {
+            const credential = EmailAuthProvider.credential(state.user.email, passwordPrompt.value.currentPassword);
+            await reauthenticateWithCredential(state.user, credential);
+            await updatePassword(state.user, passwordPrompt.value.newPassword);
+            await Swal.fire({ icon: 'success', title: 'Lösenordet ändrades', text: 'Du kan använda det nya lösenordet nästa gång du loggar in.', confirmButtonColor: '#f58220' });
+        } catch (error) {
+            console.error('[BILHK] Password update failed:', error);
+            await Swal.fire({ icon: 'error', title: 'Kunde inte ändra lösenord', text: getReadableProfileError(error), confirmButtonColor: '#f58220' });
+        }
+    }
+
 
     function createProfileItem(labelText, valueText) {
         const item = document.createElement('div');
@@ -886,6 +1325,9 @@
             mileage: toNullableNumber(data?.mileage),
             fuelType: normalizeText(data?.fuelType || data?.fuel),
             location: normalizeText(data?.location || data?.city || data?.stad),
+            active: data?.active !== false,
+            status: normalizeText(data?.status || (data?.active === false ? 'inactive' : 'active')),
+            sold: data?.sold === true || data?.isSold === true || normalizeText(data?.status).toLowerCase() === 'sold',
             image: data?.mainImage || images[0] || firstImageFromFiles || CONFIG.ROUTES.PLACEHOLDER_IMAGE
         };
     }
@@ -1029,6 +1471,31 @@
         } catch {
             window.location.href = CONFIG.ROUTES.HOME;
         }
+    }
+
+    function getReadableProfileError(error) {
+        const code = error?.code || '';
+
+        if (code === 'auth/requires-recent-login') {
+            return 'Firebase kräver ny inloggning. Bekräfta kontot eller logga in igen och försök på nytt.';
+        }
+        if (code === 'auth/email-already-in-use') {
+            return 'E-postadressen används redan av ett annat konto.';
+        }
+        if (code === 'auth/invalid-email') {
+            return 'E-postadressen är inte giltig.';
+        }
+        if (code === 'auth/weak-password') {
+            return 'Lösenordet är för svagt. Använd minst 8 tecken.';
+        }
+        if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+            return 'Lösenordet stämmer inte. Försök igen.';
+        }
+        if (code === 'permission-denied') {
+            return 'Firestore Rules tillåter inte uppdateringen. Kontrollera rules för users-kollektionen.';
+        }
+
+        return error?.message || 'Ett oväntat fel uppstod. Försök igen.';
     }
 
     function getReadableDeleteAccountError(error) {
