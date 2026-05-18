@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BilMarknad HK | Köp och sälj bilar i Sverige</title>
-    <meta name="description" content="BILHK är en svensk bilmarknad där användare kan söka, spara, köpa och sälja bilar.">
+    <title>HK Global Market | Köp och sälj bilar, fastigheter och mer</title>
+    <meta name="description" content="HK Global Market är en global marknadsplats där användare kan söka, spara, köpa och sälja bilar, fastigheter, elektronik och mycket mer.">
     <meta name="robots" content="index, follow">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
@@ -50,7 +50,7 @@
             position: sticky; top: 0; z-index: 1000;
         }
         .logo { font-size: 1.8rem; font-weight: 900; color: var(--dark); text-decoration: none; white-space: nowrap; }
-        .logo span { color: var(--primary); }
+        .logo span { color: var(--primary); font-weight: 400; }
         .nav-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-end; }
         .nav-links a, .nav-links button { text-decoration: none; color: var(--dark); font-weight: 700; font-size: 14px; transition: 0.3s; border: none; background: transparent; cursor: pointer; }
         .nav-links a:hover, .nav-links button:hover { color: var(--primary); }
@@ -240,55 +240,49 @@
 <div class="dev-banner">Sidan är under uppbyggnad - Funktioner och annonser är begränsade just nu</div>
 
 <header>
-    <a href="index.html" class="logo" aria-label="BILHK startsida">BIL<span>HK</span></a>
+    <a href="index.html" class="logo" aria-label="HK Global Market startsida">HK <span>Global Market</span></a>
     <nav class="nav-links" aria-label="Huvudmeny">
-        <a href="sell.html" class="btn-sell">Sälj din bil</a>
+        <a href="sell.html" class="btn-sell">Publicera annons</a>
         <div id="authStatusContainer" style="display:flex;align-items:center;gap:15px;"></div>
     </nav>
 </header>
 
 <section class="hero">
-    <h1>Hitta din nästa bil snabbt och enkelt</h1>
-    <div class="car-types-container" id="carTypeButtons" aria-label="Karosstyp-filter">
-        <button type="button" class="type-btn active" data-type="">Alla bilar</button>
-        <button type="button" class="type-btn" data-type="SUV">SUV / 4x4</button>
-        <button type="button" class="type-btn" data-type="Transportbil">Skåpbil</button>
-        <button type="button" class="type-btn" data-type="Sedan">Sedan</button>
-        <button type="button" class="type-btn" data-type="Kombi">Kombi</button>
-        <button type="button" class="type-btn" data-type="Halvkombi">Småbil</button>
-        <button type="button" class="type-btn" data-type="Cabriolet">Cabriolet</button>
+    <h1>Hitta det du söker snabbt och enkelt</h1>
+    <div class="car-types-container" id="carTypeButtons" aria-label="Kategorier">
+        <button type="button" class="type-btn active" data-type="">Alla annonser</button>
+        <button type="button" class="type-btn" data-type="SUV">Fordon</button>
+        <button type="button" class="type-btn" data-type="Transportbil">Fastigheter</button>
+        <button type="button" class="type-btn" data-type="Sedan">Elektronik</button>
+        <button type="button" class="type-btn" data-type="Kombi">Hem & Trädgård</button>
     </div>
 </section>
 
 <div class="filter-wrapper">
     <div class="filter-card">
         <div class="filter-grid">
-            <div class="filter-group"><label for="brandSelect">Märke</label><select id="brandSelect"><option value="">Alla märken</option></select></div>
-            <div class="filter-group"><label for="modelSelect">Modell</label><select id="modelSelect"><option value="">Välj märke först</option></select></div>
+            <div class="filter-group"><label for="brandSelect">Märke / Kategori</label><select id="brandSelect"><option value="">Alla</option></select></div>
+            <div class="filter-group"><label for="modelSelect">Modell / Typ</label><select id="modelSelect"><option value="">Välj kategori först</option></select></div>
             <div class="filter-group"><label for="maxPrice">Högsta Pris</label><input type="number" id="maxPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 300000"></div>
             <div class="filter-group"><label for="minPrice">Lägsta Pris</label><input type="number" id="minPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 50000"></div>
-            <div class="filter-group"><label for="maxMil">Mest Mil</label><input type="number" id="maxMil" min="0" max="2000000" inputmode="numeric" placeholder="Ex. 15000"></div>
-            <div class="filter-group"><label for="minMil">Minst Mil</label><input type="number" id="minMil" min="0" max="2000000" inputmode="numeric" placeholder="Ex. 0"></div>
-            <div class="filter-group"><label for="maxYear">Nyaste Årsmodell</label><input type="number" id="maxYear" min="1900" max="2027" inputmode="numeric" placeholder="Ex. 2026"></div>
-            <div class="filter-group"><label for="minYear">Äldsta Årsmodell</label><input type="number" id="minYear" min="1900" max="2027" inputmode="numeric" placeholder="Ex. 2015"></div>
         </div>
         <div class="search-actions">
-            <button type="button" class="btn-deep" id="deepSearchBtn">Djup Sökning</button>
+            <button type="button" class="btn-deep" id="deepSearchBtn">Avancerad Sökning</button>
             <button type="button" class="btn-results" id="searchBtn">Visa Resultat</button>
         </div>
     </div>
 </div>
 
 <div class="container">
-    <h2 class="section-title">De senaste toppmodellerna</h2>
+    <h2 class="section-title">Senaste annonserna globalt</h2>
     <div id="carsGrid" class="cars-grid" aria-live="polite"></div>
 </div>
 
 <footer>
     <div class="footer-content">
         <div class="footer-section">
-            <h4>Ansvarsfriskrivning</h4>
-            <p>BilMarknad-HK är en öppen marknadsplats. Vi tar inget ansvar för tvister mellan parter.</p>
+            <h4>Om HK Global Market</h4>
+            <p>HK Global Market är en öppen marknadsplats för global handel. Vi tar inget ansvar för tvister mellan parter.</p>
         </div>
         <div class="footer-section">
             <h4>Information</h4>
@@ -305,7 +299,7 @@
             </ul>
         </div>
     </div>
-    <div class="legal-box">&copy; 2026 BilMarknad-HK.</div>
+    <div class="legal-box">&copy; 2026 HK Global Market.</div>
 </footer>
 
 <script type="module">
@@ -515,7 +509,7 @@
                     .filter(Boolean)
             );
         } catch (error) {
-            console.error('Fel vid laddning av sparade bilar från index.html:', error);
+            console.error('Fel vid laddning av sparade bilar:', error);
             state.savedFavoriteIds = new Set();
         }
     }
@@ -560,10 +554,10 @@
 
             updateFavoriteButtons();
         } catch (error) {
-            console.error('Favorite error from index.html:', error);
+            console.error('Favorite error:', error);
             alert(error?.code === 'permission-denied'
-                ? 'Kunde inte spara bilen. Kontrollera Firebase-reglerna för favorites.'
-                : 'Kunde inte spara bilen just nu. Försök igen.');
+                ? 'Kunde inte spara annonsen. Kontrollera behörigheter.'
+                : 'Kunde inte spara annonsen just nu.');
         } finally {
             if (buttonElement) buttonElement.disabled = false;
         }
@@ -617,10 +611,10 @@
 
             updateFavoriteButtons();
         } catch (error) {
-            console.error('Fel vid hämtning av bilar:', error);
+            console.error('Fel vid hämtning av annonser:', error);
             renderStateMessage(
                 error?.code === 'permission-denied'
-                    ? 'Kunde inte läsa annonser. Kontrollera Firebase Rules för cars.'
+                    ? 'Kunde inte läsa annonser. Kontrollera behörigheter.'
                     : 'Ett fel uppstod vid laddning av annonser.',
                 true
             );
@@ -644,7 +638,7 @@
 
         const image = document.createElement('img');
         image.src = getCarImage(car);
-        image.alt = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Bilbild';
+        image.alt = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Annonsbild';
         image.loading = 'lazy';
         image.referrerPolicy = 'no-referrer';
         image.addEventListener('error', () => {
@@ -660,11 +654,11 @@
 
         const title = document.createElement('p');
         title.className = 'car-title';
-        title.textContent = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Bilannons';
+        title.textContent = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Annons';
 
         const meta = document.createElement('p');
         meta.className = 'car-meta';
-        meta.textContent = `${normalizeText(car.year, '-')} | ${normalizeText(car.mileage, '0')} mil`;
+        meta.textContent = `${normalizeText(car.year, '-')} | ${normalizeText(car.city || 'Global', '')}`;
 
         content.append(price, title, meta);
         card.append(favoriteButton, image, content);
@@ -687,24 +681,14 @@
 
         const minPrice = boundedNumber(elements.minPrice.value, 0, CONFIG.MAX_PRICE, 0);
         const maxPrice = boundedNumber(elements.maxPrice.value, 0, CONFIG.MAX_PRICE, 0);
-        const minMileage = boundedNumber(elements.minMil.value, 0, CONFIG.MAX_MILEAGE, 0);
-        const maxMileage = boundedNumber(elements.maxMil.value, 0, CONFIG.MAX_MILEAGE, 0);
-        const minYear = boundedNumber(elements.minYear.value, CONFIG.MIN_YEAR, CONFIG.MAX_YEAR, 0);
-        const maxYear = boundedNumber(elements.maxYear.value, CONFIG.MIN_YEAR, CONFIG.MAX_YEAR, 0);
 
         const carPrice = normalizeNumber(car.price, 0);
-        const carMileage = normalizeNumber(car.mileage, 0);
-        const carYear = normalizeNumber(car.year, 0);
 
         return (!brand || car.brand === brand) &&
             (!model || car.model === model) &&
             (!selectedType || carBodyType === selectedType) &&
             (!minPrice || carPrice >= minPrice) &&
-            (!maxPrice || carPrice <= maxPrice) &&
-            (!minMileage || carMileage >= minMileage) &&
-            (!maxMileage || carMileage <= maxMileage) &&
-            (!minYear || carYear >= minYear) &&
-            (!maxYear || carYear <= maxYear);
+            (!maxPrice || carPrice <= maxPrice);
     }
 
     function handleGridClick(event) {
@@ -732,8 +716,8 @@
             const isSaved = state.savedFavoriteIds.has(carId);
 
             button.classList.toggle('saved', isSaved);
-            button.title = isSaved ? 'Ta bort från sparade' : 'Spara bilen';
-            button.setAttribute('aria-label', isSaved ? 'Ta bort från sparade' : 'Spara bilen');
+            button.title = isSaved ? 'Ta bort från sparade' : 'Spara annons';
+            button.setAttribute('aria-label', isSaved ? 'Ta bort från sparade' : 'Spara annons');
             button.innerHTML = `<i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-heart"></i>`;
         });
     }
@@ -841,13 +825,13 @@
 
                     if (shouldShowBrowserNotification) {
                         const body = latestIncomingMessage || `Du har ${unreadCount} olästa meddelanden.`;
-                        showBilHKNotification(body, './messages.html');
+                        showHKNotification(body, './messages.html');
                     }
 
                     state.unreadSnapshotReady = true;
                 },
                 (error) => {
-                    console.warn('Kunde inte lyssna på nya meddelanden:', error);
+                    console.warn('Kunde nicht lyssna på nya meddelanden:', error);
                     state.unreadChatCount = 0;
                     state.unreadSnapshotReady = true;
                     renderNotificationBadge();
@@ -900,19 +884,19 @@
         if (Notification.permission === 'granted') {
             const count = Math.max(0, normalizeNumber(state.unreadChatCount, 0));
             text.textContent = count > 0
-                ? `Du har ${count} olästa meddelanden. Öppna Meddelanden för att läsa dem.`
+                ? `Du har ${count} olästa meddelanden. Öppna HK Global Market Meddelanden för att läsa dem.`
                 : 'Aviseringar är aktiverade. Nya meddelanden visas här och som webbläsaraviseringar.';
             button.hidden = true;
         } else if (Notification.permission === 'denied') {
-            text.textContent = 'Aviseringar är blockerade. Tillåt aviseringar i webbläsarens inställningar för den här sidan.';
+            text.textContent = 'Aviseringar är blockerade. Tillåt aviseringar i webbläsarens inställningar för HK Global Market.';
             button.hidden = true;
         } else {
-            text.textContent = 'Aktivera aviseringar för att få besked när du får nya meddelanden i BILHK.';
+            text.textContent = 'Aktivera aviseringar för att få besked när du får nya meddelanden i HK Global Market.';
             button.hidden = false;
         }
     }
 
-    async function enableBilHKNotifications(panel) {
+    async function enableHKNotifications(panel) {
         if (!('Notification' in window)) {
             updateNotificationPanel(panel);
             return;
@@ -920,24 +904,24 @@
         const permission = await Notification.requestPermission();
         updateNotificationPanel(panel);
         if (permission === 'granted') {
-            await showBilHKNotification('Aviseringar är nu aktiverade.');
+            await showHKNotification('Aviseringar är nu aktiverade.');
         }
     }
 
-    async function showBilHKNotification(body, targetUrl = './messages.html') {
+    async function showHKNotification(body, targetUrl = './messages.html') {
         if (!('Notification' in window) || Notification.permission !== 'granted') return;
         const options = {
             body,
-            tag: `bilhk-meddelande-${Date.now()}`,
+            tag: `hk-global-meddelande-${Date.now()}`,
             renotify: false,
             data: { url: targetUrl }
         };
         try {
             if ('serviceWorker' in navigator) {
                 const registration = await navigator.serviceWorker.ready;
-                await registration.showNotification('BILHK', options);
+                await registration.showNotification('HK Global Market', options);
             } else {
-                new Notification('BILHK', options);
+                new Notification('HK Global Market', options);
             }
         } catch (error) {
             console.warn('Kunde inte visa avisering:', error);
