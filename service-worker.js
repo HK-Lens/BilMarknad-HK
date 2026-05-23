@@ -1,10 +1,11 @@
-const CACHE_NAME = "bilhk-pwa-v6-scope-safe-notifications";
+const CACHE_NAME = "vorq-fordon-pwa-v1-scope-safe-notifications";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./offline.html",
   "./manifest.webmanifest",
   "./icon.svg",
+  "./vorq-fordon-logo-header.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png"
 ];
