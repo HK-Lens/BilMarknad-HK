@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sökresultat | BILHK</title>
-    <meta name="description" content="Sökresultat för bilannonser på BILHK med säkra kort, favoriter och kompatibla filter från avancerad sökning.">
+    <title>Sökresultat | VORQ Fordon</title>
+    <meta name="description" content="Sökresultat för fordonsannonser på VORQ Fordon med säkra kort, favoriter och kompatibla filter från avancerad sökning. VORQ Fordon ägs och drivs av VORQ Group.">
     <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#f58220">
+    <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -31,6 +33,24 @@
         a { color: inherit; text-decoration: none; }
         button { font-family: inherit; }
 
+        .brand-header {
+            max-width: var(--max-width);
+            margin: 0 auto 26px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 18px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+        .brand-logo-link { display: inline-flex; align-items: center; min-width: 0; }
+        .brand-logo { width: 300px; max-width: 54vw; max-height: 70px; height: auto; display: block; object-fit: contain; }
+        .brand-info { text-align: right; color: var(--muted); font-size: 12px; font-weight: 800; line-height: 1.55; }
+        .brand-info strong { display: block; color: var(--dark); font-size: 13px; font-weight: 900; }
+        .brand-info a { color: var(--primary-hover); font-weight: 900; }
         .page-header { max-width: var(--max-width); margin: 0 auto 30px; text-align: center; }
         .page-header h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 900; letter-spacing: -.05em; margin-bottom: 10px; }
         .page-header p { color: var(--muted); font-size: 14px; font-weight: 700; }
@@ -88,15 +108,29 @@
 
         @media (max-width: 640px) {
             body { padding: 14px; }
+            .brand-header { flex-direction: column; align-items: flex-start; padding: 16px; }
+            .brand-logo { width: 270px; max-width: 86vw; }
+            .brand-info { text-align: left; }
             .results-grid { grid-template-columns: 1fr; }
             .summary-bar { align-items: flex-start; }
         }
     </style>
 </head>
 <body>
+    <header class="brand-header">
+        <a href="index.html" class="brand-logo-link" aria-label="VORQ Fordon startsida">
+            <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon - Ägs av VORQ Group" class="brand-logo">
+        </a>
+        <div class="brand-info">
+            <strong>Ägs och drivs av VORQ Group</strong>
+            <a href="mailto:info@vorq.group">info@vorq.group</a><br>
+            Vision • Operations • Reach • Quality
+        </div>
+    </header>
+
     <header class="page-header">
         <h2>Hittade fordon</h2>
-        <p id="resultSubtitle">Säkra sökresultat med filter som matchar BILHK:s annonsdata.</p>
+        <p id="resultSubtitle">Säkra sökresultat med filter som matchar VORQ Fordons annonsdata.</p>
     </header>
 
     <section class="summary-bar" aria-live="polite">
@@ -214,11 +248,11 @@
     }
 
     function showResultNotice(message, type = 'error') {
-        const existing = document.querySelector('.bilhk-result-notice');
+        const existing = document.querySelector('.vorq-result-notice');
         if (existing) existing.remove();
 
         const notice = document.createElement('div');
-        notice.className = 'bilhk-result-notice';
+        notice.className = 'vorq-result-notice';
         notice.style.cssText = `
             position: fixed;
             left: 50%;
