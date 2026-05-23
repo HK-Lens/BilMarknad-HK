@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skapa konto | BILHK</title>
-    <meta name="description" content="Skapa ett privatkonto eller företagskonto på BILHK.">
+    <title>Skapa konto | VORQ Fordon</title>
+    <meta name="description" content="Skapa ett privatkonto eller företagskonto på VORQ Fordon. VORQ Fordon ägs och drivs av VORQ Group.">
     <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -77,14 +78,30 @@
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--dark);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             text-decoration: none;
-            letter-spacing: -0.055em;
         }
 
-        .logo span { color: var(--primary); }
+        .logo-image {
+            width: min(340px, 78vw);
+            max-height: 76px;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        .brand-owner {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1.55;
+        }
+
+        .brand-owner strong { color: var(--dark); }
+        .brand-owner a { color: var(--primary-hover); text-decoration: none; font-weight: 900; }
 
         .auth-container {
             flex: 1;
@@ -363,6 +380,20 @@
             font-weight: 900;
         }
 
+        .brand-footer {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 750;
+            line-height: 1.65;
+        }
+
+        .brand-footer strong { color: var(--dark); }
+        .brand-footer a { color: var(--primary-hover); text-decoration: none; font-weight: 900; }
+
         @media (max-width: 640px) {
             .auth-card { padding: 28px 20px; }
             .form-grid { grid-template-columns: 1fr; }
@@ -374,7 +405,13 @@
 <div class="dev-banner">Webbplatsen är under uppbyggnad - All data behandlas enligt testvillkor</div>
 
 <header>
-    <a href="index.html" class="logo" aria-label="Gå till startsidan">BIL<span>HK</span></a>
+    <a href="index.html" class="logo" aria-label="VORQ Fordon startsida">
+        <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon - Ägs av VORQ Group" class="logo-image">
+    </a>
+    <div class="brand-owner">
+        <strong>Ägs och drivs av VORQ Group</strong> · <a href="mailto:info@vorq.group">info@vorq.group</a><br>
+        Vision • Operations • Reach • Quality
+    </div>
 </header>
 
 <div class="auth-container">
@@ -388,7 +425,7 @@
 
         <div class="disclaimer-box">
             <strong>Ansvarsfriskrivning & Juridisk information</strong>
-            BilMarknad-HK är en förmedlingsplattform. Vi tar inget ansvar för annonsernas riktighet, fordonets skick eller finansiella transaktioner.
+            VORQ Fordon är en förmedlingsplattform för fordonsannonser och ägs och drivs av VORQ Group. Vi tar inget ansvar för annonsernas riktighet, fordonets skick eller finansiella transaktioner.
             Vi avråder starkt från förskottsbetalningar. Genom att registrera dig bekräftar du att du har läst våra
             <a href="terms.html" style="color: inherit; font-weight: bold;">Användarvillkor</a> och förstår att vi friskriver oss från allt ansvar vid bedrägeriförsök eller felaktig information.
         </div>
@@ -467,6 +504,12 @@
         <div class="footer-link">
             Har du redan ett konto? <a href="login.html">Logga in här</a>
         </div>
+
+        <div class="brand-footer">
+            <strong>VORQ Fordon</strong> · Ägs och drivs av <strong>VORQ Group</strong><br>
+            <a href="mailto:info@vorq.group">info@vorq.group</a><br>
+            Vision • Operations • Reach • Quality
+        </div>
     </div>
 </div>
 
@@ -500,7 +543,7 @@
             PRIVATE: "private",
             BUSINESS: "business"
         },
-        LEGAL_VERSION: "BILHK-LEGAL-2026-01",
+        LEGAL_VERSION: "VORQ-FORDON-LEGAL-2026-01",
         LIMITS: {
             NAME_MIN: 2,
             NAME_MAX: 90,
@@ -639,7 +682,7 @@
                     url: window.location.origin + '/' + REGISTER_CONFIG.ROUTES.LOGIN
                 });
             } catch (verificationError) {
-                console.error('[BILHK] Verification email failed:', verificationError);
+                console.error('[VORQ Fordon] Verification email failed:', verificationError);
                 await signOut(auth);
                 showMessage('Kontot skapades, men verifieringsmailet kunde inte skickas just nu. Försök logga in senare och skicka ett nytt verifieringsmail.', 'info');
                 setTimeout(() => {
@@ -655,7 +698,7 @@
                 window.location.href = REGISTER_CONFIG.ROUTES.LOGIN;
             }, 1800);
         } catch (error) {
-            console.error('[BILHK] Email registration failed:', error);
+            console.error('[VORQ Fordon] Email registration failed:', error);
             showMessage(getFirebaseRegisterErrorMessage(error), 'error');
         } finally {
             state.isSubmitting = false;
@@ -722,7 +765,7 @@
             await setDoc(userRef, payload, { merge: true });
             window.location.href = REGISTER_CONFIG.ROUTES.HOME;
         } catch (error) {
-            console.error('[BILHK] Google registration failed:', error);
+            console.error('[VORQ Fordon] Google registration failed:', error);
             showMessage(getFirebaseGoogleErrorMessage(error), 'error');
         } finally {
             state.isSubmitting = false;
@@ -1010,10 +1053,10 @@
         const clean = safeEmail(email);
 
         if (!clean || !clean.includes('@')) {
-            return 'BILHK-användare';
+            return 'VORQ Fordon-användare';
         }
 
-        return safeText(clean.split('@')[0].replace(/[._-]+/g, ' '), REGISTER_CONFIG.LIMITS.NAME_MAX) || 'BILHK-användare';
+        return safeText(clean.split('@')[0].replace(/[._-]+/g, ' '), REGISTER_CONFIG.LIMITS.NAME_MAX) || 'VORQ Fordon-användare';
     }
 </script>
 </body>
