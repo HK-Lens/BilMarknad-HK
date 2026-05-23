@@ -3,25 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VORQ Fordon | Hitta och publicera fordonsannonser</title>
-    <meta name="description" content="VORQ Fordon är en digital plattform för fordonsannonser där användare kan söka, spara och publicera annonser. Plattformen ägs och drivs av VORQ Group.">
-
-    <link rel="canonical" href="https://bilmarknad-hk.web.app/">
-    <meta property="og:title" content="VORQ Fordon | Hitta och publicera fordonsannonser">
-    <meta property="og:description" content="VORQ Fordon är en digital plattform för fordonsannonser där användare kan söka, spara och publicera annonser. Plattformen ägs och drivs av VORQ Group.">
-    <meta property="og:url" content="https://bilmarknad-hk.web.app/">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="VORQ Fordon">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="VORQ Fordon | Hitta och publicera fordonsannonser">
-    <meta name="twitter:description" content="VORQ Fordon är en digital plattform för fordonsannonser där användare kan söka, spara och publicera annonser. Plattformen ägs och drivs av VORQ Group.">
-
+    <title>VORQ Fordon | Köp och sälj fordon i Sverige</title>
+    <meta name="description" content="VORQ Fordon är en svensk fordonsplattform där användare kan söka, spara, köpa och sälja fordon. VORQ Fordon ägs och drivs av VORQ Group.">
     <meta name="robots" content="index, follow">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
     <link rel="manifest" href="./manifest.webmanifest">
     <meta name="theme-color" content="#f58220">
-    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="icon" href="./vorq-fordon-logo.png" type="image/png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,123 +21,51 @@
         :root {
             --primary: #f58220;
             --primary-hover: #e07210;
-            --accent: #f59e0b;
             --dark: #0f172a;
             --light: #f8fafc;
-            --soft: #fff7ed;
             --border: #e2e8f0;
             --white: #ffffff;
             --danger: #ef4444;
             --muted: #64748b;
-            --shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
-            --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.08);
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background:
-                radial-gradient(circle at top left, rgba(245, 130, 32, 0.08), transparent 35%),
-                linear-gradient(180deg, #f8fafc 0%, #fff7ed 100%);
-            color: var(--dark);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
         a { color: inherit; }
         button, input, select { font-family: inherit; }
 
+        .dev-banner {
+            background: var(--danger); color: white; padding: 12px; text-align: center;
+            font-weight: 800; font-size: 14px; text-transform: uppercase;
+            animation: pulse-danger 2s infinite; position: relative; z-index: 2000;
+        }
+        @keyframes pulse-danger {
+            0% { background-color: #ef4444; } 50% { background-color: #b91c1c; } 100% { background-color: #ef4444; }
+        }
+
         header {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(18px);
-            padding: 1rem 6%;
-            border-bottom: 1px solid rgba(226, 232, 240, 0.9);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
+            background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
         }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--dark);
-            text-decoration: none;
-            white-space: nowrap;
-            letter-spacing: -0.04em;
-        }
-
-        .logo span {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-
-        .nav-links a,
-        .nav-links button {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 700;
-            font-size: 14px;
-            transition: 0.3s;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-        }
-
-        .nav-links a:hover,
-        .nav-links button:hover {
-            color: var(--primary);
-        }
-
-        .btn-sell {
-            background: var(--primary) !important;
-            color: white !important;
-            padding: 10px 25px;
-            border-radius: 50px;
-            transition: 0.3s;
-            box-shadow: 0 14px 30px rgba(245, 130, 32, 0.24);
-        }
-
-        .btn-sell:hover {
-            background: var(--primary-hover) !important;
-            color: white !important;
-            transform: translateY(-1px);
-        }
-
-        .account-link {
-            color: var(--primary) !important;
-            font-weight: 800 !important;
-        }
-
-        .logout-btn {
-            color: var(--danger) !important;
-            font-size: 12px !important;
-            margin-left: 10px;
-        }
+        .logo { display: inline-flex; align-items: center; gap: 12px; color: var(--dark); text-decoration: none; white-space: nowrap; }
+        .logo-image { width: 220px; max-width: 42vw; height: auto; display: block; object-fit: contain; }
+        .logo-text-fallback { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.04em; }
+        .logo-text-fallback span { color: var(--primary); }
+        .nav-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-end; }
+        .nav-links a, .nav-links button { text-decoration: none; color: var(--dark); font-weight: 700; font-size: 14px; transition: 0.3s; border: none; background: transparent; cursor: pointer; }
+        .nav-links a:hover, .nav-links button:hover { color: var(--primary); }
+        .btn-sell { background: var(--primary) !important; color: white !important; padding: 10px 25px; border-radius: 50px; transition: 0.3s; }
+        .btn-sell:hover { background: var(--primary-hover) !important; color: white !important; }
+        .account-link { color: var(--primary) !important; font-weight: 800 !important; }
+        .logout-btn { color: var(--danger) !important; font-size: 12px !important; margin-left: 10px; }
 
         .notification-wrap {
             position: relative;
             display: inline-flex;
             align-items: center;
         }
-
         .notification-button {
             position: relative;
             width: 46px;
@@ -163,16 +80,8 @@
             box-shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
             cursor: pointer;
         }
-
-        .notification-button:hover {
-            color: var(--primary) !important;
-            transform: translateY(-1px);
-        }
-
-        .notification-button i {
-            font-size: 1rem;
-        }
-
+        .notification-button:hover { color: var(--primary) !important; transform: translateY(-1px); }
+        .notification-button i { font-size: 1rem; }
         .notification-badge {
             position: absolute;
             top: 6px;
@@ -189,7 +98,6 @@
             text-align: center;
             border: 2px solid white;
         }
-
         .notification-panel {
             position: absolute;
             top: calc(100% + 10px);
@@ -203,18 +111,13 @@
             z-index: 2500;
             text-align: left;
         }
-
-        .notification-panel[hidden] {
-            display: none !important;
-        }
-
+        .notification-panel[hidden] { display: none !important; }
         .notification-panel h3 {
             margin: 0 0 8px;
             font-size: .95rem;
             color: var(--dark);
             font-weight: 900;
         }
-
         .notification-panel p {
             margin: 0 0 10px;
             color: var(--muted);
@@ -222,7 +125,6 @@
             line-height: 1.45;
             font-weight: 500;
         }
-
         .notify-action {
             width: 100%;
             border: 0;
@@ -233,7 +135,6 @@
             font-weight: 900 !important;
             cursor: pointer;
         }
-
         .install-app-btn {
             background: var(--primary) !important;
             color: white !important;
@@ -243,412 +144,105 @@
             align-items: center;
             gap: 8px;
             font-weight: 800 !important;
-            box-shadow: 0 10px 25px rgba(245, 130, 32, .22);
+            box-shadow: 0 10px 25px rgba(245,130,32,.22);
         }
+        html.pwa-install-ready .install-app-btn { display: inline-flex; }
+        @media (display-mode: standalone) { .install-app-btn { display: none !important; } }
 
-        html.pwa-install-ready .install-app-btn {
-            display: inline-flex;
-        }
-
-        @media (display-mode: standalone) {
-            .install-app-btn {
-                display: none !important;
-            }
-        }
 
         .hero {
-            position: relative;
-            overflow: hidden;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            padding: 58px 6% 100px;
-            text-align: center;
-            color: white;
+            padding: 50px 6% 90px; text-align: center; color: white;
         }
+        .hero h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; font-weight: 900; letter-spacing: -0.05em; }
 
-        .hero::after {
-            content: "";
-            position: absolute;
-            inset: auto -10% -45% -10%;
-            height: 140px;
-            background: rgba(245, 130, 32, 0.14);
-            filter: blur(50px);
-        }
-
-        .hero h1 {
-            position: relative;
-            z-index: 2;
-            max-width: 850px;
-            margin: 0 auto;
-            font-size: clamp(30px, 5vw, 56px);
-            line-height: 1.08;
-            font-weight: 900;
-            letter-spacing: -0.06em;
-        }
-
-        .car-types-container {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 28px;
-        }
-
+        .car-types-container { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 25px; }
         .type-btn {
-            background: rgba(255,255,255,0.11);
-            border: 1px solid rgba(255,255,255,0.22);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 800;
-            transition: 0.3s;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: white; padding: 12px 20px; border-radius: 50px; cursor: pointer;
+            font-size: 13px; font-weight: 700; transition: 0.3s;
         }
+        .type-btn:hover, .type-btn.active { background: var(--primary); border-color: var(--primary); transform: translateY(-2px); }
 
-        .type-btn:hover,
-        .type-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.16);
-        }
+        .filter-wrapper { max-width: 1200px; margin: -45px auto 40px; padding: 0 20px; width: 100%; }
+        .filter-card { background: var(--white); padding: 35px; border-radius: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .filter-group { display: flex; flex-direction: column; }
+        .filter-group label { font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; }
 
-        .filter-wrapper {
-            max-width: 1200px;
-            margin: -48px auto 42px;
-            padding: 0 20px;
-            width: 100%;
-            position: relative;
-            z-index: 10;
-        }
+        input, select { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f1f5f9; font-size: 14px; outline: none; width: 100%; transition: .25s; }
+        input:focus, select:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(245,130,32,.10); }
 
-        .filter-card {
-            background: rgba(255, 255, 255, 0.94);
-            backdrop-filter: blur(16px);
-            padding: 35px;
-            border-radius: 28px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(226, 232, 240, 0.95);
-        }
+        .search-actions { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
+        .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; }
+        .btn-results:hover { background: var(--primary-hover); }
+        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 800; cursor: pointer; }
+        .btn-deep:hover { background: #cbd5e1; }
 
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .filter-group label {
-            font-size: 11px;
-            font-weight: 900;
-            color: var(--muted);
-            margin-bottom: 7px;
-            text-transform: uppercase;
-            letter-spacing: .05em;
-        }
-
-        input,
-        select {
-            padding: 14px;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            background: #f8fafc;
-            font-size: 14px;
-            outline: none;
-            width: 100%;
-            transition: .25s;
-            color: var(--dark);
-        }
-
-        input:focus,
-        select:focus {
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(245, 130, 32, .10);
-        }
-
-        .search-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            gap: 15px;
-        }
-
-        .btn-results {
-            flex: 2;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 18px;
-            border-radius: 16px;
-            font-weight: 900;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 14px 30px rgba(245, 130, 32, .22);
-        }
-
-        .btn-results:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        .btn-deep {
-            flex: 1;
-            background: #e2e8f0;
-            color: var(--dark);
-            border: none;
-            padding: 18px;
-            border-radius: 16px;
-            font-weight: 900;
-            cursor: pointer;
-        }
-
-        .btn-deep:hover {
-            background: #cbd5e1;
-            transform: translateY(-1px);
-        }
-
-        .container {
-            flex: 1;
-            padding: 0 6% 80px;
-        }
-
-        .section-title {
-            font-size: 24px;
-            font-weight: 900;
-            margin-bottom: 25px;
-            border-left: 5px solid var(--primary);
-            padding-left: 15px;
-            letter-spacing: -0.03em;
-        }
-
-        .cars-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-        }
+        .container { flex: 1; padding: 0 6% 80px; }
+        .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
+        .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
 
         .car-card {
-            position: relative;
-            background: white;
-            border-radius: 22px;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-            cursor: pointer;
-            transition: 0.25s;
-            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
+            position: relative; background: white; border-radius: 20px; overflow: hidden;
+            border: 1px solid #e2e8f0; cursor: pointer; transition: 0.25s;
         }
-
-        .car-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow);
-            border-color: rgba(245, 130, 32, 0.22);
-        }
-
-        .car-card img {
-            width: 100%;
-            height: 190px;
-            object-fit: cover;
-            display: block;
-            background: #e2e8f0;
-        }
-
-        .car-content {
-            padding: 20px;
-        }
-
-        .car-price {
-            color: var(--primary);
-            font-size: 22px;
-            font-weight: 900;
-            margin-bottom: 8px;
-        }
-
-        .car-title {
-            font-weight: 850;
-            margin-bottom: 7px;
-        }
-
-        .car-meta {
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 650;
-        }
+        .car-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+        .car-card img { width: 100%; height: 190px; object-fit: cover; display: block; background: #e2e8f0; }
+        .car-content { padding: 20px; }
+        .car-price { color: var(--primary); font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+        .car-title { font-weight: 800; margin-bottom: 7px; }
+        .car-meta { color: var(--muted); font-size: 13px; font-weight: 650; }
 
         .favorite-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 42px;
-            height: 42px;
-            border: none;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.95);
-            color: #94a3b8;
-            box-shadow: 0 8px 20px rgba(15,23,42,0.18);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            z-index: 50;
-            transition: 0.2s;
-            touch-action: manipulation;
+            position: absolute; top: 12px; right: 12px; width: 42px; height: 42px;
+            border: none; border-radius: 50%; background: rgba(255,255,255,0.95);
+            color: #94a3b8; box-shadow: 0 8px 20px rgba(15,23,42,0.18);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; z-index: 50; transition: 0.2s; touch-action: manipulation;
         }
+        .favorite-btn:hover { transform: scale(1.08); color: var(--primary); }
+        .favorite-btn.saved { color: #ef4444; }
+        .favorite-btn:disabled { opacity: 0.6; cursor: wait; }
 
-        .favorite-btn:hover {
-            transform: scale(1.08);
-            color: var(--primary);
-        }
+        .state-message { grid-column: 1/-1; text-align: center; color: var(--muted); font-weight: 700; padding: 28px; background: white; border: 1px solid var(--border); border-radius: 18px; }
+        .state-message.error { color: var(--danger); }
 
-        .favorite-btn.saved {
-            color: #ef4444;
-        }
-
-        .favorite-btn:disabled {
-            opacity: 0.6;
-            cursor: wait;
-        }
-
-        .state-message {
-            grid-column: 1/-1;
-            text-align: center;
-            color: var(--muted);
-            font-weight: 700;
-            padding: 28px;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 18px;
-        }
-
-        .state-message.error {
-            color: var(--danger);
-        }
-
-        footer {
-            background:
-                radial-gradient(circle at top left, rgba(245, 130, 32, 0.16), transparent 28%),
-                #0f172a;
-            color: #94a3b8;
-            padding: 60px 6% 40px;
-            border-top: 1px solid #1e293b;
-        }
-
-        .footer-content {
-            max-width: 1100px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 40px;
-        }
-
-        .footer-section h4 {
-            color: white;
-            margin-bottom: 14px;
-            font-size: 15px;
-        }
-
-        .footer-section p {
-            line-height: 1.7;
-            font-size: 13px;
-        }
-
-        .footer-links {
-            list-style: none;
-            display: grid;
-            gap: 9px;
-        }
-
-        .footer-links a {
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .footer-links a:hover {
-            color: var(--primary);
-        }
-
-        .legal-box {
-            max-width: 1100px;
-            margin: 50px auto 0;
-            padding-top: 30px;
-            border-top: 1px solid #1e293b;
-            text-align: center;
-            font-size: 12px;
-            line-height: 1.8;
-        }
+        footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; border-top: 1px solid #1e293b; }
+        .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+        .footer-section h4 { color: white; margin-bottom: 14px; font-size: 15px; }
+        .footer-section p { line-height: 1.7; font-size: 13px; }
+        .footer-links { list-style: none; display: grid; gap: 9px; }
+        .footer-links a { color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 700; }
+        .footer-links a:hover { color: var(--primary); }
+        .legal-box { margin-top: 50px; padding-top: 30px; border-top: 1px solid #1e293b; text-align: center; font-size: 12px; }
 
         @media (max-width: 900px) {
-            .filter-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .filter-grid { grid-template-columns: repeat(2, 1fr); }
         }
-
         @media (max-width: 768px) {
-            header {
-                padding: 1rem 4%;
-                align-items: flex-start;
-                gap: 12px;
-            }
-
-            .logo {
-                font-size: 1.55rem;
-            }
-
-            .nav-links {
-                gap: 10px;
-            }
-
-            .nav-links a,
-            .nav-links button {
-                font-size: 13px;
-            }
-
-            .btn-sell {
-                padding: 9px 16px;
-            }
-
-            .filter-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .search-actions {
-                flex-direction: column;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr;
-            }
+            header { padding: 1rem 4%; align-items: flex-start; gap: 12px; }
+            .logo-image { width: 190px; max-width: 70vw; }
+            .nav-links { gap: 10px; }
+            .nav-links a, .nav-links button { font-size: 13px; }
+            .btn-sell { padding: 9px 16px; }
+            .filter-grid { grid-template-columns: 1fr; }
+            .search-actions { flex-direction: column; }
+            .footer-content { grid-template-columns: 1fr; }
         }
-
         @media (max-width: 480px) {
-            header {
-                flex-direction: column;
-            }
-
-            .nav-links {
-                justify-content: flex-start;
-            }
-
-            .filter-card {
-                padding: 24px 18px;
-            }
+            header { flex-direction: column; }
+            .nav-links { justify-content: flex-start; }
+            .filter-card { padding: 24px 18px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <a href="index.html" class="logo" aria-label="VORQ Fordon startsida">VORQ <span>Fordon</span></a>
+    <a href="index.html" class="logo" aria-label="VORQ Fordon startsida">
+        <img src="./vorq-fordon-logo.png" alt="VORQ Fordon - Ägs av VORQ Group" class="logo-image">
+    </a>
     <nav class="nav-links" aria-label="Huvudmeny">
         <a href="sell.html" class="btn-sell">Publicera annons</a>
         <div id="authStatusContainer" style="display:flex;align-items:center;gap:15px;"></div>
@@ -657,41 +251,31 @@
 
 <section class="hero">
     <h1>Hitta ditt nästa fordon snabbt och enkelt</h1>
-    <div class="car-types-container" id="carTypeButtons" aria-label="Kategorier">
+    <div class="car-types-container" id="carTypeButtons" aria-label="Karosstyp-filter">
         <button type="button" class="type-btn active" data-type="">Alla fordon</button>
-        <button type="button" class="type-btn" data-type="SUV">SUV</button>
-        <button type="button" class="type-btn" data-type="Transportbil">Transportbil</button>
+        <button type="button" class="type-btn" data-type="SUV">SUV / 4x4</button>
+        <button type="button" class="type-btn" data-type="Transportbil">Skåpbil</button>
         <button type="button" class="type-btn" data-type="Sedan">Sedan</button>
         <button type="button" class="type-btn" data-type="Kombi">Kombi</button>
+        <button type="button" class="type-btn" data-type="Halvkombi">Småbil</button>
+        <button type="button" class="type-btn" data-type="Cabriolet">Cabriolet</button>
     </div>
 </section>
 
 <div class="filter-wrapper">
     <div class="filter-card">
         <div class="filter-grid">
-            <div class="filter-group">
-                <label for="brandSelect">Märke / Kategori</label>
-                <select id="brandSelect">
-                    <option value="">Alla</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="modelSelect">Modell / Typ</label>
-                <select id="modelSelect">
-                    <option value="">Välj kategori först</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="maxPrice">Högsta Pris</label>
-                <input type="number" id="maxPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 300000">
-            </div>
-            <div class="filter-group">
-                <label for="minPrice">Lägsta Pris</label>
-                <input type="number" id="minPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 50000">
-            </div>
+            <div class="filter-group"><label for="brandSelect">Märke</label><select id="brandSelect"><option value="">Alla märken</option></select></div>
+            <div class="filter-group"><label for="modelSelect">Modell</label><select id="modelSelect"><option value="">Välj märke först</option></select></div>
+            <div class="filter-group"><label for="maxPrice">Högsta Pris</label><input type="number" id="maxPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 300000"></div>
+            <div class="filter-group"><label for="minPrice">Lägsta Pris</label><input type="number" id="minPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 50000"></div>
+            <div class="filter-group"><label for="maxMil">Mest Mil</label><input type="number" id="maxMil" min="0" max="2000000" inputmode="numeric" placeholder="Ex. 15000"></div>
+            <div class="filter-group"><label for="minMil">Minst Mil</label><input type="number" id="minMil" min="0" max="2000000" inputmode="numeric" placeholder="Ex. 0"></div>
+            <div class="filter-group"><label for="maxYear">Nyaste Årsmodell</label><input type="number" id="maxYear" min="1900" max="2027" inputmode="numeric" placeholder="Ex. 2026"></div>
+            <div class="filter-group"><label for="minYear">Äldsta Årsmodell</label><input type="number" id="minYear" min="1900" max="2027" inputmode="numeric" placeholder="Ex. 2015"></div>
         </div>
         <div class="search-actions">
-            <button type="button" class="btn-deep" id="deepSearchBtn">Avancerad Sökning</button>
+            <button type="button" class="btn-deep" id="deepSearchBtn">Djup Sökning</button>
             <button type="button" class="btn-results" id="searchBtn">Visa Resultat</button>
         </div>
     </div>
@@ -706,7 +290,7 @@
     <div class="footer-content">
         <div class="footer-section">
             <h4>Om VORQ Fordon</h4>
-            <p>VORQ Fordon är en digital plattform för fordonsannonser. Plattformen ägs och drivs av VORQ Group. VORQ Group tar inget ansvar för tvister mellan parter.</p>
+            <p>VORQ Fordon är en öppen marknadsplats för fordonsannonser. Webbplatsen ägs och drivs av VORQ Group. Vi tar inget ansvar för tvister mellan parter.</p>
         </div>
         <div class="footer-section">
             <h4>Information</h4>
@@ -716,18 +300,14 @@
             </ul>
         </div>
         <div class="footer-section">
-            <h4>Juridisk info</h4>
+            <h4>Juridisk Info</h4>
             <ul class="footer-links">
                 <li><a href="terms.html">Villkor</a></li>
                 <li><a href="privacy.html">GDPR</a></li>
             </ul>
         </div>
     </div>
-    <div class="legal-box">
-        &copy; 2026 VORQ Group. Alla rättigheter förbehållna.<br>
-        VORQ Fordon ägs och drivs av VORQ Group.<br>
-        Vision • Operations • Reach • Quality
-    </div>
+    <div class="legal-box">&copy; 2026 VORQ Fordon. Ägs och drivs av VORQ Group.</div>
 </footer>
 
 <script type="module">
@@ -742,8 +322,7 @@
         doc,
         setDoc,
         deleteDoc,
-        serverTimestamp,
-        onSnapshot
+        serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import {
         onAuthStateChanged,
@@ -781,10 +360,7 @@
         currentUser: null,
         savedFavoriteIds: new Set(),
         favoriteCarCache: new Map(),
-        isLoadingCars: false,
-        unreadChatsUnsubscribe: null,
-        unreadChatCount: 0,
-        unreadSnapshotReady: false
+        isLoadingCars: false
     };
 
     initializePage();
@@ -802,7 +378,6 @@
 
     function attachEvents() {
         elements.searchBtn.addEventListener('click', fetchCars);
-
         elements.deepSearchBtn.addEventListener('click', () => {
             window.location.href = 'filter.html';
         });
@@ -824,16 +399,11 @@
         onAuthStateChanged(auth, async (user) => {
             state.currentUser = user;
 
-            cleanupUnreadMessagesListener();
-
             if (user) {
                 renderLoggedInNav(user);
-                startUnreadMessagesListener(user.uid);
                 await loadUserFavorites();
             } else {
                 state.savedFavoriteIds = new Set();
-                state.unreadChatCount = 0;
-                state.unreadSnapshotReady = false;
                 renderLoggedOutNav();
             }
 
@@ -878,16 +448,17 @@
             notificationPanel.hidden = !notificationPanel.hidden;
             notificationButton.setAttribute('aria-expanded', String(!notificationPanel.hidden));
             updateNotificationPanel(notificationPanel);
+            if ('Notification' in window && Notification.permission === 'granted') {
+                await showBilHKNotification('Du har inga nya aviseringar just nu.');
+            }
         });
 
         notificationPanel.addEventListener('click', (event) => event.stopPropagation());
-
         notificationPanel.querySelector('#enableNotificationsBtn').addEventListener('click', async () => {
-            await enableVORQNotifications(notificationPanel);
+            await enableBilHKNotifications(notificationPanel);
         });
 
         notificationWrap.append(notificationButton, notificationPanel);
-        renderNotificationBadge();
 
         const accountLink = document.createElement('a');
         accountLink.href = 'my-account.html';
@@ -939,7 +510,7 @@
                     .filter(Boolean)
             );
         } catch (error) {
-            console.error('Fel vid laddning av sparade bilar:', error);
+            console.error('Fel vid laddning av sparade bilar från index.html:', error);
             state.savedFavoriteIds = new Set();
         }
     }
@@ -984,10 +555,10 @@
 
             updateFavoriteButtons();
         } catch (error) {
-            console.error('Favorite error:', error);
+            console.error('Favorite error from index.html:', error);
             alert(error?.code === 'permission-denied'
-                ? 'Kunde inte spara annonsen. Kontrollera behörigheter.'
-                : 'Kunde inte spara annonsen just nu.');
+                ? 'Kunde inte spara bilen. Kontrollera Firebase-reglerna för favorites.'
+                : 'Kunde inte spara bilen just nu. Försök igen.');
         } finally {
             if (buttonElement) buttonElement.disabled = false;
         }
@@ -1041,10 +612,10 @@
 
             updateFavoriteButtons();
         } catch (error) {
-            console.error('Fel vid hämtning av annonser:', error);
+            console.error('Fel vid hämtning av bilar:', error);
             renderStateMessage(
                 error?.code === 'permission-denied'
-                    ? 'Kunde inte läsa annonser. Kontrollera behörigheter.'
+                    ? 'Kunde inte läsa annonser. Kontrollera Firebase Rules för cars.'
                     : 'Ett fel uppstod vid laddning av annonser.',
                 true
             );
@@ -1068,7 +639,7 @@
 
         const image = document.createElement('img');
         image.src = getCarImage(car);
-        image.alt = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Annonsbild';
+        image.alt = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Fordonsbild';
         image.loading = 'lazy';
         image.referrerPolicy = 'no-referrer';
         image.addEventListener('error', () => {
@@ -1084,11 +655,11 @@
 
         const title = document.createElement('p');
         title.className = 'car-title';
-        title.textContent = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Annons';
+        title.textContent = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Fordonsannons';
 
         const meta = document.createElement('p');
         meta.className = 'car-meta';
-        meta.textContent = `${normalizeText(car.year, '-')} | ${normalizeText(car.city || 'Global', '')}`;
+        meta.textContent = `${normalizeText(car.year, '-')} | ${normalizeText(car.mileage, '0')} mil`;
 
         content.append(price, title, meta);
         card.append(favoriteButton, image, content);
@@ -1111,14 +682,24 @@
 
         const minPrice = boundedNumber(elements.minPrice.value, 0, CONFIG.MAX_PRICE, 0);
         const maxPrice = boundedNumber(elements.maxPrice.value, 0, CONFIG.MAX_PRICE, 0);
+        const minMileage = boundedNumber(elements.minMil.value, 0, CONFIG.MAX_MILEAGE, 0);
+        const maxMileage = boundedNumber(elements.maxMil.value, 0, CONFIG.MAX_MILEAGE, 0);
+        const minYear = boundedNumber(elements.minYear.value, CONFIG.MIN_YEAR, CONFIG.MAX_YEAR, 0);
+        const maxYear = boundedNumber(elements.maxYear.value, CONFIG.MIN_YEAR, CONFIG.MAX_YEAR, 0);
 
         const carPrice = normalizeNumber(car.price, 0);
+        const carMileage = normalizeNumber(car.mileage, 0);
+        const carYear = normalizeNumber(car.year, 0);
 
         return (!brand || car.brand === brand) &&
             (!model || car.model === model) &&
             (!selectedType || carBodyType === selectedType) &&
             (!minPrice || carPrice >= minPrice) &&
-            (!maxPrice || carPrice <= maxPrice);
+            (!maxPrice || carPrice <= maxPrice) &&
+            (!minMileage || carMileage >= minMileage) &&
+            (!maxMileage || carMileage <= maxMileage) &&
+            (!minYear || carYear >= minYear) &&
+            (!maxYear || carYear <= maxYear);
     }
 
     function handleGridClick(event) {
@@ -1202,154 +783,49 @@
         return Math.min(max, Math.max(min, number));
     }
 
-    function startUnreadMessagesListener(userId) {
-        const safeUserId = normalizeId(userId);
-
-        if (!safeUserId) {
-            state.unreadChatCount = 0;
-            state.unreadSnapshotReady = false;
-            renderNotificationBadge();
-            updateOpenNotificationPanels();
-            return;
-        }
-
-        try {
-            const chatsQuery = query(
-                collection(db, 'chats'),
-                where('participants', 'array-contains', safeUserId)
-            );
-
-            state.unreadChatsUnsubscribe = onSnapshot(
-                chatsQuery,
-                (snapshot) => {
-                    let unreadCount = 0;
-                    let latestIncomingMessage = '';
-                    let shouldShowBrowserNotification = false;
-
-                    snapshot.forEach((chatDoc) => {
-                        const chat = chatDoc.data() || {};
-                        const unreadBy = Array.isArray(chat.unreadBy) ? chat.unreadBy : [];
-
-                        if (unreadBy.includes(safeUserId)) {
-                            unreadCount += 1;
-                        }
-                    });
-
-                    snapshot.docChanges().forEach((change) => {
-                        if (!state.unreadSnapshotReady || change.type === 'removed') return;
-
-                        const chat = change.doc.data() || {};
-                        const unreadBy = Array.isArray(chat.unreadBy) ? chat.unreadBy : [];
-                        const lastSenderId = normalizeId(chat.lastSenderId);
-
-                        if (unreadBy.includes(safeUserId) && lastSenderId && lastSenderId !== safeUserId) {
-                            shouldShowBrowserNotification = true;
-                            latestIncomingMessage = normalizeText(chat.lastMessage || 'Du har fått ett nytt meddelande.', 120);
-                        }
-                    });
-
-                    state.unreadChatCount = unreadCount;
-                    renderNotificationBadge();
-                    updateOpenNotificationPanels();
-
-                    if (shouldShowBrowserNotification) {
-                        const body = latestIncomingMessage || `Du har ${unreadCount} olästa meddelanden.`;
-                        showVORQNotification(body, './messages.html');
-                    }
-
-                    state.unreadSnapshotReady = true;
-                },
-                (error) => {
-                    console.warn('Kunde inte lyssna på nya meddelanden:', error);
-                    state.unreadChatCount = 0;
-                    state.unreadSnapshotReady = true;
-                    renderNotificationBadge();
-                    updateOpenNotificationPanels();
-                }
-            );
-        } catch (error) {
-            console.warn('Meddelandeaviseringar kunde inte startas:', error);
-            state.unreadChatCount = 0;
-            state.unreadSnapshotReady = true;
-            renderNotificationBadge();
-            updateOpenNotificationPanels();
-        }
-    }
-
-    function cleanupUnreadMessagesListener() {
-        if (typeof state.unreadChatsUnsubscribe === 'function') {
-            state.unreadChatsUnsubscribe();
-        }
-
-        state.unreadChatsUnsubscribe = null;
-        state.unreadSnapshotReady = false;
-    }
-
-    function renderNotificationBadge() {
-        const badge = document.getElementById('notificationBadge');
-        if (!badge) return;
-
-        const count = Math.max(0, Math.min(999, normalizeNumber(state.unreadChatCount, 0)));
-        badge.textContent = count > 99 ? '99+' : String(count);
-        badge.hidden = count < 1;
-        badge.setAttribute('aria-label', count > 0 ? `${count} olästa meddelanden` : 'Inga olästa meddelanden');
-    }
-
-    function updateOpenNotificationPanels() {
-        document.querySelectorAll('.notification-panel').forEach((panel) => {
-            updateNotificationPanel(panel);
-        });
-    }
 
     function updateNotificationPanel(panel) {
         const text = panel.querySelector('#notificationPanelText');
         const button = panel.querySelector('#enableNotificationsBtn');
-
         if (!('Notification' in window)) {
             text.textContent = 'Din webbläsare stöder inte aviseringar.';
             button.hidden = true;
             return;
         }
-
         if (Notification.permission === 'granted') {
-            const count = Math.max(0, normalizeNumber(state.unreadChatCount, 0));
-            text.textContent = count > 0
-                ? `Du har ${count} olästa meddelanden. Öppna VORQ Fordon Meddelanden för att läsa dem.`
-                : 'Aviseringar är aktiverade. Nya meddelanden visas här och som webbläsaraviseringar.';
+            text.textContent = 'Aviseringar är aktiverade. Nya händelser visas här och som appaviseringar.';
             button.hidden = true;
         } else if (Notification.permission === 'denied') {
-            text.textContent = 'Aviseringar är blockerade. Tillåt aviseringar i webbläsarens inställningar för VORQ Fordon.';
+            text.textContent = 'Aviseringar är blockerade. Tillåt aviseringar i webbläsarens inställningar för den här sidan.';
             button.hidden = true;
         } else {
-            text.textContent = 'Aktivera aviseringar för att få besked när du får nya meddelanden i VORQ Fordon.';
+            text.textContent = 'Aktivera aviseringar för att få besked om nya händelser i VORQ Fordon.';
             button.hidden = false;
         }
     }
 
-    async function enableVORQNotifications(panel) {
+    async function enableBilHKNotifications(panel) {
         if (!('Notification' in window)) {
             updateNotificationPanel(panel);
             return;
         }
-
         const permission = await Notification.requestPermission();
         updateNotificationPanel(panel);
-
         if (permission === 'granted') {
-            await showVORQNotification('Aviseringar är nu aktiverade.');
+            await showBilHKNotification('Aviseringar är nu aktiverade.');
         }
     }
 
-    async function showVORQNotification(body, targetUrl = './messages.html') {
+    async function showBilHKNotification(body) {
         if (!('Notification' in window) || Notification.permission !== 'granted') return;
-
         const options = {
             body,
-            tag: `vorq-fordon-meddelande-${Date.now()}`,
+            icon: './icons/icon-192.png',
+            badge: './icons/icon-192.png',
+            tag: 'bilhk-avisering',
             renotify: false,
-            data: { url: targetUrl }
+            data: { url: './index.html' }
         };
-
         try {
             if ('serviceWorker' in navigator) {
                 const registration = await navigator.serviceWorker.ready;
@@ -1370,6 +846,6 @@
         });
     });
 </script>
-<script src="./pwa-register.js" defer></script>
+  <script src="./pwa-register.js" defer></script>
 </body>
 </html>
