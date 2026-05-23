@@ -10,7 +10,7 @@
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
     <link rel="manifest" href="./manifest.webmanifest">
     <meta name="theme-color" content="#f58220">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f172a'/%3E%3Cpath d='M14 38 Q20 24 32 24 Q44 24 50 38 L46 42 H18 Z' fill='%23f58220'/%3E%3Ccircle cx='24' cy='42' r='5' fill='%23fff'/%3E%3Ccircle cx='42' cy='42' r='5' fill='%23fff'/%3E%3C/svg%3E">
+    <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,9 +49,10 @@
             display: flex; justify-content: space-between; align-items: center;
             position: sticky; top: 0; z-index: 1000;
         }
-        .logo { display: inline-flex; align-items: center; color: var(--dark); text-decoration: none; white-space: nowrap; }
-        .logo-svg { width: 260px; max-width: 52vw; height: auto; display: block; }
-        .logo-mark-shadow { filter: drop-shadow(0 10px 18px rgba(245, 130, 32, 0.24)); }
+        .logo { display: inline-flex; align-items: center; gap: 12px; color: var(--dark); text-decoration: none; white-space: nowrap; }
+        .logo-image { width: 340px; max-width: 54vw; max-height: 76px; height: auto; display: block; object-fit: contain; }
+        .logo-text-fallback { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.04em; }
+        .logo-text-fallback span { color: var(--primary); }
         .nav-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-end; }
         .nav-links a, .nav-links button { text-decoration: none; color: var(--dark); font-weight: 700; font-size: 14px; transition: 0.3s; border: none; background: transparent; cursor: pointer; }
         .nav-links a:hover, .nav-links button:hover { color: var(--primary); }
@@ -221,7 +222,7 @@
         }
         @media (max-width: 768px) {
             header { padding: 1rem 4%; align-items: flex-start; gap: 12px; }
-            .logo-svg { width: 230px; max-width: 78vw; }
+            .logo-image { width: 285px; max-width: 78vw; max-height: 66px; }
             .nav-links { gap: 10px; }
             .nav-links a, .nav-links button { font-size: 13px; }
             .btn-sell { padding: 9px 16px; }
@@ -240,26 +241,7 @@
 
 <header>
     <a href="index.html" class="logo" aria-label="VORQ Fordon startsida">
-        <svg class="logo-svg" viewBox="0 0 430 92" role="img" aria-labelledby="vorqLogoTitle vorqLogoDesc" xmlns="http://www.w3.org/2000/svg">
-            <title id="vorqLogoTitle">VORQ Fordon</title>
-            <desc id="vorqLogoDesc">VORQ Fordon ägs av VORQ Group</desc>
-            <defs>
-                <linearGradient id="vorqOrange" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stop-color="#f58220"/>
-                    <stop offset="1" stop-color="#ffb15c"/>
-                </linearGradient>
-            </defs>
-            <g class="logo-mark-shadow">
-                <rect x="2" y="12" width="68" height="68" rx="22" fill="#0f172a"/>
-                <path d="M15 50 C21 35 31 29 43 33 C51 36 58 43 62 51 L55 55 C52 51 49 49 45 49 H27 C23 49 20 51 17 55 L15 50Z" fill="url(#vorqOrange)"/>
-                <path d="M24 43 H46 C41 37 29 36 24 43Z" fill="#ffffff" opacity="0.95"/>
-                <circle cx="25" cy="58" r="6" fill="#ffffff"/>
-                <circle cx="51" cy="58" r="6" fill="#ffffff"/>
-            </g>
-            <text x="86" y="43" fill="#0f172a" font-family="Inter, Arial, sans-serif" font-size="31" font-weight="900" letter-spacing="-1.2">VORQ</text>
-            <text x="86" y="68" fill="#f58220" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="800" letter-spacing="-0.5">Fordon</text>
-            <text x="176" y="68" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">Ägs av VORQ Group</text>
-        </svg>
+        <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon - Ägs av VORQ Group" class="logo-image">
     </a>
     <nav class="nav-links" aria-label="Huvudmeny">
         <a href="sell.html" class="btn-sell">Publicera annons</a>
