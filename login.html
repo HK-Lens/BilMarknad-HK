@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logga in | BILHK</title>
-    <meta name="description" content="Logga in säkert på BILHK eller återställ ditt lösenord.">
+    <title>Logga in | VORQ Fordon</title>
+    <meta name="description" content="Logga in på VORQ Fordon för att hantera fordonsannonser, favoriter och meddelanden. VORQ Fordon ägs och drivs av VORQ Group.">
     <meta name="robots" content="noindex, nofollow">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -345,6 +345,54 @@
             line-height: 1.5;
         }
 
+
+        .logo-image {
+            width: 172px;
+            max-width: 44vw;
+            height: auto;
+            max-height: 48px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .logo-wordmark {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            color: var(--dark);
+            letter-spacing: 0;
+        }
+
+        .logo-wordmark strong {
+            color: var(--dark);
+            font-size: 1.05rem;
+            line-height: 1;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+        }
+
+        .logo-wordmark small {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.15;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        .brand-owner-note {
+            margin-top: 22px;
+            padding: 13px 14px;
+            border-radius: 18px;
+            background: rgba(245,130,32,.10);
+            border: 1px solid rgba(245,130,32,.22);
+            color: #92400e;
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1.55;
+            text-align: center;
+        }
+
         @media (max-width: 520px) {
             .auth-card { padding: 30px 20px; }
             .login-tabs { flex-direction: column; border-radius: 18px; }
@@ -355,7 +403,13 @@
 
 <body>
 <header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <a href="index.html" class="logo" aria-label="Gå till startsidan">
+        <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon" class="logo-image" onerror="this.style.display='none'">
+        <span class="logo-wordmark">
+            <strong>VORQ Fordon</strong>
+            <small>Vision • Operations • Reach • Quality</small>
+        </span>
+    </a>
 </header>
 
 <div class="auth-container">
@@ -371,7 +425,7 @@
             <i class="fa-solid fa-shield-halved"></i>
             <strong>Säkerhet först:</strong>
             Vi ansvarar inte för annonsernas innehåll. Betala aldrig i förskott och dela inte personlig information.
-            All handel sker på egen risk.
+            All handel sker på egen risk via plattformen.
         </div>
 
         <div class="verify-box" id="verifyBox">
@@ -426,6 +480,11 @@
         <div class="register-section">
             <p>Saknar du ett konto?</p>
             <a href="register.html" class="btn-outline">Skapa nytt konto</a>
+        </div>
+
+        <div class="brand-owner-note">
+            VORQ Fordon ägs och drivs av VORQ Group.<br>
+            Kontakt: info@vorq.group
         </div>
     </div>
 </div>
@@ -580,7 +639,7 @@
             await upsertUserProfileAfterLogin(user, "email-password");
             window.location.href = LOGIN_CONFIG.ROUTES.HOME;
         } catch (error) {
-            console.error("[BILHK] Login failed:", error);
+            console.error("[VORQ Fordon] Login failed:", error);
             showStatus(getReadableLoginError(error), "error");
         } finally {
             state.isSubmitting = false;
@@ -613,7 +672,7 @@
             await upsertUserProfileAfterLogin(result.user, "google");
             window.location.href = LOGIN_CONFIG.ROUTES.HOME;
         } catch (error) {
-            console.error("[BILHK] Google login failed:", error);
+            console.error("[VORQ Fordon] Google login failed:", error);
             showStatus(getReadableGoogleError(error), "error");
         } finally {
             state.isSubmitting = false;
@@ -649,7 +708,7 @@
             await sendPasswordResetEmail(auth, email);
             showStatus("Om e-postadressen är registrerad skickas en återställningslänk. Kontrollera inkorg och skräppost.", "success");
         } catch (error) {
-            console.error("[BILHK] Password reset failed:", error);
+            console.error("[VORQ Fordon] Password reset failed:", error);
             showStatus(getReadablePasswordResetError(error), "error");
         } finally {
             state.isResettingPassword = false;
@@ -692,7 +751,7 @@
         try {
             await sendEmailVerification(user);
         } catch (verificationError) {
-            console.error("[BILHK] Verification email resend failed:", verificationError);
+            console.error("[VORQ Fordon] Verification email resend failed:", verificationError);
         }
     }
 
@@ -803,8 +862,8 @@
 
     function getEmailName(email) {
         const clean = safeEmail(email);
-        if (!clean || !clean.includes("@")) return "BILHK-användare";
-        return clean.split("@")[0].replace(/[._-]+/g, " ").trim() || "BILHK-användare";
+        if (!clean || !clean.includes("@")) return "VORQ Fordon-användare";
+        return clean.split("@")[0].replace(/[._-]+/g, " ").trim() || "VORQ Fordon-användare";
     }
 </script>
 
