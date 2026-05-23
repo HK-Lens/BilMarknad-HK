@@ -1,6 +1,5 @@
 (() => {
   const APP_NAME = "VORQ Fordon";
-  const INSTALL_FALLBACK_MESSAGE = "Öppna menyn i Chrome och välj Installera VORQ Fordon / Lägg till på startskärmen.";
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
@@ -20,10 +19,9 @@
 
   async function installVORQFordonApp() {
     if (!deferredInstallPrompt) {
-      alert(INSTALL_FALLBACK_MESSAGE);
+      alert("Öppna menyn i Chrome och välj Installera app / Lägg till på startskärmen.");
       return;
     }
-
     deferredInstallPrompt.prompt();
     await deferredInstallPrompt.userChoice.catch(() => null);
     deferredInstallPrompt = null;
@@ -31,10 +29,5 @@
   }
 
   window.VORQFordonInstallApp = installVORQFordonApp;
-
-  /*
-   * Backward compatible alias for older pages that still call
-   * window.BILHKInstallApp from the install button.
-   */
   window.BILHKInstallApp = installVORQFordonApp;
 })();

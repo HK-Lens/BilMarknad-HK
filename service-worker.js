@@ -1,13 +1,17 @@
-const CACHE_NAME = "vorq-fordon-pwa-v1-scope-safe-notifications";
+const CACHE_NAME = "vorq-fordon-pwa-v10-icons-20260524";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./offline.html",
   "./manifest.webmanifest",
-  "./icon.svg",
   "./vorq-fordon-logo-header.png",
+  "./icon.svg",
+  "./icon-192.png",
+  "./icon-512.png",
   "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icons/icon-512.png",
+  "./icons/vorq-icon-192.png",
+  "./icons/vorq-icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
@@ -19,9 +23,11 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.map((key) => {
-      if (key !== CACHE_NAME) return caches.delete(key);
-    }))).then(() => self.clients.claim())
+    caches.keys()
+      .then((keys) => Promise.all(keys.map((key) => {
+        if (key !== CACHE_NAME) return caches.delete(key);
+      })))
+      .then(() => self.clients.claim())
   );
 });
 
@@ -29,7 +35,7 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: "no-store" })
       .then((response) => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => undefined);
@@ -38,7 +44,6 @@ self.addEventListener("fetch", (event) => {
       .catch(() => caches.match(event.request).then((cached) => cached || caches.match("./offline.html")))
   );
 });
-
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
