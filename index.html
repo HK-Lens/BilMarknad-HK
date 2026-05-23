@@ -20,7 +20,7 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
     <link rel="manifest" href="./manifest.webmanifest">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#f58220">
     <link rel="icon" href="./icon.svg" type="image/svg+xml">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,12 +30,12 @@
 
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --accent: #38bdf8;
+            --primary: #f58220;
+            --primary-hover: #e07210;
+            --accent: #f59e0b;
             --dark: #0f172a;
             --light: #f8fafc;
-            --soft: #eef6ff;
+            --soft: #fff7ed;
             --border: #e2e8f0;
             --white: #ffffff;
             --danger: #ef4444;
@@ -44,21 +44,28 @@
             --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.08);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
         body {
             background:
-                radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 35%),
-                linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+                radial-gradient(circle at top left, rgba(245, 130, 32, 0.08), transparent 35%),
+                linear-gradient(180deg, #f8fafc 0%, #fff7ed 100%);
             color: var(--dark);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
+
         a { color: inherit; }
         button, input, select { font-family: inherit; }
 
         header {
-            background: rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(18px);
             padding: 1rem 6%;
             border-bottom: 1px solid rgba(226, 232, 240, 0.9);
@@ -79,6 +86,7 @@
             white-space: nowrap;
             letter-spacing: -0.04em;
         }
+
         .logo span {
             color: var(--primary);
             font-weight: 700;
@@ -91,7 +99,9 @@
             flex-wrap: wrap;
             justify-content: flex-end;
         }
-        .nav-links a, .nav-links button {
+
+        .nav-links a,
+        .nav-links button {
             text-decoration: none;
             color: var(--dark);
             font-weight: 700;
@@ -101,30 +111,44 @@
             background: transparent;
             cursor: pointer;
         }
-        .nav-links a:hover, .nav-links button:hover { color: var(--primary); }
+
+        .nav-links a:hover,
+        .nav-links button:hover {
+            color: var(--primary);
+        }
 
         .btn-sell {
-            background: linear-gradient(135deg, var(--primary), #0ea5e9) !important;
+            background: var(--primary) !important;
             color: white !important;
             padding: 10px 25px;
             border-radius: 50px;
             transition: 0.3s;
-            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
+            box-shadow: 0 14px 30px rgba(245, 130, 32, 0.24);
         }
+
         .btn-sell:hover {
-            background: linear-gradient(135deg, var(--primary-hover), #0284c7) !important;
+            background: var(--primary-hover) !important;
             color: white !important;
             transform: translateY(-1px);
         }
 
-        .account-link { color: var(--primary) !important; font-weight: 800 !important; }
-        .logout-btn { color: var(--danger) !important; font-size: 12px !important; margin-left: 10px; }
+        .account-link {
+            color: var(--primary) !important;
+            font-weight: 800 !important;
+        }
+
+        .logout-btn {
+            color: var(--danger) !important;
+            font-size: 12px !important;
+            margin-left: 10px;
+        }
 
         .notification-wrap {
             position: relative;
             display: inline-flex;
             align-items: center;
         }
+
         .notification-button {
             position: relative;
             width: 46px;
@@ -139,8 +163,16 @@
             box-shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
             cursor: pointer;
         }
-        .notification-button:hover { color: var(--primary) !important; transform: translateY(-1px); }
-        .notification-button i { font-size: 1rem; }
+
+        .notification-button:hover {
+            color: var(--primary) !important;
+            transform: translateY(-1px);
+        }
+
+        .notification-button i {
+            font-size: 1rem;
+        }
+
         .notification-badge {
             position: absolute;
             top: 6px;
@@ -157,6 +189,7 @@
             text-align: center;
             border: 2px solid white;
         }
+
         .notification-panel {
             position: absolute;
             top: calc(100% + 10px);
@@ -170,13 +203,18 @@
             z-index: 2500;
             text-align: left;
         }
-        .notification-panel[hidden] { display: none !important; }
+
+        .notification-panel[hidden] {
+            display: none !important;
+        }
+
         .notification-panel h3 {
             margin: 0 0 8px;
             font-size: .95rem;
             color: var(--dark);
             font-weight: 900;
         }
+
         .notification-panel p {
             margin: 0 0 10px;
             color: var(--muted);
@@ -184,6 +222,7 @@
             line-height: 1.45;
             font-weight: 500;
         }
+
         .notify-action {
             width: 100%;
             border: 0;
@@ -194,6 +233,7 @@
             font-weight: 900 !important;
             cursor: pointer;
         }
+
         .install-app-btn {
             background: var(--primary) !important;
             color: white !important;
@@ -203,30 +243,37 @@
             align-items: center;
             gap: 8px;
             font-weight: 800 !important;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, .22);
+            box-shadow: 0 10px 25px rgba(245, 130, 32, .22);
         }
-        html.pwa-install-ready .install-app-btn { display: inline-flex; }
-        @media (display-mode: standalone) { .install-app-btn { display: none !important; } }
+
+        html.pwa-install-ready .install-app-btn {
+            display: inline-flex;
+        }
+
+        @media (display-mode: standalone) {
+            .install-app-btn {
+                display: none !important;
+            }
+        }
 
         .hero {
             position: relative;
             overflow: hidden;
-            background:
-                radial-gradient(circle at 18% 20%, rgba(56, 189, 248, 0.24), transparent 28%),
-                radial-gradient(circle at 82% 15%, rgba(37, 99, 235, 0.28), transparent 30%),
-                linear-gradient(135deg, #020617 0%, #0f172a 52%, #1e3a8a 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             padding: 58px 6% 100px;
             text-align: center;
             color: white;
         }
+
         .hero::after {
             content: "";
             position: absolute;
             inset: auto -10% -45% -10%;
             height: 140px;
-            background: rgba(255, 255, 255, 0.07);
+            background: rgba(245, 130, 32, 0.14);
             filter: blur(50px);
         }
+
         .hero h1 {
             position: relative;
             z-index: 2;
@@ -247,6 +294,7 @@
             flex-wrap: wrap;
             margin-top: 28px;
         }
+
         .type-btn {
             background: rgba(255,255,255,0.11);
             border: 1px solid rgba(255,255,255,0.22);
@@ -258,10 +306,12 @@
             font-weight: 800;
             transition: 0.3s;
         }
-        .type-btn:hover, .type-btn.active {
-            background: white;
-            border-color: white;
-            color: var(--primary);
+
+        .type-btn:hover,
+        .type-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
             transform: translateY(-2px);
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.16);
         }
@@ -274,6 +324,7 @@
             position: relative;
             z-index: 10;
         }
+
         .filter-card {
             background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(16px);
@@ -282,15 +333,18 @@
             box-shadow: var(--shadow);
             border: 1px solid rgba(226, 232, 240, 0.95);
         }
+
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
         }
+
         .filter-group {
             display: flex;
             flex-direction: column;
         }
+
         .filter-group label {
             font-size: 11px;
             font-weight: 900;
@@ -300,7 +354,8 @@
             letter-spacing: .05em;
         }
 
-        input, select {
+        input,
+        select {
             padding: 14px;
             border: 1px solid var(--border);
             border-radius: 14px;
@@ -311,10 +366,12 @@
             transition: .25s;
             color: var(--dark);
         }
-        input:focus, select:focus {
+
+        input:focus,
+        select:focus {
             border-color: var(--primary);
             background: white;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, .10);
+            box-shadow: 0 0 0 4px rgba(245, 130, 32, .10);
         }
 
         .search-actions {
@@ -323,9 +380,10 @@
             margin-top: 30px;
             gap: 15px;
         }
+
         .btn-results {
             flex: 2;
-            background: linear-gradient(135deg, var(--primary), #0ea5e9);
+            background: var(--primary);
             color: white;
             border: none;
             padding: 18px;
@@ -333,12 +391,14 @@
             font-weight: 900;
             font-size: 16px;
             cursor: pointer;
-            box-shadow: 0 14px 30px rgba(37, 99, 235, .22);
+            box-shadow: 0 14px 30px rgba(245, 130, 32, .22);
         }
+
         .btn-results:hover {
-            background: linear-gradient(135deg, var(--primary-hover), #0284c7);
+            background: var(--primary-hover);
             transform: translateY(-1px);
         }
+
         .btn-deep {
             flex: 1;
             background: #e2e8f0;
@@ -349,9 +409,17 @@
             font-weight: 900;
             cursor: pointer;
         }
-        .btn-deep:hover { background: #cbd5e1; transform: translateY(-1px); }
 
-        .container { flex: 1; padding: 0 6% 80px; }
+        .btn-deep:hover {
+            background: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .container {
+            flex: 1;
+            padding: 0 6% 80px;
+        }
+
         .section-title {
             font-size: 24px;
             font-weight: 900;
@@ -360,6 +428,7 @@
             padding-left: 15px;
             letter-spacing: -0.03em;
         }
+
         .cars-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -376,11 +445,13 @@
             transition: 0.25s;
             box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
         }
+
         .car-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow);
-            border-color: rgba(37, 99, 235, 0.20);
+            border-color: rgba(245, 130, 32, 0.22);
         }
+
         .car-card img {
             width: 100%;
             height: 190px;
@@ -388,15 +459,28 @@
             display: block;
             background: #e2e8f0;
         }
-        .car-content { padding: 20px; }
+
+        .car-content {
+            padding: 20px;
+        }
+
         .car-price {
             color: var(--primary);
             font-size: 22px;
             font-weight: 900;
             margin-bottom: 8px;
         }
-        .car-title { font-weight: 850; margin-bottom: 7px; }
-        .car-meta { color: var(--muted); font-size: 13px; font-weight: 650; }
+
+        .car-title {
+            font-weight: 850;
+            margin-bottom: 7px;
+        }
+
+        .car-meta {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 650;
+        }
 
         .favorite-btn {
             position: absolute;
@@ -418,9 +502,20 @@
             transition: 0.2s;
             touch-action: manipulation;
         }
-        .favorite-btn:hover { transform: scale(1.08); color: var(--primary); }
-        .favorite-btn.saved { color: #ef4444; }
-        .favorite-btn:disabled { opacity: 0.6; cursor: wait; }
+
+        .favorite-btn:hover {
+            transform: scale(1.08);
+            color: var(--primary);
+        }
+
+        .favorite-btn.saved {
+            color: #ef4444;
+        }
+
+        .favorite-btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
 
         .state-message {
             grid-column: 1/-1;
@@ -432,16 +527,20 @@
             border: 1px solid var(--border);
             border-radius: 18px;
         }
-        .state-message.error { color: var(--danger); }
+
+        .state-message.error {
+            color: var(--danger);
+        }
 
         footer {
             background:
-                radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 28%),
-                #020617;
+                radial-gradient(circle at top left, rgba(245, 130, 32, 0.16), transparent 28%),
+                #0f172a;
             color: #94a3b8;
             padding: 60px 6% 40px;
             border-top: 1px solid #1e293b;
         }
+
         .footer-content {
             max-width: 1100px;
             margin: 0 auto;
@@ -449,16 +548,35 @@
             grid-template-columns: 2fr 1fr 1fr;
             gap: 40px;
         }
-        .footer-section h4 { color: white; margin-bottom: 14px; font-size: 15px; }
-        .footer-section p { line-height: 1.7; font-size: 13px; }
-        .footer-links { list-style: none; display: grid; gap: 9px; }
+
+        .footer-section h4 {
+            color: white;
+            margin-bottom: 14px;
+            font-size: 15px;
+        }
+
+        .footer-section p {
+            line-height: 1.7;
+            font-size: 13px;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: grid;
+            gap: 9px;
+        }
+
         .footer-links a {
             color: #94a3b8;
             text-decoration: none;
             font-size: 13px;
             font-weight: 700;
         }
-        .footer-links a:hover { color: white; }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
         .legal-box {
             max-width: 1100px;
             margin: 50px auto 0;
@@ -470,22 +588,60 @@
         }
 
         @media (max-width: 900px) {
-            .filter-grid { grid-template-columns: repeat(2, 1fr); }
+            .filter-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
+
         @media (max-width: 768px) {
-            header { padding: 1rem 4%; align-items: flex-start; gap: 12px; }
-            .logo { font-size: 1.55rem; }
-            .nav-links { gap: 10px; }
-            .nav-links a, .nav-links button { font-size: 13px; }
-            .btn-sell { padding: 9px 16px; }
-            .filter-grid { grid-template-columns: 1fr; }
-            .search-actions { flex-direction: column; }
-            .footer-content { grid-template-columns: 1fr; }
+            header {
+                padding: 1rem 4%;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .logo {
+                font-size: 1.55rem;
+            }
+
+            .nav-links {
+                gap: 10px;
+            }
+
+            .nav-links a,
+            .nav-links button {
+                font-size: 13px;
+            }
+
+            .btn-sell {
+                padding: 9px 16px;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-actions {
+                flex-direction: column;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
         }
+
         @media (max-width: 480px) {
-            header { flex-direction: column; }
-            .nav-links { justify-content: flex-start; }
-            .filter-card { padding: 24px 18px; }
+            header {
+                flex-direction: column;
+            }
+
+            .nav-links {
+                justify-content: flex-start;
+            }
+
+            .filter-card {
+                padding: 24px 18px;
+            }
         }
     </style>
 </head>
@@ -513,10 +669,26 @@
 <div class="filter-wrapper">
     <div class="filter-card">
         <div class="filter-grid">
-            <div class="filter-group"><label for="brandSelect">Märke / Kategori</label><select id="brandSelect"><option value="">Alla</option></select></div>
-            <div class="filter-group"><label for="modelSelect">Modell / Typ</label><select id="modelSelect"><option value="">Välj kategori först</option></select></div>
-            <div class="filter-group"><label for="maxPrice">Högsta Pris</label><input type="number" id="maxPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 300000"></div>
-            <div class="filter-group"><label for="minPrice">Lägsta Pris</label><input type="number" id="minPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 50000"></div>
+            <div class="filter-group">
+                <label for="brandSelect">Märke / Kategori</label>
+                <select id="brandSelect">
+                    <option value="">Alla</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="modelSelect">Modell / Typ</label>
+                <select id="modelSelect">
+                    <option value="">Välj kategori först</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="maxPrice">Högsta Pris</label>
+                <input type="number" id="maxPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 300000">
+            </div>
+            <div class="filter-group">
+                <label for="minPrice">Lägsta Pris</label>
+                <input type="number" id="minPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 50000">
+            </div>
         </div>
         <div class="search-actions">
             <button type="button" class="btn-deep" id="deepSearchBtn">Avancerad Sökning</button>
@@ -630,6 +802,7 @@
 
     function attachEvents() {
         elements.searchBtn.addEventListener('click', fetchCars);
+
         elements.deepSearchBtn.addEventListener('click', () => {
             window.location.href = 'filter.html';
         });
@@ -708,6 +881,7 @@
         });
 
         notificationPanel.addEventListener('click', (event) => event.stopPropagation());
+
         notificationPanel.querySelector('#enableNotificationsBtn').addEventListener('click', async () => {
             await enableVORQNotifications(notificationPanel);
         });
@@ -1130,11 +1304,13 @@
     function updateNotificationPanel(panel) {
         const text = panel.querySelector('#notificationPanelText');
         const button = panel.querySelector('#enableNotificationsBtn');
+
         if (!('Notification' in window)) {
             text.textContent = 'Din webbläsare stöder inte aviseringar.';
             button.hidden = true;
             return;
         }
+
         if (Notification.permission === 'granted') {
             const count = Math.max(0, normalizeNumber(state.unreadChatCount, 0));
             text.textContent = count > 0
@@ -1155,8 +1331,10 @@
             updateNotificationPanel(panel);
             return;
         }
+
         const permission = await Notification.requestPermission();
         updateNotificationPanel(panel);
+
         if (permission === 'granted') {
             await showVORQNotification('Aviseringar är nu aktiverade.');
         }
@@ -1164,12 +1342,14 @@
 
     async function showVORQNotification(body, targetUrl = './messages.html') {
         if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
         const options = {
             body,
             tag: `vorq-fordon-meddelande-${Date.now()}`,
             renotify: false,
             data: { url: targetUrl }
         };
+
         try {
             if ('serviceWorker' in navigator) {
                 const registration = await navigator.serviceWorker.ready;
