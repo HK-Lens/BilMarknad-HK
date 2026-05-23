@@ -5,11 +5,13 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>Skapa konto | BILHK</title>
+    <title>Skapa konto | VORQ Fordon</title>
 
-    <meta name="description" content="Skapa ett privatkonto eller företagskonto på BILHK för att köpa, sälja och hantera bilannonser.">
+    <meta name="description" content="Skapa ett privatkonto eller företagskonto på VORQ Fordon för att köpa, sälja och hantera fordonsannonser. VORQ Fordon ägs och drivs av VORQ Group.">
 
     <meta name="robots" content="noindex, nofollow">
+
+    <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
@@ -150,6 +152,15 @@
             margin-bottom: 80px;
         }
 
+        .logo-image {
+            width: 320px;
+            max-width: 72vw;
+            max-height: 76px;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+
         .logo-mark {
             width: 48px;
             height: 48px;
@@ -224,6 +235,28 @@
         .security-item i {
             color: var(--primary);
             margin-top: 2px;
+        }
+
+        .brand-owner-note {
+            position: relative;
+            z-index: 2;
+            margin-top: 18px;
+            padding: 15px 16px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #cbd5e1;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.65;
+        }
+
+        .brand-owner-note strong {
+            display: block;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 900;
+            margin-bottom: 4px;
         }
 
         .auth-panel {
@@ -653,11 +686,8 @@
 <div class="page">
     <aside class="brand-panel">
         <div class="brand-content">
-            <a href="index.html" class="logo" aria-label="BILHK startsida">
-                <span class="logo-mark">
-                    <i class="fa-solid fa-car-side"></i>
-                </span>
-                BIL<span>HK</span>
+            <a href="index.html" class="logo" aria-label="VORQ Fordon startsida">
+                <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon - Ägs av VORQ Group" class="logo-image">
             </a>
 
             <div class="hero-badge">
@@ -665,11 +695,11 @@
                 Tryggare kontoregistrering
             </div>
 
-            <h1>Skapa konto och börja använda BILHK</h1>
+            <h1>Skapa konto och börja använda VORQ Fordon</h1>
 
             <p>
-                Registrera dig som privatperson eller företag för att publicera annonser, hantera dina bilar,
-                kontakta säljare och följa dina aktiviteter på plattformen.
+                Registrera dig som privatperson eller företag för att publicera annonser, hantera dina fordon,
+                kontakta säljare och följa dina aktiviteter på plattformen. VORQ Fordon ägs och drivs av VORQ Group.
             </p>
         </div>
 
@@ -681,13 +711,19 @@
 
             <div class="security-item">
                 <i class="fa-solid fa-scale-balanced"></i>
-                <span>All handel sker mellan köpare och säljare. BILHK fungerar som förmedlingsplattform.</span>
+                <span>All handel sker mellan köpare och säljare. VORQ Fordon fungerar som förmedlingsplattform och ägs av VORQ Group.</span>
             </div>
 
             <div class="security-item">
                 <i class="fa-solid fa-lock"></i>
                 <span>Undvik förskottsbetalningar och dela aldrig känslig information i onödan.</span>
             </div>
+        </div>
+
+        <div class="brand-owner-note">
+            <strong>Ägs och drivs av VORQ Group</strong>
+            info@vorq.group<br>
+            Vision • Operations • Reach • Quality
         </div>
     </aside>
 
@@ -721,7 +757,7 @@
                 <div class="notice-box">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <div>
-                        BILHK granskar inte varje fordon manuellt. Kontrollera alltid bilens historik, servicebok,
+                        VORQ Fordon granskar inte varje fordon manuellt. Kontrollera alltid bilens historik, servicebok,
                         ägare, mätarställning och betalningsupplägg innan köp.
                     </div>
                 </div>
@@ -861,7 +897,7 @@
                             <span>
                                 Jag accepterar
                                 <a href="terms.html" target="_blank" rel="noopener noreferrer">användarvillkoren</a>
-                                och förstår att BILHK endast är en förmedlingsplattform.
+                                och förstår att VORQ Fordon endast är en förmedlingsplattform som ägs och drivs av VORQ Group.
                             </span>
                         </label>
 
@@ -883,6 +919,8 @@
                 <div class="footer-links">
                     Har du redan ett konto?
                     <a href="login.html">Logga in här</a>
+                    <br><br>
+                    <small>VORQ Fordon ägs och drivs av VORQ Group · info@vorq.group · Vision • Operations • Reach • Quality</small>
                 </div>
             </div>
         </section>
@@ -1025,7 +1063,7 @@
 
         if (state.accountType === "business") {
             elements.nameLabel.innerHTML = 'Företagsnamn <span class="required">*</span>';
-            elements.fullName.placeholder = "Ex. BILHK Auto AB";
+            elements.fullName.placeholder = "Ex. Fordonsfirma AB";
             elements.nameHelp.textContent = "Ange företagets registrerade namn.";
         } else {
             elements.nameLabel.innerHTML = 'Fullständigt namn <span class="required">*</span>';
@@ -1110,7 +1148,7 @@
 
             window.location.href = SIGNUP_CONFIG.ROUTES.LOGIN;
         } catch (error) {
-            console.error("[BILHK] Signup failed:", error);
+            console.error("[VORQ Fordon] Signup failed:", error);
 
             await Swal.fire({
                 title: "Registreringen misslyckades",
@@ -1353,11 +1391,11 @@
 
     function attachGlobalErrorHandlers() {
         window.addEventListener("unhandledrejection", (event) => {
-            console.error("[BILHK] Unhandled promise rejection:", event.reason);
+            console.error("[VORQ Fordon] Unhandled promise rejection:", event.reason);
         });
 
         window.addEventListener("error", (event) => {
-            console.error("[BILHK] Page error:", event.error || event.message);
+            console.error("[VORQ Fordon] Page error:", event.error || event.message);
         });
     }
 </script>
