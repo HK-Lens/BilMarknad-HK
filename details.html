@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fordonsdetaljer | BILHK</title>
-    <meta name="description" content="Visa fordonsdetaljer, bilder, utrustning och kontaktmöjlighet för bilannons på BILHK.">
+    <title>Fordonsdetaljer | VORQ Fordon</title>
+    <meta name="description" content="Visa fordonsdetaljer, bilder, utrustning och kontaktmöjlighet för bilannons på VORQ Fordon. VORQ Fordon ägs och drivs av VORQ Group.">
     <meta name="robots" content="noindex, nofollow">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -13,7 +13,20 @@
         :root { --primary: #f58220; --dark: #0f172a; --bg: #f8fafc; --border: #e2e8f0; --reg-blue: #005599; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); line-height: 1.6; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        a { color: inherit; }
+        .site-header { position: sticky; top: 0; z-index: 60; width: 100%; background: rgba(255,255,255,.94); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+        .site-header-inner { max-width: 1200px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+        .brand-logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--dark); min-width: 0; }
+        .brand-logo-img { width: 150px; max-height: 46px; object-fit: contain; display: block; }
+        .logo-fallback { width: 44px; height: 44px; border-radius: 15px; display: grid; place-items: center; background: linear-gradient(135deg, var(--primary), #ffb15c); color: white; box-shadow: 0 10px 24px rgba(245,130,32,.28); }
+        .brand-text { display: flex; flex-direction: column; line-height: 1.1; min-width: 0; }
+        .brand-text strong { font-size: 18px; font-weight: 900; letter-spacing: -.04em; white-space: nowrap; }
+        .brand-text span { margin-top: 4px; font-size: 11px; color: #64748b; font-weight: 800; white-space: nowrap; }
+        .brand-nav { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+        .brand-link { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 13px; border-radius: 999px; text-decoration: none; color: var(--dark); font-size: 13px; font-weight: 850; transition: .22s ease; }
+        .brand-link:hover { background: rgba(245,130,32,.12); color: var(--primary); transform: translateY(-1px); }
+        .brand-link.primary { background: var(--primary); color: white; box-shadow: 0 12px 24px rgba(245,130,32,.22); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px 20px; }
         .gallery-container { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 30px; height: 500px; border-radius: 24px; overflow: hidden; cursor: pointer; }
         .main-stage { width: 100%; height: 100%; position: relative; background:#e2e8f0; }
         .main-stage img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; display:block; }
@@ -115,13 +128,56 @@
         @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes modalPopIn { from { opacity:0; transform: translateY(10px) scale(.96); } to { opacity:1; transform: translateY(0) scale(1); } }
 
-        @media (max-width: 900px) { .gallery-container { grid-template-columns: 1fr; height: 350px; } .side-stack { display: none; } .details-grid { grid-template-columns: 1fr; } .header-bar { flex-direction: column; gap: 20px; text-align: center; } .price-text { font-size: 35px; } .info-card { padding:25px; } }
+        .site-footer { margin-top: 36px; background: var(--dark); color: #94a3b8; border-top: 1px solid #1e293b; padding: 28px 20px; }
+        .site-footer-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+        .site-footer strong { display: block; color: #fff; font-size: 14px; font-weight: 900; margin-bottom: 4px; }
+        .site-footer span { font-size: 12px; font-weight: 650; }
+        .site-footer-links { display: flex; gap: 14px; flex-wrap: wrap; }
+        .site-footer-links a { color: #cbd5e1; text-decoration: none; font-size: 12px; font-weight: 850; }
+        .site-footer-links a:hover { color: var(--primary); }
+
+        @media (max-width: 900px) { .site-header-inner { flex-direction: column; align-items: flex-start; } .brand-nav { width: 100%; overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; padding-bottom: 2px; } .brand-link { white-space: nowrap; } .brand-logo-img { width: 132px; } .gallery-container { grid-template-columns: 1fr; height: 350px; } .side-stack { display: none; } .details-grid { grid-template-columns: 1fr; } .header-bar { flex-direction: column; gap: 20px; text-align: center; } .price-text { font-size: 35px; } .info-card { padding:25px; } }
+        @media (max-width: 520px) { .brand-text strong { font-size: 16px; } .brand-text span { font-size: 10px; } .brand-logo-img { width: 118px; } .container { padding-inline: 14px; } .reg-plate { font-size: 20px; } .actions-row { width: 100%; } .btn-contact, .btn-favorite-detail { width: 100%; justify-content: center; } .state-card { padding: 48px 20px; } }
     </style>
 </head>
-<body data-build="details-favorites-modal-v3">
+<body data-build="details-vorq-fordon-v1">
+<header class="site-header" aria-label="VORQ Fordon huvudmeny">
+    <div class="site-header-inner">
+        <a href="index.html" class="brand-logo" aria-label="Gå till VORQ Fordon startsidan">
+            <img class="brand-logo-img" src="vorq-fordon-logo-header.png" alt="VORQ Fordon logotyp" onerror="this.hidden=true; this.parentElement.querySelector('.logo-fallback').hidden=false;">
+            <span class="logo-fallback" hidden><i class="fa-solid fa-car-side"></i></span>
+            <span class="brand-text">
+                <strong>VORQ Fordon</strong>
+                <span>Ägs av VORQ Group</span>
+            </span>
+        </a>
+        <nav class="brand-nav" aria-label="Huvudmeny">
+            <a href="index.html" class="brand-link"><i class="fa-solid fa-house"></i> Hem</a>
+            <a href="results.html" class="brand-link"><i class="fa-solid fa-car-side"></i> Annonser</a>
+            <a href="sell.html" class="brand-link primary"><i class="fa-solid fa-plus"></i> Sälj bil</a>
+            <a href="my-account.html" class="brand-link"><i class="fa-solid fa-user"></i> Mitt konto</a>
+        </nav>
+    </div>
+</header>
 <div class="container" id="app">
     <div style="text-align:center; padding:100px;">Laddar fordonsdata...</div>
 </div>
+
+<footer class="site-footer">
+    <div class="site-footer-inner">
+        <div>
+            <strong>VORQ Fordon</strong>
+            <span>&copy; 2026 VORQ Fordon. Ägs och drivs av VORQ Group.</span>
+        </div>
+        <div class="site-footer-links">
+            <a href="index.html">Hem</a>
+            <a href="results.html">Annonser</a>
+            <a href="sell.html">Sälj bil</a>
+            <a href="terms.html">Villkor</a>
+            <a href="my-account.html">Mitt konto</a>
+        </div>
+    </div>
+</footer>
 
 <script>
     (function () {
@@ -414,7 +470,7 @@
                     <h4><i class="fa-solid fa-circle-exclamation"></i> Säker affär</h4>
                     <p style="font-size:14px; margin-top:10px;">Kontrollera alltid fordonets historik, servicebok och mätarställning innan köp.</p>
                 </div>
-                <p class="disclaimer"><strong>Ansvarsfriskrivning:</strong> BILHK är en öppen plattform. Vi granskar inte fordonens faktiska skick. All handel sker på användarens eget ansvar.</p>
+                <p class="disclaimer"><strong>Ansvarsfriskrivning:</strong> VORQ Fordon är en öppen plattform som ägs och drivs av VORQ Group. Vi granskar inte fordonens faktiska skick. All handel sker på användarens eget ansvar.</p>
             </div>
         `;
 
