@@ -5,9 +5,9 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Hantera annonser | BILHK</title>
+    <title>Hantera annonser | VORQ Fordon</title>
 
-    <meta name="description" content="Hantera dina bilannonser på BILHK. Redigera pris, öppna annons, pausa eller radera dina egna annonser.">
+    <meta name="description" content="Hantera dina fordonsannonser på VORQ Fordon. Redigera pris, öppna annons, pausa eller radera dina egna annonser. VORQ Fordon ägs och drivs av VORQ Group.">
 
     <meta name="robots" content="noindex, nofollow">
 
@@ -123,12 +123,15 @@
         .logo {
             display: inline-flex;
             align-items: center;
-            gap: 11px;
             color: var(--dark);
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: -0.06em;
             white-space: nowrap;
+        }
+
+        .logo-image {
+            width: auto;
+            height: 46px;
+            max-width: 220px;
+            object-fit: contain;
         }
 
         .logo-icon {
@@ -273,6 +276,25 @@
             font-size: 15px;
             line-height: 1.75;
             font-weight: 600;
+        }
+
+        .owner-note {
+            width: fit-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            padding: 8px 12px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.10);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            font-size: 12px;
+            font-weight: 850;
+        }
+
+        .owner-note i {
+            color: var(--primary);
         }
 
         .stats-grid {
@@ -687,6 +709,11 @@
         }
 
         @media (max-width: 430px) {
+            .logo-image {
+                height: 40px;
+                max-width: 190px;
+            }
+
             .logo {
                 font-size: 1.55rem;
             }
@@ -708,10 +735,7 @@
     <header class="site-header">
         <div class="header-inner">
             <a href="index.html" class="logo" aria-label="Gå till startsidan">
-                <span class="logo-icon">
-                    <i class="fa-solid fa-car-side"></i>
-                </span>
-                BIL<span>HK</span>
+                <img src="vorq-fordon-logo-header.png" alt="VORQ Fordon" class="logo-image">
             </a>
 
             <nav class="header-actions" aria-label="Sidmeny">
@@ -725,7 +749,7 @@
                     Startsida
                 </a>
 
-                <a href="add-car.html" class="nav-btn primary">
+                <a href="sell.html" class="nav-btn primary">
                     <i class="fa-solid fa-plus"></i>
                     Ny annons
                 </a>
@@ -743,15 +767,20 @@
                         Mina annonser
                     </div>
 
-                    <h1>Hantera dina bilannonser</h1>
+                    <h1>Hantera dina fordonsannonser</h1>
 
                     <p>
                         Här kan du se, öppna, redigera, pausa och radera dina egna annonser.
                         Endast annonser som tillhör ditt inloggade konto visas på denna sida.
                     </p>
+
+                    <div class="owner-note">
+                        <i class="fa-solid fa-building-shield"></i>
+                        Ägs och drivs av VORQ Group • Vision • Operations • Reach • Quality
+                    </div>
                 </div>
 
-                <a href="add-car.html" class="nav-btn primary">
+                <a href="sell.html" class="nav-btn primary">
                     <i class="fa-solid fa-plus"></i>
                     Publicera ny annons
                 </a>
@@ -842,9 +871,9 @@
 
         /**
          * ============================================================
-         * BILHK - manage.html
+         * VORQ Fordon - manage.html
          * ------------------------------------------------------------
-         * Secure management page for user's own car advertisements.
+         * Secure management page for the user's own vehicle advertisements.
          *
          * Security decisions:
          * 1. Requires authenticated user.
@@ -863,7 +892,7 @@
             ROUTES: {
                 LOGIN: "login.html",
                 ACCOUNT: "my-account.html",
-                ADD_CAR: "add-car.html",
+                ADD_CAR: "sell.html",
                 EDIT_CAR: "edit-car.html",
                 DETAILS: "details.html",
                 HOME: "index.html"
@@ -1002,7 +1031,7 @@
 
                 applyLocalFiltersAndRender();
             } catch (error) {
-                console.error("[BILHK] Could not load user ads:", error);
+                console.error("[VORQ Fordon] Could not load user ads:", error);
                 showErrorState(MANAGE_CONFIG.MESSAGES.LOAD_ERROR);
             } finally {
                 state.isLoading = false;
@@ -1249,7 +1278,7 @@
 
                 await loadUserAds();
             } catch (error) {
-                console.error("[BILHK] Could not update ad:", error);
+                console.error("[VORQ Fordon] Could not update ad:", error);
 
                 Swal.fire({
                     icon: "error",
@@ -1295,7 +1324,7 @@
 
                 await loadUserAds();
             } catch (error) {
-                console.error("[BILHK] Could not delete ad:", error);
+                console.error("[VORQ Fordon] Could not delete ad:", error);
 
                 Swal.fire({
                     icon: "error",
@@ -1332,7 +1361,7 @@
                     data
                 };
             } catch (error) {
-                console.error("[BILHK] Ownership verification failed:", error);
+                console.error("[VORQ Fordon] Ownership verification failed:", error);
 
                 return {
                     allowed: false,
@@ -1560,11 +1589,11 @@
 
         function attachGlobalErrorHandlers() {
             window.addEventListener("unhandledrejection", (event) => {
-                console.error("[BILHK] Unhandled promise rejection:", event.reason);
+                console.error("[VORQ Fordon] Unhandled promise rejection:", event.reason);
             });
 
             window.addEventListener("error", (event) => {
-                console.error("[BILHK] Global manage page error:", event.error || event.message);
+                console.error("[VORQ Fordon] Global manage page error:", event.error || event.message);
             });
         }
     </script>
