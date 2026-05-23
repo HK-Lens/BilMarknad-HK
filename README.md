@@ -1,57 +1,103 @@
-# BilMarknad-HK 🚗
-**An open and free platform for buying and selling cars in Sweden.**
+# VORQ Fordon 🚗
+
+**VORQ Fordon** är en modern fordonsplattform för annonser i Sverige. Webbplatsen ägs och drivs av **VORQ Group**.
+
+**VORQ Group**  
+Vision • Operations • Reach • Quality  
+Kontakt: **info@vorq.group**
 
 ---
 
 ## 🌍 Languages / اللغات
-- [English](#about-the-project)
-- [العربية](#عن-المشروع)
-- [Svenska](#om-projektet)
+- [Svenska](#om-projektet-svenska)
+- [English](#about-the-project-english)
+- [العربية](#عن-المشروع-arabic)
 
 ---
 
-## About the Project
-**BilMarknad-HK** is a modern web application inspired by "Bytbil", designed to provide a seamless and free experience for car enthusiasts in Sweden. The platform allows users to:
-- **Register & Log in:** Securely manage their listings.
-- **List Cars:** Add details such as brand, model, mileage, and price.
-- **Image Upload:** Direct photo uploads to showcase vehicles.
-- **Direct Connection:** Connect buyers and sellers through integrated contact methods.
+## Om projektet (Svenska)
 
-### 🛠 Tech Stack
-- **Frontend:** HTML5, CSS3 (Responsive Design), JavaScript.
-- **Backend/Database:** Firebase Realtime Database.
-- **Storage:** Firebase Storage (for car images).
-- **Hosting:** GitHub Pages.
+**VORQ Fordon** är en webbplats där användare kan publicera, söka och hantera fordonsannonser.
+
+Plattformen innehåller bland annat:
+
+- **Användarkonto:** registrering, inloggning och kontohantering.
+- **Publicera annons:** säljare kan lägga till fordon med bilder, pris, miltal, plats och tekniska detaljer.
+- **Avancerad sökning:** filtrering efter märke, modell, län, pris, miltal, bränsle, växellåda, karosstyp och utrustning.
+- **Favoriter:** inloggade användare kan spara intressanta annonser.
+- **Meddelanden:** köpare och säljare kan kontakta varandra via webbplatsens meddelandefunktion.
+
+---
+
+## About the project (English)
+
+**VORQ Fordon** is a vehicle marketplace website for Sweden, owned and operated by **VORQ Group**.
+
+The platform allows users to:
+
+- **Register and log in** to manage their account.
+- **Publish vehicle listings** with images, price, mileage, location and technical details.
+- **Search and filter listings** by brand, model, county, price, mileage, fuel type, gearbox, body type and equipment.
+- **Save favorite vehicles** when logged in.
+- **Contact sellers** through the built-in messaging system.
 
 ---
 
 ## عن المشروع (Arabic)
-**سوق السيارات HK** هو منصة مفتوحة ومجانية لبيع وشراء السيارات في السويد. يهدف المشروع إلى تسهيل عملية التواصل بين البائع والمشتري بدون عمولات.
-- **حسابات المستخدمين:** إمكانية إنشاء حساب خاص لكل بائع.
-- **إضافة الإعلانات:** رفع مواصفات وصور السيارة بسهولة.
-- **تواصل مباشر:** ربط المشتري بصاحب السيارة مباشرة.
+
+**VORQ Fordon** هو موقع لإعلانات المركبات في السويد، مملوك ومُدار من قبل **VORQ Group**.
+
+يوفر الموقع للمستخدمين:
+
+- **إنشاء حساب وتسجيل الدخول** لإدارة الحساب والإعلانات.
+- **نشر إعلان مركبة** مع الصور والسعر والمسافة والموقع والمواصفات.
+- **البحث المتقدم** حسب الماركة والموديل والمنطقة والسعر والمسافة ونوع الوقود وناقل الحركة والتجهيزات.
+- **حفظ الإعلانات المفضلة** للمستخدمين المسجلين.
+- **التواصل بين المشتري والبائع** عبر نظام الرسائل داخل الموقع.
 
 ---
 
-## Om Projektet (Svenska)
-**BilMarknad-HK** är en öppen och gratis plattform för att köpa och sälja bilar i Sverige. Inspirerad av de största marknadsplatserna men helt kostnadsfri för användarna.
-- **Användarkonto:** Skapa och hantera dina egna annonser.
-- **Sälj din bil:** Lägg till märke, modell, pris och bilder.
-- **Enkel kommunikation:** Koppla ihop köpare och säljare direkt.
+## 🛠 Tech Stack
+
+- **Frontend:** HTML5, CSS3, JavaScript
+- **Authentication:** Firebase Auth
+- **Database:** Cloud Firestore
+- **Storage:** Firebase Storage
+- **Hosting:** Firebase Hosting / static hosting
+- **PWA files:** manifest, service worker and offline page when enabled
 
 ---
 
-## 🚀 How to use
-1. Visit the live site (Link will be added soon).
-2. Create an account to start listing your car.
-3. Browse available cars using the search filters.
+## 📁 Main files
+
+- `index.html` — startsida
+- `results.html` — annonsresultat
+- `details.html` — fordonsdetaljer
+- `sell.html` / `add-car.html` — publicera annons
+- `edit-car.html` — redigera annons
+- `my-account.html` — användarkonto
+- `messages.html` — meddelanden, om filen finns i projektet
+- `firebase-config.js` — Firebase client configuration
+- `firestore.rules` — Firestore security rules, ska inte laddas upp som publik hosting-fil
+- `firebase.json` — Firebase Hosting configuration, används vid deploy och ska inte visas publikt
 
 ---
 
-## 📬 Contact & Support
-For inquiries or feedback, feel free to reach out:
-- **Email:** [hk.global.blog@gmail.com]
-- **Developer:** Haitham Kojar
+## 🚀 Deployment notes
+
+Vid Firebase Hosting ska publika webbplatsfiler ligga i hosting-mappen. Konfigurationsfiler som `firebase.json`, `.firebaserc`, `firestore.rules`, `storage.rules`, `.env` och privata nycklar ska inte visas som publika webbsidor.
+
+Firebase Web Config i `firebase-config.js` är publik klientkonfiguration och är inte samma sak som Admin SDK-nycklar eller service-account-filer. Säkerheten ska styras med Firebase Auth, Firestore Rules, Storage Rules, App Check och domän-/API-begränsningar.
 
 ---
-*Created with ❤️ by HK Lens Team.*
+
+## 📬 Contact
+
+For inquiries or feedback:
+
+**VORQ Group**  
+Email: **info@vorq.group**
+
+---
+
+© 2026 VORQ Group. All rights reserved.
