@@ -1,7 +1,11 @@
 /**
  * cars-data.js
  * ============================================================
- * BILHK - Central Car Data Module
+ * VORQ Fordon - Central Car Data Module
+ * ------------------------------------------------------------
+ * Owned and operated by VORQ Group
+ * Contact: info@vorq.group
+ * Vision • Operations • Reach • Quality
  * ------------------------------------------------------------
  * Central source for car brands and models used by:
  * add-car.html, sell.html, edit-car.html, filter.html, results.html,
