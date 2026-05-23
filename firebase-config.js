@@ -1,8 +1,13 @@
 /**
  * ============================================================
- * BILHK - firebase-config.js
+ * VORQ Fordon - firebase-config.js
  * ------------------------------------------------------------
- * Central Firebase client configuration for the BILHK web app.
+ * Central Firebase client configuration for the VORQ Fordon web app.
+ *
+ * Owner:
+ * VORQ Group
+ * Email: info@vorq.group
+ * Slogan: Vision • Operations • Reach • Quality
  *
  * Security notes:
  * 1. Firebase Web Config is public by design. It is NOT an Admin secret.
@@ -89,6 +94,10 @@ const ALLOWED_FRONTEND_HOSTS = Object.freeze([
  * ============================================================
  * 2. Firebase web config
  * ============================================================
+ *
+ * Important:
+ * Do not change these Firebase values unless you create a new Firebase project.
+ * These values are connected to the existing Firebase project.
  */
 
 const firebaseConfig = Object.freeze({
@@ -107,8 +116,11 @@ const firebaseConfig = Object.freeze({
  */
 
 export const APP_META = Object.freeze({
-    NAME: "BILHK",
-    LONG_NAME: "BILHK Bilmarknad",
+    NAME: "VORQ Fordon",
+    LONG_NAME: "VORQ Fordon",
+    OWNER_NAME: "VORQ Group",
+    OWNER_EMAIL: "info@vorq.group",
+    OWNER_SLOGAN: "Vision • Operations • Reach • Quality",
     DEFAULT_LANGUAGE: "sv",
     DEFAULT_COUNTRY: "SE",
     HOSTNAME,
@@ -194,14 +206,14 @@ const firebaseStorage = getStorage(firebaseApp);
 firebaseAuth.languageCode = APP_META.DEFAULT_LANGUAGE;
 
 setPersistence(firebaseAuth, browserLocalPersistence).catch((error) => {
-    safeConsole("warn", "[BILHK Firebase] Could not set auth persistence", error);
+    safeConsole("warn", "[VORQ Fordon Firebase] Could not set auth persistence", error);
 });
 
 if (IS_SECURE_CONTEXT) {
     enableIndexedDbPersistence(firebaseDb).catch((error) => {
         const code = error?.code || "";
         if (code !== "failed-precondition" && code !== "unimplemented") {
-            safeConsole("warn", "[BILHK Firebase] Offline persistence warning", error);
+            safeConsole("warn", "[VORQ Fordon Firebase] Offline persistence warning", error);
         }
     });
 }
@@ -232,7 +244,7 @@ if (IS_PRODUCTION && APP_CHECK_RECAPTCHA_ENTERPRISE_SITE_KEY && IS_SECURE_CONTEX
             isTokenAutoRefreshEnabled: true
         });
     } catch (error) {
-        safeConsole("error", "[BILHK Firebase] App Check initialization failed", error);
+        safeConsole("error", "[VORQ Fordon Firebase] App Check initialization failed", error);
     }
 }
 
@@ -248,7 +260,7 @@ if (IS_LOCALHOST && USE_FIREBASE_EMULATORS) {
         connectAuthEmulator(firebaseAuth, "http://127.0.0.1:9099", { disableWarnings: true });
         connectStorageEmulator(firebaseStorage, "127.0.0.1", 9199);
     } catch (error) {
-        safeConsole("warn", "[BILHK Firebase] Emulator connection warning", error);
+        safeConsole("warn", "[VORQ Fordon Firebase] Emulator connection warning", error);
     }
 }
 
@@ -376,22 +388,27 @@ export function normalizeBoolean(value, fallback = false) {
     if (typeof value === "boolean") {
         return value;
     }
+
     if (value === "true") {
         return true;
     }
+
     if (value === "false") {
         return false;
     }
+
     return fallback;
 }
 
 export function removeUndefinedFields(object) {
     const clean = {};
+
     Object.entries(object || {}).forEach(([key, value]) => {
         if (value !== undefined) {
             clean[key] = value;
         }
     });
+
     return clean;
 }
 
@@ -407,7 +424,7 @@ export function escapeHTML(value) {
 export function createPublicUserPayload(user, extra = {}) {
     return removeUndefinedFields({
         uid: user?.uid || null,
-        name: normalizeText(extra.name || user?.displayName || "BILHK-användare", APP_LIMITS.MAX_PROFILE_NAME_LENGTH),
+        name: normalizeText(extra.name || user?.displayName || "VORQ Fordon-användare", APP_LIMITS.MAX_PROFILE_NAME_LENGTH),
         email: normalizeEmail(extra.email || user?.email || ""),
         role: "user",
         active: true,
@@ -424,7 +441,7 @@ export function createPublicUserPayload(user, extra = {}) {
 
 function validateBrowserContext() {
     if (!IS_SECURE_CONTEXT) {
-        console.warn("[BILHK Firebase] The app should run over HTTPS in production.");
+        console.warn("[VORQ Fordon Firebase] The app should run over HTTPS in production.");
     }
 
     if (
@@ -433,7 +450,7 @@ function validateBrowserContext() {
         !ALLOWED_FRONTEND_HOSTS.includes(HOSTNAME) &&
         !IS_GITHUB_PAGES
     ) {
-        console.warn("[BILHK Firebase] Current hostname is not listed in ALLOWED_FRONTEND_HOSTS:", HOSTNAME);
+        console.warn("[VORQ Fordon Firebase] Current hostname is not listed in ALLOWED_FRONTEND_HOSTS:", HOSTNAME);
     }
 }
 
@@ -442,19 +459,19 @@ function validateFirebaseConfig(config) {
     const missingFields = requiredFields.filter((field) => !config[field] || String(config[field]).includes("PUT_YOUR"));
 
     if (missingFields.length > 0) {
-        console.warn(`[BILHK Firebase] Missing or placeholder Firebase config fields: ${missingFields.join(", ")}`);
+        console.warn(`[VORQ Fordon Firebase] Missing or placeholder Firebase config fields: ${missingFields.join(", ")}`);
     }
 
     if (config.apiKey && !String(config.apiKey).startsWith("AIza") && !String(config.apiKey).includes("PUT_YOUR")) {
-        console.warn("[BILHK Firebase] apiKey format looks unusual. Please verify it from Firebase Console.");
+        console.warn("[VORQ Fordon Firebase] apiKey format looks unusual. Please verify it from Firebase Console.");
     }
 
     if (!String(config.authDomain || "").endsWith(".firebaseapp.com")) {
-        console.warn("[BILHK Firebase] authDomain looks unusual. Please verify it from Firebase Console.");
+        console.warn("[VORQ Fordon Firebase] authDomain looks unusual. Please verify it from Firebase Console.");
     }
 
     if (config.projectId !== "bilmarknad-hk") {
-        console.warn("[BILHK Firebase] projectId does not match the expected BILHK project.");
+        console.warn("[VORQ Fordon Firebase] projectId does not match the expected Firebase project.");
     }
 }
 
@@ -497,6 +514,7 @@ function cryptoRandomId() {
         window.crypto.getRandomValues(array);
         return Array.from(array).map((value) => value.toString(36)).join("");
     }
+
     return Math.random().toString(36).slice(2, 14);
 }
 
