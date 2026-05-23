@@ -15,7 +15,7 @@ import {
 
 /**
  * ============================================================
- * BILHK - app.js
+ * VORQ Fordon - app.js
  * ------------------------------------------------------------
  * Central file for car listing display, filtering, search,
  * safe navigation, and header state.
@@ -1150,7 +1150,7 @@ function attachGlobalErrorProtection() {
     });
 }
 
-window.BILHK_APP = Object.freeze({
+const VORQ_FORDON_APP_API = Object.freeze({
     getAllCars: () => [...appState.allCars],
     getFilteredCars: () => [...appState.filteredCars],
     getLastFilters: () => ({ ...(appState.lastFilters || {}) }),
@@ -1158,3 +1158,8 @@ window.BILHK_APP = Object.freeze({
     applyCurrentUrlSearch: () => applyDeepSearch(new URLSearchParams(window.location.search)),
     normalizeCarDocument: (id, data) => normalizeCarDocument(id, data)
 });
+
+window.VORQ_FORDON_APP = VORQ_FORDON_APP_API;
+
+/* Compatibility alias for older pages that may still read window.BILHK_APP. */
+window.BILHK_APP = VORQ_FORDON_APP_API;
