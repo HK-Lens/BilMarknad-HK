@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fordonsdetaljer | BILHK</title>
-    <meta name="description" content="Visa fordonsdetaljer, bilder, utrustning och kontaktmöjlighet för bilannons på BILHK.">
+    <title>Fordonsdetaljer | VORQ FORDON</title>
+    <meta name="description" content="Visa fordonsdetaljer, bilder, utrustning och kontaktmöjlighet för bilannons på VORQ FORDON.">
     <meta name="robots" content="noindex, nofollow">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -25,8 +25,6 @@
         .reg-plate { display: inline-flex; align-items: center; border: 2px solid #222; border-radius: 6px; padding: 2px 12px; font-weight: 800; font-size: 24px; letter-spacing: 2px; background: #fff; }
         .reg-plate i { background: var(--reg-blue); color: white; font-style: normal; font-size: 11px; padding: 6px 4px; margin-right: 10px; border-radius: 2px; display: flex; flex-direction: column; line-height: 1; }
         .btn-contact { background: var(--dark); color: white; text-decoration: none; padding: 12px 25px; border-radius: 50px; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
-        .btn-report-detail { background: #fff1f2; color: #b91c1c; text-decoration: none; padding: 12px 20px; border: 1px solid #fecdd3; border-radius: 50px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 10px; transition: .3s; }
-        .btn-report-detail:hover { background: #ffe4e6; border-color: #fda4af; transform: translateY(-2px); }
         .btn-contact:hover { background: var(--primary); transform: translateY(-2px); }
         .actions-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; }
         .btn-favorite-detail { background: white; color: var(--dark); border: 1px solid var(--border); padding: 12px 20px; border-radius: 50px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: .3s; }
@@ -48,7 +46,7 @@
         .state-card { text-align:center; padding:80px; background:white; border-radius:24px; border:1px solid var(--border); }
         .state-card a { color:var(--primary); font-weight:800; text-decoration:none; }
 
-        .bilhk-modal-overlay {
+        .vorq-fordon-modal-overlay {
             position: fixed;
             inset: 0;
             z-index: 9999;
@@ -59,7 +57,7 @@
             backdrop-filter: blur(10px);
             animation: modalFadeIn .18s ease-out;
         }
-        .bilhk-modal-card {
+        .vorq-fordon-modal-card {
             width: min(92vw, 430px);
             background: rgba(255, 255, 255, .98);
             border: 1px solid rgba(226, 232, 240, .95);
@@ -69,7 +67,7 @@
             box-shadow: 0 30px 90px rgba(15, 23, 42, .28);
             animation: modalPopIn .2s ease-out;
         }
-        .bilhk-modal-icon {
+        .vorq-fordon-modal-icon {
             width: 84px;
             height: 84px;
             border-radius: 28px;
@@ -81,9 +79,9 @@
             background: linear-gradient(135deg, rgba(245,130,32,.15), rgba(245,130,32,.06));
             box-shadow: inset 0 0 0 1px rgba(245,130,32,.18);
         }
-        .bilhk-modal-icon.error { color:#ef4444; background:linear-gradient(135deg, rgba(239,68,68,.13), rgba(239,68,68,.05)); box-shadow:inset 0 0 0 1px rgba(239,68,68,.18); }
-        .bilhk-modal-icon.warning { color:#f58220; background:linear-gradient(135deg, rgba(245,130,32,.16), rgba(245,130,32,.06)); }
-        .bilhk-modal-card h3 {
+        .vorq-fordon-modal-icon.error { color:#ef4444; background:linear-gradient(135deg, rgba(239,68,68,.13), rgba(239,68,68,.05)); box-shadow:inset 0 0 0 1px rgba(239,68,68,.18); }
+        .vorq-fordon-modal-icon.warning { color:#f58220; background:linear-gradient(135deg, rgba(245,130,32,.16), rgba(245,130,32,.06)); }
+        .vorq-fordon-modal-card h3 {
             font-size: 25px;
             line-height: 1.2;
             letter-spacing: -.04em;
@@ -91,15 +89,15 @@
             color: var(--dark);
             margin-bottom: 10px;
         }
-        .bilhk-modal-card p {
+        .vorq-fordon-modal-card p {
             color: #64748b;
             font-size: 15px;
             line-height: 1.75;
             font-weight: 700;
             margin-bottom: 24px;
         }
-        .bilhk-modal-actions { display:flex; justify-content:center; gap:10px; }
-        .bilhk-modal-ok {
+        .vorq-fordon-modal-actions { display:flex; justify-content:center; gap:10px; }
+        .vorq-fordon-modal-ok {
             border: none;
             min-width: 130px;
             min-height: 48px;
@@ -113,7 +111,7 @@
             box-shadow: 0 16px 32px rgba(245, 130, 32, .26);
             transition: .22s ease;
         }
-        .bilhk-modal-ok:hover { transform: translateY(-1px); box-shadow: 0 20px 38px rgba(245,130,32,.32); }
+        .vorq-fordon-modal-ok:hover { transform: translateY(-1px); box-shadow: 0 20px 38px rgba(245,130,32,.32); }
         @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes modalPopIn { from { opacity:0; transform: translateY(10px) scale(.96); } to { opacity:1; transform: translateY(0) scale(1); } }
 
@@ -136,24 +134,24 @@
                 .replaceAll("'", '&#039;');
         }
 
-        window.showBILHKElegantModal = function ({ type = 'warning', title = 'Meddelande', message = '', confirmText = 'OK' } = {}) {
+        window.showVORQFordonElegantModal = function ({ type = 'warning', title = 'Meddelande', message = '', confirmText = 'OK' } = {}) {
             return new Promise((resolve) => {
-                const existing = document.querySelector('.bilhk-modal-overlay');
+                const existing = document.querySelector('.vorq-fordon-modal-overlay');
                 if (existing) existing.remove();
 
                 const overlay = document.createElement('div');
-                overlay.className = 'bilhk-modal-overlay';
+                overlay.className = 'vorq-fordon-modal-overlay';
                 overlay.setAttribute('role', 'dialog');
                 overlay.setAttribute('aria-modal', 'true');
 
                 const iconClass = type === 'error' ? 'fa-circle-xmark' : type === 'warning' ? 'fa-triangle-exclamation' : type === 'success' ? 'fa-circle-check' : 'fa-circle-info';
                 overlay.innerHTML = `
-                    <div class="bilhk-modal-card">
-                        <div class="bilhk-modal-icon ${escapeHTML(type)}"><i class="fa-solid ${iconClass}"></i></div>
+                    <div class="vorq-fordon-modal-card">
+                        <div class="vorq-fordon-modal-icon ${escapeHTML(type)}"><i class="fa-solid ${iconClass}"></i></div>
                         <h3>${escapeHTML(title)}</h3>
                         <p>${escapeHTML(message)}</p>
-                        <div class="bilhk-modal-actions">
-                            <button type="button" class="bilhk-modal-ok">${escapeHTML(confirmText)}</button>
+                        <div class="vorq-fordon-modal-actions">
+                            <button type="button" class="vorq-fordon-modal-ok">${escapeHTML(confirmText)}</button>
                         </div>
                     </div>
                 `;
@@ -168,7 +166,7 @@
                 };
 
                 document.body.appendChild(overlay);
-                const okButton = overlay.querySelector('.bilhk-modal-ok');
+                const okButton = overlay.querySelector('.vorq-fordon-modal-ok');
                 okButton.addEventListener('click', close, { once: true });
                 overlay.addEventListener('click', (event) => { if (event.target === overlay) close(); });
                 document.addEventListener('keydown', onKeyDown);
@@ -177,7 +175,7 @@
         };
 
         window.alert = function (message) {
-            window.showBILHKElegantModal({
+            window.showVORQFordonElegantModal({
                 type: 'warning',
                 title: 'Meddelande',
                 message: String(message || ''),
@@ -336,23 +334,10 @@
         return Array.from(new Set(merged.map(safeString).filter(Boolean))).slice(0, 80);
     }
 
-    function buildReportUrl(car, title) {
-        const params = new URLSearchParams({
-            type: 'listing',
-            listingId: carId || '',
-            project: 'VORQ Fordon',
-            title: title || 'Fordonsannons',
-            source: 'details'
-        });
-        if (car?.sellerId) params.set('sellerId', safeString(car.sellerId));
-        return `notice-action.html?${params.toString()}`;
-    }
-
     function renderCarDetails(car) {
         const images = car.images;
         const title = `${car.brand} ${car.model}`.trim() || 'Fordonsdetaljer';
         const messagesUrl = buildMessagesUrl(car, title);
-        const reportUrl = buildReportUrl(car, title);
         const priceText = `${formatNumber(car.price)} kr`;
         const mileageText = `${formatNumber(car.mileage)} km`;
         const featureHTML = car.features.length
@@ -373,7 +358,6 @@
                 <div class="actions-row">
                     <button id="favoriteDetailBtn" class="btn-favorite-detail" type="button"><i class="fa-regular fa-heart"></i> Spara bilen</button>
                     <a href="${escapeHTML(messagesUrl)}" class="btn-contact" id="contactSellerBtn"><i class="fa-solid fa-comments"></i> Kontakta säljaren</a>
-                    <a href="${escapeHTML(reportUrl)}" class="btn-report-detail" id="reportListingBtn"><i class="fa-solid fa-flag"></i> Rapportera annons</a>
                 </div>
             </div>
 
@@ -430,7 +414,7 @@
                     <h4><i class="fa-solid fa-circle-exclamation"></i> Säker affär</h4>
                     <p style="font-size:14px; margin-top:10px;">Kontrollera alltid fordonets historik, servicebok och mätarställning innan köp.</p>
                 </div>
-                <p class="disclaimer"><strong>Ansvarsfriskrivning:</strong> VORQ Fordon är en öppen annonsplattform. Vi granskar inte fordonens faktiska skick i förväg. All handel sker mellan användare på eget ansvar.</p>
+                <p class="disclaimer"><strong>Ansvarsfriskrivning:</strong> VORQ FORDON är en öppen plattform. Vi granskar inte fordonens faktiska skick. All handel sker på användarens eget ansvar.</p>
             </div>
         `;
 
@@ -483,8 +467,8 @@
 
 
     function showElegantAlert({ type = "info", title = "Meddelande", message = "", confirmText = "OK" } = {}) {
-        if (typeof window.showBILHKElegantModal === 'function') {
-            return window.showBILHKElegantModal({ type, title, message, confirmText });
+        if (typeof window.showVORQFordonElegantModal === 'function') {
+            return window.showVORQFordonElegantModal({ type, title, message, confirmText });
         }
         return Promise.resolve();
     }
