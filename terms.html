@@ -8,18 +8,16 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
 
-    <title>Användarvillkor & Integritet | VORQ Fordon</title>
+    <title>Användarvillkor | VORQ Fordon</title>
 
     <meta
         name="description"
-        content="Läs VORQ Fordons användarvillkor, ansvarsfriskrivning, säkerhetsinformation och integritetsvillkor för köp och försäljning av bilar."
+        content="Användarvillkor, plattformsansvar, annonsregler, säkerhetsinformation och rapportering för VORQ Fordon, en svensk fordonsannonsplattform under VORQ Digital, Inhaber: Haitham Kojar."
     >
 
     <meta name="robots" content="index, follow">
+    <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
 
-    <!-- Grundläggande Content Security Policy.
-         Obs: Eftersom sidan använder Google Fonts och Font Awesome behöver dessa tillåtas.
-         För ännu hårdare säkerhet kan du senare hosta CSS lokalt. -->
     <meta
         http-equiv="Content-Security-Policy"
         content="
@@ -143,6 +141,15 @@
             font-weight: 900;
             letter-spacing: -0.06em;
             color: var(--dark);
+        }
+
+        .logo-image {
+            width: 300px;
+            max-width: 58vw;
+            max-height: 68px;
+            height: auto;
+            display: block;
+            object-fit: contain;
         }
 
         .logo-icon {
@@ -677,25 +684,59 @@
                 break-inside: avoid;
             }
         }
-    </style>
+    
+
+        .legal-inline-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .legal-inline-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 13px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .legal-inline-links a:hover {
+            background: #fff7ed;
+            border-color: rgba(245, 130, 32, 0.38);
+            color: var(--primary-hover);
+        }
+
+        .legal-inline-links a.report-link {
+            background: var(--danger-soft);
+            border-color: rgba(220, 38, 38, 0.20);
+            color: #7f1d1d;
+        }
+</style>
 </head>
 
 <body>
-<div style="padding:12px 20px;background:#0f172a;color:white;text-align:center;font-weight:700;">VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar. Plattformen säljer, äger, kontrollerar eller garanterar inte fordon som publiceras av användare.</div>
 
 <header class="site-header">
     <div class="header-inner">
         <a href="index.html" class="logo" aria-label="VORQ Fordon startsida">
-            <span class="logo-icon">
-                <i class="fa-solid fa-car-side"></i>
-            </span>
-            BIL<span>HK</span>
+            <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon - Ägs av VORQ Digital" class="logo-image">
         </a>
 
         <nav class="header-actions" aria-label="Sidnavigering">
             <a href="index.html" class="header-link">
                 <i class="fa-solid fa-house"></i>
                 Startsida
+            </a>
+
+            <a href="notice-action.html" class="header-link">
+                <i class="fa-solid fa-flag"></i>
+                Anmäl annons
             </a>
 
             <a href="login.html" class="header-link">
@@ -710,15 +751,15 @@
     <div class="hero-inner">
         <div class="hero-badge">
             <i class="fa-solid fa-scale-balanced"></i>
-            Juridisk information
+            Användarvillkor
         </div>
 
-        <h1>Användarvillkor, ansvar och integritet</h1>
+        <h1>Villkor, ansvar och säker användning</h1>
 
         <p>
-            Dessa villkor beskriver hur VORQ Fordon får användas, vilket ansvar användare har,
-            hur annonser ska hanteras och vilka säkerhetsprinciper som gäller vid kontakt,
-            köp och försäljning av fordon via plattformen.
+            Dessa villkor gäller för VORQ Fordon, en svensk fordonsannonsplattform där användare kan
+            publicera, söka, visa och hantera fordonsannonser. Plattformen drivs som ett digitalt projekt
+            under VORQ Digital, Inhaber: Haitham Kojar.
         </p>
     </div>
 </section>
@@ -732,14 +773,17 @@
 
         <ul class="toc-list">
             <li><a href="#general"><i class="fa-solid fa-circle-info"></i> Allmänt</a></li>
+            <li><a href="#operator"><i class="fa-solid fa-building-shield"></i> Operatör</a></li>
             <li><a href="#platform"><i class="fa-solid fa-handshake"></i> Plattformens roll</a></li>
             <li><a href="#accounts"><i class="fa-solid fa-user-shield"></i> Konton</a></li>
             <li><a href="#ads"><i class="fa-solid fa-rectangle-ad"></i> Annonser</a></li>
-            <li><a href="#security"><i class="fa-solid fa-shield-halved"></i> Säker handel</a></li>
+            <li><a href="#moderation"><i class="fa-solid fa-shield-halved"></i> Missbruk</a></li>
+            <li><a href="#reporting"><i class="fa-solid fa-flag"></i> Anmälan</a></li>
+            <li><a href="#safety"><i class="fa-solid fa-lock"></i> Säkerhet</a></li>
             <li><a href="#messages"><i class="fa-solid fa-comments"></i> Meddelanden</a></li>
-            <li><a href="#privacy"><i class="fa-solid fa-lock"></i> Integritet</a></li>
+            <li><a href="#privacy"><i class="fa-solid fa-database"></i> Integritet</a></li>
             <li><a href="#liability"><i class="fa-solid fa-triangle-exclamation"></i> Ansvar</a></li>
-            <li><a href="#changes"><i class="fa-solid fa-file-pen"></i> Ändringar</a></li>
+            <li><a href="#law"><i class="fa-solid fa-gavel"></i> Lag & tvist</a></li>
             <li><a href="#contact"><i class="fa-solid fa-envelope"></i> Kontakt</a></li>
         </ul>
     </aside>
@@ -749,15 +793,14 @@
             <h2>Användarvillkor för VORQ Fordon</h2>
 
             <p>
-                Genom att skapa konto, publicera annons, kontakta en användare eller använda VORQ Fordon
-                godkänner du dessa användarvillkor och bekräftar att du förstår plattformens roll
-                som digital marknadsplats för fordonsannonser.
+                Genom att skapa konto, publicera annons, kontakta en annan användare eller använda
+                VORQ Fordon bekräftar du att du har läst och accepterar dessa villkor.
             </p>
 
             <div class="document-meta">
                 <span class="meta-pill">
                     <i class="fa-solid fa-calendar-check"></i>
-                    Senast uppdaterad: 2026-05-14
+                    Senast uppdaterad: 2026-05-25
                 </span>
 
                 <span class="meta-pill">
@@ -769,6 +812,16 @@
                     <i class="fa-solid fa-car"></i>
                     Gäller: VORQ Fordon
                 </span>
+
+                <span class="meta-pill">
+                    <i class="fa-solid fa-building"></i>
+                    Operatör: VORQ Digital, Inhaber: Haitham Kojar
+                </span>
+
+                <span class="meta-pill">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Marknad: Sverige
+                </span>
             </div>
         </div>
 
@@ -777,18 +830,18 @@
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <div>
                     <strong>Viktig information</strong>
-                    VORQ Fordon är en öppen digital marknadsplats för bilannonser. VORQ Fordon är inte säljare,
-                    köpare, bank, besiktningsorgan, garantigivare eller part i affären mellan användare.
-                    All handel sker mellan köpare och säljare på eget ansvar.
+                    VORQ Fordon är en digital plattform för fordonsannonser. VORQ Fordon och
+                    VORQ Digital är inte säljare, köpare, fordonsägare, besiktningsorgan,
+                    garantigivare eller part i fordonsaffären mellan användare.
                 </div>
             </div>
 
             <div class="notice notice-info">
                 <i class="fa-solid fa-circle-info"></i>
                 <div>
-                    <strong>Råd innan köp</strong>
-                    Kontrollera alltid fordonets identitet, ägarhistorik, servicehistorik,
-                    mätarställning, skulder, skick och betalningsupplägg innan du genomför en affär.
+                    <strong>Kontrollera alltid själv</strong>
+                    Kontrollera fordonets identitet, ägarförhållanden, skick, servicehistorik,
+                    mätarställning, uppgifter i annonsen och motpartens identitet innan du går vidare.
                 </div>
             </div>
 
@@ -799,311 +852,354 @@
                 </div>
 
                 <p>
-                    VORQ Fordon är en webbaserad plattform där användare kan publicera, söka efter
-                    och visa annonser för fordon. Plattformen kan användas av privatpersoner
-                    och företag, beroende på vilken kontotyp som skapas.
+                    VORQ Fordon är en webbaserad tjänst där användare kan publicera och visa
+                    fordonsannonser riktade till den svenska marknaden. Tjänsten kan användas av
+                    privatpersoner och företag, beroende på kontotyp och tillgängliga funktioner.
                 </p>
 
                 <p>
-                    Dessa villkor gäller för all användning av webbplatsen, inklusive registrering,
-                    inloggning, annonsering, kontakt mellan användare, sparade annonser,
-                    meddelandefunktioner och hantering av kontoinformation.
+                    Dessa villkor gäller för konton, annonser, bilder, beskrivningar, sparade annonser,
+                    meddelanden, rapportering av innehåll och all annan användning av VORQ Fordon.
                 </p>
 
                 <p>
-                    Om du inte accepterar dessa villkor ska du inte skapa konto, publicera annonser
-                    eller använda plattformens funktioner.
+                    Om du inte accepterar villkoren ska du inte skapa konto, publicera annons eller
+                    använda funktioner som kräver inloggning.
                 </p>
+            </section>
+
+            <section class="terms-section" id="operator">
+                <div class="section-heading">
+                    <div class="section-number">2</div>
+                    <h3>Operatör och juridisk roll</h3>
+                </div>
+
+                <p>
+                    VORQ Fordon är ett digitalt projekt under VORQ Digital, Inhaber: Haitham Kojar.
+                    VORQ Digital används som företagsbeteckning för digitala projekt och tjänster.
+                </p>
+
+                <p>
+                    VORQ Fordon är projektets namn. Den juridiska hänvisningen i villkor, företagsinformation,
+                    integritetspolicy och andra rättsliga sammanhang är VORQ Digital, Inhaber: Haitham Kojar.
+                </p>
+
+                <div class="highlight-box">
+                    <h4>
+                        <i class="fa-solid fa-address-card"></i>
+                        Rättslig identifiering
+                    </h4>
+                    <p>
+                        För fullständiga företags- och kontaktuppgifter hänvisas till sidan
+                        <a href="impressum.html">Impressum / företagsinformation</a>. Om en uppgift i dessa
+                        villkor avviker från företagsinformationen gäller den uppdaterade företagsinformationen.
+                    </p>
+                </div>
             </section>
 
             <section class="terms-section" id="platform">
                 <div class="section-heading">
-                    <div class="section-number">2</div>
+                    <div class="section-number">3</div>
                     <h3>Plattformens roll</h3>
                 </div>
 
                 <p>
-                    VORQ Fordon tillhandahåller en teknisk tjänst för att publicera och visa fordonsannonser.
-                    VORQ Fordon äger inte de fordon som annonseras och kontrollerar inte varje fordon fysiskt.
+                    VORQ Fordon tillhandahåller tekniska funktioner för att skapa, visa, söka och hantera
+                    fordonsannonser. Plattformen kontrollerar inte varje fordon fysiskt och bekräftar inte
+                    automatiskt att varje uppgift i en annons är korrekt.
                 </p>
 
                 <p>
-                    VORQ Fordon ansvarar inte för att en annons leder till affär, att köparen betalar,
-                    att säljaren levererar fordonet eller att informationen i annonsen är fullständig,
-                    korrekt eller aktuell.
+                    Avtal om visning, provkörning, överlåtelse, garanti, reklamation eller andra frågor
+                    kring ett fordon hanteras direkt mellan berörda användare. VORQ Fordon är inte part
+                    i sådan överenskommelse.
                 </p>
 
                 <div class="highlight-box">
                     <h4>
                         <i class="fa-solid fa-handshake-angle"></i>
-                        Relation mellan parterna
+                        Ingen garanti för användarinnehåll
                     </h4>
                     <p>
-                        Avtal om köp, provkörning, betalning, leverans, garanti eller reklamation
-                        ingås direkt mellan köpare och säljare. VORQ Fordon är inte avtalspart i dessa
-                        transaktioner.
+                        Annonser, bilder, priser, beskrivningar och meddelanden publiceras eller skickas av
+                        användare. VORQ Fordon kan ta bort eller begränsa innehåll enligt dessa villkor,
+                        men detta innebär inte att allt innehåll förhandsgranskas eller godkänns.
                     </p>
                 </div>
             </section>
 
             <section class="terms-section" id="accounts">
                 <div class="section-heading">
-                    <div class="section-number">3</div>
+                    <div class="section-number">4</div>
                     <h3>Användarkonton</h3>
                 </div>
 
                 <p>
-                    För att publicera annonser, hantera egna annonser eller använda vissa funktioner
-                    kan användaren behöva skapa ett konto. Användaren ansvarar för att uppgifterna
-                    som lämnas vid registrering är korrekta och uppdaterade.
+                    För att publicera eller hantera annonser kan användaren behöva skapa ett konto.
+                    Användaren ansvarar för att registrerade uppgifter är korrekta, aktuella och inte
+                    vilseledande.
                 </p>
 
                 <ul>
                     <li>Användaren ska vara minst 18 år.</li>
-                    <li>Användaren ansvarar för att skydda sitt lösenord och sin inloggning.</li>
-                    <li>Det är inte tillåtet att skapa konto med falsk identitet.</li>
-                    <li>Företagskonton ska endast användas av behöriga representanter för företaget.</li>
-                    <li>VORQ Fordon kan begränsa, stänga av eller radera konton som missbrukar plattformen.</li>
+                    <li>Det är inte tillåtet att skapa konto med falsk identitet eller vilseledande uppgifter.</li>
+                    <li>Användaren ansvarar för sitt konto, sina annonser, sina bilder och sina meddelanden.</li>
+                    <li>Företagskonto får endast användas av behörig representant.</li>
+                    <li>VORQ Fordon får begränsa, stänga av eller radera konton vid missbruk eller säkerhetsrisk.</li>
                 </ul>
-
-                <div class="two-column-list">
-                    <div class="mini-card">
-                        <strong>
-                            <i class="fa-solid fa-user"></i>
-                            Privatperson
-                        </strong>
-                        <p>
-                            Ett privatkonto är avsett för enskilda användare som vill köpa,
-                            sälja eller kontakta andra användare.
-                        </p>
-                    </div>
-
-                    <div class="mini-card">
-                        <strong>
-                            <i class="fa-solid fa-building"></i>
-                            Företag
-                        </strong>
-                        <p>
-                            Ett företagskonto är avsett för bilhandlare eller företag som publicerar
-                            annonser i kommersiellt syfte.
-                        </p>
-                    </div>
-                </div>
             </section>
 
             <section class="terms-section" id="ads">
                 <div class="section-heading">
-                    <div class="section-number">4</div>
+                    <div class="section-number">5</div>
                     <h3>Regler för annonser</h3>
                 </div>
 
                 <p>
-                    Den användare som publicerar en annons ansvarar för annonsens innehåll,
-                    inklusive bilder, pris, mätarställning, årsmodell, registreringsuppgifter,
-                    teknisk information, utrustning och beskrivning.
+                    Den användare som publicerar en annons ansvarar för allt innehåll i annonsen,
+                    inklusive bilder, prisuppgifter, fordonstyp, märke, modell, årsmodell, mätarställning,
+                    plats, utrustning, teknisk information och beskrivning.
                 </p>
 
                 <p>
-                    Annonser ska vara tydliga, sanningsenliga och inte vilseleda andra användare.
-                    Bilder som laddas upp ska visa det aktuella fordonet eller vara relevanta för annonsen.
+                    En annons ska vara sanningsenlig, tydlig och inte vilseleda andra användare.
+                    Bilder och text ska avse det aktuella fordonet eller vara tydligt relevanta för annonsen.
                 </p>
 
                 <ul>
-                    <li>Det är förbjudet att publicera falska eller vilseledande annonser.</li>
-                    <li>Det är förbjudet att använda stulna bilder eller material utan rättighet.</li>
-                    <li>Det är förbjudet att publicera kontaktuppgifter eller innehåll som bryter mot lag.</li>
-                    <li>Det är förbjudet att annonsera fordon som användaren inte har rätt att sälja.</li>
-                    <li>VORQ Fordon får ta bort annonser som bedöms vara olämpliga, felaktiga eller misstänkta.</li>
+                    <li>Det är förbjudet att publicera falska, vilseledande eller manipulerade annonser.</li>
+                    <li>Det är förbjudet att annonsera fordon som användaren inte har rätt att annonsera.</li>
+                    <li>Det är förbjudet att använda stulna bilder, kopierade texter eller material utan rättighet.</li>
+                    <li>Det är förbjudet att lägga in skadliga länkar, spam, bedrägeriförsök eller otillåten marknadsföring.</li>
+                    <li>Det är förbjudet att publicera onödiga personuppgifter eller känsliga dokument i annonsbilder eller beskrivningar.</li>
                 </ul>
 
                 <div class="highlight-box">
                     <h4>
                         <i class="fa-solid fa-camera"></i>
-                        Bilder och uppladdat material
+                        Bilder och material
                     </h4>
                     <p>
-                        Genom att ladda upp bilder eller text intygar användaren att materialet får
-                        användas i annonsen och att det inte kränker tredje parts rättigheter.
+                        Genom att ladda upp bilder eller annan information intygar användaren att materialet
+                        får användas i annonsen och inte kränker tredje parts rättigheter.
                     </p>
                 </div>
             </section>
 
-            <section class="terms-section" id="security">
+            <section class="terms-section" id="moderation">
                 <div class="section-heading">
-                    <div class="section-number">5</div>
-                    <h3>Säker handel och bedrägeririsk</h3>
+                    <div class="section-number">6</div>
+                    <h3>Missbruk, granskning och borttagning</h3>
                 </div>
 
                 <p>
-                    Handel med fordon kan innebära ekonomiska risker. Användare ska vara försiktiga
-                    och själva kontrollera motpartens identitet, fordonets skick och betalningsmetod.
+                    VORQ Fordon får ta bort, begränsa, dölja eller ändra synligheten för annonser,
+                    konton eller meddelandefunktioner om innehåll bedöms bryta mot villkoren,
+                    skapa säkerhetsrisk, vara vilseledande eller kunna vara olagligt.
+                </p>
+
+                <p>
+                    VORQ Fordon kan även agera vid misstanke om exempelvis stulna fordon, falska uppgifter,
+                    identitetsmissbruk, otillåten användning av bilder, hot, trakasserier, spam eller skadliga länkar.
                 </p>
 
                 <div class="notice notice-danger">
                     <i class="fa-solid fa-ban"></i>
                     <div>
-                        <strong>Betala inte i förskott till okända personer</strong>
-                        VORQ Fordon rekommenderar att användare undviker förskottsbetalningar,
-                        misstänkta betalningslänkar, ovanliga leveransupplägg och kontakter
-                        som försöker flytta kommunikationen till osäkra kanaler.
+                        <strong>Förbjudet innehåll</strong>
+                        Bedrägeri, hot, trakasserier, falska annonser, stulna bilder, uppmaning till olaglig handling,
+                        skadlig kod, otillåtna dokumentbilder och missbruk av andra personers uppgifter är förbjudet.
                     </div>
                 </div>
+            </section>
+
+            <section class="terms-section" id="reporting">
+                <div class="section-heading">
+                    <div class="section-number">7</div>
+                    <h3>Rapportering av felaktiga eller olagliga annonser</h3>
+                </div>
+
+                <p>
+                    Användare och besökare kan anmäla annonser eller innehåll som de anser vara felaktigt,
+                    misstänkt, vilseledande eller olagligt. En anmälan bör innehålla annonslänk, annons-ID
+                    om det finns, tydlig beskrivning och skäl för anmälan.
+                </p>
+
+                <p>
+                    VORQ Fordon kan granska anmälningar och vidta åtgärder som att begränsa, dölja eller
+                    ta bort innehåll. Anmälningar ska göras i god tro och får inte användas för att trakassera
+                    andra användare eller skada legitimt innehåll.
+                </p>
+
+                <div class="legal-inline-links">
+                    <a class="report-link" href="notice-action.html">
+                        <i class="fa-solid fa-flag"></i>
+                        Anmäl annons
+                    </a>
+                    <a href="privacy.html">
+                        <i class="fa-solid fa-lock"></i>
+                        Integritetspolicy
+                    </a>
+                </div>
+            </section>
+
+            <section class="terms-section" id="safety">
+                <div class="section-heading">
+                    <div class="section-number">8</div>
+                    <h3>Säker användning</h3>
+                </div>
+
+                <p>
+                    Användare ansvarar för att själva bedöma risker vid kontakt med andra användare.
+                    Var försiktig med ovanliga kontaktvägar, krav på snabba beslut, länkar utanför plattformen
+                    och personer som begär känslig information.
+                </p>
 
                 <ul>
-                    <li>Träffas på en säker plats vid visning eller provkörning.</li>
-                    <li>Kontrollera legitimation och att säljaren har rätt att sälja fordonet.</li>
-                    <li>Kontrollera fordonets registreringsuppgifter och eventuella skulder.</li>
-                    <li>Undvik att dela känsliga uppgifter som BankID-information, kortuppgifter eller lösenord.</li>
-                    <li>Rapportera misstänkt beteende till plattformens administratör.</li>
+                    <li>Dela aldrig BankID-koder, lösenord, kortuppgifter eller inloggningsuppgifter.</li>
+                    <li>Ladda inte upp dokumentbilder som innehåller känsliga personuppgifter om det inte är nödvändigt.</li>
+                    <li>Kontrollera motpartens identitet och fordonets uppgifter på ett säkert sätt.</li>
+                    <li>Rapportera misstänkt beteende via sidan för anmälan.</li>
                 </ul>
             </section>
 
             <section class="terms-section" id="messages">
                 <div class="section-heading">
-                    <div class="section-number">6</div>
+                    <div class="section-number">9</div>
                     <h3>Meddelanden mellan användare</h3>
                 </div>
 
                 <p>
-                    VORQ Fordon kan erbjuda en meddelandefunktion där köpare och säljare kan kontakta varandra
-                    angående en annons. Användare ansvarar för det innehåll de skickar.
+                    Om VORQ Fordon erbjuder meddelandefunktion ansvarar varje användare för det innehåll
+                    som skickas. Funktionen får inte användas för hot, trakasserier, spam, bedrägeriförsök,
+                    skadliga länkar eller annat otillåtet innehåll.
                 </p>
 
                 <p>
-                    Det är inte tillåtet att använda meddelanden för hot, trakasserier, spam,
-                    bedrägeriförsök, olaglig verksamhet eller spridning av skadliga länkar.
-                </p>
-
-                <p>
-                    VORQ Fordon kan vid behov begränsa eller radera funktioner och innehåll om det finns
-                    misstanke om missbruk, säkerhetsrisk eller brott mot villkoren.
+                    VORQ Fordon kan begränsa eller avaktivera meddelandefunktioner vid missbruk,
+                    säkerhetsrisk eller misstanke om otillåtet innehåll.
                 </p>
             </section>
 
             <section class="terms-section" id="privacy">
                 <div class="section-heading">
-                    <div class="section-number">7</div>
+                    <div class="section-number">10</div>
                     <h3>Integritet och personuppgifter</h3>
                 </div>
 
                 <p>
-                    VORQ Fordon behandlar kontouppgifter och annonsrelaterad information för att kunna
-                    tillhandahålla tjänsten. Det kan exempelvis omfatta e-postadress, namn,
-                    kontotyp, företagsuppgifter, annonser, bilder och meddelanden.
+                    VORQ Fordon behandlar personuppgifter för att kunna tillhandahålla konton,
+                    annonser, meddelanden, säkerhet, drift och administration. Mer information finns i
+                    den separata integritetspolicyn.
                 </p>
 
                 <p>
-                    Behandlingen sker för att möjliggöra registrering, inloggning, publicering av annonser,
-                    kontakt mellan användare, säkerhet, drift och administration av plattformen.
+                    Användare ska inte publicera fler personuppgifter än vad som behövs för annonsen.
+                    Det är inte tillåtet att publicera andra personers uppgifter utan rättslig grund.
                 </p>
 
-                <ul>
-                    <li>Användaren har rätt att begära information om sina personuppgifter.</li>
-                    <li>Användaren kan begära rättelse av felaktiga uppgifter.</li>
-                    <li>Användaren kan i vissa fall begära radering av uppgifter.</li>
-                    <li>VORQ Fordon ska inte samla in fler uppgifter än vad som är nödvändigt för tjänstens funktion.</li>
-                    <li>VORQ Fordon ska arbeta för att skydda uppgifter mot obehörig åtkomst.</li>
-                </ul>
-
-                <div class="highlight-box">
-                    <h4>
-                        <i class="fa-solid fa-database"></i>
-                        Lagring av data
-                    </h4>
-                    <p>
-                        Uppgifter kan lagras så länge kontot finns kvar eller så länge det behövs
-                        för säkerhet, administration, rättsliga krav eller teknisk drift. Användare
-                        kan kontakta administratören för frågor om sina uppgifter.
-                    </p>
+                <div class="legal-inline-links">
+                    <a href="privacy.html">
+                        <i class="fa-solid fa-lock"></i>
+                        Läs integritetspolicyn
+                    </a>
                 </div>
             </section>
 
             <section class="terms-section" id="liability">
                 <div class="section-heading">
-                    <div class="section-number">8</div>
-                    <h3>Ansvarsfriskrivning</h3>
+                    <div class="section-number">11</div>
+                    <h3>Ansvar och begränsningar</h3>
                 </div>
 
                 <p>
-                    VORQ Fordon tillhandahålls i befintligt skick. Plattformen kan innehålla tekniska fel,
-                    avbrott, felaktiga uppgifter eller innehåll som publicerats av användare.
+                    VORQ Fordon tillhandahålls som en digital annonsplattform. I den utsträckning lagen tillåter
+                    ansvarar VORQ Fordon och VORQ Digital inte för användares annonser, fordonens skick,
+                    felaktiga uppgifter, uteblivna överenskommelser, externa länkar eller tvister mellan användare.
                 </p>
 
                 <p>
-                    VORQ Fordon ansvarar inte för direkta eller indirekta skador, ekonomiska förluster,
-                    uteblivna affärer, felaktiga annonser, bedrägeriförsök, tvister mellan användare
-                    eller skador som uppstår genom användning av plattformen.
-                </p>
-
-                <p>
-                    Användaren är själv ansvarig för sina beslut, sin kommunikation,
-                    sina betalningar och sin kontroll av fordon och motpart.
+                    Ingenting i dessa villkor begränsar rättigheter eller ansvar som inte får begränsas enligt
+                    tvingande svensk eller europeisk lagstiftning.
                 </p>
             </section>
 
             <section class="terms-section" id="rights">
                 <div class="section-heading">
-                    <div class="section-number">9</div>
+                    <div class="section-number">12</div>
                     <h3>Immateriella rättigheter</h3>
                 </div>
 
                 <p>
-                    VORQ Fordons namn, design, gränssnitt, struktur, logotyp, kod och visuella uttryck
-                    tillhör plattformens ägare eller respektive rättighetshavare.
+                    VORQ Fordons namn, design, struktur, gränssnitt, kod, visuella uttryck och logotyper
+                    tillhör respektive rättighetshavare. Användare får inte kopiera, sälja, distribuera eller
+                    manipulera plattformen utan tillstånd, om det inte är tillåtet enligt lag.
                 </p>
 
                 <p>
-                    Användare får inte kopiera, sälja, distribuera, manipulera eller återpublicera
-                    delar av plattformen utan tillstånd, om det inte uttryckligen är tillåtet enligt lag.
-                </p>
-
-                <p>
-                    Användaren behåller ansvar för material som denne själv laddar upp, men ger VORQ Fordon
-                    rätt att visa materialet inom ramen för annonsen och plattformens funktioner.
+                    Användaren behåller ansvar för material som laddas upp, men ger VORQ Fordon rätt att visa
+                    materialet inom ramen för annonsen och plattformens funktioner.
                 </p>
             </section>
 
             <section class="terms-section" id="changes">
                 <div class="section-heading">
-                    <div class="section-number">10</div>
-                    <h3>Ändringar, avstängning och borttagning</h3>
+                    <div class="section-number">13</div>
+                    <h3>Ändringar och avstängning</h3>
                 </div>
 
                 <p>
                     VORQ Fordon kan uppdatera dessa villkor vid behov. Den senaste versionen publiceras
-                    på denna sida. Fortsatt användning av plattformen efter ändring innebär att
-                    användaren accepterar de uppdaterade villkoren.
+                    på denna sida. Fortsatt användning efter en uppdatering innebär att användaren accepterar
+                    den uppdaterade versionen.
                 </p>
 
                 <p>
-                    VORQ Fordon kan tillfälligt eller permanent begränsa åtkomst till konton, annonser
-                    eller funktioner om användaren bryter mot villkoren, missbrukar tjänsten,
-                    publicerar misstänkt innehåll eller skapar säkerhetsrisker.
+                    VORQ Fordon kan begränsa åtkomst till konton, annonser eller funktioner vid brott mot
+                    villkoren, säkerhetsrisk, missbruk eller misstanke om otillåtet innehåll.
+                </p>
+            </section>
+
+            <section class="terms-section" id="law">
+                <div class="section-heading">
+                    <div class="section-number">14</div>
+                    <h3>Tillämplig lag, konsumentskydd och tvister</h3>
+                </div>
+
+                <p>
+                    Dessa villkor ska i första hand tolkas enligt svensk rätt och relevant EU-rätt i den mån
+                    de gäller användning av VORQ Fordon för den svenska marknaden.
+                </p>
+
+                <p>
+                    Om användaren är konsument påverkar dessa villkor inte tvingande rättigheter som användaren
+                    har enligt tillämplig konsumentlagstiftning. Tvister mellan användare hanteras i första hand
+                    mellan de berörda parterna, eftersom VORQ Fordon inte är part i fordonsaffären.
+                </p>
+
+                <p>
+                    Vid misstanke om brott, bedrägeri, identitetsmissbruk eller hot bör användaren även kontakta
+                    relevanta myndigheter eller polisen.
                 </p>
             </section>
 
             <section class="terms-section" id="contact">
                 <div class="section-heading">
-                    <div class="section-number">11</div>
+                    <div class="section-number">15</div>
                     <h3>Kontakt</h3>
                 </div>
 
                 <p>
-                    För frågor om användarvillkor, konto, annonser, dataskydd eller rapportering
-                    av misstänkt innehåll kan användaren kontakta administratören via de kontaktvägar
-                    som anges på plattformen.
-                </p>
-
-                <p>
-                    Vid misstanke om bedrägeri, hot eller brott bör användaren även kontakta relevanta
-                    myndigheter eller polisen.
+                    För frågor om villkor, konto, annonser, dataskydd eller rapportering av misstänkt innehåll
+                    används de kontaktuppgifter och rapporteringsvägar som anges på VORQ Fordons sidor för
+                    företagsinformation, integritet och anmälan.
                 </p>
 
                 <div class="contact-box">
                     <h3>Behöver du hjälp?</h3>
                     <p>
-                        Kontakta VORQ Fordon om du vill rapportera en annons, ställa frågor om kontot
-                        eller begära information om personuppgifter.
+                        Gå till startsidan, ditt konto eller anmälningssidan beroende på vad frågan gäller.
+                        Vid misstanke om brott bör du även kontakta relevant myndighet.
                     </p>
 
                     <div class="contact-actions">
@@ -1116,6 +1212,11 @@
                             <i class="fa-solid fa-user"></i>
                             Mitt konto
                         </a>
+
+                        <a href="notice-action.html" class="contact-btn secondary">
+                            <i class="fa-solid fa-flag"></i>
+                            Anmäl annons
+                        </a>
                     </div>
                 </div>
             </section>
@@ -1126,7 +1227,7 @@
 <footer class="footer">
     <p>
         <strong>&copy; 2026 VORQ Fordon.</strong>
-        Alla rättigheter förbehållna. Denna sida är en informations- och villkorssida för användning av plattformen.
+        Ett digitalt fordonsannonsprojekt under VORQ Digital, Inhaber: Haitham Kojar.
     </p>
 </footer>
 

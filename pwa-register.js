@@ -1,11 +1,20 @@
 (() => {
-  const APP_NAME = "VORQ Fordon";
+  "use strict";
 
-  if ("serviceWorker" in navigator) {
+  const APP_NAME = "VORQ Fordon";
+  const SERVICE_WORKER_URL = "./service-worker.js";
+
+  const isSecureContextForSW = window.isSecureContext ||
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+
+  if ("serviceWorker" in navigator && isSecureContextForSW) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js").catch((error) => {
-        console.warn(`${APP_NAME} service worker registration failed:`, error);
-      });
+      navigator.serviceWorker
+        .register(SERVICE_WORKER_URL)
+        .catch((error) => {
+          console.warn(`${APP_NAME} service worker registration failed:`, error);
+        });
     });
   }
 
@@ -17,14 +26,27 @@
     document.documentElement.classList.add("pwa-install-ready");
   });
 
-  window.VORQ FordonInstallApp = async function VORQ FordonInstallApp() {
-    if (!deferredInstallPrompt) {
-      alert("Öppna menyn i Chrome och välj Installera app / Lägg till på startskärmen.");
-      return;
-    }
-    deferredInstallPrompt.prompt();
-    await deferredInstallPrompt.userChoice.catch(() => null);
+  window.addEventListener("appinstalled", () => {
     deferredInstallPrompt = null;
     document.documentElement.classList.remove("pwa-install-ready");
-  };
+  });
+
+  async function installVORQFordonApp() {
+    if (!deferredInstallPrompt) {
+      alert("Öppna webbläsarens meny och välj Installera app eller Lägg till på startskärmen.");
+      return;
+    }
+
+    try {
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+    } catch (error) {
+      console.warn(`${APP_NAME} install prompt failed:`, error);
+    } finally {
+      deferredInstallPrompt = null;
+      document.documentElement.classList.remove("pwa-install-ready");
+    }
+  }
+
+  window.VORQFordonInstallApp = installVORQFordonApp;
 })();

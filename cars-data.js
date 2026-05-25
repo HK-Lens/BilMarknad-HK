@@ -3,12 +3,20 @@
  * ============================================================
  * VORQ Fordon - Central Car Data Module
  * ------------------------------------------------------------
+ * VORQ Fordon is a Sweden-focused vehicle advertisement project
+ * operated under VORQ Digital, Inhaber: Haitham Kojar.
+ *
+ * VORQ Fordon provides digital tools for vehicle advertisements.
+ * It does not sell, own, inspect, guarantee or store vehicles.
+ * Advertisers are responsible for the accuracy and legality of
+ * the information they publish.
+ * ------------------------------------------------------------
  * Central source for car brands and models used by:
  * add-car.html, sell.html, edit-car.html, filter.html, results.html,
  * dashboard.html and account pages.
  *
  * Security/design notes:
- * - This file contains public car metadata only.
+ * - This file contains public vehicle metadata only.
  * - It never writes to Firebase and never trusts user-provided text.
  * - UI helpers use textContent/value, not innerHTML.
  * - Brand/model matching is normalized for accents, case and spacing.

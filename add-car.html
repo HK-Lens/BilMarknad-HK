@@ -7,7 +7,7 @@
 
     <title>Lägg till annons | VORQ Fordon</title>
 
-    <meta name="description" content="Denna sida skickar vidare till VORQ Fordons aktiva sida för att publicera bilannonser.">
+    <meta name="description" content="Denna sida skickar vidare till VORQ Fordons aktiva sida för att publicera fordonsannonser på den svenska marknaden. VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar.">
 
     <meta name="robots" content="noindex, nofollow">
 
@@ -135,6 +135,20 @@
             color: var(--dark);
             letter-spacing: -0.06em;
             white-space: nowrap;
+        }
+
+        .brand-logo-img {
+            width: auto;
+            height: 46px;
+            max-width: 220px;
+            display: block;
+            object-fit: contain;
+        }
+
+        .logo-fallback {
+            display: none;
+            align-items: center;
+            gap: 10px;
         }
 
         .logo-icon {
@@ -291,7 +305,7 @@
 
         .action-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
             gap: 14px;
         }
 
@@ -524,16 +538,24 @@
 
     <div class="top-bar">
         <i class="fa-solid fa-shield-halved"></i>
-        <span>VORQ Fordon använder en separat aktiv sida för att publicera bilannonser.</span>
+        <span>VORQ Fordon använder en separat aktiv sida för att publicera fordonsannonser.</span>
     </div>
 
     <header class="site-header">
         <div class="header-inner">
             <a href="index.html" class="logo" aria-label="Gå till startsidan">
-                <span class="logo-icon">
-                    <i class="fa-solid fa-car-side"></i>
+                <img
+                    src="vorq-fordon-logo-header.png"
+                    alt="VORQ Fordon"
+                    class="brand-logo-img"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+                >
+                <span class="logo-fallback">
+                    <span class="logo-icon">
+                        <i class="fa-solid fa-car-side"></i>
+                    </span>
+                    VORQ <span>Fordon</span>
                 </span>
-                BIL<span>HK</span>
             </a>
 
             <nav class="nav-links" aria-label="Huvudmeny">
@@ -572,7 +594,7 @@
 
                 <p>
                     Den gamla sidan för att lägga till annons är borttagen här för att undvika dubbla publiceringssidor.
-                    Använd den aktiva sidan för att skapa och publicera bilannonser.
+                    Använd den aktiva sidan för att skapa och publicera fordonsannonser i VORQ Fordon.
                 </p>
             </div>
 
@@ -582,7 +604,17 @@
                     <div>
                         <strong>Viktig information:</strong>
                         Denna fil innehåller inte längre formuläret för annonspublicering.
-                        All publicering ska göras via <strong>sell.html</strong> så att annonser sparas på ett enhetligt sätt.
+                        All publicering ska göras via <strong>sell.html</strong> så att annonser sparas på ett enhetligt sätt i VORQ Fordon.
+                    </div>
+                </div>
+
+                <div class="info-box" style="background: var(--primary-soft); border-color: rgba(245, 130, 32, 0.24); color: #9a4f05;">
+                    <i class="fa-solid fa-building-shield"></i>
+                    <div>
+                        <strong>Juridisk information:</strong>
+                        VORQ Fordon drivs under <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>.
+                        VORQ Fordon är en annonsplattform för fordonsannonser på den svenska marknaden.
+                        Plattformen säljer inte, äger inte och kontrollerar inte de fordon som publiceras av användare.
                     </div>
                 </div>
 
@@ -593,8 +625,8 @@
                         </span>
 
                         <span>
-                            <strong>Publicera bilannons</strong>
-                            <span>Gå till den aktiva sidan för att lägga upp bilen med bilder, pris och information.</span>
+                            <strong>Publicera fordonsannons</strong>
+                            <span>Gå till den aktiva sidan för att lägga upp fordonet med bilder, pris och information.</span>
                         </span>
                     </a>
 
@@ -606,6 +638,17 @@
                         <span>
                             <strong>Mina annonser</strong>
                             <span>Visa, kontrollera och hantera annonser som är kopplade till ditt konto.</span>
+                        </span>
+                    </a>
+
+                    <a href="notice-action.html" class="action-card">
+                        <span class="action-icon">
+                            <i class="fa-solid fa-flag"></i>
+                        </span>
+
+                        <span>
+                            <strong>Anmäl annons</strong>
+                            <span>Rapportera en felaktig, olaglig eller misstänkt fordonsannons till VORQ Fordon.</span>
                         </span>
                     </a>
                 </div>
@@ -633,14 +676,17 @@
         <div class="footer-inner">
             <div class="footer-brand">
                 <strong>VORQ Fordon</strong>
-                <span>&copy; 2026 VORQ Fordon. En öppen marknadsplats för bilannonser.</span>
+                <span>&copy; 2026 VORQ Digital, Inhaber: Haitham Kojar. VORQ Fordon är en fordonsannonsplattform för den svenska marknaden.</span>
             </div>
 
             <div class="footer-links">
                 <a href="index.html">Hem</a>
-                <a href="results.html">Annonser</a>
-                <a href="sell.html">Sälj bil</a>
+                <a href="results.html">Fordon</a>
+                <a href="sell.html">Sälj fordon</a>
                 <a href="terms.html">Villkor</a>
+                <a href="privacy.html">Integritet</a>
+                <a href="notice-action.html">Anmäl annons</a>
+                <a href="impressum.html">Impressum</a>
                 <a href="my-account.html">Mitt konto</a>
             </div>
         </div>
