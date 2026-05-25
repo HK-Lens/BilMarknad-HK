@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avancerad sökning | VORQ Fordon</title>
-    <meta name="description" content="Avancerad bilsökning på VORQ Fordon. Filtrera annonser efter märke, modell, län, pris, miltal, drivmedel, växellåda, utrustning och detaljer.">
+    <meta name="description" content="Avancerad fordonsökning på VORQ Fordon. Filtrera användarpublicerade fordonsannonser efter märke, modell, län, pris, miltal, drivmedel, växellåda, utrustning och detaljer. VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar.">
     <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Avancerad sökning | VORQ Fordon">
+    <meta property="og:description" content="Filtrera användarpublicerade fordonsannonser noggrant på VORQ Fordon. Drivs under VORQ Digital, Inhaber: Haitham Kojar.">
+    <meta property="og:site_name" content="VORQ Fordon">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -89,12 +95,28 @@
         .logo {
             display: inline-flex;
             align-items: center;
+            gap: 12px;
+            min-height: 48px;
+            color: var(--dark);
+            white-space: nowrap;
+        }
+
+        .brand-logo-img {
+            display: block;
+            height: 48px;
+            width: auto;
+            max-width: 230px;
+            object-fit: contain;
+        }
+
+        .brand-logo-text {
+            display: none;
+            align-items: center;
             gap: 10px;
             font-size: 1.8rem;
             font-weight: 900;
             color: var(--dark);
             letter-spacing: -0.06em;
-            white-space: nowrap;
         }
 
         .logo-icon {
@@ -108,7 +130,7 @@
             box-shadow: 0 10px 25px rgba(245, 130, 32, 0.35);
         }
 
-        .logo span { color: var(--primary); }
+        .brand-logo-text span { color: var(--primary); }
 
         .nav-actions {
             display: flex;
@@ -148,34 +170,143 @@
 
         .page-shell { max-width: var(--max-width); margin: 0 auto; padding: 38px 24px 60px; }
 
-        .page-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: end; margin-bottom: 25px; }
+        .page-heading {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 20px;
+            align-items: end;
+            margin-bottom: 25px;
+        }
 
-        .eyebrow { width: fit-content; display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: var(--radius-full); background: var(--primary-soft); color: var(--primary-hover); font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 13px; }
+        .eyebrow {
+            width: fit-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 13px;
+            border-radius: var(--radius-full);
+            background: var(--primary-soft);
+            color: var(--primary-hover);
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 13px;
+        }
 
-        .page-heading h1 { font-size: clamp(30px, 4vw, 48px); line-height: 1.05; font-weight: 900; letter-spacing: -0.055em; color: var(--dark); margin-bottom: 12px; }
+        .page-heading h1 {
+            font-size: clamp(30px, 4vw, 48px);
+            line-height: 1.05;
+            font-weight: 900;
+            letter-spacing: -0.055em;
+            color: var(--dark);
+            margin-bottom: 12px;
+        }
 
-        .page-heading p { max-width: 860px; color: var(--muted); font-size: 16px; line-height: 1.75; font-weight: 550; }
+        .page-heading p {
+            max-width: 860px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.75;
+            font-weight: 550;
+        }
+
+        .owner-note {
+            margin-top: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 13px;
+            border-radius: var(--radius-full);
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+        }
+
+        .owner-note strong { color: var(--dark); }
 
         .filter-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
 
-        .filter-panel, .summary-panel { background: rgba(255, 255, 255, 0.92); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); backdrop-filter: blur(16px); overflow: hidden; }
+        .filter-panel, .summary-panel {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(16px);
+            overflow: hidden;
+        }
 
-        .panel-header { padding: 22px 24px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.94)), radial-gradient(circle at top right, rgba(245, 130, 32, 0.35), transparent 34%); color: white; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+        .panel-header {
+            padding: 22px 24px;
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.94)),
+                radial-gradient(circle at top right, rgba(245, 130, 32, 0.35), transparent 34%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
 
         .panel-title { display: flex; align-items: center; gap: 13px; }
-        .panel-icon { width: 48px; height: 48px; border-radius: 17px; display: grid; place-items: center; background: rgba(245, 130, 32, 0.18); color: var(--primary); border: 1px solid rgba(255, 255, 255, 0.12); font-size: 19px; }
+
+        .panel-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 17px;
+            display: grid;
+            place-items: center;
+            background: rgba(245, 130, 32, 0.18);
+            color: var(--primary);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            font-size: 19px;
+        }
+
         .panel-title h2 { font-size: 19px; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 4px; }
         .panel-title span { font-size: 12px; color: #cbd5e1; font-weight: 700; }
         .panel-body { padding: 24px; }
 
-        .filter-section { border: 1px solid var(--border); background: rgba(248, 250, 252, 0.72); border-radius: 24px; padding: 22px; margin-bottom: 20px; }
+        .filter-section {
+            border: 1px solid var(--border);
+            background: rgba(248, 250, 252, 0.72);
+            border-radius: 24px;
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
         .section-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-        .section-icon { width: 38px; height: 38px; border-radius: 14px; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary); font-size: 15px; }
+
+        .section-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 15px;
+        }
+
         .section-heading h3 { color: var(--dark); font-size: 16px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 3px; }
         .section-heading span { color: var(--muted); font-size: 12px; font-weight: 700; }
 
         .type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 12px; }
-        .type-card { min-height: 92px; border: 2px solid var(--border); border-radius: 20px; padding: 14px 8px; text-align: center; background: white; transition: 0.25s ease; color: var(--muted); font-weight: 900; }
+
+        .type-card {
+            min-height: 92px;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 14px 8px;
+            text-align: center;
+            background: white;
+            transition: 0.25s ease;
+            color: var(--muted);
+            font-weight: 900;
+        }
+
         .type-card i { display: block; font-size: 25px; margin-bottom: 9px; }
         .type-card span { display: block; font-size: 11px; line-height: 1.25; text-transform: uppercase; letter-spacing: 0.03em; }
         .type-card:hover { border-color: rgba(245, 130, 32, 0.45); transform: translateY(-1px); }
@@ -185,16 +316,78 @@
         .form-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         .form-group { margin-bottom: 14px; }
         .form-group.full { grid-column: 1 / -1; }
-        label { display: flex; justify-content: space-between; gap: 8px; color: #475569; font-size: 12px; font-weight: 900; margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.04em; }
-        label .hint { color: var(--muted-light); font-size: 10px; font-weight: 800; text-transform: none; letter-spacing: 0; }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 7px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        label .hint {
+            color: var(--muted-light);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
         .input-wrap { position: relative; }
-        .input-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted-light); font-size: 14px; pointer-events: none; }
-        input, select { width: 100%; min-height: 50px; padding: 12px 14px 12px 40px; border: 1px solid var(--border); border-radius: 15px; background: white; color: var(--dark); font-size: 14px; font-weight: 750; outline: none; transition: 0.25s ease; }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.12); }
+
+        .input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-light);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        input, select {
+            width: 100%;
+            min-height: 50px;
+            padding: 12px 14px 12px 40px;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            background: white;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 750;
+            outline: none;
+            transition: 0.25s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.12);
+        }
+
         select:disabled { background: #e2e8f0; color: #64748b; cursor: not-allowed; }
 
         .chip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
-        .chip { min-height: 48px; display: flex; align-items: center; gap: 9px; padding: 12px 14px; border: 2px solid var(--border); border-radius: 15px; background: white; color: var(--dark); font-size: 13px; font-weight: 850; text-align: left; transition: 0.22s ease; }
+
+        .chip {
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 12px 14px;
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            background: white;
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 850;
+            text-align: left;
+            transition: 0.22s ease;
+        }
+
         .chip i { width: 18px; text-align: center; color: var(--primary); font-size: 14px; }
         .chip:hover { border-color: rgba(245, 130, 32, 0.45); transform: translateY(-1px); }
         .chip.active { background: var(--dark); color: white; border-color: var(--dark); box-shadow: 0 12px 22px rgba(15, 23, 42, 0.16); }
@@ -202,75 +395,550 @@
 
         .summary-panel { position: sticky; top: 100px; padding: 22px; }
         .side-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-        .side-icon { width: 46px; height: 46px; border-radius: 17px; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary); font-size: 18px; }
+
+        .side-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 17px;
+            display: grid;
+            place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 18px;
+        }
+
         .side-header h3 { font-size: 17px; font-weight: 900; color: var(--dark); letter-spacing: -0.025em; margin-bottom: 4px; }
         .side-header p { font-size: 12px; font-weight: 700; color: var(--muted); }
         .summary-list { display: grid; gap: 10px; margin-bottom: 18px; }
-        .summary-item { padding: 12px; border-radius: 16px; background: var(--surface-soft); border: 1px solid var(--border); }
+
+        .summary-item {
+            padding: 12px;
+            border-radius: 16px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+        }
+
         .summary-item strong { display: block; color: var(--dark); font-size: 12px; font-weight: 900; margin-bottom: 3px; }
         .summary-item span { display: block; color: var(--muted); font-size: 12px; font-weight: 700; line-height: 1.55; word-break: break-word; }
-        .warning-box { padding: 15px; border-radius: 18px; border: 1px solid rgba(245, 158, 11, 0.25); background: var(--warning-soft); color: #92400e; font-size: 12px; font-weight: 750; line-height: 1.65; }
+
+        .warning-box {
+            padding: 15px;
+            border-radius: 18px;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            background: var(--warning-soft);
+            color: #92400e;
+            font-size: 12px;
+            font-weight: 750;
+            line-height: 1.65;
+        }
+
         .warning-box i { color: var(--warning); margin-right: 6px; }
+        .warning-box a {
+            color: #78350f;
+            font-weight: 950;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
 
-        .footer-action { position: fixed; left: 0; bottom: 0; z-index: 80; width: 100%; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(18px); border-top: 1px solid var(--border); box-shadow: 0 -16px 40px rgba(15, 23, 42, 0.10); padding: 18px 24px; }
-        .footer-action-inner { max-width: var(--max-width); margin: 0 auto; display: grid; grid-template-columns: 1fr 1.8fr; gap: 12px; }
-        .btn { min-height: 58px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--radius-full); border: none; padding: 14px 18px; font-size: 15px; font-weight: 900; text-align: center; transition: 0.25s ease; }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 14px 28px rgba(245, 130, 32, 0.28); }
+        .footer-action {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            z-index: 80;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(18px);
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -16px 40px rgba(15, 23, 42, 0.10);
+            padding: 18px 24px;
+        }
+
+        .footer-action-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.8fr;
+            gap: 12px;
+        }
+
+        .btn {
+            min-height: 58px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-radius: var(--radius-full);
+            border: none;
+            padding: 14px 18px;
+            font-size: 15px;
+            font-weight: 900;
+            text-align: center;
+            transition: 0.25s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 14px 28px rgba(245, 130, 32, 0.28);
+        }
+
         .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
-        .btn-light { background: white; color: var(--muted); border: 1px solid var(--border); }
-        .btn-light:hover { color: var(--primary-hover); border-color: rgba(245, 130, 32, 0.45); transform: translateY(-1px); }
 
-        @media (max-width: 1050px) { .filter-layout { grid-template-columns: 1fr; } .summary-panel { position: static; } .page-heading { grid-template-columns: 1fr; } }
-        @media (max-width: 720px) { body { padding-bottom: 150px; } .top-bar { padding: 10px 16px; font-size: 12px; } .header-inner { padding: 14px 18px; flex-direction: column; align-items: flex-start; } .nav-actions { width: 100%; overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; padding-bottom: 2px; } .nav-link, .nav-button { white-space: nowrap; font-size: 13px; padding: 9px 13px; } .page-shell { padding: 30px 18px 60px; } .form-grid, .form-grid.three, .footer-action-inner { grid-template-columns: 1fr; } .filter-section, .panel-body { padding: 18px; } .panel-header { flex-direction: column; align-items: flex-start; } }
-        @media (max-width: 430px) { .logo { font-size: 1.55rem; } .logo-icon { width: 38px; height: 38px; } .page-heading h1 { font-size: 32px; } .type-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .chip-grid { grid-template-columns: 1fr; } }
+        .btn-light {
+            background: white;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-light:hover {
+            color: var(--primary-hover);
+            border-color: rgba(245, 130, 32, 0.45);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 1050px) {
+            .filter-layout { grid-template-columns: 1fr; }
+            .summary-panel { position: static; }
+            .page-heading { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 720px) {
+            body { padding-bottom: 150px; }
+            .top-bar { padding: 10px 16px; font-size: 12px; }
+            .header-inner { padding: 14px 18px; flex-direction: column; align-items: flex-start; }
+            .brand-logo-img { height: 44px; max-width: 210px; }
+            .nav-actions { width: 100%; overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; padding-bottom: 2px; }
+            .nav-link, .nav-button { white-space: nowrap; font-size: 13px; padding: 9px 13px; }
+            .page-shell { padding: 30px 18px 60px; }
+            .form-grid, .form-grid.three, .footer-action-inner { grid-template-columns: 1fr; }
+            .filter-section, .panel-body { padding: 18px; }
+            .panel-header { flex-direction: column; align-items: flex-start; }
+        }
+
+        @media (max-width: 430px) {
+            .brand-logo-img { height: 40px; max-width: 190px; }
+            .brand-logo-text { font-size: 1.55rem; }
+            .logo-icon { width: 38px; height: 38px; }
+            .page-heading h1 { font-size: 32px; }
+            .type-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .chip-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 
 <body>
-    <div class="top-bar"><i class="fa-solid fa-magnifying-glass-chart"></i><span>Filtrera annonser noggrant med märke, modell, län, pris, teknik, komfort och utrustning.</span></div>
+    <div class="top-bar">
+        <i class="fa-solid fa-magnifying-glass-chart"></i>
+        <span>VORQ Fordon hjälper dig att filtrera fordonsannonser noggrant efter märke, modell, län, pris, teknik, komfort och utrustning.</span>
+    </div>
 
     <header class="site-header">
         <div class="header-inner">
-            <a href="index.html" class="logo" aria-label="Gå till startsidan"><span class="logo-icon"><i class="fa-solid fa-car-side"></i></span>BIL<span>HK</span></a>
+            <a href="index.html" class="logo" aria-label="Gå till VORQ Fordon startsida">
+                <img
+                    src="./vorq-fordon-logo-header.png"
+                    alt="VORQ Fordon"
+                    class="brand-logo-img"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+                >
+                <span class="brand-logo-text">
+                    <span class="logo-icon"><i class="fa-solid fa-car-side"></i></span>
+                    VORQ <span>Fordon</span>
+                </span>
+            </a>
+
             <nav class="nav-actions" aria-label="Huvudmeny">
                 <a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Hem</a>
                 <a href="my-account.html" class="nav-link"><i class="fa-solid fa-user"></i> Mitt konto</a>
                 <a href="sell.html" class="nav-link primary"><i class="fa-solid fa-plus"></i> Lägg till annons</a>
-                <button type="button" class="nav-button" id="authActionBtn" data-auth-mode="login" aria-label="Logga in"><i class="fa-solid fa-right-to-bracket" id="authActionIcon"></i><span id="authActionText">Logga in</span></button>
+                <a href="notice-action.html" class="nav-link"><i class="fa-solid fa-flag"></i> Anmäl annons</a>
+                <button type="button" class="nav-button" id="authActionBtn" data-auth-mode="login" aria-label="Logga in">
+                    <i class="fa-solid fa-right-to-bracket" id="authActionIcon"></i>
+                    <span id="authActionText">Logga in</span>
+                </button>
             </nav>
         </div>
     </header>
 
     <main class="page-shell">
-        <section class="page-heading"><div><div class="eyebrow"><i class="fa-solid fa-sliders"></i> Avancerad sökning</div><h1>Hitta rätt bil snabbare</h1><p>Välj alla filter du behöver. Plats väljs från Sveriges 21 län istället för manuell text, och extra utrustning skickas vidare till results.html som sökparametrar.</p></div></section>
+        <section class="page-heading">
+            <div>
+                <div class="eyebrow"><i class="fa-solid fa-sliders"></i> Avancerad sökning</div>
+                <h1>Hitta rätt fordon snabbare</h1>
+                <p>
+                    Välj de filter du behöver för att hitta fordonsannonser i Sverige. Annonserna publiceras av användare,
+                    och VORQ Fordon fungerar som en annonsplattform – inte som säljare, ägare eller besiktningspart.
+                </p>
+                <div class="owner-note">
+                    <i class="fa-solid fa-building"></i>
+                    <span><strong>VORQ Fordon</strong> är ett projekt under <strong>VORQ Digital</strong>, Inhaber: Haitham Kojar.</span>
+                </div>
+            </div>
+        </section>
 
         <section class="filter-layout">
             <form class="filter-panel" id="filterForm" novalidate>
-                <div class="panel-header"><div class="panel-title"><div class="panel-icon"><i class="fa-solid fa-filter"></i></div><div><h2>Filter</h2><span>Alla fält är frivilliga</span></div></div></div>
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <div class="panel-icon"><i class="fa-solid fa-filter"></i></div>
+                        <div>
+                            <h2>Filter</h2>
+                            <span>Alla fält är frivilliga</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="panel-body">
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-car-side"></i></div><div><h3>Karosstyp</h3><span>Välj en typ eller lämna tomt</span></div></div><div class="type-grid" id="bodyTypeGrid"><button type="button" class="type-card" data-body-type="Sedan"><i class="fa-solid fa-car-side"></i><span>Sedan</span></button><button type="button" class="type-card" data-body-type="Kombi"><i class="fa-solid fa-car-rear"></i><span>Kombi</span></button><button type="button" class="type-card" data-body-type="Halvkombi"><i class="fa-solid fa-car"></i><span>Halvkombi</span></button><button type="button" class="type-card" data-body-type="SUV"><i class="fa-solid fa-truck-monster"></i><span>SUV</span></button><button type="button" class="type-card" data-body-type="Coupé"><i class="fa-solid fa-gauge-high"></i><span>Coupé</span></button><button type="button" class="type-card" data-body-type="Cabriolet"><i class="fa-solid fa-car-burst"></i><span>Cabriolet</span></button><button type="button" class="type-card" data-body-type="Pickup"><i class="fa-solid fa-truck-pickup"></i><span>Pickup</span></button><button type="button" class="type-card" data-body-type="Transportbil"><i class="fa-solid fa-van-shuttle"></i><span>Transport</span></button></div></div>
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon"><i class="fa-solid fa-car-side"></i></div>
+                            <div>
+                                <h3>Karosstyp</h3>
+                                <span>Välj en typ eller lämna tomt</span>
+                            </div>
+                        </div>
 
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-id-card"></i></div><div><h3>Märke och modell</h3><span>Data hämtas från cars-data.js</span></div></div><div class="form-grid"><div class="form-group"><label for="brand">Märke <span class="hint">Valfritt</span></label><div class="input-wrap"><i class="fa-solid fa-copyright"></i><select id="brand" name="brand"></select></div></div><div class="form-group"><label for="model">Modell <span class="hint">Baserat på märke</span></label><div class="input-wrap"><i class="fa-solid fa-car"></i><select id="model" name="model"></select></div></div><div class="form-group"><label for="minYear">Från år <span class="hint">Ex. 2018</span></label><div class="input-wrap"><i class="fa-solid fa-calendar"></i><input type="number" id="minYear" name="minYear" min="1900" max="2027" placeholder="Från år"></div></div><div class="form-group"><label for="maxYear">Till år <span class="hint">Ex. 2026</span></label><div class="input-wrap"><i class="fa-solid fa-calendar-check"></i><input type="number" id="maxYear" name="maxYear" min="1900" max="2027" placeholder="Till år"></div></div></div></div>
+                        <div class="type-grid" id="bodyTypeGrid">
+                            <button type="button" class="type-card" data-body-type="Sedan"><i class="fa-solid fa-car-side"></i><span>Sedan</span></button>
+                            <button type="button" class="type-card" data-body-type="Kombi"><i class="fa-solid fa-car-rear"></i><span>Kombi</span></button>
+                            <button type="button" class="type-card" data-body-type="Halvkombi"><i class="fa-solid fa-car"></i><span>Halvkombi</span></button>
+                            <button type="button" class="type-card" data-body-type="SUV"><i class="fa-solid fa-truck-monster"></i><span>SUV</span></button>
+                            <button type="button" class="type-card" data-body-type="Coupé"><i class="fa-solid fa-gauge-high"></i><span>Coupé</span></button>
+                            <button type="button" class="type-card" data-body-type="Cabriolet"><i class="fa-solid fa-car-burst"></i><span>Cabriolet</span></button>
+                            <button type="button" class="type-card" data-body-type="Pickup"><i class="fa-solid fa-truck-pickup"></i><span>Pickup</span></button>
+                            <button type="button" class="type-card" data-body-type="Transportbil"><i class="fa-solid fa-van-shuttle"></i><span>Transport</span></button>
+                        </div>
+                    </div>
 
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-location-dot"></i></div><div><h3>Plats i Sverige</h3><span>Välj län från listan</span></div></div><div class="form-grid"><div class="form-group"><label for="county">Län <span class="hint">21 län</span></label><div class="input-wrap"><i class="fa-solid fa-map-location-dot"></i><select id="county" name="county"></select></div></div><div class="form-group"><label for="location">Plats / stad <span class="hint">Automatisk lista</span></label><div class="input-wrap"><i class="fa-solid fa-location-dot"></i><input type="text" id="location" name="location" list="swedishLocationsList" maxlength="80" autocomplete="off" placeholder="Välj eller skriv stad"><datalist id="swedishLocationsList"></datalist></div></div></div></div>
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon"><i class="fa-solid fa-id-card"></i></div>
+                            <div>
+                                <h3>Märke och modell</h3>
+                                <span>Välj märke och modell från listan</span>
+                            </div>
+                        </div>
 
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-coins"></i></div><div><h3>Pris och miltal</h3><span>Begränsa resultaten ekonomiskt</span></div></div><div class="form-grid"><div class="form-group"><label for="minPrice">Minpris <span class="hint">SEK</span></label><div class="input-wrap"><i class="fa-solid fa-tag"></i><input type="number" id="minPrice" name="minPrice" min="0" placeholder="Minpris"></div></div><div class="form-group"><label for="maxPrice">Maxpris <span class="hint">SEK</span></label><div class="input-wrap"><i class="fa-solid fa-tags"></i><input type="number" id="maxPrice" name="maxPrice" min="0" placeholder="Maxpris"></div></div><div class="form-group"><label for="minMileage">Min miltal <span class="hint">km</span></label><div class="input-wrap"><i class="fa-solid fa-road"></i><input type="number" id="minMileage" name="minMileage" min="0" placeholder="Ex. 20000"></div></div><div class="form-group"><label for="maxMileage">Max miltal <span class="hint">km</span></label><div class="input-wrap"><i class="fa-solid fa-road"></i><input type="number" id="maxMileage" name="maxMileage" min="0" placeholder="Ex. 120000"></div></div><div class="form-group"><label for="owners">Max ägare <span class="hint">Valfritt</span></label><div class="input-wrap"><i class="fa-solid fa-users"></i><input type="number" id="owners" name="owners" min="0" max="50" placeholder="Ex. 2"></div></div></div></div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="brand">Märke <span class="hint">Valfritt</span></label>
+                                <div class="input-wrap"><i class="fa-solid fa-copyright"></i><select id="brand" name="brand"></select></div>
+                            </div>
 
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-gears"></i></div><div><h3>Teknik och mekanik</h3><span>Bränsle, växellåda, drift och effekt</span></div></div><div class="form-grid three"><div class="form-group"><label for="fuelType">Bränsle</label><div class="input-wrap"><i class="fa-solid fa-gas-pump"></i><select id="fuelType" name="fuelType"><option value="">Alla</option><option>Bensin</option><option>Diesel</option><option>El</option><option>Hybrid</option><option>Laddhybrid</option><option>Gas</option><option>Etanol</option><option>Övrigt</option></select></div></div><div class="form-group"><label for="transmission">Växellåda</label><div class="input-wrap"><i class="fa-solid fa-gears"></i><select id="transmission" name="transmission"><option value="">Alla</option><option>Automat</option><option>Manuell</option><option>Halvautomat</option></select></div></div><div class="form-group"><label for="drive">Drivning</label><div class="input-wrap"><i class="fa-solid fa-circle-nodes"></i><select id="drive" name="drive"><option value="">Alla</option><option value="Framhjulsdrift">Framhjulsdrift / FWD</option><option value="Bakhjulsdrift">Bakhjulsdrift / RWD</option><option value="Fyrhjulsdrift">Fyrhjulsdrift / 4WD</option><option value="AWD">AWD</option></select></div></div><div class="form-group"><label for="minHp">Min hk</label><div class="input-wrap"><i class="fa-solid fa-bolt"></i><input type="number" id="minHp" name="minHp" min="0" max="3000" placeholder="Ex. 150"></div></div><div class="form-group"><label for="maxHp">Max hk</label><div class="input-wrap"><i class="fa-solid fa-bolt-lightning"></i><input type="number" id="maxHp" name="maxHp" min="0" max="3000" placeholder="Ex. 400"></div></div><div class="form-group"><label for="condition">Skick</label><div class="input-wrap"><i class="fa-solid fa-circle-check"></i><select id="condition" name="condition"><option value="">Alla</option><option>Mycket bra</option><option>Bra</option><option>Normalt bruksskick</option><option>Behöver service</option><option>Defekt</option></select></div></div></div></div>
+                            <div class="form-group">
+                                <label for="model">Modell <span class="hint">Baserat på märke</span></label>
+                                <div class="input-wrap"><i class="fa-solid fa-car"></i><select id="model" name="model"></select></div>
+                            </div>
 
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-couch"></i></div><div><h3>Interiör och praktiska detaljer</h3><span>Dörrar, säten och färg</span></div></div><div class="form-grid three"><div class="form-group"><label for="doors">Dörrar</label><div class="input-wrap"><i class="fa-solid fa-door-open"></i><select id="doors" name="doors"><option value="">Alla</option><option value="2">2 dörrar</option><option value="3">3 dörrar</option><option value="4">4 dörrar</option><option value="5">5 dörrar</option></select></div></div><div class="form-group"><label for="seats">Säten</label><div class="input-wrap"><i class="fa-solid fa-chair"></i><select id="seats" name="seats"><option value="">Alla</option><option value="2">2 säten</option><option value="4">4 säten</option><option value="5">5 säten</option><option value="6">6 säten</option><option value="7">7 säten</option><option value="8+">8+ säten</option></select></div></div><div class="form-group"><label for="color">Färg</label><div class="input-wrap"><i class="fa-solid fa-palette"></i><select id="color" name="color"><option value="">Alla</option><option>Svart</option><option>Vit</option><option>Grå</option><option>Silver</option><option>Blå</option><option>Röd</option><option>Grön</option><option>Brun</option><option>Beige</option><option>Gul</option><option>Orange</option><option>Annan</option></select></div></div></div></div>
+                            <div class="form-group">
+                                <label for="minYear">Från år <span class="hint">Ex. 2018</span></label>
+                                <div class="input-wrap"><i class="fa-solid fa-calendar"></i><input type="number" id="minYear" name="minYear" min="1900" max="2027" placeholder="Från år"></div>
+                            </div>
 
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-shield-halved"></i></div><div><h3>Säkerhet och förarassistans</h3><span>Välj en eller flera utrustningar</span></div></div><div class="chip-grid" id="safetyGrid"><button type="button" class="chip" data-feature="ABS"><i class="fa-solid fa-shield"></i> ABS</button><button type="button" class="chip" data-feature="Antisladd"><i class="fa-solid fa-car-burst"></i> Antisladd</button><button type="button" class="chip" data-feature="Adaptiv farthållare"><i class="fa-solid fa-gauge-high"></i> Adaptiv farthållare</button><button type="button" class="chip" data-feature="Autobroms"><i class="fa-solid fa-triangle-exclamation"></i> Autobroms</button><button type="button" class="chip" data-feature="Filhållningsassistans"><i class="fa-solid fa-road"></i> Filhållningsassistans</button><button type="button" class="chip" data-feature="Dödavinkelvarnare"><i class="fa-solid fa-eye"></i> Dödavinkelvarnare</button><button type="button" class="chip" data-feature="Parkeringssensorer"><i class="fa-solid fa-square-parking"></i> Parkeringssensorer</button><button type="button" class="chip" data-feature="360-kamera"><i class="fa-solid fa-camera"></i> 360-kamera</button><button type="button" class="chip" data-feature="Backkamera"><i class="fa-solid fa-video"></i> Backkamera</button><button type="button" class="chip" data-feature="Isofix"><i class="fa-solid fa-child-reaching"></i> Isofix</button></div></div>
+                            <div class="form-group">
+                                <label for="maxYear">Till år <span class="hint">Ex. 2026</span></label>
+                                <div class="input-wrap"><i class="fa-solid fa-calendar-check"></i><input type="number" id="maxYear" name="maxYear" min="1900" max="2027" placeholder="Till år"></div>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="filter-section"><div class="section-heading"><div class="section-icon"><i class="fa-solid fa-star"></i></div><div><h3>Komfort och extra utrustning</h3><span>Vanliga val för bilannonser</span></div></div><div class="chip-grid" id="comfortGrid"><button type="button" class="chip" data-feature="Klimatanläggning"><i class="fa-solid fa-snowflake"></i> Klimatanläggning</button><button type="button" class="chip" data-feature="Sätesvärme"><i class="fa-solid fa-temperature-high"></i> Sätesvärme</button><button type="button" class="chip" data-feature="Ventilerade säten"><i class="fa-solid fa-fan"></i> Ventilerade säten</button><button type="button" class="chip" data-feature="Elstolar"><i class="fa-solid fa-chair"></i> Elstolar</button><button type="button" class="chip" data-feature="Minnesstol"><i class="fa-solid fa-memory"></i> Minnesstol</button><button type="button" class="chip" data-feature="Skinn"><i class="fa-solid fa-couch"></i> Skinn</button><button type="button" class="chip" data-feature="Panoramatak"><i class="fa-solid fa-window-maximize"></i> Panoramatak</button><button type="button" class="chip" data-feature="Taklucka"><i class="fa-solid fa-sun"></i> Taklucka</button><button type="button" class="chip" data-feature="Navigation"><i class="fa-solid fa-map"></i> Navigation</button><button type="button" class="chip" data-feature="Bluetooth"><i class="fa-brands fa-bluetooth-b"></i> Bluetooth</button><button type="button" class="chip" data-feature="Apple CarPlay"><i class="fa-brands fa-apple"></i> Apple CarPlay</button><button type="button" class="chip" data-feature="Android Auto"><i class="fa-brands fa-android"></i> Android Auto</button><button type="button" class="chip" data-feature="Premiumljud"><i class="fa-solid fa-volume-high"></i> Premiumljud</button><button type="button" class="chip" data-feature="LED-strålkastare"><i class="fa-solid fa-lightbulb"></i> LED-strålkastare</button><button type="button" class="chip" data-feature="Xenonljus"><i class="fa-solid fa-car-on"></i> Xenonljus</button><button type="button" class="chip" data-feature="Dragkrok"><i class="fa-solid fa-link"></i> Dragkrok</button><button type="button" class="chip" data-feature="Nyservad"><i class="fa-solid fa-screwdriver-wrench"></i> Nyservad</button><button type="button" class="chip" data-feature="Vinterhjul"><i class="fa-regular fa-snowflake"></i> Vinterhjul</button><button type="button" class="chip" data-feature="Sommarhjul"><i class="fa-solid fa-circle-dot"></i> Sommarhjul</button><button type="button" class="chip" data-feature="Elhissar"><i class="fa-solid fa-window-maximize"></i> Elhissar</button><button type="button" class="chip" data-feature="Tonade rutor"><i class="fa-solid fa-window-restore"></i> Tonade rutor</button></div></div>
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon"><i class="fa-solid fa-location-dot"></i></div>
+                            <div>
+                                <h3>Plats i Sverige</h3>
+                                <span>Välj län från listan</span>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="county">Län <span class="hint">21 län</span></label>
+                                <div class="input-wrap"><i class="fa-solid fa-map-location-dot"></i><select id="county" name="county"></select></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="location">Plats / stad <span class="hint">Automatisk lista</span></label>
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <input type="text" id="location" name="location" list="swedishLocationsList" maxlength="80" autocomplete="off" placeholder="Välj eller skriv stad">
+                                    <datalist id="swedishLocationsList"></datalist>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon"><i class="fa-solid fa-coins"></i></div>
+                            <div>
+                                <h3>Pris och miltal</h3>
+                                <span>Begränsa resultaten ekonomiskt</span>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="minPrice">Minpris <span class="hint">SEK</span></label>
+                                <div class="input-wrap"><i class="fa-solid fa-tag"></i><input type="number" id="minPrice" name="minPrice" min="0" placeholder="Minpris"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="maxPrice">Maxpris <span class="hint">SEK</span></label>
+                                <div class="input-wrap"><i class="fa-solid fa-tags"></i><input type="number" id="maxPrice" name="maxPrice" min="0" placeholder="Maxpris"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="minMileage">Min miltal <span class="hint">km</span></label>
+                                <div class="input-wrap"><i class="fa-solid fa-road"></i><input type="number" id="minMileage" name="minMileage" min="0" placeholder="Ex. 20000"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="maxMileage">Max miltal <span class="hint">km</span></label>
+                                <div class="input-wrap"><i class="fa-solid fa-road"></i><input type="number" id="maxMileage" name="maxMileage" min="0" placeholder="Ex. 120000"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="owners">Max ägare <span class="hint">Valfritt</span></label>
+                                <div class="input-wrap"><i class="fa-solid fa-users"></i><input type="number" id="owners" name="owners" min="0" max="50" placeholder="Ex. 2"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon"><i class="fa-solid fa-gears"></i></div>
+                            <div>
+                                <h3>Teknik och mekanik</h3>
+                                <span>Bränsle, växellåda, drift och effekt</span>
+                            </div>
+                        </div>
+
+                        <div class="form-grid three">
+                            <div class="form-group">
+                                <label for="fuelType">Bränsle</label>
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-gas-pump"></i>
+                                    <select id="fuelType" name="fuelType">
+                                        <option value="">Alla</option>
+                                        <option>Bensin</option>
+                                        <option>Diesel</option>
+                                        <option>El</option>
+                                        <option>Hybrid</option>
+                                        <option>Laddhybrid</option>
+                                        <option>Gas</option>
+                                        <option>Etanol</option>
+                                        <option>Övrigt</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="transmission">Växellåda</label>
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-gears"></i>
+                                    <select id="transmission" name="transmission">
+                                        <option value="">Alla</option>
+                                        <option>Automat</option>
+                                        <option>Manuell</option>
+                                        <option>Halvautomat</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="drive">Drivning</label>
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-circle-nodes"></i>
+                                    <select id="drive" name="drive">
+                                        <option value="">Alla</option>
+                                        <option value="Framhjulsdrift">Framhjulsdrift / FWD</option>
+                                        <option value="Bakhjulsdrift">Bakhjulsdrift / RWD</option>
+                                        <option value="Fyrhjulsdrift">Fyrhjulsdrift / 4WD</option>
+                                        <option value="AWD">AWD</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="minHp">Min hk</label>
+                                <div class="input-wrap"><i class="fa-solid fa-bolt"></i><input type="number" id="minHp" name="minHp" min="0" max="3000" placeholder="Ex. 150"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="maxHp">Max hk</label>
+                                <div class="input-wrap"><i class="fa-solid fa-bolt-lightning"></i><input type="number" id="maxHp" name="maxHp" min="0" max="3000" placeholder="Ex. 400"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="condition">Skick</label>
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <select id="condition" name="condition">
+                                        <option value="">Alla</option>
+                                        <option>Mycket bra</option>
+                                        <option>Bra</option>
+                                        <option>Normalt bruksskick</option>
+                                        <option>Behöver service</option>
+                                        <option>Defekt</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon"><i class="fa-solid fa-couch"></i></div>
+                            <div>
+                                <h3>Interiör och praktiska detaljer</h3>
+                                <span>Dörrar, säten och färg</span>
+                            </div>
+                        </div>
+
+                        <div class="form-grid three">
+                            <div class="form-group">
+                                <label for="doors">Dörrar</label>
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-door-open"></i>
+                                    <select id="doors" name="doors">
+                                        <option value="">Alla</option>
+                                        <option value="2">2 dörrar</option>
+                                        <option value="3">3 dörrar</option>
+                                        <option value="4">4 dörrar</option>
+                                        <option value="5">5 dörrar</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="seats">Säten</label>
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-chair"></i>
+                                    <select id="seats" name="seats">
+                                        <option value="">Alla</option>
+                                        <option value="2">2 säten</option>
+                                        <option value="4">4 säten</option>
+                                        <option value="5">5 säten</option>
+                                        <option value="6">6 säten</option>
+                                        <option value="7">7 säten</option>
+                                        <option value="8+">8+ säten</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="color">Färg</label>
+                                <div class="input-wrap">
+                                    <i class="fa-solid fa-palette"></i>
+                                    <select id="color" name="color">
+                                        <option value="">Alla</option>
+                                        <option>Svart</option>
+                                        <option>Vit</option>
+                                        <option>Grå</option>
+                                        <option>Silver</option>
+                                        <option>Blå</option>
+                                        <option>Röd</option>
+                                        <option>Grön</option>
+                                        <option>Brun</option>
+                                        <option>Beige</option>
+                                        <option>Gul</option>
+                                        <option>Orange</option>
+                                        <option>Annan</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                            <div>
+                                <h3>Säkerhet och förarassistans</h3>
+                                <span>Välj en eller flera utrustningar</span>
+                            </div>
+                        </div>
+
+                        <div class="chip-grid" id="safetyGrid">
+                            <button type="button" class="chip" data-feature="ABS"><i class="fa-solid fa-shield"></i> ABS</button>
+                            <button type="button" class="chip" data-feature="Antisladd"><i class="fa-solid fa-car-burst"></i> Antisladd</button>
+                            <button type="button" class="chip" data-feature="Adaptiv farthållare"><i class="fa-solid fa-gauge-high"></i> Adaptiv farthållare</button>
+                            <button type="button" class="chip" data-feature="Autobroms"><i class="fa-solid fa-triangle-exclamation"></i> Autobroms</button>
+                            <button type="button" class="chip" data-feature="Filhållningsassistans"><i class="fa-solid fa-road"></i> Filhållningsassistans</button>
+                            <button type="button" class="chip" data-feature="Dödavinkelvarnare"><i class="fa-solid fa-eye"></i> Dödavinkelvarnare</button>
+                            <button type="button" class="chip" data-feature="Parkeringssensorer"><i class="fa-solid fa-square-parking"></i> Parkeringssensorer</button>
+                            <button type="button" class="chip" data-feature="360-kamera"><i class="fa-solid fa-camera"></i> 360-kamera</button>
+                            <button type="button" class="chip" data-feature="Backkamera"><i class="fa-solid fa-video"></i> Backkamera</button>
+                            <button type="button" class="chip" data-feature="Isofix"><i class="fa-solid fa-child-reaching"></i> Isofix</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="section-heading">
+                            <div class="section-icon"><i class="fa-solid fa-star"></i></div>
+                            <div>
+                                <h3>Komfort och extra utrustning</h3>
+                                <span>Vanliga val för fordonsannonser</span>
+                            </div>
+                        </div>
+
+                        <div class="chip-grid" id="comfortGrid">
+                            <button type="button" class="chip" data-feature="Klimatanläggning"><i class="fa-solid fa-snowflake"></i> Klimatanläggning</button>
+                            <button type="button" class="chip" data-feature="Sätesvärme"><i class="fa-solid fa-temperature-high"></i> Sätesvärme</button>
+                            <button type="button" class="chip" data-feature="Ventilerade säten"><i class="fa-solid fa-fan"></i> Ventilerade säten</button>
+                            <button type="button" class="chip" data-feature="Elstolar"><i class="fa-solid fa-chair"></i> Elstolar</button>
+                            <button type="button" class="chip" data-feature="Minnesstol"><i class="fa-solid fa-memory"></i> Minnesstol</button>
+                            <button type="button" class="chip" data-feature="Skinn"><i class="fa-solid fa-couch"></i> Skinn</button>
+                            <button type="button" class="chip" data-feature="Panoramatak"><i class="fa-solid fa-window-maximize"></i> Panoramatak</button>
+                            <button type="button" class="chip" data-feature="Taklucka"><i class="fa-solid fa-sun"></i> Taklucka</button>
+                            <button type="button" class="chip" data-feature="Navigation"><i class="fa-solid fa-map"></i> Navigation</button>
+                            <button type="button" class="chip" data-feature="Bluetooth"><i class="fa-brands fa-bluetooth-b"></i> Bluetooth</button>
+                            <button type="button" class="chip" data-feature="Apple CarPlay"><i class="fa-brands fa-apple"></i> Apple CarPlay</button>
+                            <button type="button" class="chip" data-feature="Android Auto"><i class="fa-brands fa-android"></i> Android Auto</button>
+                            <button type="button" class="chip" data-feature="Premiumljud"><i class="fa-solid fa-volume-high"></i> Premiumljud</button>
+                            <button type="button" class="chip" data-feature="LED-strålkastare"><i class="fa-solid fa-lightbulb"></i> LED-strålkastare</button>
+                            <button type="button" class="chip" data-feature="Xenonljus"><i class="fa-solid fa-car-on"></i> Xenonljus</button>
+                            <button type="button" class="chip" data-feature="Dragkrok"><i class="fa-solid fa-link"></i> Dragkrok</button>
+                            <button type="button" class="chip" data-feature="Nyservad"><i class="fa-solid fa-screwdriver-wrench"></i> Nyservad</button>
+                            <button type="button" class="chip" data-feature="Vinterhjul"><i class="fa-regular fa-snowflake"></i> Vinterhjul</button>
+                            <button type="button" class="chip" data-feature="Sommarhjul"><i class="fa-solid fa-circle-dot"></i> Sommarhjul</button>
+                            <button type="button" class="chip" data-feature="Elhissar"><i class="fa-solid fa-window-maximize"></i> Elhissar</button>
+                            <button type="button" class="chip" data-feature="Tonade rutor"><i class="fa-solid fa-window-restore"></i> Tonade rutor</button>
+                        </div>
+                    </div>
                 </div>
             </form>
 
-            <aside class="summary-panel"><div class="side-header"><div class="side-icon"><i class="fa-solid fa-clipboard-list"></i></div><div><h3>Valda filter</h3><p>Uppdateras automatiskt.</p></div></div><div class="summary-list" id="summaryList"></div><div class="warning-box"><i class="fa-solid fa-triangle-exclamation"></i>Kontrollera alltid bilens skick, dokumentation och säljare innan affär.</div></aside>
+            <aside class="summary-panel">
+                <div class="side-header">
+                    <div class="side-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                    <div>
+                        <h3>Valda filter</h3>
+                        <p>Uppdateras automatiskt.</p>
+                    </div>
+                </div>
+
+                <div class="summary-list" id="summaryList"></div>
+
+                <div class="warning-box">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Kontrollera alltid fordonets skick, dokumentation och säljare innan affär. VORQ Fordon säljer inte fordon och garanterar inte användarnas uppgifter. <a href="notice-action.html">Anmäl felaktig eller olaglig annons</a>.
+                </div>
+            </aside>
         </section>
     </main>
 
-    <div class="footer-action"><div class="footer-action-inner"><button type="button" class="btn btn-light" id="resetBtn"><i class="fa-solid fa-rotate-left"></i> Rensa filter</button><button type="button" class="btn btn-primary" id="showResultsBtn"><i class="fa-solid fa-magnifying-glass"></i> Visa resultat</button></div></div>
+    <div class="footer-action">
+        <div class="footer-action-inner">
+            <button type="button" class="btn btn-light" id="resetBtn">
+                <i class="fa-solid fa-rotate-left"></i> Rensa filter
+            </button>
+            <button type="button" class="btn btn-primary" id="showResultsBtn">
+                <i class="fa-solid fa-magnifying-glass"></i> Visa resultat
+            </button>
+        </div>
+    </div>
 
     <script type="module">
         import { auth } from './firebase-config.js';
@@ -278,54 +946,572 @@
         import { attachBrandModelSelects } from './cars-data.js';
 
         const FILTER_CONFIG = Object.freeze({
-            ROUTES: Object.freeze({ HOME: 'index.html', LOGIN: 'login.html', RESULTS: 'results.html' }),
-            LIMITS: Object.freeze({ TEXT_MAX: 80, QUERY_MAX: 2000, MIN_YEAR: 1900, MAX_YEAR: 2027, MIN_PRICE: 0, MAX_PRICE: 20000000, MIN_MILEAGE: 0, MAX_MILEAGE: 2000000, MIN_HP: 0, MAX_HP: 3000, MAX_OWNERS: 50 }),
-            NUMBER_FIELDS: Object.freeze({ minYear: [1900, 2027], maxYear: [1900, 2027], minPrice: [0, 20000000], maxPrice: [0, 20000000], minMileage: [0, 2000000], maxMileage: [0, 2000000], owners: [0, 50], minHp: [0, 3000], maxHp: [0, 3000] })
+            ROUTES: Object.freeze({
+                HOME: 'index.html',
+                LOGIN: 'login.html',
+                RESULTS: 'results.html'
+            }),
+            LIMITS: Object.freeze({
+                TEXT_MAX: 80,
+                QUERY_MAX: 2000,
+                MIN_YEAR: 1900,
+                MAX_YEAR: 2027,
+                MIN_PRICE: 0,
+                MAX_PRICE: 20000000,
+                MIN_MILEAGE: 0,
+                MAX_MILEAGE: 2000000,
+                MIN_HP: 0,
+                MAX_HP: 3000,
+                MAX_OWNERS: 50
+            }),
+            NUMBER_FIELDS: Object.freeze({
+                minYear: [1900, 2027],
+                maxYear: [1900, 2027],
+                minPrice: [0, 20000000],
+                maxPrice: [0, 20000000],
+                minMileage: [0, 2000000],
+                maxMileage: [0, 2000000],
+                owners: [0, 50],
+                minHp: [0, 3000],
+                maxHp: [0, 3000]
+            })
         });
 
-        const SWEDISH_COUNTIES = Object.freeze(["Stockholm","Uppsala","Södermanland","Östergötland","Jönköping","Kronoberg","Kalmar","Gotland","Blekinge","Skåne","Halland","Västra Götaland","Värmland","Örebro","Västmanland","Dalarna","Gävleborg","Västernorrland","Jämtland","Västerbotten","Norrbotten"]);
-        const SWEDISH_LOCATION_DATA = Object.freeze({"Stockholm":["Stockholm","Solna","Sundbyberg","Danderyd","Lidingö","Nacka","Värmdö","Täby","Sollentuna","Järfälla","Upplands Väsby","Sigtuna","Märsta","Vallentuna","Österåker","Åkersberga","Vaxholm","Ekerö","Botkyrka","Tumba","Huddinge","Haninge","Tyresö","Nynäshamn","Norrtälje","Södertälje","Salem","Nykvarn"],"Uppsala":["Uppsala","Enköping","Bålsta","Håbo","Knivsta","Tierp","Östhammar","Älvkarleby","Heby"],"Södermanland":["Nyköping","Eskilstuna","Katrineholm","Strängnäs","Mariefred","Flen","Gnesta","Oxelösund","Trosa","Vingåker"],"Östergötland":["Linköping","Norrköping","Motala","Mjölby","Finspång","Söderköping","Vadstena","Valdemarsvik","Åtvidaberg","Kisa","Boxholm","Ödeshög"],"Jönköping":["Jönköping","Huskvarna","Nässjö","Eksjö","Tranås","Vetlanda","Värnamo","Gislaved","Anderstorp","Gnosjö","Sävsjö","Aneby","Mullsjö","Habo"],"Kronoberg":["Växjö","Ljungby","Alvesta","Älmhult","Tingsryd","Lessebo","Markaryd","Uppvidinge"],"Kalmar":["Kalmar","Västervik","Oskarshamn","Vimmerby","Nybro","Mönsterås","Hultsfred","Emmaboda","Borgholm","Mörbylånga","Torsås","Högsby"],"Gotland":["Visby","Hemse","Slite","Roma","Klintehamn","Fårösund"],"Blekinge":["Karlskrona","Karlshamn","Ronneby","Sölvesborg","Olofström"],"Skåne":["Malmö","Lund","Helsingborg","Kristianstad","Landskrona","Trelleborg","Ystad","Eslöv","Hässleholm","Ängelholm","Höganäs","Staffanstorp","Lomma","Kävlinge","Burlöv","Svedala","Vellinge","Skurup","Sjöbo","Tomelilla","Simrishamn","Bromölla","Osby","Perstorp","Klippan","Åstorp","Båstad","Örkelljunga","Hörby","Höör","Östra Göinge"],"Halland":["Halmstad","Varberg","Kungsbacka","Falkenberg","Laholm","Hyltebruk","Hylte"],"Västra Götaland":["Göteborg","Borås","Trollhättan","Uddevalla","Skövde","Alingsås","Lidköping","Mariestad","Vänersborg","Mölndal","Partille","Lerum","Kungälv","Stenungsund","Lysekil","Strömstad","Falköping","Tidaholm","Ulricehamn","Mark","Kinna","Bollebygd","Herrljunga","Vara","Grästorp","Essunga","Töreboda","Karlsborg","Gullspång","Tranemo","Svenljunga","Åmål","Bengtsfors","Mellerud","Dals-Ed","Färgelanda","Orust","Tjörn","Härryda","Öckerö"],"Värmland":["Karlstad","Kristinehamn","Arvika","Hagfors","Sunne","Säffle","Filipstad","Torsby","Kil","Grums","Forshaga","Munkfors","Årjäng","Eda","Storfors"],"Örebro":["Örebro","Karlskoga","Kumla","Lindesberg","Hallsberg","Nora","Askersund","Lekeberg","Degerfors","Hällefors","Ljusnarsberg","Laxå"],"Västmanland":["Västerås","Köping","Sala","Arboga","Fagersta","Hallstahammar","Surahammar","Skinnskatteberg","Norberg","Kungsör"],"Dalarna":["Falun","Borlänge","Mora","Ludvika","Avesta","Hedemora","Säter","Leksand","Rättvik","Orsa","Malung","Sälen","Älvdalen","Vansbro","Gagnef","Smedjebacken"],"Gävleborg":["Gävle","Sandviken","Hudiksvall","Bollnäs","Söderhamn","Ljusdal","Ockelbo","Hofors","Ovanåker","Edsbyn","Nordanstig"],"Västernorrland":["Sundsvall","Örnsköldsvik","Härnösand","Kramfors","Sollefteå","Timrå","Ånge"],"Jämtland":["Östersund","Åre","Krokom","Strömsund","Bräcke","Berg","Härjedalen","Sveg","Ragunda"],"Västerbotten":["Umeå","Skellefteå","Lycksele","Vännäs","Robertsfors","Vindeln","Nordmaling","Bjurholm","Åsele","Dorotea","Vilhelmina","Storuman","Sorsele","Malå","Norsjö"],"Norrbotten":["Luleå","Piteå","Boden","Kiruna","Gällivare","Kalix","Haparanda","Älvsbyn","Arvidsjaur","Jokkmokk","Överkalix","Övertorneå","Pajala","Arjeplog"]});
+        const SWEDISH_COUNTIES = Object.freeze([
+            "Stockholm",
+            "Uppsala",
+            "Södermanland",
+            "Östergötland",
+            "Jönköping",
+            "Kronoberg",
+            "Kalmar",
+            "Gotland",
+            "Blekinge",
+            "Skåne",
+            "Halland",
+            "Västra Götaland",
+            "Värmland",
+            "Örebro",
+            "Västmanland",
+            "Dalarna",
+            "Gävleborg",
+            "Västernorrland",
+            "Jämtland",
+            "Västerbotten",
+            "Norrbotten"
+        ]);
 
-        const state = { selectedBodyType: "", selectedFeatures: new Set(), currentUser: null, brandModelAttached: false };
-        const elements = { form: byId('filterForm'), brand: byId('brand'), model: byId('model'), minYear: byId('minYear'), maxYear: byId('maxYear'), county: byId('county'), location: byId('location'), swedishLocationsList: byId('swedishLocationsList'), minPrice: byId('minPrice'), maxPrice: byId('maxPrice'), minMileage: byId('minMileage'), maxMileage: byId('maxMileage'), owners: byId('owners'), fuelType: byId('fuelType'), transmission: byId('transmission'), drive: byId('drive'), minHp: byId('minHp'), maxHp: byId('maxHp'), condition: byId('condition'), doors: byId('doors'), seats: byId('seats'), color: byId('color'), bodyTypeGrid: byId('bodyTypeGrid'), summaryList: byId('summaryList'), resetBtn: byId('resetBtn'), showResultsBtn: byId('showResultsBtn'), authActionBtn: byId('authActionBtn'), authActionIcon: byId('authActionIcon'), authActionText: byId('authActionText') };
+        const SWEDISH_LOCATION_DATA = Object.freeze({
+            "Stockholm": ["Stockholm","Solna","Sundbyberg","Danderyd","Lidingö","Nacka","Värmdö","Täby","Sollentuna","Järfälla","Upplands Väsby","Sigtuna","Märsta","Vallentuna","Österåker","Åkersberga","Vaxholm","Ekerö","Botkyrka","Tumba","Huddinge","Haninge","Tyresö","Nynäshamn","Norrtälje","Södertälje","Salem","Nykvarn"],
+            "Uppsala": ["Uppsala","Enköping","Bålsta","Håbo","Knivsta","Tierp","Östhammar","Älvkarleby","Heby"],
+            "Södermanland": ["Nyköping","Eskilstuna","Katrineholm","Strängnäs","Mariefred","Flen","Gnesta","Oxelösund","Trosa","Vingåker"],
+            "Östergötland": ["Linköping","Norrköping","Motala","Mjölby","Finspång","Söderköping","Vadstena","Valdemarsvik","Åtvidaberg","Kisa","Boxholm","Ödeshög"],
+            "Jönköping": ["Jönköping","Huskvarna","Nässjö","Eksjö","Tranås","Vetlanda","Värnamo","Gislaved","Anderstorp","Gnosjö","Sävsjö","Aneby","Mullsjö","Habo"],
+            "Kronoberg": ["Växjö","Ljungby","Alvesta","Älmhult","Tingsryd","Lessebo","Markaryd","Uppvidinge"],
+            "Kalmar": ["Kalmar","Västervik","Oskarshamn","Vimmerby","Nybro","Mönsterås","Hultsfred","Emmaboda","Borgholm","Mörbylånga","Torsås","Högsby"],
+            "Gotland": ["Visby","Hemse","Slite","Roma","Klintehamn","Fårösund"],
+            "Blekinge": ["Karlskrona","Karlshamn","Ronneby","Sölvesborg","Olofström"],
+            "Skåne": ["Malmö","Lund","Helsingborg","Kristianstad","Landskrona","Trelleborg","Ystad","Eslöv","Hässleholm","Ängelholm","Höganäs","Staffanstorp","Lomma","Kävlinge","Burlöv","Svedala","Vellinge","Skurup","Sjöbo","Tomelilla","Simrishamn","Bromölla","Osby","Perstorp","Klippan","Åstorp","Båstad","Örkelljunga","Hörby","Höör","Östra Göinge"],
+            "Halland": ["Halmstad","Varberg","Kungsbacka","Falkenberg","Laholm","Hyltebruk","Hylte"],
+            "Västra Götaland": ["Göteborg","Borås","Trollhättan","Uddevalla","Skövde","Alingsås","Lidköping","Mariestad","Vänersborg","Mölndal","Partille","Lerum","Kungälv","Stenungsund","Lysekil","Strömstad","Falköping","Tidaholm","Ulricehamn","Mark","Kinna","Bollebygd","Herrljunga","Vara","Grästorp","Essunga","Töreboda","Karlsborg","Gullspång","Tranemo","Svenljunga","Åmål","Bengtsfors","Mellerud","Dals-Ed","Färgelanda","Orust","Tjörn","Härryda","Öckerö"],
+            "Värmland": ["Karlstad","Kristinehamn","Arvika","Hagfors","Sunne","Säffle","Filipstad","Torsby","Kil","Grums","Forshaga","Munkfors","Årjäng","Eda","Storfors"],
+            "Örebro": ["Örebro","Karlskoga","Kumla","Lindesberg","Hallsberg","Nora","Askersund","Lekeberg","Degerfors","Hällefors","Ljusnarsberg","Laxå"],
+            "Västmanland": ["Västerås","Köping","Sala","Arboga","Fagersta","Hallstahammar","Surahammar","Skinnskatteberg","Norberg","Kungsör"],
+            "Dalarna": ["Falun","Borlänge","Mora","Ludvika","Avesta","Hedemora","Säter","Leksand","Rättvik","Orsa","Malung","Sälen","Älvdalen","Vansbro","Gagnef","Smedjebacken"],
+            "Gävleborg": ["Gävle","Sandviken","Hudiksvall","Bollnäs","Söderhamn","Ljusdal","Ockelbo","Hofors","Ovanåker","Edsbyn","Nordanstig"],
+            "Västernorrland": ["Sundsvall","Örnsköldsvik","Härnösand","Kramfors","Sollefteå","Timrå","Ånge"],
+            "Jämtland": ["Östersund","Åre","Krokom","Strömsund","Bräcke","Berg","Härjedalen","Sveg","Ragunda"],
+            "Västerbotten": ["Umeå","Skellefteå","Lycksele","Vännäs","Robertsfors","Vindeln","Nordmaling","Bjurholm","Åsele","Dorotea","Vilhelmina","Storuman","Sorsele","Malå","Norsjö"],
+            "Norrbotten": ["Luleå","Piteå","Boden","Kiruna","Gällivare","Kalix","Haparanda","Älvsbyn","Arvidsjaur","Jokkmokk","Överkalix","Övertorneå","Pajala","Arjeplog"]
+        });
+
+        const state = {
+            selectedBodyType: "",
+            selectedFeatures: new Set(),
+            currentUser: null,
+            brandModelAttached: false
+        };
+
+        const elements = {
+            form: byId('filterForm'),
+            brand: byId('brand'),
+            model: byId('model'),
+            minYear: byId('minYear'),
+            maxYear: byId('maxYear'),
+            county: byId('county'),
+            location: byId('location'),
+            swedishLocationsList: byId('swedishLocationsList'),
+            minPrice: byId('minPrice'),
+            maxPrice: byId('maxPrice'),
+            minMileage: byId('minMileage'),
+            maxMileage: byId('maxMileage'),
+            owners: byId('owners'),
+            fuelType: byId('fuelType'),
+            transmission: byId('transmission'),
+            drive: byId('drive'),
+            minHp: byId('minHp'),
+            maxHp: byId('maxHp'),
+            condition: byId('condition'),
+            doors: byId('doors'),
+            seats: byId('seats'),
+            color: byId('color'),
+            bodyTypeGrid: byId('bodyTypeGrid'),
+            summaryList: byId('summaryList'),
+            resetBtn: byId('resetBtn'),
+            showResultsBtn: byId('showResultsBtn'),
+            authActionBtn: byId('authActionBtn'),
+            authActionIcon: byId('authActionIcon'),
+            authActionText: byId('authActionText')
+        };
 
         initializePage();
 
-        function initializePage() { populateCountySelect(); populateLocationDatalist(); hydrateFromURL(); attachBrandModelSelectsSafely(); attachEvents(); observeAuth(); updateBodyTypeUI(); updateFeatureUI(); updateSummary(); }
-        function byId(id) { return document.getElementById(id); }
-        function attachBrandModelSelectsSafely() { try { attachBrandModelSelects(elements.brand, elements.model, { selectedBrand: elements.brand.dataset.initialBrand || "", selectedModel: elements.model.dataset.initialModel || "" }); state.brandModelAttached = true; } catch (error) { console.error('[VORQ Fordon] Could not initialize brand/model selects:', error); } }
-        function populateCountySelect() { clearSelect(elements.county); appendOption(elements.county, "", "Alla län"); SWEDISH_COUNTIES.forEach((county) => appendOption(elements.county, county, county)); }
-        function populateLocationDatalist() { clearDatalist(elements.swedishLocationsList); const selectedCounty = cleanText(elements.county.value, 80); const locations = selectedCounty && SWEDISH_LOCATION_DATA[selectedCounty] ? SWEDISH_LOCATION_DATA[selectedCounty] : getAllSwedishLocations(); locations.forEach((locationName) => appendDatalistOption(elements.swedishLocationsList, locationName)); }
-        function getAllSwedishLocations() { const uniqueLocations = new Set(); SWEDISH_COUNTIES.forEach((county) => { uniqueLocations.add(county); (SWEDISH_LOCATION_DATA[county] || []).forEach((locationName) => uniqueLocations.add(locationName)); }); return Array.from(uniqueLocations).sort((a, b) => a.localeCompare(b, 'sv-SE')); }
-        function observeAuth() { onAuthStateChanged(auth, (user) => { state.currentUser = user || null; updateAuthActionButton(user); }); }
-        function updateAuthActionButton(user) { const isLoggedIn = Boolean(user); elements.authActionBtn.dataset.authMode = isLoggedIn ? 'logout' : 'login'; elements.authActionBtn.setAttribute('aria-label', isLoggedIn ? 'Logga ut' : 'Logga in'); elements.authActionIcon.className = isLoggedIn ? 'fa-solid fa-right-from-bracket' : 'fa-solid fa-right-to-bracket'; elements.authActionText.textContent = isLoggedIn ? 'Logga ut' : 'Logga in'; elements.authActionBtn.disabled = false; }
-        async function handleAuthAction() { if (!state.currentUser) { safeNavigate(FILTER_CONFIG.ROUTES.LOGIN); return; } elements.authActionBtn.disabled = true; elements.authActionIcon.className = 'fa-solid fa-spinner fa-spin'; elements.authActionText.textContent = 'Loggar ut...'; try { await signOut(auth); safeNavigate(FILTER_CONFIG.ROUTES.HOME); } catch (error) { console.error('[VORQ Fordon] Logout failed:', error); updateAuthActionButton(state.currentUser); } }
-        function attachEvents() { elements.authActionBtn.addEventListener('click', handleAuthAction); elements.county.addEventListener('change', () => { populateLocationDatalist(); updateSummary(); }); elements.bodyTypeGrid.querySelectorAll('[data-body-type]').forEach((button) => { button.addEventListener('click', () => { const value = cleanText(button.dataset.bodyType, 40); state.selectedBodyType = state.selectedBodyType === value ? "" : value; updateBodyTypeUI(); updateSummary(); }); }); document.querySelectorAll('[data-feature]').forEach((button) => { button.addEventListener('click', () => { const feature = cleanText(button.dataset.feature, 80); if (!feature) return; if (state.selectedFeatures.has(feature)) state.selectedFeatures.delete(feature); else state.selectedFeatures.add(feature); updateFeatureUI(); updateSummary(); }); }); elements.form.querySelectorAll('input, select').forEach((field) => { field.addEventListener('input', updateSummary); field.addEventListener('change', updateSummary); }); elements.resetBtn.addEventListener('click', resetFilters); elements.showResultsBtn.addEventListener('click', goToResults); }
-        function hydrateFromURL() { const params = new URLSearchParams(window.location.search); elements.brand.dataset.initialBrand = cleanText(firstParam(params, ['brand']), 80); elements.model.dataset.initialModel = cleanText(firstParam(params, ['model']), 80); state.selectedBodyType = cleanText(firstParam(params, ['bodyType', 'karosseri', 'kar']), 40); parseFeatureParam(firstParam(params, ['features', 'feature', 'equipment'])).forEach((feature) => state.selectedFeatures.add(feature)); const fieldAliases = { minYear: ['minYear','minY'], maxYear: ['maxYear','maxY'], county: ['county','lan','län'], location: ['location','city','stad'], minPrice: ['minPrice','minP'], maxPrice: ['maxPrice','maxP'], minMileage: ['minMileage','minM'], maxMileage: ['maxMileage','maxM'], owners: ['owners'], fuelType: ['fuelType','fuel'], transmission: ['transmission','gear','gearbox'], drive: ['drive','drivetrain'], minHp: ['minHp'], maxHp: ['maxHp'], condition: ['condition'], doors: ['doors'], seats: ['seats'], color: ['color'] }; Object.entries(fieldAliases).forEach(([id, aliases]) => { const rawValue = firstParam(params, aliases); if (!rawValue || !elements[id]) return; if (FILTER_CONFIG.NUMBER_FIELDS[id]) elements[id].value = cleanNumberForField(id, rawValue); else elements[id].value = cleanText(rawValue, FILTER_CONFIG.LIMITS.TEXT_MAX); }); populateLocationDatalist(); }
-        function updateBodyTypeUI() { elements.bodyTypeGrid.querySelectorAll('[data-body-type]').forEach((button) => button.classList.toggle('active', cleanText(button.dataset.bodyType, 40) === state.selectedBodyType)); }
-        function updateFeatureUI() { document.querySelectorAll('[data-feature]').forEach((button) => button.classList.toggle('active', state.selectedFeatures.has(cleanText(button.dataset.feature, 80)))); }
-        function updateSummary() { elements.summaryList.textContent = ""; const items = buildSelectedFilterItems(); if (!items.length) { appendSummaryItem('Filter', 'Inga filter valda ännu.'); return; } items.forEach((item) => appendSummaryItem(item.label, item.value)); }
-        function buildSelectedFilterItems() { const items = []; addItem(items, 'Karosstyp', state.selectedBodyType); addItem(items, 'Märke', elements.brand.value); addItem(items, 'Modell', elements.model.value); addItem(items, 'Län', elements.county.value); addItem(items, 'Plats / stad', elements.location.value); addItem(items, 'År', rangeText(elements.minYear.value, elements.maxYear.value)); addItem(items, 'Pris', priceRangeText(elements.minPrice.value, elements.maxPrice.value)); addItem(items, 'Miltal', mileageRangeText(elements.minMileage.value, elements.maxMileage.value)); addItem(items, 'Max ägare', elements.owners.value); addItem(items, 'Bränsle', elements.fuelType.value); addItem(items, 'Växellåda', elements.transmission.value); addItem(items, 'Drivning', elements.drive.value); addItem(items, 'Hästkrafter', rangeText(elements.minHp.value, elements.maxHp.value)); addItem(items, 'Skick', elements.condition.value); addItem(items, 'Dörrar', elements.doors.value); addItem(items, 'Säten', elements.seats.value); addItem(items, 'Färg', elements.color.value); addItem(items, 'Utrustning', Array.from(state.selectedFeatures).join(', ')); return items; }
-        function addItem(items, label, value) { const clean = cleanText(value, 500); if (clean) items.push({ label, value: clean }); }
-        function appendSummaryItem(label, value) { const item = document.createElement('div'); item.className = 'summary-item'; const strong = document.createElement('strong'); strong.textContent = label; const span = document.createElement('span'); span.textContent = value; item.append(strong, span); elements.summaryList.appendChild(item); }
-        function rangeText(min, max) { if (min && max) return `${min} - ${max}`; if (min) return `Från ${min}`; if (max) return `Till ${max}`; return ""; }
-        function priceRangeText(min, max) { if (min && max) return `${formatNumber(min)} - ${formatNumber(max)} kr`; if (min) return `Från ${formatNumber(min)} kr`; if (max) return `Till ${formatNumber(max)} kr`; return ""; }
-        function mileageRangeText(min, max) { if (min && max) return `${formatNumber(min)} - ${formatNumber(max)} km`; if (min) return `Från ${formatNumber(min)} km`; if (max) return `Till ${formatNumber(max)} km`; return ""; }
-        function formatNumber(value) { return new Intl.NumberFormat('sv-SE').format(Number(value) || 0); }
-        function resetFilters() { elements.form.reset(); state.selectedBodyType = ""; state.selectedFeatures.clear(); elements.brand.dispatchEvent(new Event('change')); populateLocationDatalist(); updateBodyTypeUI(); updateFeatureUI(); updateSummary(); }
-        function goToResults() { const params = new URLSearchParams(); setParam(params, 'bodyType', state.selectedBodyType); setParam(params, 'kar', state.selectedBodyType); setParam(params, 'brand', elements.brand.value); setParam(params, 'model', elements.model.value); setParam(params, 'county', elements.county.value); setParam(params, 'location', elements.location.value); setNumberParam(params, 'minYear', elements.minYear.value); setNumberParam(params, 'minY', elements.minYear.value); setNumberParam(params, 'maxYear', elements.maxYear.value); setNumberParam(params, 'maxY', elements.maxYear.value); setNumberParam(params, 'minPrice', elements.minPrice.value); setNumberParam(params, 'minP', elements.minPrice.value); setNumberParam(params, 'maxPrice', elements.maxPrice.value); setNumberParam(params, 'maxP', elements.maxPrice.value); setNumberParam(params, 'minMileage', elements.minMileage.value); setNumberParam(params, 'minM', elements.minMileage.value); setNumberParam(params, 'maxMileage', elements.maxMileage.value); setNumberParam(params, 'maxM', elements.maxMileage.value); setNumberParam(params, 'owners', elements.owners.value); setParam(params, 'fuelType', elements.fuelType.value); setParam(params, 'fuel', elements.fuelType.value); setParam(params, 'transmission', elements.transmission.value); setParam(params, 'gear', elements.transmission.value); setParam(params, 'drive', elements.drive.value); setParam(params, 'drivetrain', elements.drive.value); setNumberParam(params, 'minHp', elements.minHp.value); setNumberParam(params, 'maxHp', elements.maxHp.value); setParam(params, 'condition', elements.condition.value); setParam(params, 'doors', elements.doors.value); setParam(params, 'seats', elements.seats.value); setParam(params, 'color', elements.color.value); setParam(params, 'features', Array.from(state.selectedFeatures).join(',')); const queryString = params.toString(); if (queryString.length > FILTER_CONFIG.LIMITS.QUERY_MAX) { console.warn('[VORQ Fordon] Query string is long but will still be submitted.'); } safeNavigate(queryString ? `${FILTER_CONFIG.ROUTES.RESULTS}?${queryString}` : FILTER_CONFIG.ROUTES.RESULTS); }
-        function setParam(params, key, value) { const clean = cleanText(value, FILTER_CONFIG.LIMITS.TEXT_MAX); if (clean) params.set(key, clean); }
-        function setNumberParam(params, key, value) { const fieldId = legacyKeyToFieldId(key); const clean = cleanNumberForField(fieldId, value); if (clean !== "") params.set(key, clean); }
-        function legacyKeyToFieldId(key) { return ({ minY: 'minYear', maxY: 'maxYear', minP: 'minPrice', maxP: 'maxPrice', minM: 'minMileage', maxM: 'maxMileage' })[key] || key; }
-        function cleanText(value, maxLength = 120) { return String(value ?? '').replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, maxLength); }
-        function cleanNumberForField(fieldId, value) { const raw = String(value ?? '').trim(); if (!raw) return ""; const number = Number(raw); if (!Number.isFinite(number)) return ""; const [min, max] = FILTER_CONFIG.NUMBER_FIELDS[fieldId] || [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY]; if (number < min || number > max) return ""; return String(Math.trunc(number)); }
-        function firstParam(params, keys) { for (const key of keys) { const value = params.get(key); if (value !== null && String(value).trim() !== '') return value; } return ""; }
-        function parseFeatureParam(value) { return cleanText(value, 1000).split(',').map((item) => cleanText(item, 80)).filter(Boolean).slice(0, 40); }
-        function clearSelect(selectElement) { while (selectElement.firstChild) selectElement.removeChild(selectElement.firstChild); }
-        function clearDatalist(datalistElement) { while (datalistElement.firstChild) datalistElement.removeChild(datalistElement.firstChild); }
-        function appendDatalistOption(datalistElement, value) { const option = document.createElement('option'); option.value = cleanText(value, 80); datalistElement.appendChild(option); }
-        function appendOption(selectElement, value, label) { const option = document.createElement('option'); option.value = cleanText(value, 80); option.textContent = cleanText(label, 80); selectElement.appendChild(option); }
-        function safeNavigate(relativeUrl) { const clean = cleanText(relativeUrl, 2500); try { const url = new URL(clean, window.location.origin); if (url.origin !== window.location.origin) return; window.location.href = `${url.pathname.replace(/^\//, '')}${url.search}${url.hash}`; } catch { window.location.href = FILTER_CONFIG.ROUTES.RESULTS; } }
+        function initializePage() {
+            populateCountySelect();
+            populateLocationDatalist();
+            hydrateFromURL();
+            attachBrandModelSelectsSafely();
+            attachEvents();
+            observeAuth();
+            updateBodyTypeUI();
+            updateFeatureUI();
+            updateSummary();
+        }
+
+        function byId(id) {
+            return document.getElementById(id);
+        }
+
+        function attachBrandModelSelectsSafely() {
+            try {
+                attachBrandModelSelects(elements.brand, elements.model, {
+                    selectedBrand: elements.brand.dataset.initialBrand || "",
+                    selectedModel: elements.model.dataset.initialModel || ""
+                });
+                state.brandModelAttached = true;
+            } catch (error) {
+                console.error('[VORQ Fordon] Could not initialize brand/model selects:', error);
+            }
+        }
+
+        function populateCountySelect() {
+            clearSelect(elements.county);
+            appendOption(elements.county, "", "Alla län");
+            SWEDISH_COUNTIES.forEach((county) => appendOption(elements.county, county, county));
+        }
+
+        function populateLocationDatalist() {
+            clearDatalist(elements.swedishLocationsList);
+            const selectedCounty = cleanText(elements.county.value, 80);
+            const locations = selectedCounty && SWEDISH_LOCATION_DATA[selectedCounty]
+                ? SWEDISH_LOCATION_DATA[selectedCounty]
+                : getAllSwedishLocations();
+
+            locations.forEach((locationName) => appendDatalistOption(elements.swedishLocationsList, locationName));
+        }
+
+        function getAllSwedishLocations() {
+            const uniqueLocations = new Set();
+
+            SWEDISH_COUNTIES.forEach((county) => {
+                uniqueLocations.add(county);
+                (SWEDISH_LOCATION_DATA[county] || []).forEach((locationName) => uniqueLocations.add(locationName));
+            });
+
+            return Array.from(uniqueLocations).sort((a, b) => a.localeCompare(b, 'sv-SE'));
+        }
+
+        function observeAuth() {
+            onAuthStateChanged(auth, (user) => {
+                state.currentUser = user || null;
+                updateAuthActionButton(user);
+            });
+        }
+
+        function updateAuthActionButton(user) {
+            const isLoggedIn = Boolean(user);
+
+            elements.authActionBtn.dataset.authMode = isLoggedIn ? 'logout' : 'login';
+            elements.authActionBtn.setAttribute('aria-label', isLoggedIn ? 'Logga ut' : 'Logga in');
+            elements.authActionIcon.className = isLoggedIn ? 'fa-solid fa-right-from-bracket' : 'fa-solid fa-right-to-bracket';
+            elements.authActionText.textContent = isLoggedIn ? 'Logga ut' : 'Logga in';
+            elements.authActionBtn.disabled = false;
+        }
+
+        async function handleAuthAction() {
+            if (!state.currentUser) {
+                safeNavigate(FILTER_CONFIG.ROUTES.LOGIN);
+                return;
+            }
+
+            elements.authActionBtn.disabled = true;
+            elements.authActionIcon.className = 'fa-solid fa-spinner fa-spin';
+            elements.authActionText.textContent = 'Loggar ut...';
+
+            try {
+                await signOut(auth);
+                safeNavigate(FILTER_CONFIG.ROUTES.HOME);
+            } catch (error) {
+                console.error('[VORQ Fordon] Logout failed:', error);
+                updateAuthActionButton(state.currentUser);
+            }
+        }
+
+        function attachEvents() {
+            elements.authActionBtn.addEventListener('click', handleAuthAction);
+
+            elements.county.addEventListener('change', () => {
+                populateLocationDatalist();
+                updateSummary();
+            });
+
+            elements.bodyTypeGrid.querySelectorAll('[data-body-type]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const value = cleanText(button.dataset.bodyType, 40);
+                    state.selectedBodyType = state.selectedBodyType === value ? "" : value;
+                    updateBodyTypeUI();
+                    updateSummary();
+                });
+            });
+
+            document.querySelectorAll('[data-feature]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const feature = cleanText(button.dataset.feature, 80);
+                    if (!feature) return;
+
+                    if (state.selectedFeatures.has(feature)) {
+                        state.selectedFeatures.delete(feature);
+                    } else {
+                        state.selectedFeatures.add(feature);
+                    }
+
+                    updateFeatureUI();
+                    updateSummary();
+                });
+            });
+
+            elements.form.querySelectorAll('input, select').forEach((field) => {
+                field.addEventListener('input', updateSummary);
+                field.addEventListener('change', updateSummary);
+            });
+
+            elements.resetBtn.addEventListener('click', resetFilters);
+            elements.showResultsBtn.addEventListener('click', goToResults);
+        }
+
+        function hydrateFromURL() {
+            const params = new URLSearchParams(window.location.search);
+
+            elements.brand.dataset.initialBrand = cleanText(firstParam(params, ['brand']), 80);
+            elements.model.dataset.initialModel = cleanText(firstParam(params, ['model']), 80);
+            state.selectedBodyType = cleanText(firstParam(params, ['bodyType', 'karosseri', 'kar']), 40);
+
+            parseFeatureParam(firstParam(params, ['features', 'feature', 'equipment']))
+                .forEach((feature) => state.selectedFeatures.add(feature));
+
+            const fieldAliases = {
+                minYear: ['minYear', 'minY'],
+                maxYear: ['maxYear', 'maxY'],
+                county: ['county', 'lan', 'län'],
+                location: ['location', 'city', 'stad'],
+                minPrice: ['minPrice', 'minP'],
+                maxPrice: ['maxPrice', 'maxP'],
+                minMileage: ['minMileage', 'minM'],
+                maxMileage: ['maxMileage', 'maxM'],
+                owners: ['owners'],
+                fuelType: ['fuelType', 'fuel'],
+                transmission: ['transmission', 'gear', 'gearbox'],
+                drive: ['drive', 'drivetrain'],
+                minHp: ['minHp'],
+                maxHp: ['maxHp'],
+                condition: ['condition'],
+                doors: ['doors'],
+                seats: ['seats'],
+                color: ['color']
+            };
+
+            Object.entries(fieldAliases).forEach(([id, aliases]) => {
+                const rawValue = firstParam(params, aliases);
+                if (!rawValue || !elements[id]) return;
+
+                if (FILTER_CONFIG.NUMBER_FIELDS[id]) {
+                    elements[id].value = cleanNumberForField(id, rawValue);
+                } else {
+                    elements[id].value = cleanText(rawValue, FILTER_CONFIG.LIMITS.TEXT_MAX);
+                }
+            });
+
+            populateLocationDatalist();
+        }
+
+        function updateBodyTypeUI() {
+            elements.bodyTypeGrid.querySelectorAll('[data-body-type]').forEach((button) => {
+                button.classList.toggle(
+                    'active',
+                    cleanText(button.dataset.bodyType, 40) === state.selectedBodyType
+                );
+            });
+        }
+
+        function updateFeatureUI() {
+            document.querySelectorAll('[data-feature]').forEach((button) => {
+                button.classList.toggle(
+                    'active',
+                    state.selectedFeatures.has(cleanText(button.dataset.feature, 80))
+                );
+            });
+        }
+
+        function updateSummary() {
+            elements.summaryList.textContent = "";
+            const items = buildSelectedFilterItems();
+
+            if (!items.length) {
+                appendSummaryItem('Filter', 'Inga filter valda ännu.');
+                return;
+            }
+
+            items.forEach((item) => appendSummaryItem(item.label, item.value));
+        }
+
+        function buildSelectedFilterItems() {
+            const items = [];
+
+            addItem(items, 'Karosstyp', state.selectedBodyType);
+            addItem(items, 'Märke', elements.brand.value);
+            addItem(items, 'Modell', elements.model.value);
+            addItem(items, 'Län', elements.county.value);
+            addItem(items, 'Plats / stad', elements.location.value);
+            addItem(items, 'År', rangeText(elements.minYear.value, elements.maxYear.value));
+            addItem(items, 'Pris', priceRangeText(elements.minPrice.value, elements.maxPrice.value));
+            addItem(items, 'Miltal', mileageRangeText(elements.minMileage.value, elements.maxMileage.value));
+            addItem(items, 'Max ägare', elements.owners.value);
+            addItem(items, 'Bränsle', elements.fuelType.value);
+            addItem(items, 'Växellåda', elements.transmission.value);
+            addItem(items, 'Drivning', elements.drive.value);
+            addItem(items, 'Hästkrafter', rangeText(elements.minHp.value, elements.maxHp.value));
+            addItem(items, 'Skick', elements.condition.value);
+            addItem(items, 'Dörrar', elements.doors.value);
+            addItem(items, 'Säten', elements.seats.value);
+            addItem(items, 'Färg', elements.color.value);
+            addItem(items, 'Utrustning', Array.from(state.selectedFeatures).join(', '));
+
+            return items;
+        }
+
+        function addItem(items, label, value) {
+            const clean = cleanText(value, 500);
+            if (clean) {
+                items.push({ label, value: clean });
+            }
+        }
+
+        function appendSummaryItem(label, value) {
+            const item = document.createElement('div');
+            item.className = 'summary-item';
+
+            const strong = document.createElement('strong');
+            strong.textContent = label;
+
+            const span = document.createElement('span');
+            span.textContent = value;
+
+            item.append(strong, span);
+            elements.summaryList.appendChild(item);
+        }
+
+        function rangeText(min, max) {
+            if (min && max) return `${min} - ${max}`;
+            if (min) return `Från ${min}`;
+            if (max) return `Till ${max}`;
+            return "";
+        }
+
+        function priceRangeText(min, max) {
+            if (min && max) return `${formatNumber(min)} - ${formatNumber(max)} kr`;
+            if (min) return `Från ${formatNumber(min)} kr`;
+            if (max) return `Till ${formatNumber(max)} kr`;
+            return "";
+        }
+
+        function mileageRangeText(min, max) {
+            if (min && max) return `${formatNumber(min)} - ${formatNumber(max)} km`;
+            if (min) return `Från ${formatNumber(min)} km`;
+            if (max) return `Till ${formatNumber(max)} km`;
+            return "";
+        }
+
+        function formatNumber(value) {
+            return new Intl.NumberFormat('sv-SE').format(Number(value) || 0);
+        }
+
+        function resetFilters() {
+            elements.form.reset();
+            state.selectedBodyType = "";
+            state.selectedFeatures.clear();
+            elements.brand.dispatchEvent(new Event('change'));
+            populateLocationDatalist();
+            updateBodyTypeUI();
+            updateFeatureUI();
+            updateSummary();
+        }
+
+        function goToResults() {
+            const params = new URLSearchParams();
+
+            setParam(params, 'bodyType', state.selectedBodyType);
+            setParam(params, 'kar', state.selectedBodyType);
+            setParam(params, 'brand', elements.brand.value);
+            setParam(params, 'model', elements.model.value);
+            setParam(params, 'county', elements.county.value);
+            setParam(params, 'location', elements.location.value);
+
+            setNumberParam(params, 'minYear', elements.minYear.value);
+            setNumberParam(params, 'minY', elements.minYear.value);
+            setNumberParam(params, 'maxYear', elements.maxYear.value);
+            setNumberParam(params, 'maxY', elements.maxYear.value);
+            setNumberParam(params, 'minPrice', elements.minPrice.value);
+            setNumberParam(params, 'minP', elements.minPrice.value);
+            setNumberParam(params, 'maxPrice', elements.maxPrice.value);
+            setNumberParam(params, 'maxP', elements.maxPrice.value);
+            setNumberParam(params, 'minMileage', elements.minMileage.value);
+            setNumberParam(params, 'minM', elements.minMileage.value);
+            setNumberParam(params, 'maxMileage', elements.maxMileage.value);
+            setNumberParam(params, 'maxM', elements.maxMileage.value);
+            setNumberParam(params, 'owners', elements.owners.value);
+
+            setParam(params, 'fuelType', elements.fuelType.value);
+            setParam(params, 'fuel', elements.fuelType.value);
+            setParam(params, 'transmission', elements.transmission.value);
+            setParam(params, 'gear', elements.transmission.value);
+            setParam(params, 'drive', elements.drive.value);
+            setParam(params, 'drivetrain', elements.drive.value);
+
+            setNumberParam(params, 'minHp', elements.minHp.value);
+            setNumberParam(params, 'maxHp', elements.maxHp.value);
+
+            setParam(params, 'condition', elements.condition.value);
+            setParam(params, 'doors', elements.doors.value);
+            setParam(params, 'seats', elements.seats.value);
+            setParam(params, 'color', elements.color.value);
+            setParam(params, 'features', Array.from(state.selectedFeatures).join(','));
+
+            const queryString = params.toString();
+
+            if (queryString.length > FILTER_CONFIG.LIMITS.QUERY_MAX) {
+                console.warn('[VORQ Fordon] Query string is long but will still be submitted.');
+            }
+
+            safeNavigate(queryString ? `${FILTER_CONFIG.ROUTES.RESULTS}?${queryString}` : FILTER_CONFIG.ROUTES.RESULTS);
+        }
+
+        function setParam(params, key, value) {
+            const clean = cleanText(value, FILTER_CONFIG.LIMITS.TEXT_MAX);
+            if (clean) {
+                params.set(key, clean);
+            }
+        }
+
+        function setNumberParam(params, key, value) {
+            const fieldId = legacyKeyToFieldId(key);
+            const clean = cleanNumberForField(fieldId, value);
+            if (clean !== "") {
+                params.set(key, clean);
+            }
+        }
+
+        function legacyKeyToFieldId(key) {
+            return ({
+                minY: 'minYear',
+                maxY: 'maxYear',
+                minP: 'minPrice',
+                maxP: 'maxPrice',
+                minM: 'minMileage',
+                maxM: 'maxMileage'
+            })[key] || key;
+        }
+
+        function cleanText(value, maxLength = 120) {
+            return String(value ?? '')
+                .replace(/[\u0000-\u001F\u007F]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .slice(0, maxLength);
+        }
+
+        function cleanNumberForField(fieldId, value) {
+            const raw = String(value ?? '').trim();
+            if (!raw) return "";
+
+            const number = Number(raw);
+            if (!Number.isFinite(number)) return "";
+
+            const [min, max] = FILTER_CONFIG.NUMBER_FIELDS[fieldId] || [
+                Number.NEGATIVE_INFINITY,
+                Number.POSITIVE_INFINITY
+            ];
+
+            if (number < min || number > max) return "";
+
+            return String(Math.trunc(number));
+        }
+
+        function firstParam(params, keys) {
+            for (const key of keys) {
+                const value = params.get(key);
+                if (value !== null && String(value).trim() !== '') {
+                    return value;
+                }
+            }
+
+            return "";
+        }
+
+        function parseFeatureParam(value) {
+            return cleanText(value, 1000)
+                .split(',')
+                .map((item) => cleanText(item, 80))
+                .filter(Boolean)
+                .slice(0, 40);
+        }
+
+        function clearSelect(selectElement) {
+            while (selectElement.firstChild) {
+                selectElement.removeChild(selectElement.firstChild);
+            }
+        }
+
+        function clearDatalist(datalistElement) {
+            while (datalistElement.firstChild) {
+                datalistElement.removeChild(datalistElement.firstChild);
+            }
+        }
+
+        function appendDatalistOption(datalistElement, value) {
+            const option = document.createElement('option');
+            option.value = cleanText(value, 80);
+            datalistElement.appendChild(option);
+        }
+
+        function appendOption(selectElement, value, label) {
+            const option = document.createElement('option');
+            option.value = cleanText(value, 80);
+            option.textContent = cleanText(label, 80);
+            selectElement.appendChild(option);
+        }
+
+        function safeNavigate(relativeUrl) {
+            const clean = cleanText(relativeUrl, 2500);
+
+            try {
+                const url = new URL(clean, window.location.origin);
+                if (url.origin !== window.location.origin) return;
+
+                window.location.href = `${url.pathname.replace(/^\//, '')}${url.search}${url.hash}`;
+            } catch {
+                window.location.href = FILTER_CONFIG.ROUTES.RESULTS;
+            }
+        }
     </script>
 </body>
 </html>

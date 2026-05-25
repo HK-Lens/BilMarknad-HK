@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logga in | VORQ Fordon</title>
-    <meta name="description" content="Logga in säkert på VORQ Fordon eller återställ ditt lösenord.">
+    <meta name="description" content="Logga in på VORQ Fordon för att hantera fordonsannonser, favoriter och meddelanden. VORQ Fordon är ett fordonsannonsprojekt från VORQ Digital, Inhaber: Haitham Kojar.">
     <meta name="robots" content="noindex, nofollow">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -52,20 +52,52 @@
         header {
             background: rgba(255,255,255,.94);
             backdrop-filter: blur(14px);
-            padding: 15px 6%;
+            padding: 12px 6%;
             border-bottom: 1px solid var(--border);
-            text-align: center;
+        }
+
+        .header-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
             color: var(--dark);
             text-decoration: none;
-            letter-spacing: -0.05em;
         }
 
-        .logo span { color: var(--primary); }
+        .header-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .header-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 900;
+            padding: 9px 12px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border);
+            background: rgba(248,250,252,.85);
+            transition: 0.25s ease;
+        }
+
+        .header-links a:hover {
+            border-color: rgba(245,130,32,.45);
+            color: var(--primary-hover);
+            background: white;
+        }
 
         .auth-container {
             flex: 1;
@@ -345,6 +377,83 @@
             line-height: 1.5;
         }
 
+
+        .logo-image {
+            width: 172px;
+            max-width: 44vw;
+            height: auto;
+            max-height: 48px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .logo-wordmark {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            color: var(--dark);
+            letter-spacing: 0;
+        }
+
+        .logo-wordmark strong {
+            color: var(--dark);
+            font-size: 1.05rem;
+            line-height: 1;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+        }
+
+        .logo-wordmark small {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.15;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        .brand-owner-note {
+            margin-top: 22px;
+            padding: 13px 14px;
+            border-radius: 18px;
+            background: rgba(245,130,32,.10);
+            border: 1px solid rgba(245,130,32,.22);
+            color: #92400e;
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1.55;
+            text-align: center;
+        }
+
+        .brand-owner-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .brand-owner-links a,
+        .terms-container a {
+            color: var(--primary-hover);
+            font-weight: 900;
+            text-decoration: none;
+        }
+
+        .brand-owner-links a:hover,
+        .terms-container a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .header-inner {
+                flex-direction: column;
+                justify-content: center;
+                gap: 12px;
+            }
+            .header-links { justify-content: center; }
+        }
+
         @media (max-width: 520px) {
             .auth-card { padding: 30px 20px; }
             .login-tabs { flex-direction: column; border-radius: 18px; }
@@ -355,7 +464,19 @@
 
 <body>
 <header>
-    <a href="index.html" class="logo">BIL<span>HK</span></a>
+    <div class="header-inner">
+        <a href="index.html" class="logo" aria-label="Gå till startsidan">
+            <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon" class="logo-image" onerror="this.style.display='none'">
+            <span class="logo-wordmark">
+                <strong>VORQ Fordon</strong>
+                <small>Vision • Operations • Reach • Quality</small>
+            </span>
+        </a>
+        <nav class="header-links" aria-label="Snabblänkar">
+            <a href="index.html">Startsida</a>
+            <a href="notice-action.html">Anmäl annons</a>
+        </nav>
+    </div>
 </header>
 
 <div class="auth-container">
@@ -370,8 +491,8 @@
         <div class="disclaimer-box">
             <i class="fa-solid fa-shield-halved"></i>
             <strong>Säkerhet först:</strong>
-            Vi ansvarar inte för annonsernas innehåll. Betala aldrig i förskott och dela inte personlig information.
-            All handel sker på egen risk.
+            VORQ Fordon är en fordonsannonsplattform. VORQ Digital säljer inte, äger inte, kontrollerar inte och garanterar inte fordon som publiceras av användare.
+            Dela aldrig BankID, kortuppgifter, lösenord eller känsliga dokument med andra användare.
         </div>
 
         <div class="verify-box" id="verifyBox">
@@ -385,7 +506,7 @@
 
         <label class="terms-container">
             <input type="checkbox" id="termsCheck">
-            <span>Jag godkänner villkoren och bekräftar ansvarsfriskrivningen.</span>
+            <span>Jag godkänner <a href="terms.html">villkoren</a> och <a href="privacy.html">integritetspolicyn</a> samt bekräftar att VORQ Fordon endast är en annonsplattform.</span>
         </label>
 
         <div id="googleSection">
@@ -426,6 +547,17 @@
         <div class="register-section">
             <p>Saknar du ett konto?</p>
             <a href="register.html" class="btn-outline">Skapa nytt konto</a>
+        </div>
+
+        <div class="brand-owner-note">
+            VORQ Fordon är ett fordonsannonsprojekt från <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>.<br>
+            VORQ Digital är inte säljare, ägare, besiktningspart, avtalspart eller garant för fordon som annonseras av användare.
+            <div class="brand-owner-links" aria-label="Juridiska länkar">
+                <a href="impressum.html">Företagsinformation</a>
+                <a href="terms.html">Villkor</a>
+                <a href="privacy.html">Integritet</a>
+                <a href="notice-action.html">Anmäl annons</a>
+            </div>
         </div>
     </div>
 </div>

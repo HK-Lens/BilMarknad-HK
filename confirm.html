@@ -9,6 +9,8 @@
 
     <meta name="description" content="Bekräftar inloggningslänk för VORQ Fordon.">
 
+    <meta name="application-name" content="VORQ Fordon">
+
     <meta name="robots" content="noindex, nofollow">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -134,6 +136,20 @@
             color: var(--dark);
             letter-spacing: -0.06em;
             white-space: nowrap;
+        }
+
+        .brand-logo-img {
+            width: auto;
+            height: 46px;
+            max-width: 220px;
+            display: block;
+            object-fit: contain;
+        }
+
+        .logo-fallback {
+            display: none;
+            align-items: center;
+            gap: 10px;
         }
 
         .logo-icon {
@@ -701,7 +717,21 @@
                 font-size: 1.55rem;
             }
 
-            .logo-icon {
+            .brand-logo-img {
+            width: auto;
+            height: 46px;
+            max-width: 220px;
+            display: block;
+            object-fit: contain;
+        }
+
+        .logo-fallback {
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
                 width: 38px;
                 height: 38px;
                 border-radius: 13px;
@@ -720,10 +750,18 @@
     <header class="site-header">
         <div class="header-inner">
             <a href="index.html" class="logo" aria-label="Gå till startsidan">
-                <span class="logo-icon">
-                    <i class="fa-solid fa-car-side"></i>
+                <img
+                    src="vorq-fordon-logo-header.png"
+                    alt="VORQ Fordon"
+                    class="brand-logo-img"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+                >
+                <span class="logo-fallback">
+                    <span class="logo-icon">
+                        <i class="fa-solid fa-car-side"></i>
+                    </span>
+                    VORQ <span>Fordon</span>
                 </span>
-                BIL<span>HK</span>
             </a>
 
             <nav class="header-actions" aria-label="Sidnavigering">
@@ -735,6 +773,11 @@
                 <a href="results.html" class="header-link">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     Sök bilar
+                </a>
+
+                <a href="notice-action.html" class="header-link">
+                    <i class="fa-solid fa-flag"></i>
+                    Anmäl annons
                 </a>
 
                 <a href="login.html" class="header-link">
@@ -753,13 +796,13 @@
                     <div>
                         <div class="eyebrow">
                             <i class="fa-solid fa-envelope-circle-check"></i>
-                            Email link authentication
+                            Säker e-postinloggning
                         </div>
 
                         <h1>Vi bekräftar din inloggning på ett säkert sätt.</h1>
 
                         <p>
-                            Den här sidan kontrollerar länken från din e-post, loggar in dig och skapar din profil om det är första gången du använder VORQ Fordon.
+                            Den här sidan kontrollerar länken från din e-post, loggar in dig och skapar din profil om det är första gången du använder VORQ Fordon. VORQ Fordon är en svensk inriktad plattform för fordonsannonser som drivs under VORQ Digital, Inhaber: Haitham Kojar. Plattformen säljer, äger, kontrollerar eller garanterar inte fordon som publiceras av användare.
                         </p>
                     </div>
 
@@ -823,7 +866,7 @@
                                 id="compName"
                                 autocomplete="organization"
                                 maxlength="120"
-                                placeholder="Ex. VORQ Fordon AB"
+                                placeholder="Ex. Exempel Bil AB"
                             >
                         </div>
 
@@ -904,13 +947,16 @@
         <div class="footer-inner">
             <div class="footer-brand">
                 <strong>VORQ Fordon</strong>
-                <span>&copy; 2026 VORQ Fordon. En öppen marknadsplats för bilannonser.</span>
+                <span>&copy; 2026 VORQ Fordon. En fordonsannonsplattform som drivs under VORQ Digital, Inhaber: Haitham Kojar.</span>
             </div>
 
             <div class="footer-links">
                 <a href="index.html">Hem</a>
                 <a href="results.html">Annonser</a>
                 <a href="login.html">Logga in</a>
+                <a href="notice-action.html">Anmäl annons</a>
+                <a href="privacy.html">Integritet</a>
+                <a href="impressum.html">Företagsuppgifter</a>
                 <a href="terms.html">Villkor</a>
             </div>
         </div>
@@ -931,22 +977,6 @@
             serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        /**
-         * ============================================================
-         * VORQ Fordon - confirm.html
-         * ------------------------------------------------------------
-         * صفحة إكمال تسجيل الدخول عبر رابط البريد الإلكتروني.
-         *
-         * أهداف الإصلاح:
-         * 1. التحقق من أن الرابط صالح لتسجيل الدخول.
-         * 2. طلب البريد عند عدم توفره في localStorage.
-         * 3. إنشاء ملف مستخدم جديد فقط عند الحاجة.
-         * 4. التحقق من بيانات الشركة قبل حفظها.
-         * 5. عدم استخدام innerHTML مع بيانات المستخدم.
-         * 6. منع الضغط المتكرر أثناء الحفظ.
-         * 7. تنظيف localStorage بعد النجاح.
-         * ============================================================
-         */
 
         const CONFIRM_CONFIG = {
             STORAGE_KEYS: {

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fordonsdetaljer | VORQ Fordon</title>
-    <meta name="description" content="Visa fordonsdetaljer, bilder, utrustning och kontaktmöjlighet för bilannons på VORQ Fordon.">
+    <title>Fordonsdetaljer | VORQ FORDON</title>
+    <meta name="description" content="Visa fordonsdetaljer, bilder, utrustning och kontaktmöjlighet för bilannons på VORQ FORDON.">
     <meta name="robots" content="noindex, nofollow">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -134,7 +134,7 @@
                 .replaceAll("'", '&#039;');
         }
 
-        window.showVORQ FordonElegantModal = function ({ type = 'warning', title = 'Meddelande', message = '', confirmText = 'OK' } = {}) {
+        window.showVORQFordonElegantModal = function ({ type = 'warning', title = 'Meddelande', message = '', confirmText = 'OK' } = {}) {
             return new Promise((resolve) => {
                 const existing = document.querySelector('.vorq-fordon-modal-overlay');
                 if (existing) existing.remove();
@@ -175,7 +175,7 @@
         };
 
         window.alert = function (message) {
-            window.showVORQ FordonElegantModal({
+            window.showVORQFordonElegantModal({
                 type: 'warning',
                 title: 'Meddelande',
                 message: String(message || ''),
@@ -414,7 +414,7 @@
                     <h4><i class="fa-solid fa-circle-exclamation"></i> Säker affär</h4>
                     <p style="font-size:14px; margin-top:10px;">Kontrollera alltid fordonets historik, servicebok och mätarställning innan köp.</p>
                 </div>
-                <p class="disclaimer"><strong>Ansvarsfriskrivning:</strong> VORQ Fordon är en öppen plattform. Vi granskar inte fordonens faktiska skick. All handel sker på användarens eget ansvar.</p>
+                <p class="disclaimer"><strong>Ansvarsfriskrivning:</strong> VORQ FORDON är en öppen plattform. Vi granskar inte fordonens faktiska skick. All handel sker på användarens eget ansvar.</p>
             </div>
         `;
 
@@ -467,8 +467,8 @@
 
 
     function showElegantAlert({ type = "info", title = "Meddelande", message = "", confirmText = "OK" } = {}) {
-        if (typeof window.showVORQ FordonElegantModal === 'function') {
-            return window.showVORQ FordonElegantModal({ type, title, message, confirmText });
+        if (typeof window.showVORQFordonElegantModal === 'function') {
+            return window.showVORQFordonElegantModal({ type, title, message, confirmText });
         }
         return Promise.resolve();
     }

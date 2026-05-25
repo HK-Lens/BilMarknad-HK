@@ -7,7 +7,7 @@
 
     <title>Hantera annonser | VORQ Fordon</title>
 
-    <meta name="description" content="Hantera dina bilannonser på VORQ Fordon. Redigera pris, öppna annons, pausa eller radera dina egna annonser.">
+    <meta name="description" content="Hantera dina fordonsannonser på VORQ Fordon. Redigera pris, öppna annons, pausa eller radera dina egna annonser. VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar.">
 
     <meta name="robots" content="noindex, nofollow">
 
@@ -123,12 +123,15 @@
         .logo {
             display: inline-flex;
             align-items: center;
-            gap: 11px;
             color: var(--dark);
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: -0.06em;
             white-space: nowrap;
+        }
+
+        .logo-image {
+            width: auto;
+            height: 46px;
+            max-width: 220px;
+            object-fit: contain;
         }
 
         .logo-icon {
@@ -273,6 +276,25 @@
             font-size: 15px;
             line-height: 1.75;
             font-weight: 600;
+        }
+
+        .owner-note {
+            width: fit-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            padding: 8px 12px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.10);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            font-size: 12px;
+            font-weight: 850;
+        }
+
+        .owner-note i {
+            color: var(--primary);
         }
 
         .stats-grid {
@@ -576,6 +598,42 @@
             color: white;
         }
 
+
+
+        .legal-disclaimer {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+            font-weight: 700;
+        }
+
+        .legal-disclaimer strong {
+            color: var(--dark);
+            font-weight: 900;
+        }
+
+        .legal-disclaimer a {
+            color: var(--primary-hover);
+            font-weight: 900;
+        }
+
+        .action-btn.report {
+            background: var(--surface-soft);
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+
+        .action-btn.report:hover {
+            border-color: rgba(245, 130, 32, 0.45);
+            color: var(--primary-hover);
+        }
+
         .state-card {
             background: white;
             border: 1px solid var(--border);
@@ -687,6 +745,11 @@
         }
 
         @media (max-width: 430px) {
+            .logo-image {
+                height: 40px;
+                max-width: 190px;
+            }
+
             .logo {
                 font-size: 1.55rem;
             }
@@ -708,10 +771,7 @@
     <header class="site-header">
         <div class="header-inner">
             <a href="index.html" class="logo" aria-label="Gå till startsidan">
-                <span class="logo-icon">
-                    <i class="fa-solid fa-car-side"></i>
-                </span>
-                BIL<span>HK</span>
+                <img src="vorq-fordon-logo-header.png" alt="VORQ Fordon" class="logo-image">
             </a>
 
             <nav class="header-actions" aria-label="Sidmeny">
@@ -725,7 +785,12 @@
                     Startsida
                 </a>
 
-                <a href="add-car.html" class="nav-btn primary">
+                <a href="notice-action.html" class="nav-btn">
+                    <i class="fa-solid fa-flag"></i>
+                    Anmäl annons
+                </a>
+
+                <a href="sell.html" class="nav-btn primary">
                     <i class="fa-solid fa-plus"></i>
                     Ny annons
                 </a>
@@ -743,19 +808,34 @@
                         Mina annonser
                     </div>
 
-                    <h1>Hantera dina bilannonser</h1>
+                    <h1>Hantera dina fordonsannonser</h1>
 
                     <p>
                         Här kan du se, öppna, redigera, pausa och radera dina egna annonser.
                         Endast annonser som tillhör ditt inloggade konto visas på denna sida.
                     </p>
+
+                    <div class="owner-note">
+                        <i class="fa-solid fa-building-shield"></i>
+                        Drivs under VORQ Digital, Inhaber: Haitham Kojar
+                    </div>
                 </div>
 
-                <a href="add-car.html" class="nav-btn primary">
+                <a href="sell.html" class="nav-btn primary">
                     <i class="fa-solid fa-plus"></i>
                     Publicera ny annons
                 </a>
             </div>
+        </section>
+
+        <section class="legal-disclaimer" aria-label="Juridisk information om VORQ Fordon">
+            <strong>VORQ Fordon</strong> är en svensk fordonsannonsplattform som drivs under
+            <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>. Plattformen ger användare möjlighet
+            att hantera egna fordonsannonser. VORQ Digital säljer inte, äger inte, besiktigar inte,
+            kontrollerar inte och garanterar inte fordon som publiceras av användare. Annonsören ansvarar
+            för att uppgifter, bilder, pris och kontaktinformation är korrekta och lagliga.
+            Misstänkta, felaktiga eller olagliga annonser kan rapporteras via
+            <a href="notice-action.html">Anmäl annons</a>.
         </section>
 
         <section class="stats-grid" aria-label="Annonsstatistik">
@@ -817,6 +897,22 @@
 
     </main>
 
+
+
+    <footer class="page-shell" style="padding-top:0; padding-bottom:34px; color:#64748b; font-size:13px; font-weight:700; line-height:1.7;">
+        <p>
+            VORQ Fordon drivs under <strong style="color:#0f172a;">VORQ Digital, Inhaber: Haitham Kojar</strong>.
+            Plattformen är avsedd för fordonsannonser i Sverige och fungerar inte som säljare, fordonsägare,
+            besiktningsorgan, betalningsförmedlare eller garantiutfärdare.
+        </p>
+        <p style="margin-top:10px;">
+            <a href="terms.html">Villkor</a> ·
+            <a href="privacy.html">Integritet</a> ·
+            <a href="impressum.html">Företagsinformation</a> ·
+            <a href="notice-action.html">Anmäl annons</a>
+        </p>
+    </footer>
+
     <script type="module">
         import {
             auth,
@@ -844,7 +940,7 @@
          * ============================================================
          * VORQ Fordon - manage.html
          * ------------------------------------------------------------
-         * Secure management page for user's own car advertisements.
+         * Secure management page for the user's own vehicle advertisements.
          *
          * Security decisions:
          * 1. Requires authenticated user.
@@ -863,9 +959,10 @@
             ROUTES: {
                 LOGIN: "login.html",
                 ACCOUNT: "my-account.html",
-                ADD_CAR: "add-car.html",
+                ADD_CAR: "sell.html",
                 EDIT_CAR: "edit-car.html",
                 DETAILS: "details.html",
+                NOTICE: "notice-action.html",
                 HOME: "index.html"
             },
 
@@ -1125,6 +1222,7 @@
             actions.className = "ad-actions";
 
             actions.appendChild(createActionButton("view", "fa-solid fa-eye", "Visa", () => openDetails(ad.id)));
+            actions.appendChild(createActionButton("report", "fa-solid fa-flag", "Anmäl", () => openReport(ad.id)));
             actions.appendChild(createActionButton("edit", "fa-solid fa-pen-to-square", "Redigera", () => openEdit(ad.id)));
             actions.appendChild(createActionButton("price", "fa-solid fa-tag", "Ändra pris", () => promptPriceUpdate(ad)));
             actions.appendChild(createActionButton("toggle", isAdActive(ad) ? "fa-solid fa-pause" : "fa-solid fa-play", isAdActive(ad) ? "Pausa" : "Aktivera", () => toggleAdStatus(ad)));
@@ -1368,6 +1466,15 @@
             }
 
             window.location.href = `${MANAGE_CONFIG.ROUTES.EDIT_CAR}?id=${safeId}`;
+        }
+
+        function openReport(adId) {
+            const safeId = encodeURIComponent(String(adId || ""));
+            const target = safeId
+                ? `${MANAGE_CONFIG.ROUTES.NOTICE}?adId=${safeId}&source=manage`
+                : MANAGE_CONFIG.ROUTES.NOTICE;
+
+            window.location.href = target;
         }
 
         function showLoadingState() {
