@@ -4,22 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mitt Konto | VORQ Fordon</title>
-    <meta name="description" content="Mitt konto på VORQ Fordon. VORQ Fordon är en svensk fordonsannonsplattform som drivs av VORQ Digital, Inhaber: Haitham Kojar.">
-    <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root { --primary: #f58220; --primary-hover: #e67312; --primary-soft: rgba(245,130,32,.12); --dark: #0f172a; --muted:#64748b; --bg: #f8fafc; --border: #e2e8f0; --danger: #ef4444; --danger-soft: rgba(239,68,68,.10); --success:#16a34a; --surface:#ffffff; --radius-full:999px; }
         body { background: var(--bg); font-family: 'Inter', sans-serif; padding: 20px; color: var(--dark); }
-        .account-header { max-width:1000px; margin:0 auto 30px; display:flex; justify-content:space-between; align-items:center; gap:18px; background:white; border:1px solid var(--border); border-radius:20px; padding:14px 18px; box-shadow:0 10px 25px rgba(15,23,42,.06); }
-        .brand-logo { display:inline-flex; align-items:center; gap:12px; color:var(--dark); text-decoration:none; min-width:0; }
-        .brand-logo-img { width:300px; max-width:52vw; max-height:70px; height:auto; display:block; object-fit:contain; }
-        .brand-logo-fallback { align-items:baseline; gap:7px; font-size:26px; font-weight:900; letter-spacing:-.04em; white-space:nowrap; }
-        .brand-logo-fallback span { color:var(--primary); }
-        .brand-owner { display:flex; flex-direction:column; gap:4px; text-align:right; color:var(--muted); font-size:12px; line-height:1.35; font-weight:800; }
-        .brand-owner strong { color:var(--dark); font-weight:900; }
-        @media (max-width: 768px) { .account-header { flex-direction:column; align-items:flex-start; padding:14px; } .brand-logo-img { width:260px; max-width:88vw; max-height:64px; } .brand-owner { text-align:left; } }
         .wrapper { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 250px 1fr; gap: 30px; }
         @media (max-width: 768px) { .wrapper { grid-template-columns: 1fr; } }
         .tab-btn { width: 100%; text-align: left; padding: 15px; cursor: pointer; border-radius: 12px; margin-bottom: 10px; font-weight: 700; background: white; border: 1px solid var(--border); transition:.25s ease; }
@@ -53,33 +43,11 @@
         .btn-del { margin-left: auto; color: var(--danger); border: none; background: none; font-size: 20px; cursor: pointer; width:42px; height:42px; border-radius:50%; display:grid; place-items:center; }
         .btn-del:hover { background: var(--danger-soft); }
         .state-box { background:white; border:1px solid var(--border); border-radius:18px; padding:26px; color:var(--muted); font-weight:800; line-height:1.7; }
-
-        .sidebar .tab-btn { display:block; text-decoration:none; color:inherit; }
-        .sidebar .tab-btn.report-link { color:#92400e; background:var(--primary-soft); border-color:rgba(245,130,32,.28); }
-        .sidebar .tab-btn.report-link:hover { color:#7c2d12; background:rgba(245,130,32,.18); }
-        .card-actions { margin-left:auto; display:flex; align-items:center; gap:8px; flex:0 0 auto; }
-        .card-actions .btn-del { margin-left:0; }
-        .btn-report { color:#92400e; border:1px solid rgba(245,130,32,.30); background:var(--primary-soft); font-size:13px; cursor:pointer; min-height:38px; border-radius:var(--radius-full); padding:0 12px; display:inline-flex; align-items:center; justify-content:center; gap:7px; font-weight:900; }
-        .btn-report:hover { background:rgba(245,130,32,.18); }
-        .legal-footer { max-width:1000px; margin:28px auto 0; background:#0f172a; color:#cbd5e1; border-radius:20px; padding:20px; display:grid; gap:12px; box-shadow:0 10px 25px rgba(15,23,42,.08); }
-        .legal-footer strong { color:#fff; font-weight:900; display:block; margin-bottom:6px; }
-        .legal-footer p { margin:0; color:#cbd5e1; font-size:13px; line-height:1.7; font-weight:700; }
-        .legal-footer-links { display:flex; flex-wrap:wrap; gap:12px; }
-        .legal-footer-links a { color:#fff; text-decoration:none; font-size:13px; font-weight:900; }
-        .legal-footer-links a:hover { color:var(--primary); }
     </style>
 </head>
 <body>
-<header class="account-header">
-    <a href="index.html" class="brand-logo" aria-label="VORQ Fordon startsida">
-        <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon - Ägs av VORQ Digital" class="brand-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
-        <span class="brand-logo-fallback" style="display:none;">VORQ <span>Fordon</span></span>
-    </a>
-    <div class="brand-owner" aria-label="Ägare och kontakt">
-        <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>
-        <span>Driver VORQ Fordon som fordonsannonsplattform i Sverige.</span>
-        <span>VORQ Digital säljer inte, äger inte och garanterar inte fordon i användarannonser.</span>
-    </div>
+<header style="margin-bottom:30px; display:flex; justify-content:space-between; align-items:center;">
+    <a href="index.html" style="text-decoration:none; font-weight:900; color:var(--dark); font-size:24px;">BIL<span>HK</span></a>
 </header>
 <div class="wrapper">
     <div class="sidebar">
@@ -88,28 +56,9 @@
         <button class="tab-btn" id="btnProfile" type="button">Min profil</button>
         <button class="tab-btn" id="btnMessages" type="button">Meddelanden</button>
         <button class="tab-btn" id="btnDashboard" type="button">Dashboard</button>
-        <a class="tab-btn report-link" href="notice-action.html?source=my-account" aria-label="Anmäl felaktig eller olaglig annons"><i class="fa-solid fa-flag"></i> Anmäl annons</a>
     </div>
     <main class="content" id="mainContent" aria-live="polite">Laddar...</main>
 </div>
-
-
-<footer class="legal-footer" aria-label="Juridisk information">
-    <div>
-        <strong>VORQ Fordon</strong>
-        <p>
-            VORQ Fordon är en fordonsannonsplattform för Sverige som drivs av VORQ Digital, Inhaber: Haitham Kojar.
-            Annonser publiceras av användare. VORQ Digital är inte säljare, ägare, besiktningspart,
-            betalningsförmedlare eller garant för fordon som visas i annonser.
-        </p>
-    </div>
-    <nav class="legal-footer-links" aria-label="Juridiska länkar">
-        <a href="impressum.html">Företagsinformation</a>
-        <a href="terms.html">Villkor</a>
-        <a href="privacy.html">Integritet</a>
-        <a href="notice-action.html">Anmäl annons</a>
-    </nav>
-</footer>
 
 <script type="module">
     import { auth, db, storage } from './firebase-config.js';
@@ -144,7 +93,6 @@
             DETAILS: 'details.html',
             MESSAGES: 'messages.html',
             DASHBOARD: 'dashboard.html',
-            REPORT: 'notice-action.html',
             PLACEHOLDER_IMAGE: 'placeholder.jpg'
         },
         COLLECTIONS: {
@@ -368,23 +316,6 @@
         info.append(title, price, meta);
         card.append(image, info);
 
-        const actions = document.createElement('div');
-        actions.className = 'card-actions';
-
-        const reportButton = document.createElement('button');
-        reportButton.type = 'button';
-        reportButton.className = 'btn-report';
-        reportButton.setAttribute('aria-label', 'Anmäl annons');
-        reportButton.title = 'Anmäl felaktig eller olaglig annons';
-        const reportIcon = document.createElement('i');
-        reportIcon.className = 'fa-solid fa-flag';
-        reportButton.append(reportIcon, document.createTextNode(' Anmäl'));
-        reportButton.addEventListener('click', (event) => {
-            event.stopPropagation();
-            navigateToReport(carId);
-        });
-        actions.appendChild(reportButton);
-
         if (mode === 'ads') {
             const deleteButton = document.createElement('button');
             deleteButton.type = 'button';
@@ -397,7 +328,7 @@
                 event.stopPropagation();
                 handleDeleteAd(sourceDocId);
             });
-            actions.appendChild(deleteButton);
+            card.appendChild(deleteButton);
         }
 
         if (mode === 'favs') {
@@ -413,10 +344,8 @@
                 event.stopPropagation();
                 handleRemoveFavorite(sourceDocId, carId);
             });
-            actions.appendChild(removeFavoriteButton);
+            card.appendChild(removeFavoriteButton);
         }
-
-        card.appendChild(actions);
 
         return card;
     }
@@ -539,7 +468,7 @@
         title.textContent = 'Min profil';
 
         const intro = document.createElement('p');
-        intro.textContent = 'Här visas kontouppgifter för den inloggade användaren. Publicerade annonser ansvarar användaren själv för. Alternativet för permanent radering finns längst ned i profilen.';
+        intro.textContent = 'Här visas kontouppgifter för den inloggade användaren. Alternativet för permanent radering finns längst ned i profilen.';
 
         const grid = document.createElement('div');
         grid.className = 'profile-grid';
@@ -566,11 +495,11 @@
         dangerTitle.append(dangerIcon, document.createTextNode(' Ta bort konto permanent'));
 
         const p1 = document.createElement('p');
-        p1.textContent = 'Det här alternativet finns inne i profilen för att användaren tydligt ska se vilket konto och vilka användaruppgifter som raderas.';
+        p1.textContent = 'Det här alternativet finns inne i profilen för att användaren tydligt ska se vilket konto som raderas.';
         const p2 = document.createElement('p');
         p2.textContent = 'När du trycker på knappen visas en varning först. Efter det måste du bekräfta med din e-postadress. Om kontot är skapat med e-post och lösenord måste lösenordet anges igen. Om kontot är skapat med Google måste Google-bekräftelse genomföras.';
         const p3 = document.createElement('p');
-        p3.append(createStrongText('Viktigt:'), document.createTextNode(' raderingen försöker ta bort dina annonser, sparade bilar och konversationer kopplade till kontot innan själva Firebase-kontot tas bort. Det kan finnas uppgifter som måste sparas om lag kräver det. Detta går inte att ångra.'));
+        p3.append(createStrongText('Viktigt:'), document.createTextNode(' raderingen försöker ta bort dina annonser, sparade bilar och konversationer kopplade till kontot innan själva Firebase-kontot tas bort. Detta går inte att ångra.'));
 
         const accountLine = document.createElement('div');
         accountLine.className = 'account-line';
@@ -1074,15 +1003,6 @@
         } catch {
             return CONFIG.ROUTES.PLACEHOLDER_IMAGE;
         }
-    }
-
-    function navigateToReport(carId) {
-        const safeCarId = normalizeDocumentId(carId);
-        const query = safeCarId
-            ? `?adId=${encodeURIComponent(safeCarId)}&source=my-account`
-            : '?source=my-account';
-
-        safeNavigate(`${CONFIG.ROUTES.REPORT}${query}`);
     }
 
     function navigateToDetails(carId) {

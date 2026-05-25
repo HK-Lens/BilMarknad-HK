@@ -4,17 +4,6 @@
  * ------------------------------------------------------------
  * Central Firebase client configuration for the VORQ Fordon web app.
  *
- * Legal operator:
- * VORQ Digital, Inhaber: Haitham Kojar
- * Project:
- * VORQ Fordon
- * Contact email:
- * info@vorq.group
- *
- * Legal note:
- * VORQ Fordon is a Swedish vehicle-advertising platform. VORQ Digital does not
- * own, sell, inspect, store, guarantee, or control vehicles advertised by users.
- *
  * Security notes:
  * 1. Firebase Web Config is public by design. It is NOT an Admin secret.
  * 2. Never place service-account keys, Admin SDK credentials, or server secrets here.
@@ -100,10 +89,6 @@ const ALLOWED_FRONTEND_HOSTS = Object.freeze([
  * ============================================================
  * 2. Firebase web config
  * ============================================================
- *
- * Important:
- * Do not change these Firebase values unless you create a new Firebase project.
- * These values are connected to the existing Firebase project.
  */
 
 const firebaseConfig = Object.freeze({
@@ -123,15 +108,7 @@ const firebaseConfig = Object.freeze({
 
 export const APP_META = Object.freeze({
     NAME: "VORQ Fordon",
-    LONG_NAME: "VORQ Fordon",
-    OWNER_NAME: "VORQ Digital, Inhaber: Haitham Kojar",
-    OWNER_EMAIL: "info@vorq.group",
-    OWNER_SLOGAN: "VORQ Fordon – fordonsannonser i Sverige",
-    BUSINESS_NAME: "VORQ Digital",
-    LEGAL_RESPONSIBLE_PERSON: "Haitham Kojar",
-    LEGAL_OPERATOR: "VORQ Digital, Inhaber: Haitham Kojar",
-    PROJECT_TYPE: "vehicle_classifieds_platform",
-    MARKET_COUNTRY: "SE",
+    LONG_NAME: "VORQ Fordon Bilmarknad",
     DEFAULT_LANGUAGE: "sv",
     DEFAULT_COUNTRY: "SE",
     HOSTNAME,
@@ -399,27 +376,22 @@ export function normalizeBoolean(value, fallback = false) {
     if (typeof value === "boolean") {
         return value;
     }
-
     if (value === "true") {
         return true;
     }
-
     if (value === "false") {
         return false;
     }
-
     return fallback;
 }
 
 export function removeUndefinedFields(object) {
     const clean = {};
-
     Object.entries(object || {}).forEach(([key, value]) => {
         if (value !== undefined) {
             clean[key] = value;
         }
     });
-
     return clean;
 }
 
@@ -482,7 +454,7 @@ function validateFirebaseConfig(config) {
     }
 
     if (config.projectId !== "bilmarknad-hk") {
-        console.warn("[VORQ Fordon Firebase] projectId does not match the expected Firebase project.");
+        console.warn("[VORQ Fordon Firebase] projectId does not match the expected VORQ Fordon project.");
     }
 }
 
@@ -525,7 +497,6 @@ function cryptoRandomId() {
         window.crypto.getRandomValues(array);
         return Array.from(array).map((value) => value.toString(36)).join("");
     }
-
     return Math.random().toString(36).slice(2, 14);
 }
 
