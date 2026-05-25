@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Meddelanden | VORQ Fordon</title>
-    <meta name="description" content="Hantera dina meddelanden och konversationer på VORQ Fordon. VORQ Fordon ägs och drivs av VORQ Group.">
+    <meta name="description" content="Hantera dina meddelanden och konversationer på VORQ Fordon. VORQ Fordon är en svensk fordonsannonsplattform under VORQ Digital, Inhaber: Haitham Kojar.">
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -38,10 +38,11 @@
 </head>
 <body>
 <header class="site-header">
-    <a href="index.html" class="logo" aria-label="VORQ Fordon startsida"><img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon - Ägs av VORQ Group" class="logo-image"></a>
+    <a href="index.html" class="logo" aria-label="VORQ Fordon startsida"><img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon - Ägs av VORQ Digital" class="logo-image"></a>
     <div class="header-actions">
         <a href="my-account.html" class="nav-btn"><i class="fa-solid fa-user"></i><span>Mitt konto</span></a>
         <a href="index.html" class="nav-btn"><i class="fa-solid fa-house"></i><span>Startsida</span></a>
+        <a href="notice-action.html" class="nav-btn"><i class="fa-solid fa-flag"></i><span>Anmäl annons</span></a>
         <div class="user-pill" id="userStatus"><i class="fa-solid fa-circle-notch fa-spin"></i><span>Laddar...</span></div>
     </div>
 </header>
@@ -69,6 +70,7 @@
             <div class="active-actions">
                 <button type="button" class="mini-action-btn" id="carInfoBtn" disabled><i class="fa-solid fa-circle-info"></i><span>Annonsinfo</span></button>
                 <a class="mini-action-btn" id="openAdBtn" href="#" aria-disabled="true"><i class="fa-solid fa-car-side"></i><span>Visa annons</span></a>
+                <a class="mini-action-btn" id="reportAdBtn" href="notice-action.html" aria-disabled="true"><i class="fa-solid fa-flag"></i><span>Anmäl annons</span></a>
             </div>
         </div>
 
@@ -85,8 +87,8 @@
         </div>
 
         <div class="legal-footer">
-            <span><strong>Ansvarsfriskrivning:</strong> VORQ Fordon är endast en annonsplattform. Webbplatsen ägs och drivs av VORQ Group. Kontrollera alltid fordon, betalning, dokument och motpart innan affär. Kontakt: info@vorq.group · Vision • Operations • Reach • Quality</span>
-            <span><a href="terms.html">Användarvillkor</a> · <a href="privacy.html">Integritetspolicy</a></span>
+            <span><strong>Ansvarsfriskrivning:</strong> VORQ Fordon är endast en fordonsannonsplattform. VORQ Digital, Inhaber: Haitham Kojar, säljer inte, äger inte, kontrollerar inte och garanterar inte fordon, annonser, betalning, dokument eller motparter. Dela aldrig BankID, kortuppgifter, lösenord eller känsliga dokument i chatten. Kontakt: info@vorq.group</span>
+            <span><a href="terms.html">Användarvillkor</a> · <a href="privacy.html">Integritetspolicy</a> · <a href="notice-action.html">Anmäl annons</a></span>
         </div>
     </section>
 </main>
@@ -144,6 +146,7 @@
         activeSubtitle: document.getElementById("activeSubtitle"),
         carInfoBtn: document.getElementById("carInfoBtn"),
         openAdBtn: document.getElementById("openAdBtn"),
+        reportAdBtn: document.getElementById("reportAdBtn"),
         msgArea: document.getElementById("msgArea"),
         msgInput: document.getElementById("msgInput"),
         inputHint: document.getElementById("inputHint"),
@@ -540,11 +543,16 @@
         elements.carInfoBtn.disabled = false;
 
         if (room.carId) {
-            elements.openAdBtn.href = `details.html?id=${encodeURIComponent(room.carId)}`;
+            const encodedCarId = encodeURIComponent(room.carId);
+            elements.openAdBtn.href = `details.html?id=${encodedCarId}`;
             elements.openAdBtn.setAttribute("aria-disabled", "false");
+            elements.reportAdBtn.href = `notice-action.html?adId=${encodedCarId}&source=messages`;
+            elements.reportAdBtn.setAttribute("aria-disabled", "false");
         } else {
             elements.openAdBtn.href = "#";
             elements.openAdBtn.setAttribute("aria-disabled", "true");
+            elements.reportAdBtn.href = "notice-action.html";
+            elements.reportAdBtn.setAttribute("aria-disabled", "true");
         }
     }
 
@@ -840,6 +848,8 @@
         elements.carInfoBtn.disabled = true;
         elements.openAdBtn.href = "#";
         elements.openAdBtn.setAttribute("aria-disabled", "true");
+        elements.reportAdBtn.href = "notice-action.html";
+        elements.reportAdBtn.setAttribute("aria-disabled", "true");
         lockInput("Välj en konversation för att skriva.");
         elements.msgArea.innerHTML = '<div class="welcome-state"><div class="state-card"><div class="state-icon"><i class="fa-regular fa-comment-dots"></i></div><h3>Välj en konversation</h3><p>Klicka på en chatt till vänster för att läsa och skicka meddelanden.</p></div></div>';
         closeChatMobile();

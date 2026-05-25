@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sökresultat | VORQ Fordon</title>
-    <meta name="description" content="Sökresultat för fordonsannonser på VORQ Fordon med säkra kort, favoriter och kompatibla filter från avancerad sökning. VORQ Fordon ägs och drivs av VORQ Group.">
+    <meta name="description" content="Sökresultat för fordonsannonser på VORQ Fordon. VORQ Fordon är en fordonsannonsplattform i Sverige under VORQ Digital, Inhaber: Haitham Kojar.">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#f58220">
     <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
@@ -104,6 +104,49 @@
         .mini-tag { padding: 5px 8px; border-radius: 999px; background: #fff5eb; color: var(--primary-hover); font-size: 10px; font-weight: 900; text-transform: uppercase; }
         .no-results { text-align: center; padding: 80px 24px; grid-column: 1/-1; background: white; border: 1px solid var(--border); border-radius: 24px; color: var(--muted); font-weight: 800; }
         .no-results i { display: block; color: var(--primary); font-size: 34px; margin-bottom: 14px; }
+
+        .card-actions {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .card-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 8px 11px;
+            background: #fff;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 900;
+            transition: .25s;
+        }
+        .card-action:hover {
+            border-color: var(--danger);
+            color: #991b1b;
+            background: #fff1f2;
+            transform: translateY(-1px);
+        }
+        .platform-note {
+            max-width: var(--max-width);
+            margin: 28px auto 0;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #7c2d12;
+            border-radius: 20px;
+            padding: 16px 18px;
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1.7;
+            box-shadow: var(--shadow-sm);
+        }
+        .platform-note strong { color: #431407; font-weight: 900; }
+
         .error-box { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
 
         @media (max-width: 640px) {
@@ -119,12 +162,12 @@
 <body>
     <header class="brand-header">
         <a href="index.html" class="brand-logo-link" aria-label="VORQ Fordon startsida">
-            <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon - Ägs av VORQ Group" class="brand-logo">
+            <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon - Ägs av VORQ Digital" class="brand-logo">
         </a>
         <div class="brand-info">
-            <strong>Ägs och drivs av VORQ Group</strong>
-            <a href="mailto:info@vorq.group">info@vorq.group</a><br>
-            Vision • Operations • Reach • Quality
+            <strong>VORQ Fordon</strong>
+            En fordonsannonsplattform i Sverige under VORQ Digital, Inhaber: Haitham Kojar.<br>
+            <a href="notice-action.html">Anmäl annons</a>
         </div>
     </header>
 
@@ -140,11 +183,20 @@
         </div>
         <div class="summary-actions">
             <a href="filter.html" class="summary-link"><i class="fa-solid fa-sliders"></i> Ändra filter</a>
+            <a href="notice-action.html" class="summary-link"><i class="fa-solid fa-flag"></i> Anmäl annons</a>
             <a href="index.html" class="summary-link"><i class="fa-solid fa-house"></i> Hem</a>
         </div>
     </section>
 
     <main id="resultsGrid" class="results-grid"></main>
+
+    <section class="platform-note" aria-label="Information om VORQ Fordon">
+        <strong>Viktig information:</strong>
+        VORQ Fordon är en annonsplattform för fordonsannonser i Sverige. VORQ Digital, Inhaber: Haitham Kojar,
+        säljer inte, äger inte, kontrollerar inte, besiktigar inte och garanterar inte fordon som publiceras av användare.
+        Användare ansvarar själva för annonsens innehåll, bilder, pris, fordonsuppgifter och kontaktuppgifter.
+        Misstänkta, felaktiga eller olagliga annonser kan rapporteras via <a href="notice-action.html">Anmäl annons</a>.
+    </section>
 
 <script type="module">
     import { db, auth } from './firebase-config.js';
@@ -384,11 +436,32 @@
 
         const extra = createExtraTags(car);
 
+        const actions = createCardActions(car);
+
         content.append(price, title, meta);
         if (extra) content.appendChild(extra);
+        content.appendChild(actions);
 
         card.append(favoriteButton, imageWrap, content);
         return card;
+    }
+
+    function createCardActions(car) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'card-actions';
+
+        const reportLink = document.createElement('a');
+        reportLink.className = 'card-action';
+        reportLink.href = buildReportUrl(car.id, 'results');
+        reportLink.title = 'Anmäl felaktig eller olaglig annons';
+        reportLink.setAttribute('aria-label', 'Anmäl felaktig eller olaglig annons');
+        reportLink.addEventListener('click', (event) => {
+            event.stopPropagation();
+        });
+        reportLink.append(createIcon('fa-solid fa-flag'), document.createTextNode('Anmäl annons'));
+
+        wrapper.appendChild(reportLink);
+        return wrapper;
     }
 
     function createExtraTags(car) {
@@ -439,6 +512,14 @@
         if (!safeCarId) return;
         const params = new URLSearchParams({ id: safeCarId });
         window.location.href = `details.html?${params.toString()}`;
+    }
+
+    function buildReportUrl(carId, source) {
+        const safeCarId = normalizeDocumentId(carId);
+        const params = new URLSearchParams();
+        if (safeCarId) params.set('adId', safeCarId);
+        params.set('source', source || 'results');
+        return `notice-action.html?${params.toString()}`;
     }
 
     function extractFiltersFromParams(params) {

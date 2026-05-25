@@ -43,6 +43,7 @@ const APP_CONFIG = {
         MESSAGES: "messages.html",
         DETAILS: "details.html",
         RESULTS: "results.html",
+        NOTICE_ACTION: "notice-action.html",
         PLACEHOLDER_IMAGE: "placeholder.jpg"
     },
 
@@ -286,7 +287,7 @@ async function initApp() {
     } catch (error) {
         console.error("Error fetching cars:", error);
         setErrorState({
-            title: "Kunde inte ladda bilar",
+            title: "Kunde inte ladda fordon",
             message: "Kontrollera anslutningen och försök igen.",
             actionText: "Försök igen",
             onAction: () => initApp()
@@ -643,8 +644,19 @@ function createCarCard(car) {
     card.setAttribute("role", "link");
     card.setAttribute("aria-label", `Visa detaljer för ${buildCarTitle(car.brand, car.model, car.year)}`);
 
-    card.addEventListener("click", () => navigateToDetails(car.id));
+    card.addEventListener("click", (event) => {
+        if (isInteractiveElement(event.target)) {
+            return;
+        }
+
+        navigateToDetails(car.id);
+    });
+
     card.addEventListener("keydown", (event) => {
+        if (isInteractiveElement(event.target)) {
+            return;
+        }
+
         if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             navigateToDetails(car.id);
@@ -692,6 +704,9 @@ function createCarCard(car) {
     const description = createDescriptionElement(car.description);
     if (description) content.appendChild(description);
 
+    const actions = createCardActionsRow(car);
+    content.appendChild(actions);
+
     card.append(imageWrapper, content);
     return card;
 }
@@ -725,6 +740,29 @@ function createDescriptionElement(descriptionText) {
     description.className = "car-short-description";
     description.textContent = truncateText(cleanDescription, APP_CONFIG.LIMITS.CARD_DESCRIPTION_MAX_LENGTH);
     return description;
+}
+
+function createCardActionsRow(car) {
+    const row = document.createElement("div");
+    row.className = "car-card-actions";
+
+    const detailsLink = document.createElement("a");
+    detailsLink.className = "car-card-action car-card-action-primary";
+    detailsLink.href = buildDetailsURL(car.id);
+    detailsLink.textContent = "Visa detaljer";
+    detailsLink.setAttribute("aria-label", `Visa detaljer för ${buildCarTitle(car.brand, car.model, car.year)}`);
+    detailsLink.addEventListener("click", (event) => event.stopPropagation());
+
+    const reportLink = document.createElement("a");
+    reportLink.className = "car-card-action car-card-action-report";
+    reportLink.href = buildReportAdURL(car);
+    reportLink.textContent = "Anmäl annons";
+    reportLink.rel = "nofollow";
+    reportLink.setAttribute("aria-label", `Anmäl annonsen ${buildCarTitle(car.brand, car.model, car.year)}`);
+    reportLink.addEventListener("click", (event) => event.stopPropagation());
+
+    row.append(detailsLink, reportLink);
+    return row;
 }
 
 function renderEmptyState(container) {
@@ -865,8 +903,8 @@ function updateResultTitleForSearch(count) {
     if (!resultTitle) return;
 
     resultTitle.textContent = count > 0
-        ? `Hittade ${count} ${count === 1 ? "bil" : "bilar"} som matchar din sökning`
-        : "Inga bilar matchade din sökning";
+        ? `Hittade ${count} ${count === 1 ? "fordon" : "fordon"} som matchar din sökning`
+        : "Inga fordon matchade din sökning";
 }
 
 function updateResultTitleForDefaultView(count) {
@@ -880,12 +918,35 @@ function navigateToDetails(carId) {
     const safeId = normalizeDocumentId(carId);
     if (!safeId) return;
 
-    window.location.href = `${APP_CONFIG.ROUTES.DETAILS}?id=${encodeURIComponent(safeId)}`;
+    window.location.href = buildDetailsURL(safeId);
+}
+
+function buildDetailsURL(carId) {
+    const safeId = normalizeDocumentId(carId);
+    return safeId ? `${APP_CONFIG.ROUTES.DETAILS}?id=${encodeURIComponent(safeId)}` : APP_CONFIG.ROUTES.RESULTS;
+}
+
+function buildReportAdURL(car) {
+    const safeId = normalizeDocumentId(car?.id);
+    const params = new URLSearchParams();
+
+    if (safeId) {
+        params.set("adId", safeId);
+    }
+
+    params.set("source", "listing");
+
+    const title = truncateText(buildCarTitle(car?.brand, car?.model, car?.year), 120);
+    if (title) {
+        params.set("title", title);
+    }
+
+    return `${APP_CONFIG.ROUTES.NOTICE_ACTION}?${params.toString()}`;
 }
 
 function buildCarTitle(brand, model, year) {
     const parts = [normalizeText(brand), normalizeText(model)].filter(Boolean);
-    const baseTitle = parts.length > 0 ? parts.join(" ") : "Okänd bil";
+    const baseTitle = parts.length > 0 ? parts.join(" ") : "Okänt fordon";
 
     if (Number.isFinite(Number(year)) && Number(year) > 0) {
         return `${baseTitle} ${Number(year)}`;
@@ -1138,6 +1199,14 @@ function isPlainObject(value) {
     return Object.prototype.toString.call(value) === "[object Object]";
 }
 
+function isInteractiveElement(target) {
+    if (!(target instanceof Element)) {
+        return false;
+    }
+
+    return Boolean(target.closest("a, button, input, select, textarea, label, summary, [role='button']"));
+}
+
 function attachGlobalErrorProtection() {
     window.addEventListener("beforeunload", () => cleanupUnreadMessagesListener());
 
@@ -1160,6 +1229,3 @@ const VORQ_FORDON_APP_API = Object.freeze({
 });
 
 window.VORQ_FORDON_APP = VORQ_FORDON_APP_API;
-
-/* Compatibility alias for older pages that may still read window.BILHK_APP. */
-window.BILHK_APP = VORQ_FORDON_APP_API;

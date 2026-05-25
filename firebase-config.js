@@ -4,10 +4,16 @@
  * ------------------------------------------------------------
  * Central Firebase client configuration for the VORQ Fordon web app.
  *
- * Owner:
- * VORQ Group
- * Email: info@vorq.group
- * Slogan: Vision • Operations • Reach • Quality
+ * Legal operator:
+ * VORQ Digital, Inhaber: Haitham Kojar
+ * Project:
+ * VORQ Fordon
+ * Contact email:
+ * info@vorq.group
+ *
+ * Legal note:
+ * VORQ Fordon is a Swedish vehicle-advertising platform. VORQ Digital does not
+ * own, sell, inspect, store, guarantee, or control vehicles advertised by users.
  *
  * Security notes:
  * 1. Firebase Web Config is public by design. It is NOT an Admin secret.
@@ -118,9 +124,14 @@ const firebaseConfig = Object.freeze({
 export const APP_META = Object.freeze({
     NAME: "VORQ Fordon",
     LONG_NAME: "VORQ Fordon",
-    OWNER_NAME: "VORQ Group",
+    OWNER_NAME: "VORQ Digital, Inhaber: Haitham Kojar",
     OWNER_EMAIL: "info@vorq.group",
-    OWNER_SLOGAN: "Vision • Operations • Reach • Quality",
+    OWNER_SLOGAN: "VORQ Fordon – fordonsannonser i Sverige",
+    BUSINESS_NAME: "VORQ Digital",
+    LEGAL_RESPONSIBLE_PERSON: "Haitham Kojar",
+    LEGAL_OPERATOR: "VORQ Digital, Inhaber: Haitham Kojar",
+    PROJECT_TYPE: "vehicle_classifieds_platform",
+    MARKET_COUNTRY: "SE",
     DEFAULT_LANGUAGE: "sv",
     DEFAULT_COUNTRY: "SE",
     HOSTNAME,

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Fordonsdetaljer | VORQ Fordon</title>
-    <meta name="description" content="Visa fordonsdetaljer, bilder, utrustning och kontaktmöjlighet för bilannons på VORQ Fordon. VORQ Fordon ägs och drivs av VORQ Group.">
+    <meta name="description" content="Visa fordonsdetaljer, bilder, utrustning och kontaktmöjlighet för bilannons på VORQ Fordon. VORQ Fordon är en annonsplattform för den svenska fordonsmarknaden. Tjänsten tillhandahålls av VORQ Digital, Inhaber: Haitham Kojar.">
     <meta name="robots" content="noindex, nofollow">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -43,6 +43,15 @@
         .btn-favorite-detail { background: white; color: var(--dark); border: 1px solid var(--border); padding: 12px 20px; border-radius: 50px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: .3s; }
         .btn-favorite-detail:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
         .btn-favorite-detail.saved { color: #ef4444; border-color: #fecaca; background: #fff1f2; }
+        .btn-report-detail { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; padding: 12px 20px; border-radius: 50px; font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 10px; text-decoration: none; transition: .3s; }
+        .btn-report-detail:hover { background: #ffedd5; border-color: var(--primary); color: #7c2d12; transform: translateY(-2px); }
+        .platform-note { margin-top: 18px; padding: 18px; border-radius: 18px; background: #f8fafc; border: 1px solid var(--border); color: #475569; font-size: 13px; line-height: 1.75; font-weight: 650; }
+        .report-box { margin-top: 18px; padding: 20px; border-radius: 18px; background: #fff7ed; border: 1px solid #fed7aa; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+        .report-box strong { display: block; color: #7c2d12; font-size: 14px; font-weight: 900; margin-bottom: 4px; }
+        .report-box span { color: #9a3412; font-size: 13px; font-weight: 650; line-height: 1.6; }
+        .report-box a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 10px 16px; border-radius: 999px; background: var(--dark); color: #fff; text-decoration: none; font-size: 13px; font-weight: 900; }
+        .report-box a:hover { background: var(--primary); }
+
         .details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
         .info-card { background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); margin-bottom: 25px; }
         .price-text { font-size: 45px; font-weight: 900; color: var(--primary); margin: 10px 0; }
@@ -59,7 +68,7 @@
         .state-card { text-align:center; padding:80px; background:white; border-radius:24px; border:1px solid var(--border); }
         .state-card a { color:var(--primary); font-weight:800; text-decoration:none; }
 
-        .bilhk-modal-overlay {
+        .vorq-modal-overlay {
             position: fixed;
             inset: 0;
             z-index: 9999;
@@ -70,7 +79,7 @@
             backdrop-filter: blur(10px);
             animation: modalFadeIn .18s ease-out;
         }
-        .bilhk-modal-card {
+        .vorq-modal-card {
             width: min(92vw, 430px);
             background: rgba(255, 255, 255, .98);
             border: 1px solid rgba(226, 232, 240, .95);
@@ -80,7 +89,7 @@
             box-shadow: 0 30px 90px rgba(15, 23, 42, .28);
             animation: modalPopIn .2s ease-out;
         }
-        .bilhk-modal-icon {
+        .vorq-modal-icon {
             width: 84px;
             height: 84px;
             border-radius: 28px;
@@ -92,9 +101,9 @@
             background: linear-gradient(135deg, rgba(245,130,32,.15), rgba(245,130,32,.06));
             box-shadow: inset 0 0 0 1px rgba(245,130,32,.18);
         }
-        .bilhk-modal-icon.error { color:#ef4444; background:linear-gradient(135deg, rgba(239,68,68,.13), rgba(239,68,68,.05)); box-shadow:inset 0 0 0 1px rgba(239,68,68,.18); }
-        .bilhk-modal-icon.warning { color:#f58220; background:linear-gradient(135deg, rgba(245,130,32,.16), rgba(245,130,32,.06)); }
-        .bilhk-modal-card h3 {
+        .vorq-modal-icon.error { color:#ef4444; background:linear-gradient(135deg, rgba(239,68,68,.13), rgba(239,68,68,.05)); box-shadow:inset 0 0 0 1px rgba(239,68,68,.18); }
+        .vorq-modal-icon.warning { color:#f58220; background:linear-gradient(135deg, rgba(245,130,32,.16), rgba(245,130,32,.06)); }
+        .vorq-modal-card h3 {
             font-size: 25px;
             line-height: 1.2;
             letter-spacing: -.04em;
@@ -102,15 +111,15 @@
             color: var(--dark);
             margin-bottom: 10px;
         }
-        .bilhk-modal-card p {
+        .vorq-modal-card p {
             color: #64748b;
             font-size: 15px;
             line-height: 1.75;
             font-weight: 700;
             margin-bottom: 24px;
         }
-        .bilhk-modal-actions { display:flex; justify-content:center; gap:10px; }
-        .bilhk-modal-ok {
+        .vorq-modal-actions { display:flex; justify-content:center; gap:10px; }
+        .vorq-modal-ok {
             border: none;
             min-width: 130px;
             min-height: 48px;
@@ -124,7 +133,7 @@
             box-shadow: 0 16px 32px rgba(245, 130, 32, .26);
             transition: .22s ease;
         }
-        .bilhk-modal-ok:hover { transform: translateY(-1px); box-shadow: 0 20px 38px rgba(245,130,32,.32); }
+        .vorq-modal-ok:hover { transform: translateY(-1px); box-shadow: 0 20px 38px rgba(245,130,32,.32); }
         @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes modalPopIn { from { opacity:0; transform: translateY(10px) scale(.96); } to { opacity:1; transform: translateY(0) scale(1); } }
 
@@ -137,10 +146,10 @@
         .site-footer-links a:hover { color: var(--primary); }
 
         @media (max-width: 900px) { .site-header-inner { flex-direction: column; align-items: flex-start; } .brand-nav { width: 100%; overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; padding-bottom: 2px; } .brand-link { white-space: nowrap; } .brand-logo-img { width: 132px; } .gallery-container { grid-template-columns: 1fr; height: 350px; } .side-stack { display: none; } .details-grid { grid-template-columns: 1fr; } .header-bar { flex-direction: column; gap: 20px; text-align: center; } .price-text { font-size: 35px; } .info-card { padding:25px; } }
-        @media (max-width: 520px) { .brand-text strong { font-size: 16px; } .brand-text span { font-size: 10px; } .brand-logo-img { width: 118px; } .container { padding-inline: 14px; } .reg-plate { font-size: 20px; } .actions-row { width: 100%; } .btn-contact, .btn-favorite-detail { width: 100%; justify-content: center; } .state-card { padding: 48px 20px; } }
+        @media (max-width: 520px) { .brand-text strong { font-size: 16px; } .brand-text span { font-size: 10px; } .brand-logo-img { width: 118px; } .container { padding-inline: 14px; } .reg-plate { font-size: 20px; } .actions-row { width: 100%; } .btn-contact, .btn-favorite-detail, .btn-report-detail { width: 100%; justify-content: center; } .state-card { padding: 48px 20px; } }
     </style>
 </head>
-<body data-build="details-vorq-fordon-v1">
+<body data-build="details-vorq-fordon-se-v2">
 <header class="site-header" aria-label="VORQ Fordon huvudmeny">
     <div class="site-header-inner">
         <a href="index.html" class="brand-logo" aria-label="Gå till VORQ Fordon startsidan">
@@ -148,7 +157,7 @@
             <span class="logo-fallback" hidden><i class="fa-solid fa-car-side"></i></span>
             <span class="brand-text">
                 <strong>VORQ Fordon</strong>
-                <span>Ägs av VORQ Group</span>
+                <span>Ett projekt av VORQ Digital</span>
             </span>
         </a>
         <nav class="brand-nav" aria-label="Huvudmeny">
@@ -156,6 +165,7 @@
             <a href="results.html" class="brand-link"><i class="fa-solid fa-car-side"></i> Annonser</a>
             <a href="sell.html" class="brand-link primary"><i class="fa-solid fa-plus"></i> Sälj bil</a>
             <a href="my-account.html" class="brand-link"><i class="fa-solid fa-user"></i> Mitt konto</a>
+            <a href="notice-action.html" class="brand-link"><i class="fa-solid fa-flag"></i> Anmäl annons</a>
         </nav>
     </div>
 </header>
@@ -167,7 +177,7 @@
     <div class="site-footer-inner">
         <div>
             <strong>VORQ Fordon</strong>
-            <span>&copy; 2026 VORQ Fordon. Ägs och drivs av VORQ Group.</span>
+            <span>&copy; 2026 VORQ Fordon. Ett projekt av VORQ Digital, Inhaber: Haitham Kojar.</span>
         </div>
         <div class="site-footer-links">
             <a href="index.html">Hem</a>
@@ -175,6 +185,7 @@
             <a href="sell.html">Sälj bil</a>
             <a href="terms.html">Villkor</a>
             <a href="my-account.html">Mitt konto</a>
+            <a href="notice-action.html">Anmäl annons</a>
         </div>
     </div>
 </footer>
@@ -190,24 +201,24 @@
                 .replaceAll("'", '&#039;');
         }
 
-        window.showBILHKElegantModal = function ({ type = 'warning', title = 'Meddelande', message = '', confirmText = 'OK' } = {}) {
+        window.showVORQElegantModal = function ({ type = 'warning', title = 'Meddelande', message = '', confirmText = 'OK' } = {}) {
             return new Promise((resolve) => {
-                const existing = document.querySelector('.bilhk-modal-overlay');
+                const existing = document.querySelector('.vorq-modal-overlay');
                 if (existing) existing.remove();
 
                 const overlay = document.createElement('div');
-                overlay.className = 'bilhk-modal-overlay';
+                overlay.className = 'vorq-modal-overlay';
                 overlay.setAttribute('role', 'dialog');
                 overlay.setAttribute('aria-modal', 'true');
 
                 const iconClass = type === 'error' ? 'fa-circle-xmark' : type === 'warning' ? 'fa-triangle-exclamation' : type === 'success' ? 'fa-circle-check' : 'fa-circle-info';
                 overlay.innerHTML = `
-                    <div class="bilhk-modal-card">
-                        <div class="bilhk-modal-icon ${escapeHTML(type)}"><i class="fa-solid ${iconClass}"></i></div>
+                    <div class="vorq-modal-card">
+                        <div class="vorq-modal-icon ${escapeHTML(type)}"><i class="fa-solid ${iconClass}"></i></div>
                         <h3>${escapeHTML(title)}</h3>
                         <p>${escapeHTML(message)}</p>
-                        <div class="bilhk-modal-actions">
-                            <button type="button" class="bilhk-modal-ok">${escapeHTML(confirmText)}</button>
+                        <div class="vorq-modal-actions">
+                            <button type="button" class="vorq-modal-ok">${escapeHTML(confirmText)}</button>
                         </div>
                     </div>
                 `;
@@ -222,7 +233,7 @@
                 };
 
                 document.body.appendChild(overlay);
-                const okButton = overlay.querySelector('.bilhk-modal-ok');
+                const okButton = overlay.querySelector('.vorq-modal-ok');
                 okButton.addEventListener('click', close, { once: true });
                 overlay.addEventListener('click', (event) => { if (event.target === overlay) close(); });
                 document.addEventListener('keydown', onKeyDown);
@@ -231,7 +242,7 @@
         };
 
         window.alert = function (message) {
-            window.showBILHKElegantModal({
+            window.showVORQElegantModal({
                 type: 'warning',
                 title: 'Meddelande',
                 message: String(message || ''),
@@ -394,6 +405,7 @@
         const images = car.images;
         const title = `${car.brand} ${car.model}`.trim() || 'Fordonsdetaljer';
         const messagesUrl = buildMessagesUrl(car, title);
+        const reportUrl = buildReportUrl(car, title);
         const priceText = `${formatNumber(car.price)} kr`;
         const mileageText = `${formatNumber(car.mileage)} km`;
         const featureHTML = car.features.length
@@ -414,6 +426,7 @@
                 <div class="actions-row">
                     <button id="favoriteDetailBtn" class="btn-favorite-detail" type="button"><i class="fa-regular fa-heart"></i> Spara bilen</button>
                     <a href="${escapeHTML(messagesUrl)}" class="btn-contact" id="contactSellerBtn"><i class="fa-solid fa-comments"></i> Kontakta säljaren</a>
+                    <a href="${escapeHTML(reportUrl)}" class="btn-report-detail" id="reportAdBtn"><i class="fa-solid fa-flag"></i> Anmäl annons</a>
                 </div>
             </div>
 
@@ -452,6 +465,9 @@
                     <div class="info-card">
                         <h3 style="margin-bottom:20px; font-weight:900;">Beskrivning</h3>
                         <p style="white-space: pre-wrap; line-height:1.8; color:#334155;">${escapeHTML(car.description)}</p>
+                        <div class="platform-note">
+                            <strong>Viktig information:</strong> Annonsens uppgifter kommer från annonsören. VORQ Fordon är inte säljare, ägare eller besiktningspart för fordonet och garanterar inte pris, skick, äganderätt, finansiering, leverans eller motpartens identitet.
+                        </div>
                     </div>
                 </div>
 
@@ -468,9 +484,16 @@
             <div class="safety-footer">
                 <div class="safety-box">
                     <h4><i class="fa-solid fa-circle-exclamation"></i> Säker affär</h4>
-                    <p style="font-size:14px; margin-top:10px;">Kontrollera alltid fordonets historik, servicebok och mätarställning innan köp.</p>
+                    <p style="font-size:14px; margin-top:10px;">Kontrollera alltid fordonets historik, servicebok, mätarställning, ägaruppgifter och dokument innan köp. Dela aldrig BankID, kortuppgifter eller lösenord.</p>
                 </div>
-                <p class="disclaimer"><strong>Ansvarsfriskrivning:</strong> VORQ Fordon är en öppen plattform som ägs och drivs av VORQ Group. Vi granskar inte fordonens faktiska skick. All handel sker på användarens eget ansvar.</p>
+                <div class="report-box">
+                    <div>
+                        <strong>Felaktig, misstänkt eller olaglig annons?</strong>
+                        <span>Rapportera annonsen så att VORQ Fordon kan granska uppgifterna enligt plattformens regler.</span>
+                    </div>
+                    <a href="${escapeHTML(reportUrl)}"><i class="fa-solid fa-flag"></i> Anmäl annons</a>
+                </div>
+                <p class="disclaimer"><strong>Ansvarsfriskrivning:</strong> VORQ Fordon är en annonsplattform för fordon. Tjänsten tillhandahålls av VORQ Digital, Inhaber: Haitham Kojar. VORQ Fordon säljer inte, äger inte, förmedlar inte och kontrollerar inte fordonen i användarnas annonser. Uppgifterna i annonsen lämnas av annonsören. Inom lagens ramar ansvarar annonsören för att information, bilder, pris, äganderätt och kontaktuppgifter är korrekta och lagliga. Kontrollera alltid fordon, dokument, historik, mätarställning och motpart innan köp.</p>
             </div>
         `;
 
@@ -523,8 +546,8 @@
 
 
     function showElegantAlert({ type = "info", title = "Meddelande", message = "", confirmText = "OK" } = {}) {
-        if (typeof window.showBILHKElegantModal === 'function') {
-            return window.showBILHKElegantModal({ type, title, message, confirmText });
+        if (typeof window.showVORQElegantModal === 'function') {
+            return window.showVORQElegantModal({ type, title, message, confirmText });
         }
         return Promise.resolve();
     }
@@ -540,6 +563,17 @@
         if (sellerName) params.set('sellerName', sellerName);
         if (sellerEmail) params.set('sellerEmail', sellerEmail);
         return `messages.html?${params.toString()}`;
+    }
+
+    function buildReportUrl(car, titleText = 'Fordonsannons') {
+        const params = new URLSearchParams();
+        if (carId) params.set('adId', carId);
+        params.set('source', 'details');
+        const title = safeString(`${titleText} ${car?.year || ''}`.trim());
+        if (title) params.set('title', title);
+        const sellerId = getSellerIdFromCar(car);
+        if (sellerId) params.set('sellerId', sellerId);
+        return `notice-action.html?${params.toString()}`;
     }
 
     function getSellerIdFromCar(car) {

@@ -7,7 +7,7 @@
 
     <title>Hantera annonser | VORQ Fordon</title>
 
-    <meta name="description" content="Hantera dina fordonsannonser på VORQ Fordon. Redigera pris, öppna annons, pausa eller radera dina egna annonser. VORQ Fordon ägs och drivs av VORQ Group.">
+    <meta name="description" content="Hantera dina fordonsannonser på VORQ Fordon. Redigera pris, öppna annons, pausa eller radera dina egna annonser. VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar.">
 
     <meta name="robots" content="noindex, nofollow">
 
@@ -598,6 +598,42 @@
             color: white;
         }
 
+
+
+        .legal-disclaimer {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+            font-weight: 700;
+        }
+
+        .legal-disclaimer strong {
+            color: var(--dark);
+            font-weight: 900;
+        }
+
+        .legal-disclaimer a {
+            color: var(--primary-hover);
+            font-weight: 900;
+        }
+
+        .action-btn.report {
+            background: var(--surface-soft);
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+
+        .action-btn.report:hover {
+            border-color: rgba(245, 130, 32, 0.45);
+            color: var(--primary-hover);
+        }
+
         .state-card {
             background: white;
             border: 1px solid var(--border);
@@ -749,6 +785,11 @@
                     Startsida
                 </a>
 
+                <a href="notice-action.html" class="nav-btn">
+                    <i class="fa-solid fa-flag"></i>
+                    Anmäl annons
+                </a>
+
                 <a href="sell.html" class="nav-btn primary">
                     <i class="fa-solid fa-plus"></i>
                     Ny annons
@@ -776,7 +817,7 @@
 
                     <div class="owner-note">
                         <i class="fa-solid fa-building-shield"></i>
-                        Ägs och drivs av VORQ Group • Vision • Operations • Reach • Quality
+                        Drivs under VORQ Digital, Inhaber: Haitham Kojar
                     </div>
                 </div>
 
@@ -785,6 +826,16 @@
                     Publicera ny annons
                 </a>
             </div>
+        </section>
+
+        <section class="legal-disclaimer" aria-label="Juridisk information om VORQ Fordon">
+            <strong>VORQ Fordon</strong> är en svensk fordonsannonsplattform som drivs under
+            <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>. Plattformen ger användare möjlighet
+            att hantera egna fordonsannonser. VORQ Digital säljer inte, äger inte, besiktigar inte,
+            kontrollerar inte och garanterar inte fordon som publiceras av användare. Annonsören ansvarar
+            för att uppgifter, bilder, pris och kontaktinformation är korrekta och lagliga.
+            Misstänkta, felaktiga eller olagliga annonser kan rapporteras via
+            <a href="notice-action.html">Anmäl annons</a>.
         </section>
 
         <section class="stats-grid" aria-label="Annonsstatistik">
@@ -846,6 +897,22 @@
 
     </main>
 
+
+
+    <footer class="page-shell" style="padding-top:0; padding-bottom:34px; color:#64748b; font-size:13px; font-weight:700; line-height:1.7;">
+        <p>
+            VORQ Fordon drivs under <strong style="color:#0f172a;">VORQ Digital, Inhaber: Haitham Kojar</strong>.
+            Plattformen är avsedd för fordonsannonser i Sverige och fungerar inte som säljare, fordonsägare,
+            besiktningsorgan, betalningsförmedlare eller garantiutfärdare.
+        </p>
+        <p style="margin-top:10px;">
+            <a href="terms.html">Villkor</a> ·
+            <a href="privacy.html">Integritet</a> ·
+            <a href="impressum.html">Företagsinformation</a> ·
+            <a href="notice-action.html">Anmäl annons</a>
+        </p>
+    </footer>
+
     <script type="module">
         import {
             auth,
@@ -895,6 +962,7 @@
                 ADD_CAR: "sell.html",
                 EDIT_CAR: "edit-car.html",
                 DETAILS: "details.html",
+                NOTICE: "notice-action.html",
                 HOME: "index.html"
             },
 
@@ -1154,6 +1222,7 @@
             actions.className = "ad-actions";
 
             actions.appendChild(createActionButton("view", "fa-solid fa-eye", "Visa", () => openDetails(ad.id)));
+            actions.appendChild(createActionButton("report", "fa-solid fa-flag", "Anmäl", () => openReport(ad.id)));
             actions.appendChild(createActionButton("edit", "fa-solid fa-pen-to-square", "Redigera", () => openEdit(ad.id)));
             actions.appendChild(createActionButton("price", "fa-solid fa-tag", "Ändra pris", () => promptPriceUpdate(ad)));
             actions.appendChild(createActionButton("toggle", isAdActive(ad) ? "fa-solid fa-pause" : "fa-solid fa-play", isAdActive(ad) ? "Pausa" : "Aktivera", () => toggleAdStatus(ad)));
@@ -1397,6 +1466,15 @@
             }
 
             window.location.href = `${MANAGE_CONFIG.ROUTES.EDIT_CAR}?id=${safeId}`;
+        }
+
+        function openReport(adId) {
+            const safeId = encodeURIComponent(String(adId || ""));
+            const target = safeId
+                ? `${MANAGE_CONFIG.ROUTES.NOTICE}?adId=${safeId}&source=manage`
+                : MANAGE_CONFIG.ROUTES.NOTICE;
+
+            window.location.href = target;
         }
 
         function showLoadingState() {
