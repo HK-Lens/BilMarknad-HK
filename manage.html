@@ -7,7 +7,7 @@
 
     <title>Hantera annonser | VORQ Fordon</title>
 
-    <meta name="description" content="Hantera dina fordonsannonser på VORQ Fordon. Redigera pris, öppna annons, pausa eller radera dina egna annonser. VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar.">
+    <meta name="description" content="Hantera dina fordonsannonser på VORQ Fordon, en fordonsannonsplattform riktad till den svenska marknaden. VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar.">
 
     <meta name="robots" content="noindex, nofollow">
 
@@ -787,7 +787,7 @@
 
                 <a href="notice-action.html" class="nav-btn">
                     <i class="fa-solid fa-flag"></i>
-                    Anmäl annons
+                    Rapportera
                 </a>
 
                 <a href="sell.html" class="nav-btn primary">
@@ -817,7 +817,7 @@
 
                     <div class="owner-note">
                         <i class="fa-solid fa-building-shield"></i>
-                        Drivs under VORQ Digital, Inhaber: Haitham Kojar
+                        Drivs under VORQ Digital, Inhaber: Haitham Kojar · Ziegelstraße 26, 42289 Wuppertal, Deutschland
                     </div>
                 </div>
 
@@ -829,13 +829,13 @@
         </section>
 
         <section class="legal-disclaimer" aria-label="Juridisk information om VORQ Fordon">
-            <strong>VORQ Fordon</strong> är en svensk fordonsannonsplattform som drivs under
-            <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>. Plattformen ger användare möjlighet
-            att hantera egna fordonsannonser. VORQ Digital säljer inte, äger inte, besiktigar inte,
-            kontrollerar inte och garanterar inte fordon som publiceras av användare. Annonsören ansvarar
-            för att uppgifter, bilder, pris och kontaktinformation är korrekta och lagliga.
+            <strong>VORQ Fordon</strong> är en fordonsannonsplattform riktad till den svenska marknaden och drivs under
+            <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>, Ziegelstraße 26, 42289 Wuppertal, Deutschland.
+            Plattformen ger användare möjlighet att hantera egna fordonsannonser. VORQ Digital säljer inte,
+            äger inte, besiktigar inte, kontrollerar inte och garanterar inte fordon som publiceras av användare.
+            Annonsören ansvarar för att uppgifter, bilder, pris och kontaktinformation är korrekta och lagliga.
             Misstänkta, felaktiga eller olagliga annonser kan rapporteras via
-            <a href="notice-action.html">Anmäl annons</a>.
+            <a href="notice-action.html">Rapportera</a>.
         </section>
 
         <section class="stats-grid" aria-label="Annonsstatistik">
@@ -901,15 +901,19 @@
 
     <footer class="page-shell" style="padding-top:0; padding-bottom:34px; color:#64748b; font-size:13px; font-weight:700; line-height:1.7;">
         <p>
-            VORQ Fordon drivs under <strong style="color:#0f172a;">VORQ Digital, Inhaber: Haitham Kojar</strong>.
-            Plattformen är avsedd för fordonsannonser i Sverige och fungerar inte som säljare, fordonsägare,
-            besiktningsorgan, betalningsförmedlare eller garantiutfärdare.
+            VORQ Fordon drivs under <strong style="color:#0f172a;">VORQ Digital, Inhaber: Haitham Kojar</strong>,
+            Ziegelstraße 26, 42289 Wuppertal, Deutschland.
+            Plattformen är en fordonsannonsplattform riktad till den svenska marknaden och fungerar inte som säljare,
+            fordonsägare, besiktningsorgan, betalningsförmedlare eller garantiutfärdare.
         </p>
         <p style="margin-top:10px;">
             <a href="terms.html">Villkor</a> ·
             <a href="privacy.html">Integritet</a> ·
-            <a href="impressum.html">Företagsinformation</a> ·
-            <a href="notice-action.html">Anmäl annons</a>
+            <a href="cookies.html">Cookies</a> ·
+            <a href="legal.html">Juridik</a> ·
+            <a href="foretagsinfo.html">Företagsinfo</a> ·
+            <a href="impressum.html">Impressum</a> ·
+            <a href="notice-action.html">Rapportera</a>
         </p>
     </footer>
 
@@ -1208,6 +1212,8 @@
             const meta = document.createElement("div");
             meta.className = "meta-grid";
 
+            const annonsnummer = getAnnonsnummer(ad);
+            meta.appendChild(createMetaPill("fa-solid fa-hashtag", annonsnummer ? `Annonsnummer: ${annonsnummer}` : "Annonsnummer: -"));
             meta.appendChild(createMetaPill("fa-solid fa-calendar", ad.year ? String(ad.year) : "-"));
             meta.appendChild(createMetaPill("fa-solid fa-road", ad.mileage ? `${formatNumber(ad.mileage)} mil` : "-"));
             meta.appendChild(createMetaPill("fa-solid fa-gas-pump", safeDisplay(ad.fuelType || ad.fuel || "-")));
@@ -1222,7 +1228,7 @@
             actions.className = "ad-actions";
 
             actions.appendChild(createActionButton("view", "fa-solid fa-eye", "Visa", () => openDetails(ad.id)));
-            actions.appendChild(createActionButton("report", "fa-solid fa-flag", "Anmäl", () => openReport(ad.id)));
+            actions.appendChild(createActionButton("report", "fa-solid fa-flag", "Rapportera", () => openReport(ad)));
             actions.appendChild(createActionButton("edit", "fa-solid fa-pen-to-square", "Redigera", () => openEdit(ad.id)));
             actions.appendChild(createActionButton("price", "fa-solid fa-tag", "Ändra pris", () => promptPriceUpdate(ad)));
             actions.appendChild(createActionButton("toggle", isAdActive(ad) ? "fa-solid fa-pause" : "fa-solid fa-play", isAdActive(ad) ? "Pausa" : "Aktivera", () => toggleAdStatus(ad)));
@@ -1468,13 +1474,25 @@
             window.location.href = `${MANAGE_CONFIG.ROUTES.EDIT_CAR}?id=${safeId}`;
         }
 
-        function openReport(adId) {
-            const safeId = encodeURIComponent(String(adId || ""));
-            const target = safeId
-                ? `${MANAGE_CONFIG.ROUTES.NOTICE}?adId=${safeId}&source=manage`
-                : MANAGE_CONFIG.ROUTES.NOTICE;
+        function openReport(ad) {
+            const adId = getAdId(ad);
+            const annonsnummer = getAnnonsnummer(ad);
+            const params = new URLSearchParams();
 
-            window.location.href = target;
+            if (adId) {
+                params.set("adId", adId);
+            }
+
+            if (annonsnummer) {
+                params.set("annonsnummer", annonsnummer);
+            }
+
+            params.set("source", "manage");
+
+            const queryString = params.toString();
+            window.location.href = queryString
+                ? `${MANAGE_CONFIG.ROUTES.NOTICE}?${queryString}`
+                : MANAGE_CONFIG.ROUTES.NOTICE;
         }
 
         function showLoadingState() {
@@ -1543,6 +1561,22 @@
             card.appendChild(message);
 
             return card;
+        }
+
+        function getAdId(ad) {
+            if (typeof ad === "string") {
+                return normalizeText(ad, 160);
+            }
+
+            return normalizeText(ad?.adId || ad?.id || "", 160);
+        }
+
+        function getAnnonsnummer(ad) {
+            if (!ad || typeof ad === "string") {
+                return normalizeText(ad || "", 160);
+            }
+
+            return normalizeText(ad.annonsnummer || ad.adId || ad.id || "", 160);
         }
 
         function buildAdTitle(ad) {

@@ -3,19 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VORQ Fordon | Fordonsannonser i Sverige</title>
-    <meta name="description" content="VORQ Fordon är en svensk fordonsplattform där användare kan söka, spara och publicera fordonsannonser. VORQ Fordon är ett projekt under VORQ Digital, med Haitham Kojar som juridisk operatör.">
+    <title>BilMarknad HK | Köp och sälj bilar i Sverige</title>
+    <meta name="description" content="VORQ Fordon är en svensk bilmarknad där användare kan söka, spara, köpa och sälja bilar.">
     <meta name="robots" content="index, follow">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
-    <meta property="og:title" content="VORQ Fordon | Fordonsannonser i Sverige">
-    <meta property="og:description" content="Sök och publicera fordonsannonser i Sverige. VORQ Fordon är en annonsplattform, inte säljare eller ägare av fordonen.">
-    <meta property="og:site_name" content="VORQ Fordon">
-    <meta name="twitter:card" content="summary_large_image">
-    <link rel="manifest" href="./manifest.webmanifest?v=vorq-fordon-se-20260525">
+    <link rel="manifest" href="./manifest.webmanifest">
     <meta name="theme-color" content="#f58220">
-    <link rel="icon" href="./vorq-icon-192.png" type="image/png">
-    <link rel="apple-touch-icon" href="./vorq-icon-192.png">
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,189 +21,206 @@
         :root {
             --primary: #f58220;
             --primary-hover: #e07210;
-            --primary-soft: rgba(245,130,32,.12);
             --dark: #0f172a;
-            --dark-soft: #1e293b;
             --light: #f8fafc;
             --border: #e2e8f0;
             --white: #ffffff;
             --danger: #ef4444;
-            --danger-soft: #fff1f2;
             --muted: #64748b;
-            --muted-light: #94a3b8;
-            --shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
-            --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.08);
-            --radius: 22px;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        html { scroll-behavior: smooth; }
         body { background-color: var(--light); color: var(--dark); display: flex; flex-direction: column; min-height: 100vh; }
         a { color: inherit; }
         button, input, select { font-family: inherit; }
-        button { cursor: pointer; }
-        .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+        .dev-banner {
+            background: var(--danger); color: white; padding: 12px; text-align: center;
+            font-weight: 800; font-size: 14px; text-transform: uppercase;
+            animation: pulse-danger 2s infinite; position: relative; z-index: 2000;
+        }
+        @keyframes pulse-danger {
+            0% { background-color: #ef4444; } 50% { background-color: #b91c1c; } 100% { background-color: #ef4444; }
+        }
 
         header {
-            background: rgba(255,255,255,.96);
-            padding: .88rem 6%;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 18px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(14px);
+            background: var(--white); padding: 1rem 6%; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
         }
-        .logo { display: inline-flex; align-items: center; gap: 12px; color: var(--dark); text-decoration: none; white-space: nowrap; min-width: 0; }
-        .logo-image { width: 330px; max-width: 50vw; max-height: 70px; height: auto; display: block; object-fit: contain; }
-        .logo-fallback { display:none; font-size: 1.5rem; font-weight: 900; letter-spacing: -0.04em; }
-        .logo-fallback span { color: var(--primary); }
-        .nav-links { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: flex-end; }
-        .nav-links a, .nav-links button { text-decoration: none; color: var(--dark); font-weight: 800; font-size: 14px; transition: .22s ease; border: none; background: transparent; cursor: pointer; }
+        .logo { font-size: 1.8rem; font-weight: 900; color: var(--dark); text-decoration: none; white-space: nowrap; }
+        .logo span { color: var(--primary); }
+        .nav-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-end; }
+        .nav-links a, .nav-links button { text-decoration: none; color: var(--dark); font-weight: 700; font-size: 14px; transition: 0.3s; border: none; background: transparent; cursor: pointer; }
         .nav-links a:hover, .nav-links button:hover { color: var(--primary); }
-        .btn-sell { background: var(--primary) !important; color: white !important; padding: 10px 22px; border-radius: 999px; box-shadow: 0 10px 24px rgba(245,130,32,.22); }
-        .btn-sell:hover { background: var(--primary-hover) !important; color: white !important; transform: translateY(-1px); }
-        .account-link { color: var(--primary) !important; font-weight: 900 !important; }
-        .logout-btn { color: var(--danger) !important; font-size: 12px !important; margin-left: 4px; }
+        .btn-sell { background: var(--primary) !important; color: white !important; padding: 10px 25px; border-radius: 50px; transition: 0.3s; }
+        .btn-sell:hover { background: var(--primary-hover) !important; color: white !important; }
+        .account-link { color: var(--primary) !important; font-weight: 800 !important; }
+        .logout-btn { color: var(--danger) !important; font-size: 12px !important; margin-left: 10px; }
 
-        .notification-wrap { position: relative; display: inline-flex; align-items: center; }
+        .notification-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
         .notification-button {
-            position: relative; width: 44px; height: 44px; border-radius: 999px;
-            display: inline-flex; align-items: center; justify-content: center;
-            background: var(--white); color: var(--dark) !important;
+            position: relative;
+            width: 46px;
+            height: 46px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--white);
+            color: var(--dark) !important;
             border: 1px solid rgba(15, 23, 42, 0.08);
-            box-shadow: var(--shadow-soft);
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
             cursor: pointer;
         }
         .notification-button:hover { color: var(--primary) !important; transform: translateY(-1px); }
+        .notification-button i { font-size: 1rem; }
         .notification-badge {
-            position: absolute; top: 5px; right: 5px; min-width: 17px; height: 17px; padding: 0 4px;
-            border-radius: 999px; background: var(--danger); color: white; font-size: 10px; font-weight: 900;
-            line-height: 17px; text-align: center; border: 2px solid white;
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            border-radius: 999px;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            line-height: 17px;
+            text-align: center;
+            border: 2px solid white;
         }
         .notification-panel {
-            position: absolute; top: calc(100% + 10px); right: 0; width: min(320px, calc(100vw - 24px));
-            background: var(--white); border: 1px solid rgba(15,23,42,.10); border-radius: 18px;
-            box-shadow: 0 20px 55px rgba(15,23,42,.18); padding: 14px; z-index: 2500; text-align: left;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: min(320px, calc(100vw - 24px));
+            background: var(--white);
+            border: 1px solid rgba(15,23,42,.10);
+            border-radius: 18px;
+            box-shadow: 0 20px 55px rgba(15,23,42,.18);
+            padding: 14px;
+            z-index: 2500;
+            text-align: left;
         }
         .notification-panel[hidden] { display: none !important; }
-        .notification-panel h3 { margin: 0 0 8px; font-size: .95rem; color: var(--dark); font-weight: 900; }
-        .notification-panel p { margin: 0 0 10px; color: var(--muted); font-size: .88rem; line-height: 1.45; font-weight: 500; }
-        .notify-action { width: 100%; border: 0; border-radius: 12px; padding: 10px 12px; background: var(--primary) !important; color: #fff !important; font-weight: 900 !important; cursor: pointer; }
-        .install-app-btn {
-            background: var(--dark) !important; color: white !important; padding: 10px 16px; border-radius: 999px;
-            display: inline-flex; align-items: center; gap: 8px; font-weight: 800 !important; box-shadow: var(--shadow-soft);
+        .notification-panel h3 {
+            margin: 0 0 8px;
+            font-size: .95rem;
+            color: var(--dark);
+            font-weight: 900;
         }
+        .notification-panel p {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: .88rem;
+            line-height: 1.45;
+            font-weight: 500;
+        }
+        .notify-action {
+            width: 100%;
+            border: 0;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: var(--primary) !important;
+            color: #fff !important;
+            font-weight: 900 !important;
+            cursor: pointer;
+        }
+        .install-app-btn {
+            background: var(--primary) !important;
+            color: white !important;
+            padding: 10px 18px;
+            border-radius: 50px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800 !important;
+            box-shadow: 0 10px 25px rgba(245,130,32,.22);
+        }
+        html.pwa-install-ready .install-app-btn { display: inline-flex; }
         @media (display-mode: standalone) { .install-app-btn { display: none !important; } }
 
-        .hero {
-            background:
-                radial-gradient(circle at 18% 18%, rgba(245,130,32,.24), transparent 30%),
-                radial-gradient(circle at 82% 8%, rgba(255,255,255,.10), transparent 28%),
-                linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            padding: 54px 6% 92px;
-            text-align: center;
-            color: white;
-        }
-        .hero-badge {
-            display:inline-flex; align-items:center; gap:8px; margin-bottom:16px; padding:8px 14px;
-            border-radius:999px; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.16);
-            font-size:12px; font-weight:900; color:#f8fafc;
-        }
-        .hero h1 { font-size: clamp(30px, 5vw, 54px); line-height: 1.06; font-weight: 900; letter-spacing: -0.055em; }
-        .hero p { max-width: 780px; margin: 16px auto 0; color: #cbd5e1; line-height: 1.75; font-weight: 600; }
 
-        .car-types-container { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 50px 6% 90px; text-align: center; color: white;
+        }
+        .hero h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.08; font-weight: 900; letter-spacing: -0.05em; }
+
+        .car-types-container { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 25px; }
         .type-btn {
-            background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.20); color: white;
-            padding: 12px 20px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 800; transition: .22s ease;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: white; padding: 12px 20px; border-radius: 50px; cursor: pointer;
+            font-size: 13px; font-weight: 700; transition: 0.3s;
         }
         .type-btn:hover, .type-btn.active { background: var(--primary); border-color: var(--primary); transform: translateY(-2px); }
 
         .filter-wrapper { max-width: 1200px; margin: -45px auto 40px; padding: 0 20px; width: 100%; }
-        .filter-card { background: var(--white); padding: 35px; border-radius: 26px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .filter-card { background: var(--white); padding: 35px; border-radius: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
         .filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .filter-group { display: flex; flex-direction: column; }
-        .filter-group label { font-size: 11px; font-weight: 900; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing:.04em; }
+        .filter-group label { font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; }
 
-        input, select { padding: 14px; border: 1px solid var(--border); border-radius: 13px; background: #f1f5f9; font-size: 14px; outline: none; width: 100%; transition: .25s; }
+        input, select { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f1f5f9; font-size: 14px; outline: none; width: 100%; transition: .25s; }
         input:focus, select:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(245,130,32,.10); }
 
         .search-actions { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
-        .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; }
+        .btn-results { flex: 2; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; }
         .btn-results:hover { background: var(--primary-hover); }
-        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 900; cursor: pointer; }
+        .btn-deep { flex: 1; background: #e2e8f0; color: var(--dark); border: none; padding: 18px; border-radius: 15px; font-weight: 800; cursor: pointer; }
         .btn-deep:hover { background: #cbd5e1; }
 
         .container { flex: 1; padding: 0 6% 80px; }
-        .section-title { font-size: 24px; font-weight: 900; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
+        .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
         .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
 
-        .car-card { position: relative; background: white; border-radius: 22px; overflow: hidden; border: 1px solid #e2e8f0; cursor: pointer; transition: .25s ease; box-shadow: 0 4px 14px rgba(15,23,42,.04); }
+        .car-card {
+            position: relative; background: white; border-radius: 20px; overflow: hidden;
+            border: 1px solid #e2e8f0; cursor: pointer; transition: 0.25s;
+        }
         .car-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
         .car-card img { width: 100%; height: 190px; object-fit: cover; display: block; background: #e2e8f0; }
         .car-content { padding: 20px; }
-        .car-price { color: var(--primary); font-size: 22px; font-weight: 950; margin-bottom: 8px; }
-        .car-title { font-weight: 900; margin-bottom: 7px; }
-        .car-meta { color: var(--muted); font-size: 13px; font-weight: 700; }
-        .car-actions { display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:16px; }
-        .details-link {
-            flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none;
-            background:#f1f5f9; color:var(--dark); border:1px solid var(--border); border-radius:13px; padding:10px 12px;
-            font-size:12px; font-weight:900; transition:.2s ease;
-        }
-        .details-link:hover { border-color:var(--primary); color:var(--primary); background:#fff7ed; }
-        .report-btn {
-            display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none;
-            background:var(--danger-soft); color:#b91c1c; border:1px solid #fecdd3; border-radius:13px; padding:10px 12px;
-            font-size:12px; font-weight:900; transition:.2s ease;
-        }
-        .report-btn:hover { background:#ffe4e6; border-color:#fda4af; transform:translateY(-1px); }
+        .car-price { color: var(--primary); font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+        .car-title { font-weight: 800; margin-bottom: 7px; }
+        .car-meta { color: var(--muted); font-size: 13px; font-weight: 650; }
 
         .favorite-btn {
             position: absolute; top: 12px; right: 12px; width: 42px; height: 42px;
-            border: none; border-radius: 50%; background: rgba(255,255,255,0.95); color: #94a3b8;
-            box-shadow: 0 8px 20px rgba(15,23,42,0.18); cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 18px; z-index: 50; transition: .2s; touch-action: manipulation;
+            border: none; border-radius: 50%; background: rgba(255,255,255,0.95);
+            color: #94a3b8; box-shadow: 0 8px 20px rgba(15,23,42,0.18);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; z-index: 50; transition: 0.2s; touch-action: manipulation;
         }
         .favorite-btn:hover { transform: scale(1.08); color: var(--primary); }
         .favorite-btn.saved { color: #ef4444; }
         .favorite-btn:disabled { opacity: 0.6; cursor: wait; }
 
-        .state-message { grid-column: 1/-1; text-align: center; color: var(--muted); font-weight: 800; padding: 28px; background: white; border: 1px solid var(--border); border-radius: 18px; }
+        .state-message { grid-column: 1/-1; text-align: center; color: var(--muted); font-weight: 700; padding: 28px; background: white; border: 1px solid var(--border); border-radius: 18px; }
         .state-message.error { color: var(--danger); }
 
-        .safety-strip { padding: 0 6% 64px; }
-        .safety-card {
-            max-width: 1100px; margin: 0 auto; background: white; border: 1px solid var(--border); border-radius: 26px;
-            padding: 28px; box-shadow: var(--shadow-soft); display:grid; grid-template-columns: 1.2fr .8fr; gap:22px; align-items:start;
-        }
-        .safety-card h2 { font-size: 20px; font-weight: 950; margin-bottom: 10px; }
-        .safety-card p { color: var(--muted); line-height: 1.75; font-size: 13px; font-weight: 650; }
-        .safety-list { display:grid; gap:10px; }
-        .safety-list a, .safety-list span { display:flex; gap:10px; align-items:flex-start; text-decoration:none; font-size:13px; font-weight:800; color:var(--dark); }
-        .safety-list i { color:var(--primary); margin-top:2px; }
-
-        footer { background: #0f172a; color: #94a3b8; padding: 58px 6% 38px; border-top: 1px solid #1e293b; }
+        footer { background: #0f172a; color: #94a3b8; padding: 60px 6% 40px; border-top: 1px solid #1e293b; }
         .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
-        .footer-section h4 { color: white; margin-bottom: 14px; font-size: 15px; font-weight: 950; }
+        .footer-section h4 { color: white; margin-bottom: 14px; font-size: 15px; }
         .footer-section p { line-height: 1.7; font-size: 13px; }
         .footer-links { list-style: none; display: grid; gap: 9px; }
-        .footer-links a { color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 800; }
+        .footer-links a { color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 700; }
         .footer-links a:hover { color: var(--primary); }
-        .legal-box { max-width:1100px; margin: 46px auto 0; padding-top: 26px; border-top: 1px solid #1e293b; font-size: 12px; line-height:1.8; text-align:center; }
-        .legal-box strong { color:#e2e8f0; }
+        .legal-box { margin-top: 50px; padding-top: 30px; border-top: 1px solid #1e293b; text-align: center; font-size: 12px; }
 
-        @media (max-width: 980px) {
+        @media (max-width: 900px) {
             .filter-grid { grid-template-columns: repeat(2, 1fr); }
-            .safety-card { grid-template-columns: 1fr; }
         }
-        @media (max-width: 780px) {
+        @media (max-width: 768px) {
             header { padding: 1rem 4%; align-items: flex-start; gap: 12px; }
-            .logo-image { width: 285px; max-width: 78vw; max-height: 66px; }
+            .logo { font-size: 1.55rem; }
             .nav-links { gap: 10px; }
             .nav-links a, .nav-links button { font-size: 13px; }
             .btn-sell { padding: 9px 16px; }
@@ -216,117 +228,88 @@
             .search-actions { flex-direction: column; }
             .footer-content { grid-template-columns: 1fr; }
         }
-        @media (max-width: 520px) {
+        @media (max-width: 480px) {
             header { flex-direction: column; }
-            .logo-image { width: 260px; max-width: 92vw; }
-            .nav-links { justify-content: flex-start; width:100%; }
+            .nav-links { justify-content: flex-start; }
             .filter-card { padding: 24px 18px; }
-            .car-actions { flex-direction:column; align-items:stretch; }
-            .report-btn, .details-link { width:100%; }
         }
     </style>
 </head>
-<body data-project="vorq-fordon-se" data-operator="haitham-kojar-vorq-digital">
+<body>
+
+<div class="dev-banner">Sidan är under uppbyggnad - Funktioner och annonser är begränsade just nu</div>
 
 <header>
-    <a href="index.html" class="logo" aria-label="VORQ Fordon startsida">
-        <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon - Ägs av VORQ Digital" class="logo-image" onerror="this.hidden=true; this.nextElementSibling.style.display='inline-block';">
-        <span class="logo-fallback">VORQ <span>Fordon</span></span>
-    </a>
+    <a href="index.html" class="logo" aria-label="VORQ Fordon startsida">BIL<span>HK</span></a>
     <nav class="nav-links" aria-label="Huvudmeny">
-        <a href="sell.html" class="btn-sell">Publicera annons</a>
-        <a href="notice-action.html" title="Rapportera felaktig annons eller otillåtet innehåll">Rapportera</a>
-        <div id="authStatusContainer" style="display:flex;align-items:center;gap:15px;flex-wrap:wrap;"></div>
+        <a href="sell.html" class="btn-sell">Sälj din bil</a>
+        <div id="authStatusContainer" style="display:flex;align-items:center;gap:15px;"></div>
     </nav>
 </header>
 
-<main>
-    <section class="hero">
-        <div class="hero-badge"><i class="fa-solid fa-shield-halved"></i> Svensk fordonsannonsplattform • Projekt under VORQ Digital</div>
-        <h1>Hitta ditt nästa fordon snabbt och enkelt</h1>
-        <p>VORQ Fordon publicerar fordonsannonser från användare. Plattformen säljer inte, äger inte och lagerhåller inte fordonen. Kontrollera alltid annonsuppgifter, fordonets skick och motpartens identitet innan avtal eller betalning.</p>
-        <div class="car-types-container" id="carTypeButtons" aria-label="Karosstyp-filter">
-            <button type="button" class="type-btn active" data-type="">Alla fordon</button>
-            <button type="button" class="type-btn" data-type="SUV">SUV / 4x4</button>
-            <button type="button" class="type-btn" data-type="Transportbil">Skåpbil</button>
-            <button type="button" class="type-btn" data-type="Sedan">Sedan</button>
-            <button type="button" class="type-btn" data-type="Kombi">Kombi</button>
-            <button type="button" class="type-btn" data-type="Halvkombi">Småbil</button>
-            <button type="button" class="type-btn" data-type="Cabriolet">Cabriolet</button>
-        </div>
-    </section>
+<section class="hero">
+    <h1>Hitta din nästa bil snabbt och enkelt</h1>
+    <div class="car-types-container" id="carTypeButtons" aria-label="Karosstyp-filter">
+        <button type="button" class="type-btn active" data-type="">Alla bilar</button>
+        <button type="button" class="type-btn" data-type="SUV">SUV / 4x4</button>
+        <button type="button" class="type-btn" data-type="Transportbil">Skåpbil</button>
+        <button type="button" class="type-btn" data-type="Sedan">Sedan</button>
+        <button type="button" class="type-btn" data-type="Kombi">Kombi</button>
+        <button type="button" class="type-btn" data-type="Halvkombi">Småbil</button>
+        <button type="button" class="type-btn" data-type="Cabriolet">Cabriolet</button>
+    </div>
+</section>
 
-    <div class="filter-wrapper">
-        <div class="filter-card" aria-label="Sökfilter">
-            <div class="filter-grid">
-                <div class="filter-group"><label for="brandSelect">Märke</label><select id="brandSelect"><option value="">Alla märken</option></select></div>
-                <div class="filter-group"><label for="modelSelect">Modell</label><select id="modelSelect"><option value="">Välj märke först</option></select></div>
-                <div class="filter-group"><label for="maxPrice">Högsta pris</label><input type="number" id="maxPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 300000"></div>
-                <div class="filter-group"><label for="minPrice">Lägsta pris</label><input type="number" id="minPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 50000"></div>
-                <div class="filter-group"><label for="maxMil">Mest mil</label><input type="number" id="maxMil" min="0" max="2000000" inputmode="numeric" placeholder="Ex. 15000"></div>
-                <div class="filter-group"><label for="minMil">Minst mil</label><input type="number" id="minMil" min="0" max="2000000" inputmode="numeric" placeholder="Ex. 0"></div>
-                <div class="filter-group"><label for="maxYear">Nyaste årsmodell</label><input type="number" id="maxYear" min="1900" max="2027" inputmode="numeric" placeholder="Ex. 2026"></div>
-                <div class="filter-group"><label for="minYear">Äldsta årsmodell</label><input type="number" id="minYear" min="1900" max="2027" inputmode="numeric" placeholder="Ex. 2015"></div>
-            </div>
-            <div class="search-actions">
-                <button type="button" class="btn-deep" id="deepSearchBtn">Djup sökning</button>
-                <button type="button" class="btn-results" id="searchBtn">Visa resultat</button>
-            </div>
+<div class="filter-wrapper">
+    <div class="filter-card">
+        <div class="filter-grid">
+            <div class="filter-group"><label for="brandSelect">Märke</label><select id="brandSelect"><option value="">Alla märken</option></select></div>
+            <div class="filter-group"><label for="modelSelect">Modell</label><select id="modelSelect"><option value="">Välj märke först</option></select></div>
+            <div class="filter-group"><label for="maxPrice">Högsta Pris</label><input type="number" id="maxPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 300000"></div>
+            <div class="filter-group"><label for="minPrice">Lägsta Pris</label><input type="number" id="minPrice" min="0" max="20000000" inputmode="numeric" placeholder="Ex. 50000"></div>
+            <div class="filter-group"><label for="maxMil">Mest Mil</label><input type="number" id="maxMil" min="0" max="2000000" inputmode="numeric" placeholder="Ex. 15000"></div>
+            <div class="filter-group"><label for="minMil">Minst Mil</label><input type="number" id="minMil" min="0" max="2000000" inputmode="numeric" placeholder="Ex. 0"></div>
+            <div class="filter-group"><label for="maxYear">Nyaste Årsmodell</label><input type="number" id="maxYear" min="1900" max="2027" inputmode="numeric" placeholder="Ex. 2026"></div>
+            <div class="filter-group"><label for="minYear">Äldsta Årsmodell</label><input type="number" id="minYear" min="1900" max="2027" inputmode="numeric" placeholder="Ex. 2015"></div>
+        </div>
+        <div class="search-actions">
+            <button type="button" class="btn-deep" id="deepSearchBtn">Djup Sökning</button>
+            <button type="button" class="btn-results" id="searchBtn">Visa Resultat</button>
         </div>
     </div>
+</div>
 
-    <div class="container">
-        <h2 class="section-title">Senaste fordonsannonserna</h2>
-        <div id="carsGrid" class="cars-grid" aria-live="polite"></div>
-    </div>
-
-    <section class="safety-strip" aria-label="Säkerhet och juridisk information">
-        <div class="safety-card">
-            <div>
-                <h2>Säker användning av VORQ Fordon</h2>
-                <p>VORQ Fordon är en digital annonsplattform. Annonsören ansvarar för att uppgifter, bilder, pris, skick, äganderätt och kontaktinformation är korrekta. VORQ Fordon är inte part i köp, försäljning, betalning, leverans, besiktning eller annan överenskommelse mellan användare.</p>
-            </div>
-            <div class="safety-list">
-                <a href="notice-action.html"><i class="fa-solid fa-flag"></i><span>Rapportera felaktig annons, bedrägerimisstanke eller otillåtet innehåll.</span></a>
-                <a href="terms.html"><i class="fa-solid fa-file-contract"></i><span>Läs användarvillkoren innan du publicerar eller kontaktar en annonsör.</span></a>
-                <a href="privacy.html"><i class="fa-solid fa-user-shield"></i><span>Läs hur personuppgifter, konto- och serverlogguppgifter hanteras.</span></a>
-            </div>
-        </div>
-    </section>
-</main>
+<div class="container">
+    <h2 class="section-title">De senaste toppmodellerna</h2>
+    <div id="carsGrid" class="cars-grid" aria-live="polite"></div>
+</div>
 
 <footer>
     <div class="footer-content">
         <div class="footer-section">
-            <h4>Om VORQ Fordon</h4>
-            <p>VORQ Fordon är en marknadsplats för fordonsannonser i Sverige. Annonser publiceras av användare. VORQ Fordon säljer inte, äger inte, kontrollerar inte och lagerhåller inte de fordon som visas i annonserna.</p>
+            <h4>Ansvarsfriskrivning</h4>
+            <p>BilMarknad-HK är en öppen marknadsplats. Vi tar inget ansvar för tvister mellan parter.</p>
         </div>
         <div class="footer-section">
             <h4>Information</h4>
             <ul class="footer-links">
                 <li><a href="terms.html">Användarvillkor</a></li>
                 <li><a href="privacy.html">Integritetspolicy</a></li>
-                <li><a href="notice-action.html">Rapportera annons</a></li>
             </ul>
         </div>
         <div class="footer-section">
-            <h4>Juridisk information</h4>
+            <h4>Juridisk Info</h4>
             <ul class="footer-links">
-                <li><a href="impressum.html">Impressum / Företagsinfo</a></li>
-                <li><a href="legal.html">Legal</a></li>
-                <li><a href="cookie-policy.html">Cookies</a></li>
+                <li><a href="terms.html">Villkor</a></li>
+                <li><a href="privacy.html">GDPR</a></li>
             </ul>
         </div>
     </div>
-    <div class="legal-box">
-        <strong>&copy; 2026 VORQ Fordon.</strong><br>
-        VORQ Fordon är ett digitalt projekt under <strong>VORQ Digital</strong>. Juridisk operatör: <strong>Haitham Kojar – VORQ Digital</strong>, nicht eingetragenes gewerbliches Einzelunternehmen, Tyskland.<br>
-        VORQ Fordon är inte säljare, köpare, förmedlare, fordonsägare, besiktningsorgan, betalningsförmedlare eller garantigivare för annonserade fordon om inget annat uttryckligen anges.
-    </div>
+    <div class="legal-box">&copy; 2026 BilMarknad-HK.</div>
 </footer>
 
 <script type="module">
-    import { db, auth } from './firebase-config.js';
+    import { db, auth, escapeHTML } from './firebase-config.js';
     import {
         collection,
         query,
@@ -351,8 +334,7 @@
         MIN_YEAR: 1900,
         MAX_YEAR: 2027,
         MAX_HOME_RESULTS: 20,
-        PLACEHOLDER_IMAGE: 'placeholder.jpg',
-        REPORT_PAGE: 'notice-action.html'
+        PLACEHOLDER_IMAGE: 'placeholder.jpg'
     });
 
     const elements = {
@@ -433,9 +415,9 @@
         const installButton = document.createElement('button');
         installButton.type = 'button';
         installButton.className = 'install-app-btn';
-        installButton.innerHTML = '<i class="fa-solid fa-download" aria-hidden="true"></i> Installera app';
+        installButton.innerHTML = '<i class="fa-solid fa-download"></i> Installera app';
         installButton.addEventListener('click', () => {
-            if (typeof window.VORQInstallApp === 'function') window.VORQInstallApp();
+            if (window.BILHKInstallApp) window.BILHKInstallApp();
         });
 
         const notificationWrap = document.createElement('div');
@@ -447,7 +429,7 @@
         notificationButton.setAttribute('aria-label', 'Aviseringar');
         notificationButton.setAttribute('aria-expanded', 'false');
         notificationButton.title = 'Aviseringar';
-        notificationButton.innerHTML = '<i class="fa-regular fa-bell" aria-hidden="true"></i><span class="notification-badge" id="notificationBadge" hidden>0</span>';
+        notificationButton.innerHTML = '<i class="fa-regular fa-bell"></i><span class="notification-badge" id="notificationBadge" hidden>0</span>';
 
         const notificationPanel = document.createElement('div');
         notificationPanel.className = 'notification-panel';
@@ -465,13 +447,13 @@
             notificationButton.setAttribute('aria-expanded', String(!notificationPanel.hidden));
             updateNotificationPanel(notificationPanel);
             if ('Notification' in window && Notification.permission === 'granted') {
-                await showVORQNotification('Du har inga nya aviseringar just nu.');
+                await showBilHKNotification('Du har inga nya aviseringar just nu.');
             }
         });
 
         notificationPanel.addEventListener('click', (event) => event.stopPropagation());
         notificationPanel.querySelector('#enableNotificationsBtn').addEventListener('click', async () => {
-            await enableVORQNotifications(notificationPanel);
+            await enableBilHKNotifications(notificationPanel);
         });
 
         notificationWrap.append(notificationButton, notificationPanel);
@@ -479,7 +461,7 @@
         const accountLink = document.createElement('a');
         accountLink.href = 'my-account.html';
         accountLink.className = 'account-link';
-        accountLink.innerHTML = '<i class="fa-solid fa-circle-user" aria-hidden="true"></i> Mitt konto';
+        accountLink.innerHTML = '<i class="fa-solid fa-circle-user"></i> Mitt Konto';
         accountLink.title = user.email || 'Mitt konto';
 
         const logoutButton = document.createElement('button');
@@ -526,7 +508,7 @@
                     .filter(Boolean)
             );
         } catch (error) {
-            console.error('Fel vid laddning av sparade annonser från index.html:', error);
+            console.error('Fel vid laddning av sparade bilar från index.html:', error);
             state.savedFavoriteIds = new Set();
         }
     }
@@ -573,8 +555,8 @@
         } catch (error) {
             console.error('Favorite error from index.html:', error);
             alert(error?.code === 'permission-denied'
-                ? 'Kunde inte spara annonsen. Kontrollera Firebase-reglerna för favorites.'
-                : 'Kunde inte spara annonsen just nu. Försök igen.');
+                ? 'Kunde inte spara bilen. Kontrollera Firebase-reglerna för favorites.'
+                : 'Kunde inte spara bilen just nu. Försök igen.');
         } finally {
             if (buttonElement) buttonElement.disabled = false;
         }
@@ -628,7 +610,7 @@
 
             updateFavoriteButtons();
         } catch (error) {
-            console.error('Fel vid hämtning av annonser:', error);
+            console.error('Fel vid hämtning av bilar:', error);
             renderStateMessage(
                 error?.code === 'permission-denied'
                     ? 'Kunde inte läsa annonser. Kontrollera Firebase Rules för cars.'
@@ -646,7 +628,7 @@
         card.dataset.carId = carId;
         card.tabIndex = 0;
         card.setAttribute('role', 'link');
-        card.setAttribute('aria-label', `Visa annons för ${displayValue(car.brand)} ${displayValue(car.model)}`.trim());
+        card.setAttribute('aria-label', `Visa annons för ${normalizeText(car.brand)} ${normalizeText(car.model)}`);
 
         const favoriteButton = document.createElement('button');
         favoriteButton.type = 'button';
@@ -655,7 +637,7 @@
 
         const image = document.createElement('img');
         image.src = getCarImage(car);
-        image.alt = `${displayValue(car.brand)} ${displayValue(car.model)}`.trim() || 'Fordonsbild';
+        image.alt = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Bilbild';
         image.loading = 'lazy';
         image.referrerPolicy = 'no-referrer';
         image.addEventListener('error', () => {
@@ -671,29 +653,13 @@
 
         const title = document.createElement('p');
         title.className = 'car-title';
-        title.textContent = `${displayValue(car.brand)} ${displayValue(car.model)}`.trim() || 'Fordonsannons';
+        title.textContent = `${normalizeText(car.brand)} ${normalizeText(car.model)}`.trim() || 'Bilannons';
 
         const meta = document.createElement('p');
         meta.className = 'car-meta';
-        meta.textContent = `${displayValue(car.year, '-')} | ${displayValue(car.mileage, '0')} mil`;
+        meta.textContent = `${normalizeText(car.year, '-')} | ${normalizeText(car.mileage, '0')} mil`;
 
-        const actions = document.createElement('div');
-        actions.className = 'car-actions';
-
-        const detailsLink = document.createElement('a');
-        detailsLink.className = 'details-link';
-        detailsLink.href = `details.html?id=${encodeURIComponent(carId)}`;
-        detailsLink.innerHTML = '<i class="fa-solid fa-eye" aria-hidden="true"></i> Visa annons';
-
-        const reportLink = document.createElement('a');
-        reportLink.className = 'report-btn';
-        reportLink.href = buildReportUrl(carId, car);
-        reportLink.setAttribute('aria-label', 'Rapportera annons');
-        reportLink.innerHTML = '<i class="fa-solid fa-flag" aria-hidden="true"></i> Rapportera';
-        reportLink.addEventListener('click', (event) => event.stopPropagation());
-
-        actions.append(detailsLink, reportLink);
-        content.append(price, title, meta, actions);
+        content.append(price, title, meta);
         card.append(favoriteButton, image, content);
 
         card.addEventListener('keydown', (event) => {
@@ -703,17 +669,6 @@
         });
 
         return card;
-    }
-
-    function buildReportUrl(carId, car) {
-        const params = new URLSearchParams({
-            type: 'listing',
-            listingId: normalizeId(carId),
-            project: 'VORQ Fordon',
-            title: `${displayValue(car.brand)} ${displayValue(car.model)}`.trim() || 'Fordonsannons',
-            source: 'index'
-        });
-        return `${CONFIG.REPORT_PAGE}?${params.toString()}`;
     }
 
     function matchesCurrentFilters(car) {
@@ -747,18 +702,11 @@
 
     function handleGridClick(event) {
         const favoriteButton = event.target.closest('.favorite-btn');
-        const reportButton = event.target.closest('.report-btn');
-        const detailsLink = event.target.closest('.details-link');
 
         if (favoriteButton) {
             event.preventDefault();
             event.stopPropagation();
             toggleFavoriteById(favoriteButton.dataset.carId, favoriteButton);
-            return;
-        }
-
-        if (reportButton || detailsLink) {
-            event.stopPropagation();
             return;
         }
 
@@ -777,9 +725,9 @@
             const isSaved = state.savedFavoriteIds.has(carId);
 
             button.classList.toggle('saved', isSaved);
-            button.title = isSaved ? 'Ta bort från sparade' : 'Spara annons';
-            button.setAttribute('aria-label', isSaved ? 'Ta bort från sparade' : 'Spara annons');
-            button.innerHTML = `<i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-heart" aria-hidden="true"></i>`;
+            button.title = isSaved ? 'Ta bort från sparade' : 'Spara bilen';
+            button.setAttribute('aria-label', isSaved ? 'Ta bort från sparade' : 'Spara bilen');
+            button.innerHTML = `<i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-heart"></i>`;
         });
     }
 
@@ -819,13 +767,7 @@
     }
 
     function normalizeText(value, maxLength = 160) {
-        const length = Number.isFinite(Number(maxLength)) ? Number(maxLength) : 160;
-        return String(value ?? '').replace(/\s+/g, ' ').trim().slice(0, length);
-    }
-
-    function displayValue(value, fallback = '') {
-        const text = normalizeText(value, 160);
-        return text || fallback;
+        return String(value ?? '').replace(/\s+/g, ' ').trim().slice(0, maxLength);
     }
 
     function normalizeNumber(value, fallback = 0) {
@@ -838,6 +780,7 @@
         if (!number) return fallback;
         return Math.min(max, Math.max(min, number));
     }
+
 
     function updateNotificationPanel(panel) {
         const text = panel.querySelector('#notificationPanelText');
@@ -859,7 +802,7 @@
         }
     }
 
-    async function enableVORQNotifications(panel) {
+    async function enableBilHKNotifications(panel) {
         if (!('Notification' in window)) {
             updateNotificationPanel(panel);
             return;
@@ -867,17 +810,17 @@
         const permission = await Notification.requestPermission();
         updateNotificationPanel(panel);
         if (permission === 'granted') {
-            await showVORQNotification('Aviseringar är nu aktiverade.');
+            await showBilHKNotification('Aviseringar är nu aktiverade.');
         }
     }
 
-    async function showVORQNotification(body) {
+    async function showBilHKNotification(body) {
         if (!('Notification' in window) || Notification.permission !== 'granted') return;
         const options = {
             body,
-            icon: './vorq-icon-192.png',
-            badge: './vorq-icon-192.png',
-            tag: 'vorq-fordon-avisering',
+            icon: './icons/icon-192.png',
+            badge: './icons/icon-192.png',
+            tag: 'bilhk-avisering',
             renotify: false,
             data: { url: './index.html' }
         };
@@ -901,6 +844,6 @@
         });
     });
 </script>
-<script src="./pwa-register.js" defer></script>
+  <script src="./pwa-register.js" defer></script>
 </body>
 </html>

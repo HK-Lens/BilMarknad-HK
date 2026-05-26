@@ -1,24 +1,33 @@
 /* VORQ Fordon service worker
    Project operator in legal pages: VORQ Digital, Inhaber: Haitham Kojar.
+   VORQ Fordon is a vehicle-ad platform directed to the Swedish market.
    No payment, invoice or pricing logic is handled here.
 */
 
-const CACHE_NAME = "vorq-fordon-pwa-v11-20260525";
+const CACHE_PREFIX = "vorq-fordon-pwa-";
+const CACHE_NAME = `${CACHE_PREFIX}v12-20260526`;
 
 const APP_SHELL = [
   "./",
   "./index.html",
   "./offline.html",
+  "./404.html",
   "./manifest.webmanifest",
   "./vorq-fordon-logo-header.png",
-  "./icon.svg",
-  "./vorq-icon-192.png",
-  "./vorq-icon-512.png",
   "./icons/vorq-icon-192.png",
-  "./icons/vorq-icon-512.png"
+  "./icons/vorq-icon-512.png",
+  "./terms.html",
+  "./privacy.html",
+  "./cookies.html",
+  "./legal.html",
+  "./foretagsinfo.html",
+  "./impressum.html",
+  "./notice-action.html",
+  "./rapportera.html"
 ];
 
 const OFFLINE_URL = "./offline.html";
+const NOT_FOUND_URL = "./404.html";
 
 async function cacheAppShell() {
   const cache = await caches.open(CACHE_NAME);
@@ -32,8 +41,18 @@ async function cacheAppShell() {
           await cache.put(request, response);
         }
       } catch (error) {
-        // Optional assets may not exist in every deployment.
+        // Optional assets/pages may not exist in every deployment.
       }
+    })
+  );
+}
+
+async function deleteOldVorqCaches() {
+  const keys = await caches.keys();
+  await Promise.all(
+    keys.map((key) => {
+      const isOldVorqCache = key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME;
+      return isOldVorqCache ? caches.delete(key) : Promise.resolve(false);
     })
   );
 }
@@ -45,12 +64,25 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(
-        keys.map((key) => (key !== CACHE_NAME ? caches.delete(key) : Promise.resolve(false)))
-      ))
-      .then(() => self.clients.claim())
+    deleteOldVorqCaches().then(() => self.clients.claim())
   );
+});
+
+self.addEventListener("message", (event) => {
+  const type = event.data && event.data.type;
+
+  if (type === "SKIP_WAITING") {
+    self.skipWaiting();
+    return;
+  }
+
+  if (type === "CLEAR_VORQ_CACHE") {
+    event.waitUntil(
+      caches.keys().then((keys) => Promise.all(
+        keys.map((key) => key.startsWith(CACHE_PREFIX) ? caches.delete(key) : Promise.resolve(false))
+      ))
+    );
+  }
 });
 
 self.addEventListener("fetch", (event) => {
@@ -66,11 +98,19 @@ self.addEventListener("fetch", (event) => {
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request, { cache: "no-store" })
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME)
-            .then((cache) => cache.put(event.request, copy))
-            .catch(() => undefined);
+        .then(async (response) => {
+          if (response && response.status === 404) {
+            const notFoundPage = await caches.match(NOT_FOUND_URL);
+            return notFoundPage || response;
+          }
+
+          if (response && response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME)
+              .then((cache) => cache.put(event.request, copy))
+              .catch(() => undefined);
+          }
+
           return response;
         })
         .catch(() => caches.match(OFFLINE_URL).then((cached) => cached || Response.error()))

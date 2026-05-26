@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Meddelanden | VORQ Fordon</title>
-    <meta name="description" content="Hantera dina meddelanden och konversationer på VORQ Fordon. VORQ Fordon är en svensk fordonsannonsplattform under VORQ Digital, Inhaber: Haitham Kojar.">
+    <meta name="description" content="Hantera dina meddelanden och konversationer på VORQ Fordon. VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden under VORQ Digital, Inhaber: Haitham Kojar.">
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -42,7 +42,7 @@
     <div class="header-actions">
         <a href="my-account.html" class="nav-btn"><i class="fa-solid fa-user"></i><span>Mitt konto</span></a>
         <a href="index.html" class="nav-btn"><i class="fa-solid fa-house"></i><span>Startsida</span></a>
-        <a href="notice-action.html" class="nav-btn"><i class="fa-solid fa-flag"></i><span>Anmäl annons</span></a>
+        <a href="notice-action.html" class="nav-btn"><i class="fa-solid fa-flag"></i><span>Rapportera</span></a>
         <div class="user-pill" id="userStatus"><i class="fa-solid fa-circle-notch fa-spin"></i><span>Laddar...</span></div>
     </div>
 </header>
@@ -70,7 +70,7 @@
             <div class="active-actions">
                 <button type="button" class="mini-action-btn" id="carInfoBtn" disabled><i class="fa-solid fa-circle-info"></i><span>Annonsinfo</span></button>
                 <a class="mini-action-btn" id="openAdBtn" href="#" aria-disabled="true"><i class="fa-solid fa-car-side"></i><span>Visa annons</span></a>
-                <a class="mini-action-btn" id="reportAdBtn" href="notice-action.html" aria-disabled="true"><i class="fa-solid fa-flag"></i><span>Anmäl annons</span></a>
+                <a class="mini-action-btn" id="reportAdBtn" href="notice-action.html" aria-disabled="true"><i class="fa-solid fa-flag"></i><span>Rapportera</span></a>
             </div>
         </div>
 
@@ -87,8 +87,8 @@
         </div>
 
         <div class="legal-footer">
-            <span><strong>Ansvarsfriskrivning:</strong> VORQ Fordon är endast en fordonsannonsplattform. VORQ Digital, Inhaber: Haitham Kojar, säljer inte, äger inte, kontrollerar inte och garanterar inte fordon, annonser, betalning, dokument eller motparter. Dela aldrig BankID, kortuppgifter, lösenord eller känsliga dokument i chatten. Kontakt: info@vorq.group</span>
-            <span><a href="terms.html">Användarvillkor</a> · <a href="privacy.html">Integritetspolicy</a> · <a href="notice-action.html">Anmäl annons</a></span>
+            <span><strong>Ansvarsfriskrivning:</strong> VORQ Fordon är endast en fordonsannonsplattform riktad till den svenska marknaden. VORQ Digital, Inhaber: Haitham Kojar, Ziegelstraße 26, 42289 Wuppertal, Deutschland, säljer inte, äger inte, kontrollerar inte och garanterar inte fordon, annonser, betalning, dokument eller motparter. Dela aldrig BankID, kortuppgifter, lösenord eller känsliga dokument i chatten. Kontakt: info@vorq.group</span>
+            <span><a href="terms.html">Användarvillkor</a> · <a href="privacy.html">Integritetspolicy</a> · <a href="cookies.html">Cookies</a> · <a href="legal.html">Juridik</a> · <a href="foretagsinfo.html">Företagsinfo</a> · <a href="notice-action.html">Rapportera</a></span>
         </div>
     </section>
 </main>
@@ -311,6 +311,7 @@
 
         const roomId = directRoomId || buildRoomId({ buyerId, sellerId, carId });
         const carTitle = rawTitle || buildCarTitle(carData) || "Bilannons";
+        const annonsnummer = getCarAnnonsnummer(carData, carId);
         const sellerName = sellerNameFromURL || cleanText(carData?.sellerName) || "Säljare";
         const sellerEmail = sellerEmailFromURL || cleanText(carData?.sellerEmail || "");
         const buyerName = state.user.displayName || getNameFromEmail(state.user.email) || "Köpare";
@@ -318,6 +319,8 @@
         const roomRef = doc(db, "chats", roomId);
         const createPayload = {
             carId,
+            adId: carId,
+            annonsnummer,
             carName: carTitle,
             carTitle,
             participants: uniqueArray([buyerId, sellerId]),
@@ -536,22 +539,24 @@
     function renderActiveHeader(room) {
         const otherName = getOtherUserName(room);
         const carTitle = getRoomCarTitle(room);
+        const annonsnummer = getRoomAnnonsnummer(room);
 
         elements.activeAvatar.textContent = getInitials(otherName);
         elements.activeTitle.textContent = otherName;
-        elements.activeSubtitle.textContent = carTitle;
+        elements.activeSubtitle.textContent = annonsnummer ? `${carTitle} • Annonsnummer: ${annonsnummer}` : carTitle;
         elements.carInfoBtn.disabled = false;
 
         if (room.carId) {
             const encodedCarId = encodeURIComponent(room.carId);
+            const encodedAnnonsnummer = encodeURIComponent(annonsnummer || room.carId);
             elements.openAdBtn.href = `details.html?id=${encodedCarId}`;
             elements.openAdBtn.setAttribute("aria-disabled", "false");
-            elements.reportAdBtn.href = `notice-action.html?adId=${encodedCarId}&source=messages`;
+            elements.reportAdBtn.href = `notice-action.html?adId=${encodedCarId}&annonsnummer=${encodedAnnonsnummer}&source=messages`;
             elements.reportAdBtn.setAttribute("aria-disabled", "false");
         } else {
             elements.openAdBtn.href = "#";
             elements.openAdBtn.setAttribute("aria-disabled", "true");
-            elements.reportAdBtn.href = "notice-action.html";
+            elements.reportAdBtn.href = "notice-action.html?source=messages";
             elements.reportAdBtn.setAttribute("aria-disabled", "true");
         }
     }
@@ -790,6 +795,7 @@
 
         const carData = room.carId ? await fetchCarData(room.carId) : null;
         const title = getRoomCarTitle(room);
+        const annonsnummer = getCarAnnonsnummer(carData, room.carId || getRoomAnnonsnummer(room));
         const price = carData?.price ? `${formatNumber(carData.price)} kr` : "Ej angivet";
         const mileage = carData?.mileage ? `${formatNumber(carData.mileage)} km` : "Ej angivet";
         const year = carData?.year || "Ej angivet";
@@ -802,6 +808,7 @@
             html: `
                 <div style="text-align:left;line-height:1.8;font-weight:700;color:#334155;">
                     <p><strong>Annons:</strong> ${escapeHTML(title)}</p>
+                    <p><strong>Annonsnummer:</strong> ${escapeHTML(annonsnummer || "Ej angivet")}</p>
                     <p><strong>År:</strong> ${escapeHTML(year)}</p>
                     <p><strong>Pris:</strong> ${escapeHTML(price)}</p>
                     <p><strong>Miltal:</strong> ${escapeHTML(mileage)}</p>
@@ -975,6 +982,14 @@
 
     function getRoomCarTitle(room) {
         return cleanText(room?.carName || room?.carTitle || room?.title || "Bilannons");
+    }
+
+    function getRoomAnnonsnummer(room) {
+        return sanitizeId(room?.annonsnummer || room?.adId || room?.carId || "");
+    }
+
+    function getCarAnnonsnummer(carData, fallbackId = "") {
+        return sanitizeId(carData?.annonsnummer || carData?.adId || carData?.id || fallbackId || "");
     }
 
     function getOtherUserName(room) {

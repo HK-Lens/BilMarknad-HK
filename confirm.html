@@ -777,7 +777,7 @@
 
                 <a href="notice-action.html" class="header-link">
                     <i class="fa-solid fa-flag"></i>
-                    Anmäl annons
+                    Rapportera
                 </a>
 
                 <a href="login.html" class="header-link">
@@ -802,7 +802,7 @@
                         <h1>Vi bekräftar din inloggning på ett säkert sätt.</h1>
 
                         <p>
-                            Den här sidan kontrollerar länken från din e-post, loggar in dig och skapar din profil om det är första gången du använder VORQ Fordon. VORQ Fordon är en svensk inriktad plattform för fordonsannonser som drivs under VORQ Digital, Inhaber: Haitham Kojar. Plattformen säljer, äger, kontrollerar eller garanterar inte fordon som publiceras av användare.
+                            Den här sidan kontrollerar länken från din e-post, loggar in dig och skapar din profil om det är första gången du använder VORQ Fordon. VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden och drivs under VORQ Digital, Inhaber: Haitham Kojar. Plattformen säljer, äger, kontrollerar, besiktigar, lagrar eller garanterar inte fordon som publiceras av användare.
                         </p>
                     </div>
 
@@ -947,17 +947,20 @@
         <div class="footer-inner">
             <div class="footer-brand">
                 <strong>VORQ Fordon</strong>
-                <span>&copy; 2026 VORQ Fordon. En fordonsannonsplattform som drivs under VORQ Digital, Inhaber: Haitham Kojar.</span>
+                <span>&copy; 2026 VORQ Fordon. En fordonsannonsplattform riktad till den svenska marknaden. Drivs under VORQ Digital, Inhaber: Haitham Kojar, Ziegelstraße 26, 42289 Wuppertal, Deutschland.</span>
             </div>
 
             <div class="footer-links">
                 <a href="index.html">Hem</a>
                 <a href="results.html">Annonser</a>
                 <a href="login.html">Logga in</a>
-                <a href="notice-action.html">Anmäl annons</a>
+                <a href="notice-action.html">Rapportera</a>
                 <a href="privacy.html">Integritet</a>
-                <a href="impressum.html">Företagsuppgifter</a>
                 <a href="terms.html">Villkor</a>
+                <a href="cookies.html">Cookies</a>
+                <a href="legal.html">Legal</a>
+                <a href="foretagsinfo.html">Företagsinfo</a>
+                <a href="impressum.html">Impressum</a>
             </div>
         </div>
     </footer>
@@ -997,6 +1000,16 @@
 
             COLLECTIONS: {
                 USERS: "users"
+            },
+
+            LEGAL: {
+                TERMS_VERSION: "vorq-fordon-terms-2026-05",
+                PRIVACY_VERSION: "vorq-fordon-privacy-2026-05",
+                OPERATOR_LEGAL_NAME: "VORQ Digital, Inhaber: Haitham Kojar",
+                OPERATOR_ADDRESS: "Ziegelstraße 26, 42289 Wuppertal, Deutschland",
+                LEGAL_FORM: "nicht eingetragenes gewerbliches Einzelunternehmen",
+                REGISTERED_ACTIVITY: "IT-Dienstleistungen, Webdesign, Webentwicklung und Betrieb von Internetportalen",
+                PLATFORM_MARKET: "Fordonsannonsplattform riktad till den svenska marknaden"
             },
 
             LIMITS: {
@@ -1195,6 +1208,18 @@
             return CONFIRM_CONFIG.USER_TYPES.PRIVATE;
         }
 
+        function getLegalProfileMetadata() {
+            return {
+                operatorLegalName: CONFIRM_CONFIG.LEGAL.OPERATOR_LEGAL_NAME,
+                operatorAddress: CONFIRM_CONFIG.LEGAL.OPERATOR_ADDRESS,
+                legalForm: CONFIRM_CONFIG.LEGAL.LEGAL_FORM,
+                registeredActivity: CONFIRM_CONFIG.LEGAL.REGISTERED_ACTIVITY,
+                platformMarket: CONFIRM_CONFIG.LEGAL.PLATFORM_MARKET,
+                accountTermsVersion: CONFIRM_CONFIG.LEGAL.TERMS_VERSION,
+                privacyVersion: CONFIRM_CONFIG.LEGAL.PRIVACY_VERSION
+            };
+        }
+
         async function createPrivateUserProfile(user, email) {
             const profileData = {
                 uid: user.uid,
@@ -1208,7 +1233,8 @@
                 role: "user",
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
-                lastLoginAt: serverTimestamp()
+                lastLoginAt: serverTimestamp(),
+                ...getLegalProfileMetadata()
             };
 
             await saveUserToDB(user.uid, profileData, { merge: true });
@@ -1219,7 +1245,8 @@
                 email,
                 emailLower: email.toLowerCase(),
                 lastLoginAt: serverTimestamp(),
-                updatedAt: serverTimestamp()
+                updatedAt: serverTimestamp(),
+                ...getLegalProfileMetadata()
             };
 
             await saveUserToDB(uid, updateData, { merge: true });
@@ -1356,7 +1383,8 @@
                     companyVerificationStatus: "pending",
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp(),
-                    lastLoginAt: serverTimestamp()
+                    lastLoginAt: serverTimestamp(),
+                    ...getLegalProfileMetadata()
                 };
 
                 await saveUserToDB(user.uid, companyData, { merge: true });

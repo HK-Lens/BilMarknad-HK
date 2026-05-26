@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logga in | VORQ Fordon</title>
-    <meta name="description" content="Logga in på VORQ Fordon för att hantera fordonsannonser, favoriter och meddelanden. VORQ Fordon är ett fordonsannonsprojekt från VORQ Digital, Inhaber: Haitham Kojar.">
+    <meta name="description" content="Logga in på VORQ Fordon för att hantera fordonsannonser, favoriter och meddelanden. VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden och drivs under VORQ Digital, Inhaber: Haitham Kojar.">
     <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -474,7 +475,7 @@
         </a>
         <nav class="header-links" aria-label="Snabblänkar">
             <a href="index.html">Startsida</a>
-            <a href="notice-action.html">Anmäl annons</a>
+            <a href="notice-action.html">Rapportera</a>
         </nav>
     </div>
 </header>
@@ -491,7 +492,7 @@
         <div class="disclaimer-box">
             <i class="fa-solid fa-shield-halved"></i>
             <strong>Säkerhet först:</strong>
-            VORQ Fordon är en fordonsannonsplattform. VORQ Digital säljer inte, äger inte, kontrollerar inte och garanterar inte fordon som publiceras av användare.
+            VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden. VORQ Digital, Inhaber: Haitham Kojar, säljer inte, äger inte, kontrollerar inte, besiktigar inte och garanterar inte fordon som publiceras av användare.
             Dela aldrig BankID, kortuppgifter, lösenord eller känsliga dokument med andra användare.
         </div>
 
@@ -505,8 +506,8 @@
         <div class="notice-box hidden" id="statusBox" role="status" aria-live="polite"></div>
 
         <label class="terms-container">
-            <input type="checkbox" id="termsCheck">
-            <span>Jag godkänner <a href="terms.html">villkoren</a> och <a href="privacy.html">integritetspolicyn</a> samt bekräftar att VORQ Fordon endast är en annonsplattform.</span>
+            <input type="checkbox" id="termsCheck" data-terms-version="vorq-fordon-terms-2026-05" data-privacy-version="vorq-fordon-privacy-2026-05">
+            <span>Jag godkänner <a href="terms.html">villkoren</a> och <a href="privacy.html">integritetspolicyn</a> samt bekräftar att VORQ Fordon endast är en fordonsannonsplattform riktad till den svenska marknaden.</span>
         </label>
 
         <div id="googleSection">
@@ -550,13 +551,17 @@
         </div>
 
         <div class="brand-owner-note">
-            VORQ Fordon är ett fordonsannonsprojekt från <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>.<br>
-            VORQ Digital är inte säljare, ägare, besiktningspart, avtalspart eller garant för fordon som annonseras av användare.
+            VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden och drivs under <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>.<br>
+            Juridisk operatörsadress: Ziegelstraße 26, 42289 Wuppertal, Deutschland.<br>
+            VORQ Digital är inte säljare, ägare, besiktningspart, avtalspart, betalningsförmedlare eller garant för fordon som annonseras av användare.
             <div class="brand-owner-links" aria-label="Juridiska länkar">
-                <a href="impressum.html">Företagsinformation</a>
+                <a href="impressum.html">Impressum</a>
+                <a href="foretagsinfo.html">Företagsinfo</a>
                 <a href="terms.html">Villkor</a>
                 <a href="privacy.html">Integritet</a>
-                <a href="notice-action.html">Anmäl annons</a>
+                <a href="cookies.html">Cookies</a>
+                <a href="legal.html">Legal</a>
+                <a href="notice-action.html">Rapportera</a>
             </div>
         </div>
     </div>
@@ -592,6 +597,14 @@
         ACCOUNT_TYPES: {
             PRIVATE: "private",
             BUSINESS: "business"
+        },
+        LEGAL: {
+            TERMS_VERSION: "vorq-fordon-terms-2026-05",
+            PRIVACY_VERSION: "vorq-fordon-privacy-2026-05",
+            OPERATOR_ADDRESS: "Ziegelstraße 26, 42289 Wuppertal, Deutschland",
+            LEGAL_FORM: "nicht eingetragenes gewerbliches Einzelunternehmen",
+            REGISTERED_ACTIVITY: "IT-Dienstleistungen, Webdesign, Webentwicklung und Betrieb von Internetportalen",
+            PLATFORM_MARKET: "Fordonsannonsplattform riktad till den svenska marknaden"
         },
         LIMITS: {
             EMAIL_MAX: 120,
@@ -809,7 +822,15 @@
             role: "user",
             emailVerified: Boolean(user.emailVerified),
             lastLoginAt: serverTimestamp(),
-            accountUpdatedAt: serverTimestamp()
+            accountUpdatedAt: serverTimestamp(),
+            loginConsentAccepted: true,
+            loginConsentAcceptedAt: serverTimestamp(),
+            lastAcceptedTermsVersion: LOGIN_CONFIG.LEGAL.TERMS_VERSION,
+            lastAcceptedPrivacyVersion: LOGIN_CONFIG.LEGAL.PRIVACY_VERSION,
+            operatorAddress: LOGIN_CONFIG.LEGAL.OPERATOR_ADDRESS,
+            legalForm: LOGIN_CONFIG.LEGAL.LEGAL_FORM,
+            registeredActivity: LOGIN_CONFIG.LEGAL.REGISTERED_ACTIVITY,
+            platformMarket: LOGIN_CONFIG.LEGAL.PLATFORM_MARKET
         };
 
         if (!userDoc.exists()) {

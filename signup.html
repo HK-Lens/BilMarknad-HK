@@ -7,7 +7,7 @@
 
     <title>Skapa konto | VORQ Fordon</title>
 
-    <meta name="description" content="Skapa ett privatkonto eller företagskonto på VORQ Fordon för att publicera, söka och hantera fordonsannonser i Sverige. VORQ Fordon drivs av VORQ Digital, Inhaber: Haitham Kojar.">
+    <meta name="description" content="Skapa ett privatkonto eller företagskonto på VORQ Fordon för att publicera, söka och hantera fordonsannonser riktade till den svenska marknaden. VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar.">
 
     <meta name="robots" content="noindex, nofollow">
 
@@ -722,7 +722,7 @@
 
         <div class="brand-owner-note">
             <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>
-            VORQ Fordon är en svensk fordonsannonsplattform. VORQ Digital är inte säljare, ägare, besiktningspart, betalningsförmedlare eller garant för fordon som publiceras av användare.
+            VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden. Juridisk adress: Ziegelstraße 26, 42289 Wuppertal, Deutschland. VORQ Digital är inte säljare, ägare, besiktningspart, betalningsförmedlare eller garant för fordon som publiceras av användare.
         </div>
     </aside>
 
@@ -896,7 +896,7 @@
                             <span>
                                 Jag accepterar
                                 <a href="terms.html" target="_blank" rel="noopener noreferrer">användarvillkoren</a>
-                                och förstår att VORQ Fordon endast är en förmedlingsplattform som drivs av VORQ Digital, Inhaber: Haitham Kojar.
+                                och förstår att VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden och drivs under VORQ Digital, Inhaber: Haitham Kojar.
                             </span>
                         </label>
 
@@ -920,7 +920,7 @@
                     Har du redan ett konto?
                     <a href="login.html">Logga in här</a>
                     <br><br>
-                    <small>VORQ Fordon drivs av VORQ Digital, Inhaber: Haitham Kojar · <a href="notice-action.html">Anmäl annons</a> · <a href="terms.html">Villkor</a> · <a href="privacy.html">Integritet</a></small>
+                    <small>VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar · Ziegelstraße 26, 42289 Wuppertal, Deutschland · <a href="notice-action.html">Rapportera</a> · <a href="terms.html">Villkor</a> · <a href="privacy.html">Integritet</a> · <a href="cookies.html">Cookies</a> · <a href="foretagsinfo.html">Företagsinfo</a> · <a href="legal.html">Juridik</a></small>
                 </div>
             </div>
         </section>
@@ -1064,16 +1064,26 @@
         elements.address.required = state.accountType === "business";
 
         if (state.accountType === "business") {
-            elements.nameLabel.innerHTML = 'Företagsnamn <span class="required">*</span>';
+            setRequiredLabel(elements.nameLabel, "Företagsnamn");
             elements.fullName.placeholder = "Ex. Fordonsfirma AB";
             elements.nameHelp.textContent = "Ange företagets registrerade namn.";
         } else {
-            elements.nameLabel.innerHTML = 'Fullständigt namn <span class="required">*</span>';
+            setRequiredLabel(elements.nameLabel, "Fullständigt namn");
             elements.fullName.placeholder = "För- och efternamn";
             elements.nameHelp.textContent = "Använd ditt riktiga namn för bättre trovärdighet.";
         }
 
         updateSubmitAvailability();
+    }
+
+    function setRequiredLabel(labelElement, labelText) {
+        labelElement.replaceChildren();
+        labelElement.appendChild(document.createTextNode(labelText + " "));
+
+        const required = document.createElement("span");
+        required.className = "required";
+        required.textContent = "*";
+        labelElement.appendChild(required);
     }
 
     async function handleRegistrationSubmit(event) {
@@ -1088,7 +1098,7 @@
         if (!validation.ok) {
             await Swal.fire({
                 title: "Kontrollera uppgifterna",
-                html: validation.errors.map((error) => `<div style="text-align:left;margin-bottom:7px;">• ${escapeHtml(error)}</div>`).join(""),
+                text: validation.errors.map((error) => `• ${String(error)}`).join("\n"),
                 icon: "warning",
                 confirmButtonColor: "#f58220"
             });
@@ -1136,9 +1146,13 @@
                 platform: "VORQ Fordon",
                 platformCountry: "SE",
                 platformOperator: "VORQ Digital, Inhaber: Haitham Kojar",
+                operatorAddress: "Ziegelstraße 26, 42289 Wuppertal, Deutschland",
+                legalForm: "nicht eingetragenes gewerbliches Einzelunternehmen",
+                registeredActivity: "IT-Dienstleistungen, Webdesign, Webentwicklung und Betrieb von Internetportalen",
+                platformMarket: "Sverige / den svenska marknaden",
                 userAcknowledgedPlatformRole: true,
-                accountTermsVersion: "vorq-fordon-se-2026-05",
-                privacyVersion: "vorq-fordon-se-2026-05",
+                accountTermsVersion: "vorq-fordon-terms-2026-05",
+                privacyVersion: "vorq-fordon-privacy-2026-05",
 
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
@@ -1331,7 +1345,7 @@
     }
 
     function setButtonLoading(isLoading, text) {
-        elements.regBtn.innerHTML = "";
+        elements.regBtn.replaceChildren();
 
         const icon = document.createElement("i");
         icon.className = isLoading ? "fa-solid fa-circle-notch spinner" : "fa-solid fa-user-plus";

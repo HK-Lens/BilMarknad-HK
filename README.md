@@ -1,13 +1,16 @@
 # VORQ Fordon 🚗
 
-**VORQ Fordon** är en svensk fordonsannonsplattform där användare kan publicera, söka och hantera fordonsannonser.
+**VORQ Fordon** är en fordonsannonsplattform riktad till den svenska marknaden. Användare kan publicera, söka, spara och hantera fordonsannonser samt kontakta andra användare via webbplatsens funktioner.
 
 Projektet drivs under:
 
 **VORQ Digital, Inhaber: Haitham Kojar**  
-Digitala projekt, webbutveckling, IT-tjänster och drift av internetportaler.
+**Ziegelstraße 26, 42289 Wuppertal, Deutschland**
 
-VORQ Fordon är en annonsplattform. Plattformen säljer inte fordon, äger inte fordon, förvarar inte fordon, kontrollerar inte fordonens tekniska skick och är inte part i avtal mellan annonsörer, köpare eller säljare.
+Juridisk form: **nicht eingetragenes gewerbliches Einzelunternehmen**.  
+Registrerad verksamhet: **IT-Dienstleistungen, Webdesign, Webentwicklung und Betrieb von Internetportalen**.
+
+VORQ Fordon är en annonsplattform. Plattformen säljer inte fordon, äger inte fordon, förvarar inte fordon, kontrollerar inte fordonens tekniska skick, hanterar inte betalning och är inte part i avtal mellan annonsörer, köpare eller säljare.
 
 ---
 
@@ -21,7 +24,7 @@ VORQ Fordon är en annonsplattform. Plattformen säljer inte fordon, äger inte 
 
 ## Om projektet (Svenska)
 
-**VORQ Fordon** är en webbplats för fordonsannonser i Sverige. Användare kan publicera, söka, spara och hantera fordonsannonser samt kontakta andra användare via webbplatsens funktioner.
+**VORQ Fordon** är en webbplats för fordonsannonser riktad till den svenska marknaden. Plattformen drivs juridiskt från Tyskland under VORQ Digital, Inhaber: Haitham Kojar.
 
 Plattformen innehåller bland annat:
 
@@ -30,7 +33,7 @@ Plattformen innehåller bland annat:
 - **Avancerad sökning:** filtrering efter märke, modell, län, pris, miltal, bränsle, växellåda, karosstyp och utrustning.
 - **Favoriter:** inloggade användare kan spara intressanta annonser.
 - **Meddelanden:** användare kan kontakta varandra via webbplatsens meddelandefunktion.
-- **Anmäl annons:** användare och besökare kan rapportera felaktiga, misstänkta eller olagliga annonser.
+- **Rapportera annons:** användare och besökare kan rapportera felaktiga, misstänkta eller olagliga annonser.
 
 ### Ansvarsbegränsning för annonser
 
@@ -42,11 +45,12 @@ VORQ Fordon kan ta bort, begränsa eller granska annonser, konton eller innehål
 
 ## About the project (English)
 
-**VORQ Fordon** is a vehicle listing platform for Sweden. Users can publish, search, save and manage vehicle advertisements and contact other users through the website’s functions.
+**VORQ Fordon** is a vehicle listing platform directed to the Swedish market. The platform is legally operated from Germany under VORQ Digital, Inhaber: Haitham Kojar.
 
 The project is operated under:
 
-**VORQ Digital, Inhaber: Haitham Kojar**
+**VORQ Digital, Inhaber: Haitham Kojar**  
+**Ziegelstraße 26, 42289 Wuppertal, Germany**
 
 The platform includes:
 
@@ -65,11 +69,10 @@ VORQ Fordon is an advertising platform only. It does not sell vehicles, own vehi
 
 ## عن المشروع (Arabic)
 
-**VORQ Fordon** هو موقع سويدي لإعلانات المركبات. يتيح للمستخدمين نشر إعلانات المركبات، البحث، حفظ الإعلانات، إدارة الحساب، والتواصل عبر وظائف الموقع.
+**VORQ Fordon** هي منصة إعلانات مركبات موجهة للسوق السويدي. المشغّل القانوني للمنصة موجود في ألمانيا تحت اسم:
 
-يعمل المشروع تحت:
-
-**VORQ Digital, Inhaber: Haitham Kojar**
+**VORQ Digital, Inhaber: Haitham Kojar**  
+**Ziegelstraße 26, 42289 Wuppertal, Deutschland**
 
 يوفر الموقع للمستخدمين:
 
@@ -91,7 +94,7 @@ VORQ Fordon هي منصة إعلانات فقط. المنصة لا تبيع ال
 - **Frontend:** HTML5, CSS3, JavaScript
 - **Authentication:** Firebase Auth
 - **Database:** Cloud Firestore
-- **Storage:** Firebase Storage
+- **Storage:** Firebase Storage, when enabled for user images
 - **Hosting:** Firebase Hosting / static hosting
 - **PWA:** manifest, service worker, offline page and install support when enabled
 
@@ -102,22 +105,30 @@ VORQ Fordon هي منصة إعلانات فقط. المنصة لا تبيع ال
 - `index.html` — startsida och annonsöversikt
 - `results.html` — annonsresultat
 - `details.html` — fordonsdetaljer
-- `sell.html` / `add-car.html` — publicera annons
+- `sell.html` — publicera annons med villkorsgodkännande
+- `add-car.html` — länk-/bryggsida till `sell.html`
 - `edit-car.html` — redigera annons
 - `confirm.html` — bekräftelse efter publicering eller ändring
 - `my-account.html` — användarkonto
 - `manage.html` — hantera egna annonser
 - `messages.html` — meddelanden
 - `notice-action.html` — rapportering av annonser eller innehåll
+- `rapportera.html` — svensk genväg/omdirigering till rapportering
 - `privacy.html` — integritetspolicy
 - `terms.html` — användarvillkor
-- `cookie-policy.html` — information om cookies och lokal lagring
+- `cookies.html` — information om cookies och lokal lagring
+- `legal.html` — rättslig information
+- `foretagsinfo.html` — svensk företagsinformation
+- `impressum.html` — tysk företagsinformation / Impressum
+- `404.html` — felsida
+- `offline.html` — offline-sida
 - `manifest.webmanifest` — PWA-manifest
 - `service-worker.js` — offline/cache-funktioner
 - `pwa-register.js` — registrering av PWA-funktioner
 - `firebase-config.js` — Firebase client configuration
-- `firestore.rules` — Firestore security rules, ska inte publiceras som webbsida
+- `firestore.rules.txt` — Firestore security rules, ska inte publiceras som webbsida
 - `firebase.json` — Firebase Hosting configuration, används vid deploy och ska inte visas som publik webbsida
+- `VORQ-FORDON-INFO.md` — levande intern projektöversikt och beslutslogg
 
 ---
 
@@ -130,11 +141,26 @@ Plattformen ska användas på ett lagligt och säkert sätt. Det är inte tillå
 - bilder eller text som användaren inte har rätt att använda,
 - bedrägligt eller manipulerat innehåll,
 - skadliga länkar eller försök till phishing,
-- BankID-uppgifter, kortuppgifter, lösenord eller känsliga dokument,
-- personuppgifter som inte är nödvändiga för annonsen,
+- BankID-uppgifter, kortuppgifter, lösenord eller engångskoder,
+- känsliga dokument eller onödiga personuppgifter,
 - innehåll som bryter mot lag, tredje parts rättigheter eller plattformens villkor.
 
-Misstänkta annonser kan rapporteras via funktionen **Anmäl annons** eller via `notice-action.html`.
+Misstänkta annonser kan rapporteras via funktionen **Rapportera** eller via `notice-action.html`.
+
+---
+
+## ✅ Terms acceptance and reporting
+
+När en användare publicerar en annons ska `sell.html` kräva uttryckligt godkännande av `terms.html` innan annonsen publiceras. Annonsdokumentet i Firestore ska innehålla bland annat:
+
+- `termsAccepted: true`
+- `termsAcceptedAt`
+- `termsVersion: "vorq-fordon-terms-2026-05"`
+- `listingConsentAccepted: true`
+- `adId`
+- `annonsnummer`
+
+Annonskort och detaljsidor ska visa **Annonsnummer** och ha en tydlig **Rapportera**-länk som skickar `adId`, `annonsnummer` och `source` till `notice-action.html`.
 
 ---
 
@@ -146,8 +172,8 @@ Filer som inte ska visas som publika webbsidor bör inte placeras i den publika 
 
 - `firebase.json`
 - `.firebaserc`
-- `firestore.rules`
-- `storage.rules`
+- `firestore.rules` / `firestore.rules.txt`
+- `storage.rules`, if used later
 - `.env`
 - privata nycklar
 - service-account-filer
@@ -156,6 +182,8 @@ Filer som inte ska visas som publika webbsidor bör inte placeras i den publika 
 
 Firebase Web Config i `firebase-config.js` är publik klientkonfiguration och är inte samma sak som Admin SDK-nycklar eller service-account-filer. Säkerheten ska styras med Firebase Auth, Firestore Rules, Storage Rules, App Check och domän-/API-begränsningar.
 
+Om användaruppladdade bilder används med Firebase Storage bör Storage-regler finnas i Firebase Console eller i ett separat `storage.rules`-flöde.
+
 ---
 
 ## 📬 Contact and legal information
@@ -163,14 +191,20 @@ Firebase Web Config i `firebase-config.js` är publik klientkonfiguration och ä
 Kontaktuppgifter och rättslig information ska finnas på webbplatsens juridiska sidor, till exempel:
 
 - `impressum.html`
+- `foretagsinfo.html`
+- `legal.html`
 - `privacy.html`
 - `terms.html`
-- `cookie-policy.html`
+- `cookies.html`
 - `notice-action.html`
 
 För juridiska och officiella sammanhang ska namnet användas som:
 
 **VORQ Digital, Inhaber: Haitham Kojar**
+
+Officiell operatörsadress:
+
+**Ziegelstraße 26, 42289 Wuppertal, Deutschland**
 
 ---
 

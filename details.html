@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fordonsdetaljer | VORQ FORDON</title>
-    <meta name="description" content="Visa fordonsdetaljer, bilder, utrustning och kontaktmöjlighet för bilannons på VORQ FORDON.">
+    <title>Fordonsdetaljer | VORQ Fordon</title>
+    <meta name="description" content="Visa fordonsdetaljer, bilder, utrustning och kontaktmöjlighet för bilannons på VORQ Fordon.">
     <meta name="robots" content="noindex, nofollow">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -30,6 +30,10 @@
         .btn-favorite-detail { background: white; color: var(--dark); border: 1px solid var(--border); padding: 12px 20px; border-radius: 50px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: .3s; }
         .btn-favorite-detail:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
         .btn-favorite-detail.saved { color: #ef4444; border-color: #fecaca; background: #fff1f2; }
+        .annons-id-detail { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:999px; background:#f1f5f9; border:1px solid var(--border); color:#475569; font-size:12px; font-weight:900; max-width:100%; word-break:break-word; }
+        .annons-id-detail i { color: var(--primary); }
+        .btn-report-detail { background:#fff7ed; color:#9a3412; border:1px solid #fed7aa; padding:12px 20px; border-radius:50px; font-weight:900; font-size:14px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:.3s; text-decoration:none; }
+        .btn-report-detail:hover { background:#ffedd5; color:#7c2d12; border-color:#fdba74; transform:translateY(-2px); }
         .details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
         .info-card { background: white; padding: 35px; border-radius: 28px; border: 1px solid var(--border); margin-bottom: 25px; }
         .price-text { font-size: 45px; font-weight: 900; color: var(--primary); margin: 10px 0; }
@@ -338,6 +342,8 @@
         const images = car.images;
         const title = `${car.brand} ${car.model}`.trim() || 'Fordonsdetaljer';
         const messagesUrl = buildMessagesUrl(car, title);
+        const reportUrl = buildReportUrl();
+        const annonsnummer = carId || '-';
         const priceText = `${formatNumber(car.price)} kr`;
         const mileageText = `${formatNumber(car.mileage)} km`;
         const featureHTML = car.features.length
@@ -354,10 +360,17 @@
             </div>
 
             <div class="header-bar">
-                <div class="reg-plate"><i>S</i> ${escapeHTML(car.regNo.toUpperCase())}</div>
+                <div>
+                    <div class="reg-plate"><i>S</i> ${escapeHTML(car.regNo.toUpperCase())}</div>
+                    <div class="annons-id-detail" title="Annonsnummer">
+                        <i class="fa-solid fa-hashtag"></i>
+                        Annonsnummer: ${escapeHTML(annonsnummer)}
+                    </div>
+                </div>
                 <div class="actions-row">
                     <button id="favoriteDetailBtn" class="btn-favorite-detail" type="button"><i class="fa-regular fa-heart"></i> Spara bilen</button>
                     <a href="${escapeHTML(messagesUrl)}" class="btn-contact" id="contactSellerBtn"><i class="fa-solid fa-comments"></i> Kontakta säljaren</a>
+                    <a href="${escapeHTML(reportUrl)}" class="btn-report-detail" id="reportAdBtn"><i class="fa-solid fa-flag"></i> Rapportera</a>
                 </div>
             </div>
 
@@ -368,6 +381,7 @@
                         <p style="color:#64748b; font-weight:700; font-size:18px;">Modellår: ${escapeHTML(car.year)} • ${escapeHTML(mileageText)}</p>
                         <div class="price-text">${escapeHTML(priceText)}</div>
                         <div class="specs-list">
+                            ${specBox('Annonsnummer', annonsnummer)}
                             ${specBox('Årsmodell', car.year)}
                             ${specBox('Drivmedel', car.fuel)}
                             ${specBox('Växellåda', car.transmission)}
@@ -414,7 +428,7 @@
                     <h4><i class="fa-solid fa-circle-exclamation"></i> Säker affär</h4>
                     <p style="font-size:14px; margin-top:10px;">Kontrollera alltid fordonets historik, servicebok och mätarställning innan köp.</p>
                 </div>
-                <p class="disclaimer"><strong>Ansvarsfriskrivning:</strong> VORQ FORDON är en öppen plattform. Vi granskar inte fordonens faktiska skick. All handel sker på användarens eget ansvar.</p>
+                <p class="disclaimer"><strong>Ansvarsfriskrivning:</strong> VORQ Fordon är en öppen plattform. Vi granskar inte fordonens faktiska skick. All handel sker på användarens eget ansvar.</p>
             </div>
         `;
 
@@ -471,6 +485,14 @@
             return window.showVORQFordonElegantModal({ type, title, message, confirmText });
         }
         return Promise.resolve();
+    }
+
+    function buildReportUrl() {
+        const params = new URLSearchParams();
+        params.set('adId', carId || '');
+        params.set('annonsnummer', carId || '');
+        params.set('source', 'details');
+        return `notice-action.html?${params.toString()}`;
     }
 
     function buildMessagesUrl(car, titleText = 'Bilannons') {

@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avancerad sökning | VORQ Fordon</title>
-    <meta name="description" content="Avancerad fordonsökning på VORQ Fordon. Filtrera användarpublicerade fordonsannonser efter märke, modell, län, pris, miltal, drivmedel, växellåda, utrustning och detaljer. VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar.">
+    <meta name="description" content="Avancerad fordonsökning på VORQ Fordon. Filtrera användarpublicerade fordonsannonser riktade till den svenska marknaden efter märke, modell, län, pris, miltal, drivmedel, växellåda, utrustning och detaljer. VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar.">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Avancerad sökning | VORQ Fordon">
-    <meta property="og:description" content="Filtrera användarpublicerade fordonsannonser noggrant på VORQ Fordon. Drivs under VORQ Digital, Inhaber: Haitham Kojar.">
+    <meta property="og:description" content="Filtrera användarpublicerade fordonsannonser riktade till den svenska marknaden på VORQ Fordon. Drivs under VORQ Digital, Inhaber: Haitham Kojar.">
     <meta property="og:site_name" content="VORQ Fordon">
     <meta name="twitter:card" content="summary_large_image">
 
@@ -496,6 +496,67 @@
             transform: translateY(-1px);
         }
 
+
+        .legal-info-strip {
+            margin-top: 28px;
+            padding: 22px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+        }
+
+        .legal-info-strip h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark);
+            font-size: 18px;
+            font-weight: 950;
+            letter-spacing: -0.025em;
+            margin-bottom: 10px;
+        }
+
+        .legal-info-strip h2 i {
+            color: var(--primary);
+        }
+
+        .legal-info-strip p {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 650;
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+
+        .legal-info-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .legal-info-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 40px;
+            padding: 9px 13px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .legal-info-links a:hover {
+            border-color: rgba(245, 130, 32, 0.45);
+            background: #fff7ed;
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
         @media (max-width: 1050px) {
             .filter-layout { grid-template-columns: 1fr; }
             .summary-panel { position: static; }
@@ -529,7 +590,7 @@
 <body>
     <div class="top-bar">
         <i class="fa-solid fa-magnifying-glass-chart"></i>
-        <span>VORQ Fordon hjälper dig att filtrera fordonsannonser noggrant efter märke, modell, län, pris, teknik, komfort och utrustning.</span>
+        <span>VORQ Fordon hjälper dig att filtrera fordonsannonser riktade till den svenska marknaden efter märke, modell, län, pris, teknik, komfort och utrustning.</span>
     </div>
 
     <header class="site-header">
@@ -551,7 +612,7 @@
                 <a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Hem</a>
                 <a href="my-account.html" class="nav-link"><i class="fa-solid fa-user"></i> Mitt konto</a>
                 <a href="sell.html" class="nav-link primary"><i class="fa-solid fa-plus"></i> Lägg till annons</a>
-                <a href="notice-action.html" class="nav-link"><i class="fa-solid fa-flag"></i> Anmäl annons</a>
+                <a href="notice-action.html" class="nav-link"><i class="fa-solid fa-flag"></i> Rapportera</a>
                 <button type="button" class="nav-button" id="authActionBtn" data-auth-mode="login" aria-label="Logga in">
                     <i class="fa-solid fa-right-to-bracket" id="authActionIcon"></i>
                     <span id="authActionText">Logga in</span>
@@ -566,12 +627,12 @@
                 <div class="eyebrow"><i class="fa-solid fa-sliders"></i> Avancerad sökning</div>
                 <h1>Hitta rätt fordon snabbare</h1>
                 <p>
-                    Välj de filter du behöver för att hitta fordonsannonser i Sverige. Annonserna publiceras av användare,
+                    Välj de filter du behöver för att hitta fordonsannonser riktade till den svenska marknaden. Annonserna publiceras av användare,
                     och VORQ Fordon fungerar som en annonsplattform – inte som säljare, ägare eller besiktningspart.
                 </p>
                 <div class="owner-note">
                     <i class="fa-solid fa-building"></i>
-                    <span><strong>VORQ Fordon</strong> är ett projekt under <strong>VORQ Digital</strong>, Inhaber: Haitham Kojar.</span>
+                    <span><strong>VORQ Fordon</strong> drivs under <strong>VORQ Digital</strong>, Inhaber: Haitham Kojar. Juridisk adress: Ziegelstraße 26, 42289 Wuppertal, Deutschland.</span>
                 </div>
             </div>
         </section>
@@ -923,10 +984,30 @@
 
                 <div class="warning-box">
                     <i class="fa-solid fa-triangle-exclamation"></i>
-                    Kontrollera alltid fordonets skick, dokumentation och säljare innan affär. VORQ Fordon säljer inte fordon och garanterar inte användarnas uppgifter. <a href="notice-action.html">Anmäl felaktig eller olaglig annons</a>.
+                    Kontrollera alltid fordonets skick, dokumentation och säljare innan affär. VORQ Fordon säljer inte fordon och garanterar inte användarnas uppgifter. <a href="notice-action.html">Rapportera felaktig eller olaglig annons</a>.
                 </div>
             </aside>
         </section>
+
+        <section class="legal-info-strip" aria-label="Juridisk information">
+            <h2><i class="fa-solid fa-scale-balanced"></i> Juridisk information och säkerhet</h2>
+            <p>
+                VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden.
+                Plattformen säljer inte, äger inte, kontrollerar inte, besiktigar inte och garanterar inte fordon.
+                Annonser publiceras av användare och användaren ansvarar för innehåll, bilder och uppgifter.
+            </p>
+            <p>
+                Juridisk operatör: Haitham Kojar – VORQ Digital, Ziegelstraße 26, 42289 Wuppertal, Deutschland.
+            </p>
+            <div class="legal-info-links">
+                <a href="terms.html"><i class="fa-solid fa-file-contract"></i> Villkor</a>
+                <a href="privacy.html"><i class="fa-solid fa-user-shield"></i> Integritet</a>
+                <a href="cookies.html"><i class="fa-solid fa-cookie-bite"></i> Cookies</a>
+                <a href="foretagsinfo.html"><i class="fa-solid fa-building"></i> Företagsinfo</a>
+                <a href="notice-action.html"><i class="fa-solid fa-flag"></i> Rapportera</a>
+            </div>
+        </section>
+
     </main>
 
     <div class="footer-action">

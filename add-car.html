@@ -7,7 +7,7 @@
 
     <title>Lägg till annons | VORQ Fordon</title>
 
-    <meta name="description" content="Denna sida skickar vidare till VORQ Fordons aktiva sida för att publicera fordonsannonser på den svenska marknaden. VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar.">
+    <meta name="description" content="Denna sida skickar vidare till VORQ Fordons aktiva sida för att publicera fordonsannonser riktade till den svenska marknaden. VORQ Fordon drivs under VORQ Digital, Inhaber: Haitham Kojar.">
 
     <meta name="robots" content="noindex, nofollow">
 
@@ -594,7 +594,7 @@
 
                 <p>
                     Den gamla sidan för att lägga till annons är borttagen här för att undvika dubbla publiceringssidor.
-                    Använd den aktiva sidan för att skapa och publicera fordonsannonser i VORQ Fordon.
+                    Använd den aktiva säljsidan för att skapa och publicera fordonsannonser i VORQ Fordon med samma villkor, säkerhetsregler och lagring av godkännanden.
                 </p>
             </div>
 
@@ -604,7 +604,7 @@
                     <div>
                         <strong>Viktig information:</strong>
                         Denna fil innehåller inte längre formuläret för annonspublicering.
-                        All publicering ska göras via <strong>sell.html</strong> så att annonser sparas på ett enhetligt sätt i VORQ Fordon.
+                        All publicering ska göras via <strong>sell.html</strong> så att annonser, annonsnummer och villkorsgodkännanden sparas på ett enhetligt sätt i VORQ Fordon.
                     </div>
                 </div>
 
@@ -613,8 +613,8 @@
                     <div>
                         <strong>Juridisk information:</strong>
                         VORQ Fordon drivs under <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>.
-                        VORQ Fordon är en annonsplattform för fordonsannonser på den svenska marknaden.
-                        Plattformen säljer inte, äger inte och kontrollerar inte de fordon som publiceras av användare.
+                        VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden.
+                        Plattformen säljer inte, äger inte, kontrollerar inte, besiktigar inte och garanterar inte de fordon som publiceras av användare. Juridisk operatörsadress: Ziegelstraße 26, 42289 Wuppertal, Deutschland.
                     </div>
                 </div>
 
@@ -647,7 +647,7 @@
                         </span>
 
                         <span>
-                            <strong>Anmäl annons</strong>
+                            <strong>Rapportera</strong>
                             <span>Rapportera en felaktig, olaglig eller misstänkt fordonsannons till VORQ Fordon.</span>
                         </span>
                     </a>
@@ -676,7 +676,7 @@
         <div class="footer-inner">
             <div class="footer-brand">
                 <strong>VORQ Fordon</strong>
-                <span>&copy; 2026 VORQ Digital, Inhaber: Haitham Kojar. VORQ Fordon är en fordonsannonsplattform för den svenska marknaden.</span>
+                <span>&copy; 2026 VORQ Digital, Inhaber: Haitham Kojar. VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden. Juridisk adress: Ziegelstraße 26, 42289 Wuppertal, Deutschland.</span>
             </div>
 
             <div class="footer-links">
@@ -685,8 +685,11 @@
                 <a href="sell.html">Sälj fordon</a>
                 <a href="terms.html">Villkor</a>
                 <a href="privacy.html">Integritet</a>
-                <a href="notice-action.html">Anmäl annons</a>
+                <a href="notice-action.html">Rapportera</a>
                 <a href="impressum.html">Impressum</a>
+                <a href="foretagsinfo.html">Företagsinfo</a>
+                <a href="legal.html">Rättsligt</a>
+                <a href="cookies.html">Cookies</a>
                 <a href="my-account.html">Mitt konto</a>
             </div>
         </div>
@@ -718,10 +721,7 @@
             elements.logoutBtn.addEventListener("click", async () => {
                 try {
                     elements.logoutBtn.disabled = true;
-                    elements.logoutBtn.innerHTML = `
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                        Loggar ut...
-                    `;
+                    setButtonContent(elements.logoutBtn, "fa-solid fa-spinner fa-spin", "Loggar ut...");
 
                     await signOut(auth);
 
@@ -730,10 +730,7 @@
                     console.error("Logout error:", error);
 
                     elements.logoutBtn.disabled = false;
-                    elements.logoutBtn.innerHTML = `
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        Logga ut
-                    `;
+                    setButtonContent(elements.logoutBtn, "fa-solid fa-right-from-bracket", "Logga ut");
                 }
             });
         }
@@ -754,10 +751,7 @@
             elements.logoutBtn.style.display = "inline-flex";
             elements.accountLink.style.display = "inline-flex";
 
-            elements.statusLine.innerHTML = `
-                <strong>Status:</strong>
-                Inloggad som ${escapeHTML(user.email || "användare")}. Du kan fortsätta till publiceringssidan.
-            `;
+            setStatusText(`Inloggad som ${user.email || "användare"}. Du kan fortsätta till publiceringssidan.`);
         }
 
         function renderLoggedOutState() {
@@ -765,19 +759,25 @@
             elements.logoutBtn.style.display = "none";
             elements.accountLink.style.display = "inline-flex";
 
-            elements.statusLine.innerHTML = `
-                <strong>Status:</strong>
-                Du är inte inloggad. Logga in innan du publicerar en annons.
-            `;
+            setStatusText("Du är inte inloggad. Logga in innan du publicerar en annons.");
         }
 
-        function escapeHTML(value) {
-            return String(value || "")
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replaceAll("'", "&#039;");
+        function setStatusText(message) {
+            elements.statusLine.replaceChildren();
+
+            const strong = document.createElement("strong");
+            strong.textContent = "Status:";
+
+            elements.statusLine.append(strong, document.createTextNode(` ${message}`));
+        }
+
+        function setButtonContent(button, iconClass, label) {
+            button.replaceChildren();
+
+            const icon = document.createElement("i");
+            icon.className = iconClass;
+
+            button.append(icon, document.createTextNode(` ${label}`));
         }
     </script>
 

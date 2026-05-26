@@ -10,6 +10,92 @@ service cloud.firestore {
       return value is string && value.size() > 0;
     }
 
+    function isShortString(value, maxSize) {
+      return value is string && value.size() <= maxSize;
+    }
+
+    function isLegalTimestampOrString(value) {
+      return value is timestamp || isNonEmptyString(value);
+    }
+
+    function isOwnerCreate(data) {
+      return signedIn() && (
+        data.sellerId == request.auth.uid
+        || data.ownerId == request.auth.uid
+        || data.userId == request.auth.uid
+        || data.uid == request.auth.uid
+        || data.createdBy == request.auth.uid
+        || data.createdById == request.auth.uid
+      );
+    }
+
+    function isOwnerExisting(data) {
+      return signedIn() && (
+        data.sellerId == request.auth.uid
+        || data.ownerId == request.auth.uid
+        || data.userId == request.auth.uid
+        || data.uid == request.auth.uid
+        || data.createdBy == request.auth.uid
+        || data.createdById == request.auth.uid
+      );
+    }
+
+    function hasValidCarIdentity(data, carId) {
+      return isNonEmptyString(data.adId)
+        && data.adId == carId
+        && isNonEmptyString(data.annonsnummer)
+        && data.annonsnummer == carId;
+    }
+
+    function hasValidTermsProof(data) {
+      return data.termsAccepted == true
+        && data.listingConsentAccepted == true
+        && data.termsVersion == 'vorq-fordon-terms-2026-05'
+        && isLegalTimestampOrString(data.termsAcceptedAt)
+        && isLegalTimestampOrString(data.listingConsentAcceptedAt)
+        && (
+          !data.keys().hasAny(['termsAcceptedBy'])
+          || data.termsAcceptedBy == request.auth.uid
+        )
+        && (
+          !data.keys().hasAny(['legalConsentVersion'])
+          || isShortString(data.legalConsentVersion, 120)
+        );
+    }
+
+    function validCarCreate(carId) {
+      return isOwnerCreate(request.resource.data)
+        && hasValidCarIdentity(request.resource.data, carId)
+        && hasValidTermsProof(request.resource.data);
+    }
+
+    function validCarIdentityAfterUpdate(carId) {
+      return !request.resource.data.keys().hasAny(['adId', 'annonsnummer'])
+        || hasValidCarIdentity(request.resource.data, carId);
+    }
+
+    function legalProofSafeOnUpdate() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+        'termsAccepted',
+        'termsAcceptedAt',
+        'termsVersion',
+        'termsUrl',
+        'termsAcceptedBy',
+        'termsAcceptedEmail',
+        'termsAcceptedPlatform',
+        'listingConsentAccepted',
+        'listingConsentAcceptedAt',
+        'legalConsentVersion'
+      ])
+      || hasValidTermsProof(request.resource.data);
+    }
+
+    function validCarUpdate(carId) {
+      return isOwnerExisting(resource.data)
+        && validCarIdentityAfterUpdate(carId)
+        && legalProofSafeOnUpdate();
+    }
+
     function hasParticipant(data, uid) {
       return data.participants is list && uid in data.participants;
     }
@@ -41,10 +127,17 @@ service cloud.firestore {
         && isChatParticipant(currentChat(chatId));
     }
 
+    function validOptionalAdIdentity(data) {
+      return (!data.keys().hasAny(['adId']) || isShortString(data.adId, 160))
+        && (!data.keys().hasAny(['annonsnummer']) || isShortString(data.annonsnummer, 160));
+    }
+
     function validChatCreate() {
       return signedIn()
         && request.resource.data.keys().hasOnly([
           'carId',
+          'adId',
+          'annonsnummer',
           'carName',
           'carTitle',
           'title',
@@ -67,6 +160,7 @@ service cloud.firestore {
         && isNonEmptyString(request.resource.data.buyerId)
         && isNonEmptyString(request.resource.data.sellerId)
         && isNonEmptyString(request.resource.data.carId)
+        && validOptionalAdIdentity(request.resource.data)
         && request.resource.data.buyerId != request.resource.data.sellerId
         && request.resource.data.participants is list
         && request.resource.data.participants.size() >= 2
@@ -101,6 +195,7 @@ service cloud.firestore {
       return isChatParticipant(resource.data)
         && coreChatFieldsUnchanged()
         && validParticipantsAfterUpdate()
+        && validOptionalAdIdentity(request.resource.data)
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'participants',
           'participantNames',
@@ -112,6 +207,8 @@ service cloud.firestore {
           'carName',
           'carTitle',
           'title',
+          'adId',
+          'annonsnummer',
           'lastMessage',
           'lastSenderId',
           'unreadBy',
@@ -127,31 +224,74 @@ service cloud.firestore {
           'senderEmail',
           'senderName',
           'text',
+          'adId',
+          'annonsnummer',
+          'carId',
           'createdAt'
         ])
         && request.resource.data.senderId == request.auth.uid
+        && validOptionalAdIdentity(request.resource.data)
+        && (!request.resource.data.keys().hasAny(['carId']) || isShortString(request.resource.data.carId, 160))
         && isNonEmptyString(request.resource.data.text)
         && request.resource.data.text.size() <= 1500;
     }
 
+    function validUserDocument(data, userId) {
+      return signedIn()
+        && request.auth.uid == userId
+        && (!data.keys().hasAny(['uid']) || data.uid == request.auth.uid);
+    }
+
+    function validReportCreate() {
+      return request.resource.data.keys().hasOnly([
+          'adId',
+          'annonsnummer',
+          'carId',
+          'source',
+          'category',
+          'description',
+          'reporterEmail',
+          'reporterName',
+          'reporterId',
+          'status',
+          'priority',
+          'pageUrl',
+          'url',
+          'userAgent',
+          'platform',
+          'operator',
+          'createdAt',
+          'updatedAt'
+        ])
+        && (
+          isNonEmptyString(request.resource.data.adId)
+          || isNonEmptyString(request.resource.data.annonsnummer)
+          || isNonEmptyString(request.resource.data.carId)
+        )
+        && isNonEmptyString(request.resource.data.category)
+        && request.resource.data.category.size() <= 120
+        && isNonEmptyString(request.resource.data.description)
+        && request.resource.data.description.size() >= 10
+        && request.resource.data.description.size() <= 5000
+        && (!request.resource.data.keys().hasAny(['source']) || isShortString(request.resource.data.source, 80))
+        && (!request.resource.data.keys().hasAny(['reporterEmail']) || isShortString(request.resource.data.reporterEmail, 254))
+        && (!request.resource.data.keys().hasAny(['reporterName']) || isShortString(request.resource.data.reporterName, 120))
+        && (!request.resource.data.keys().hasAny(['reporterId']) || (signedIn() && request.resource.data.reporterId == request.auth.uid))
+        && (!request.resource.data.keys().hasAny(['status']) || request.resource.data.status in ['new', 'open', 'received'])
+        && (!request.resource.data.keys().hasAny(['priority']) || request.resource.data.priority in ['low', 'normal', 'high', 'urgent'])
+        && (!request.resource.data.keys().hasAny(['createdAt']) || isLegalTimestampOrString(request.resource.data.createdAt))
+        && (!request.resource.data.keys().hasAny(['updatedAt']) || isLegalTimestampOrString(request.resource.data.updatedAt));
+    }
+
+    match /users/{userId} {
+      allow read, create, update, delete: if validUserDocument(request.resource.data, userId);
+    }
+
     match /cars/{carId} {
       allow read: if true;
-      allow create: if signedIn() && (
-        request.resource.data.sellerId == request.auth.uid
-        || request.resource.data.ownerId == request.auth.uid
-        || request.resource.data.userId == request.auth.uid
-        || request.resource.data.uid == request.auth.uid
-        || request.resource.data.createdBy == request.auth.uid
-        || request.resource.data.createdById == request.auth.uid
-      );
-      allow update, delete: if signedIn() && (
-        resource.data.sellerId == request.auth.uid
-        || resource.data.ownerId == request.auth.uid
-        || resource.data.userId == request.auth.uid
-        || resource.data.uid == request.auth.uid
-        || resource.data.createdBy == request.auth.uid
-        || resource.data.createdById == request.auth.uid
-      );
+      allow create: if validCarCreate(carId);
+      allow update: if validCarUpdate(carId);
+      allow delete: if isOwnerExisting(resource.data);
     }
 
     match /carListings/{carId} { allow read: if true; }
@@ -166,6 +306,11 @@ service cloud.firestore {
         && resource.data.userId == request.auth.uid
         && request.resource.data.userId == request.auth.uid;
       allow delete: if signedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /reports/{reportId} {
+      allow create: if validReportCreate();
+      allow read, update, delete: if false;
     }
 
     match /chats/{chatId} {
@@ -184,6 +329,10 @@ service cloud.firestore {
         allow delete: if isParticipantOfExistingChat(chatId)
           && resource.data.senderId == request.auth.uid;
       }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

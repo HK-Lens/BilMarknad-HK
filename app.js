@@ -698,6 +698,9 @@ function createCarCard(car) {
 
     content.append(priceTag, title, meta);
 
+    const adNumber = createAdNumberElement(car);
+    if (adNumber) content.appendChild(adNumber);
+
     const extraMeta = createExtraMetaRow(car);
     if (extraMeta) content.appendChild(extraMeta);
 
@@ -709,6 +712,25 @@ function createCarCard(car) {
 
     card.append(imageWrapper, content);
     return card;
+}
+
+function createAdNumberElement(car) {
+    const safeId = normalizeDocumentId(car?.id);
+
+    if (!safeId) {
+        return null;
+    }
+
+    const adNumber = document.createElement("div");
+    adNumber.className = "car-ad-number";
+    adNumber.textContent = `Annonsnummer: ${safeId}`;
+    adNumber.setAttribute("aria-label", `Annonsnummer ${safeId}`);
+    adNumber.style.marginTop = "8px";
+    adNumber.style.fontSize = "12px";
+    adNumber.style.fontWeight = "800";
+    adNumber.style.color = "#64748b";
+    adNumber.style.letterSpacing = ".01em";
+    return adNumber;
 }
 
 function createExtraMetaRow(car) {
@@ -756,9 +778,9 @@ function createCardActionsRow(car) {
     const reportLink = document.createElement("a");
     reportLink.className = "car-card-action car-card-action-report";
     reportLink.href = buildReportAdURL(car);
-    reportLink.textContent = "Anmäl annons";
+    reportLink.textContent = "Rapportera";
     reportLink.rel = "nofollow";
-    reportLink.setAttribute("aria-label", `Anmäl annonsen ${buildCarTitle(car.brand, car.model, car.year)}`);
+    reportLink.setAttribute("aria-label", `Rapportera annons ${normalizeDocumentId(car?.id) || buildCarTitle(car.brand, car.model, car.year)}`);
     reportLink.addEventListener("click", (event) => event.stopPropagation());
 
     row.append(detailsLink, reportLink);
@@ -932,6 +954,7 @@ function buildReportAdURL(car) {
 
     if (safeId) {
         params.set("adId", safeId);
+        params.set("annonsnummer", safeId);
     }
 
     params.set("source", "listing");

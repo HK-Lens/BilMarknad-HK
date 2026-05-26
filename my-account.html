@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mitt Konto | VORQ Fordon</title>
-    <meta name="description" content="Mitt konto på VORQ Fordon. VORQ Fordon är en svensk fordonsannonsplattform som drivs av VORQ Digital, Inhaber: Haitham Kojar.">
+    <meta name="description" content="Mitt konto på VORQ Fordon. VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden och drivs av VORQ Digital, Inhaber: Haitham Kojar.">
     <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -49,6 +49,7 @@
         .ad-card h4 { margin:0 0 6px; font-size:15px; font-weight:900; color:var(--dark); }
         .ad-card p { margin:0; font-size:13px; font-weight:800; color:var(--muted); }
         .ad-card small { display:block; margin-top:5px; color:#94a3b8; font-weight:700; }
+        .ad-number { display:block; margin-top:6px; color:#0f172a; font-size:12px; font-weight:900; }
         .ad-info { min-width:0; flex:1; }
         .btn-del { margin-left: auto; color: var(--danger); border: none; background: none; font-size: 20px; cursor: pointer; width:42px; height:42px; border-radius:50%; display:grid; place-items:center; }
         .btn-del:hover { background: var(--danger-soft); }
@@ -77,7 +78,8 @@
     </a>
     <div class="brand-owner" aria-label="Ägare och kontakt">
         <strong>VORQ Digital, Inhaber: Haitham Kojar</strong>
-        <span>Driver VORQ Fordon som fordonsannonsplattform i Sverige.</span>
+        <span>Driver VORQ Fordon som fordonsannonsplattform riktad till den svenska marknaden.</span>
+        <span>Juridisk operatör: VORQ Digital, Inhaber: Haitham Kojar, Ziegelstraße 26, 42289 Wuppertal, Deutschland.</span>
         <span>VORQ Digital säljer inte, äger inte och garanterar inte fordon i användarannonser.</span>
     </div>
 </header>
@@ -88,7 +90,7 @@
         <button class="tab-btn" id="btnProfile" type="button">Min profil</button>
         <button class="tab-btn" id="btnMessages" type="button">Meddelanden</button>
         <button class="tab-btn" id="btnDashboard" type="button">Dashboard</button>
-        <a class="tab-btn report-link" href="notice-action.html?source=my-account" aria-label="Anmäl felaktig eller olaglig annons"><i class="fa-solid fa-flag"></i> Anmäl annons</a>
+        <a class="tab-btn report-link" href="notice-action.html?source=my-account" aria-label="Rapportera felaktig eller olaglig annons"><i class="fa-solid fa-flag"></i> Rapportera</a>
     </div>
     <main class="content" id="mainContent" aria-live="polite">Laddar...</main>
 </div>
@@ -98,7 +100,7 @@
     <div>
         <strong>VORQ Fordon</strong>
         <p>
-            VORQ Fordon är en fordonsannonsplattform för Sverige som drivs av VORQ Digital, Inhaber: Haitham Kojar.
+            VORQ Fordon är en fordonsannonsplattform riktad till den svenska marknaden och drivs av VORQ Digital, Inhaber: Haitham Kojar, Ziegelstraße 26, 42289 Wuppertal, Deutschland.
             Annonser publiceras av användare. VORQ Digital är inte säljare, ägare, besiktningspart,
             betalningsförmedlare eller garant för fordon som visas i annonser.
         </p>
@@ -107,7 +109,10 @@
         <a href="impressum.html">Företagsinformation</a>
         <a href="terms.html">Villkor</a>
         <a href="privacy.html">Integritet</a>
-        <a href="notice-action.html">Anmäl annons</a>
+        <a href="notice-action.html">Rapportera</a>
+        <a href="cookies.html">Cookies</a>
+        <a href="legal.html">Juridik</a>
+        <a href="foretagsinfo.html">Företagsinfo</a>
     </nav>
 </footer>
 
@@ -335,6 +340,7 @@
         card.setAttribute('aria-label', `Visa detaljer för ${buildCarTitle(car)}`);
 
         const carId = normalizeDocumentId(car.id);
+        const annonsnummer = normalizeDocumentId(car.annonsnummer || car.adId || car.id || carId) || carId;
 
         card.addEventListener('click', () => navigateToDetails(carId));
         card.addEventListener('keydown', (event) => {
@@ -365,7 +371,11 @@
         const meta = document.createElement('small');
         meta.textContent = buildCarMeta(car);
 
-        info.append(title, price, meta);
+        const number = document.createElement('small');
+        number.className = 'ad-number';
+        number.textContent = annonsnummer ? `Annonsnummer: ${annonsnummer}` : 'Annonsnummer saknas';
+
+        info.append(title, price, meta, number);
         card.append(image, info);
 
         const actions = document.createElement('div');
@@ -374,14 +384,14 @@
         const reportButton = document.createElement('button');
         reportButton.type = 'button';
         reportButton.className = 'btn-report';
-        reportButton.setAttribute('aria-label', 'Anmäl annons');
-        reportButton.title = 'Anmäl felaktig eller olaglig annons';
+        reportButton.setAttribute('aria-label', 'Rapportera annons');
+        reportButton.title = 'Rapportera felaktig eller olaglig annons';
         const reportIcon = document.createElement('i');
         reportIcon.className = 'fa-solid fa-flag';
-        reportButton.append(reportIcon, document.createTextNode(' Anmäl'));
+        reportButton.append(reportIcon, document.createTextNode(' Rapportera'));
         reportButton.addEventListener('click', (event) => {
             event.stopPropagation();
-            navigateToReport(carId);
+            navigateToReport(carId, annonsnummer);
         });
         actions.appendChild(reportButton);
 
@@ -949,6 +959,8 @@
 
         return {
             id: normalizeDocumentId(id),
+            adId: normalizeDocumentId(data?.adId || id),
+            annonsnummer: normalizeDocumentId(data?.annonsnummer || data?.adId || id),
             brand: normalizeText(data?.brand),
             model: normalizeText(data?.model),
             title: normalizeText(data?.title),
@@ -964,6 +976,8 @@
     function normalizeFavoriteData(id, data) {
         return {
             id: normalizeDocumentId(data?.carId || id),
+            adId: normalizeDocumentId(data?.adId || data?.carId || id),
+            annonsnummer: normalizeDocumentId(data?.annonsnummer || data?.adId || data?.carId || id),
             brand: normalizeText(data?.brand),
             model: normalizeText(data?.model),
             title: normalizeText(data?.title),
@@ -1076,13 +1090,20 @@
         }
     }
 
-    function navigateToReport(carId) {
+    function navigateToReport(carId, annonsnummer = '') {
         const safeCarId = normalizeDocumentId(carId);
-        const query = safeCarId
-            ? `?adId=${encodeURIComponent(safeCarId)}&source=my-account`
-            : '?source=my-account';
+        const safeAnnonsnummer = normalizeDocumentId(annonsnummer || carId);
+        const params = new URLSearchParams({ source: 'my-account' });
 
-        safeNavigate(`${CONFIG.ROUTES.REPORT}${query}`);
+        if (safeCarId) {
+            params.set('adId', safeCarId);
+        }
+
+        if (safeAnnonsnummer) {
+            params.set('annonsnummer', safeAnnonsnummer);
+        }
+
+        safeNavigate(`${CONFIG.ROUTES.REPORT}?${params.toString()}`);
     }
 
     function navigateToDetails(carId) {

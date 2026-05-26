@@ -2,114 +2,86 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>404 | Sidan hittades inte | VORQ FORDON</title>
-
-    <meta name="description" content="Sidan kunde inte hittas. Gå tillbaka till startsidan, sök efter bilar eller publicera en bilannons på VORQ FORDON.">
-
+    <title>404 | Sidan hittades inte | VORQ Fordon</title>
+    <meta name="description" content="Sidan kunde inte hittas på VORQ Fordon. Gå tillbaka till startsidan, sök efter fordonsannonser eller rapportera ett problem.">
     <meta name="robots" content="noindex, follow">
+    <meta property="og:title" content="404 | Sidan hittades inte | VORQ Fordon">
+    <meta property="og:description" content="Sidan kunde inte hittas på VORQ Fordon.">
+    <meta property="og:site_name" content="VORQ Fordon">
+    <meta name="twitter:card" content="summary">
 
+    <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         :root {
             --primary: #f58220;
-            --primary-hover: #e07210;
+            --primary-hover: #e67312;
             --primary-soft: rgba(245, 130, 32, 0.12);
-
             --dark: #0f172a;
             --dark-soft: #1e293b;
-
             --text: #0f172a;
             --muted: #64748b;
             --muted-light: #94a3b8;
-
-            --light: #f8fafc;
             --surface: #ffffff;
-
+            --surface-soft: #f1f5f9;
             --border: #e2e8f0;
-            --border-dark: #334155;
-
-            --success: #22c55e;
-            --danger: #ef4444;
             --warning: #f59e0b;
-
-            --shadow-sm: 0 4px 10px rgba(15, 23, 42, 0.06);
-            --shadow-md: 0 12px 30px rgba(15, 23, 42, 0.10);
-            --shadow-lg: 0 25px 70px rgba(15, 23, 42, 0.16);
-
-            --radius-sm: 12px;
+            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
+            --shadow-lg: 0 28px 80px rgba(15, 23, 42, 0.16);
             --radius-md: 18px;
-            --radius-lg: 28px;
+            --radius-lg: 30px;
             --radius-full: 999px;
-
             --max-width: 1180px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
 
         body {
             min-height: 100vh;
             font-family: 'Inter', Roboto, Helvetica, Arial, sans-serif;
             background:
-                radial-gradient(circle at 15% 15%, rgba(245, 130, 32, 0.16), transparent 28%),
-                radial-gradient(circle at 85% 10%, rgba(15, 23, 42, 0.10), transparent 30%),
+                radial-gradient(circle at 12% 12%, rgba(245, 130, 32, 0.15), transparent 30%),
+                radial-gradient(circle at 88% 8%, rgba(15, 23, 42, 0.10), transparent 33%),
                 linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
             color: var(--text);
             display: flex;
             flex-direction: column;
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        button,
-        input {
-            font-family: inherit;
-        }
+        a { color: inherit; text-decoration: none; }
+        button, input { font-family: inherit; }
+        button { cursor: pointer; }
 
         .top-notice {
             width: 100%;
-            background: linear-gradient(90deg, var(--dark) 0%, var(--dark-soft) 55%, #2b1d12 100%);
-            color: #ffffff;
-            padding: 11px 6%;
-            font-size: 13px;
-            font-weight: 700;
+            background: linear-gradient(90deg, var(--dark) 0%, var(--dark-soft) 64%, #2b1d12 100%);
+            color: white;
+            padding: 10px 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
             text-align: center;
-            letter-spacing: 0.01em;
+            font-size: 13px;
+            font-weight: 800;
         }
 
-        .top-notice i {
-            color: var(--primary);
-            font-size: 15px;
-        }
+        .top-notice i { color: var(--primary); }
 
         .site-header {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(18px);
-            border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 50;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.93);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
         }
 
         .header-inner {
@@ -125,11 +97,12 @@
         .logo {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            font-size: 1.8rem;
+            gap: 11px;
+            min-height: 46px;
+            font-size: 1.72rem;
             font-weight: 900;
+            letter-spacing: -0.055em;
             color: var(--dark);
-            letter-spacing: -0.06em;
             white-space: nowrap;
         }
 
@@ -144,9 +117,7 @@
             box-shadow: 0 10px 25px rgba(245, 130, 32, 0.35);
         }
 
-        .logo span {
-            color: var(--primary);
-        }
+        .logo span { color: var(--primary); }
 
         .nav-links {
             display: flex;
@@ -166,7 +137,7 @@
             border-radius: var(--radius-full);
             color: var(--dark);
             font-size: 14px;
-            font-weight: 800;
+            font-weight: 850;
             transition: 0.25s ease;
         }
 
@@ -176,35 +147,24 @@
             transform: translateY(-1px);
         }
 
-        .nav-link.sell-link {
+        .nav-link.primary {
             background: var(--primary);
             color: white;
-            padding-inline: 20px;
-            box-shadow: 0 12px 25px rgba(245, 130, 32, 0.28);
+            box-shadow: 0 12px 25px rgba(245, 130, 32, 0.25);
         }
 
-        .nav-link.sell-link:hover {
-            background: var(--primary-hover);
-            color: white;
-        }
+        .nav-link.primary:hover { background: var(--primary-hover); color: white; }
 
-        main {
-            flex: 1;
-        }
+        main { flex: 1; }
 
         .not-found-section {
             max-width: var(--max-width);
             margin: 0 auto;
-            padding: 66px 24px 80px;
+            padding: 62px 24px 70px;
             display: grid;
-            grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
+            grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
             gap: 34px;
             align-items: center;
-        }
-
-        .error-content {
-            position: relative;
-            z-index: 2;
         }
 
         .eyebrow {
@@ -227,21 +187,21 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
         .error-code strong {
-            font-size: clamp(72px, 12vw, 150px);
+            font-size: clamp(78px, 13vw, 150px);
             line-height: 0.86;
             font-weight: 900;
             letter-spacing: -0.09em;
-            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 75%);
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 76%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
 
-        .error-code .small-car {
+        .small-car {
             width: 76px;
             height: 76px;
             border-radius: 24px;
@@ -256,7 +216,7 @@
         }
 
         .error-title {
-            max-width: 700px;
+            max-width: 760px;
             font-size: clamp(32px, 5vw, 58px);
             line-height: 1.05;
             font-weight: 900;
@@ -266,10 +226,11 @@
         }
 
         .error-description {
-            max-width: 690px;
+            max-width: 720px;
             color: var(--muted);
             font-size: 17px;
             line-height: 1.8;
+            font-weight: 550;
             margin-bottom: 28px;
         }
 
@@ -278,7 +239,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 13px;
-            margin-bottom: 28px;
+            margin-bottom: 26px;
         }
 
         .btn {
@@ -292,49 +253,20 @@
             border: 1px solid transparent;
             font-size: 14px;
             font-weight: 900;
-            cursor: pointer;
             transition: 0.25s ease;
             white-space: nowrap;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 14px 30px rgba(245, 130, 32, 0.30);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-        }
-
-        .btn-dark {
-            background: var(--dark);
-            color: white;
-            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18);
-        }
-
-        .btn-dark:hover {
-            background: #020617;
-            transform: translateY(-2px);
-        }
-
-        .btn-light {
-            background: white;
-            color: var(--dark);
-            border-color: var(--border);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-light:hover {
-            border-color: rgba(245, 130, 32, 0.45);
-            color: var(--primary-hover);
-            transform: translateY(-2px);
-        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 14px 30px rgba(245, 130, 32, 0.30); }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn-dark { background: var(--dark); color: white; box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18); }
+        .btn-dark:hover { background: #020617; transform: translateY(-2px); }
+        .btn-light { background: white; color: var(--dark); border-color: var(--border); box-shadow: var(--shadow-sm); }
+        .btn-light:hover { border-color: rgba(245, 130, 32, 0.45); color: var(--primary-hover); transform: translateY(-2px); }
 
         .search-box {
-            max-width: 700px;
-            background: rgba(255, 255, 255, 0.84);
+            max-width: 720px;
+            background: rgba(255, 255, 255, 0.86);
             border: 1px solid var(--border);
             border-radius: 24px;
             padding: 14px;
@@ -346,18 +278,8 @@
             margin-bottom: 24px;
         }
 
-        .search-input-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-input-wrap i {
-            position: absolute;
-            left: 17px;
-            color: var(--muted-light);
-            font-size: 15px;
-        }
+        .search-input-wrap { position: relative; display: flex; align-items: center; }
+        .search-input-wrap i { position: absolute; left: 17px; color: var(--muted-light); font-size: 15px; }
 
         .search-box input {
             width: 100%;
@@ -368,7 +290,7 @@
             padding: 0 18px 0 44px;
             color: var(--dark);
             font-size: 15px;
-            font-weight: 700;
+            font-weight: 750;
             outline: none;
             transition: 0.25s ease;
         }
@@ -388,14 +310,10 @@
             color: white;
             font-size: 14px;
             font-weight: 900;
-            cursor: pointer;
             transition: 0.25s ease;
         }
 
-        .search-box button:hover {
-            background: var(--primary);
-            transform: translateY(-1px);
-        }
+        .search-box button:hover { background: var(--primary); transform: translateY(-1px); }
 
         .help-links {
             display: grid;
@@ -405,11 +323,11 @@
         }
 
         .help-card {
-            background: rgba(255, 255, 255, 0.78);
+            background: rgba(255, 255, 255, 0.80);
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 18px;
-            min-height: 122px;
+            min-height: 126px;
             box-shadow: var(--shadow-sm);
             transition: 0.25s ease;
         }
@@ -432,26 +350,10 @@
             font-size: 16px;
         }
 
-        .help-card strong {
-            display: block;
-            font-size: 14px;
-            font-weight: 900;
-            color: var(--dark);
-            margin-bottom: 6px;
-        }
+        .help-card strong { display: block; font-size: 14px; font-weight: 900; color: var(--dark); margin-bottom: 6px; }
+        .help-card span { display: block; font-size: 12px; line-height: 1.55; color: var(--muted); font-weight: 650; }
 
-        .help-card span {
-            display: block;
-            font-size: 12px;
-            line-height: 1.55;
-            color: var(--muted);
-            font-weight: 600;
-        }
-
-        .visual-panel {
-            position: relative;
-            min-height: 560px;
-        }
+        .visual-panel { position: relative; min-height: 560px; }
 
         .panel-card {
             position: relative;
@@ -459,35 +361,24 @@
             min-height: 560px;
             border-radius: 34px;
             background:
-                linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.88) 100%),
-                radial-gradient(circle at top right, rgba(245, 130, 32, 0.45), transparent 38%);
+                linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(15, 23, 42, 0.88) 100%),
+                radial-gradient(circle at top right, rgba(245, 130, 32, 0.45), transparent 40%);
             box-shadow: var(--shadow-lg);
             border: 1px solid rgba(255, 255, 255, 0.12);
             padding: 32px;
             color: white;
         }
 
-        .panel-card::before {
-            content: "";
-            position: absolute;
-            width: 420px;
-            height: 420px;
-            border-radius: 999px;
-            background: rgba(245, 130, 32, 0.14);
-            top: -120px;
-            right: -140px;
-        }
-
+        .panel-card::before,
         .panel-card::after {
             content: "";
             position: absolute;
-            width: 280px;
-            height: 280px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.06);
-            bottom: -110px;
-            left: -110px;
+            pointer-events: none;
         }
+
+        .panel-card::before { width: 420px; height: 420px; background: rgba(245, 130, 32, 0.14); top: -120px; right: -140px; }
+        .panel-card::after { width: 280px; height: 280px; background: rgba(255, 255, 255, 0.06); bottom: -110px; left: -110px; }
 
         .floating-label {
             position: relative;
@@ -498,7 +389,6 @@
             gap: 9px;
             background: rgba(255, 255, 255, 0.10);
             border: 1px solid rgba(255, 255, 255, 0.14);
-            color: white;
             border-radius: var(--radius-full);
             padding: 10px 14px;
             font-size: 12px;
@@ -507,9 +397,7 @@
             letter-spacing: 0.06em;
         }
 
-        .floating-label i {
-            color: var(--primary);
-        }
+        .floating-label i { color: var(--primary); }
 
         .car-illustration {
             position: relative;
@@ -589,13 +477,8 @@
             box-shadow: inset 0 0 0 10px #64748b;
         }
 
-        .wheel.left {
-            left: 58px;
-        }
-
-        .wheel.right {
-            right: 58px;
-        }
+        .wheel.left { left: 58px; }
+        .wheel.right { right: 58px; }
 
         .road {
             position: absolute;
@@ -619,42 +502,199 @@
             backdrop-filter: blur(14px);
         }
 
-        .status-box h2 {
-            font-size: 22px;
-            font-weight: 900;
-            letter-spacing: -0.04em;
-            margin-bottom: 10px;
+        .status-box h2 { font-size: 22px; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 10px; }
+        .status-box p { color: #cbd5e1; font-size: 14px; line-height: 1.7; margin-bottom: 18px; }
+        .status-list { display: grid; gap: 10px; }
+        .status-item { display: flex; align-items: center; gap: 12px; color: #e2e8f0; font-size: 13px; font-weight: 750; }
+        .status-item i { width: 28px; height: 28px; border-radius: 10px; display: grid; place-items: center; background: rgba(245, 130, 32, 0.16); color: var(--primary); }
+
+        .site-footer {
+            border-top: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
         }
 
-        .status-box p {
-            color: #cbd5e1;
-            font-size: 14px;
-            line-height: 1.7;
-            margin-bottom: 18px;
-        }
-
-        .status-list {
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 24px;
             display: grid;
-            gap: 10px;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 20px;
+            align-items: center;
         }
 
-        .status-item {
+        .footer-brand strong { display: block; color: var(--dark); font-size: 15px; font-weight: 900; margin-bottom: 6px; }
+        .footer-brand span { display: block; color: var(--muted); font-size: 12px; font-weight: 700; line-height: 1.6; }
+
+        .footer-links {
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: #e2e8f0;
-            font-size: 13px;
-            font-weight: 700;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 10px 14px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 850;
         }
 
-        .status-item i {
-            width: 28px;
-            height: 28px;
-            border-radius: 10px;
-            display: grid;
-            place-items: center;
-            background: rgba(245, 130, 32, 0.16);
-            color: var(--primary);
+        .footer-links a:hover { color: var(--primary-hover); }
+
+        @media (max-width: 980px) {
+            .not-found-section { grid-template-columns: 1fr; padding-top: 46px; }
+            .visual-panel, .panel-card { min-height: 440px; }
+            .car-illustration { margin-top: 56px; }
         }
 
-        .
+        @media (max-width: 720px) {
+            .top-notice { padding: 10px 16px; font-size: 12px; }
+            .header-inner { flex-direction: column; align-items: flex-start; padding: 14px 18px; }
+            .logo { font-size: 1.55rem; }
+            .nav-links { width: 100%; overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; padding-bottom: 2px; }
+            .nav-link { white-space: nowrap; font-size: 13px; padding: 9px 13px; }
+            .not-found-section { padding: 34px 18px 52px; }
+            .search-box { grid-template-columns: 1fr; }
+            .search-box button { width: 100%; }
+            .help-links { grid-template-columns: 1fr; }
+            .footer-inner { grid-template-columns: 1fr; }
+            .footer-links { justify-content: flex-start; }
+            .visual-panel { display: none; }
+        }
+
+        @media (max-width: 430px) {
+            .logo-icon { width: 38px; height: 38px; }
+            .error-code { align-items: flex-end; }
+            .small-car { width: 62px; height: 62px; border-radius: 20px; font-size: 24px; }
+            .error-title { font-size: 32px; }
+            .action-row .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-notice">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <span>VORQ Fordon är en annonsplattform för fordonsannonser. Plattformen äger, säljer, kontrollerar eller garanterar inte fordonen.</span>
+    </div>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo" aria-label="Gå till VORQ Fordon startsida">
+                <span class="logo-icon" aria-hidden="true"><i class="fa-solid fa-car-side"></i></span>
+                VORQ <span>Fordon</span>
+            </a>
+
+            <nav class="nav-links" aria-label="Huvudmeny">
+                <a href="index.html" class="nav-link"><i class="fa-solid fa-house" aria-hidden="true"></i> Hem</a>
+                <a href="filter.html" class="nav-link"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Sök</a>
+                <a href="notice-action.html" class="nav-link"><i class="fa-solid fa-flag" aria-hidden="true"></i> Rapportera</a>
+                <a href="sell.html" class="nav-link primary"><i class="fa-solid fa-plus" aria-hidden="true"></i> Lägg till annons</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="not-found-section" aria-labelledby="pageTitle">
+            <div class="error-content">
+                <div class="eyebrow"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Sidan hittades inte</div>
+
+                <div class="error-code" aria-label="404">
+                    <strong>404</strong>
+                    <span class="small-car" aria-hidden="true"><i class="fa-solid fa-car-burst"></i></span>
+                </div>
+
+                <h1 class="error-title" id="pageTitle">Den här sidan verkar ha kört fel väg.</h1>
+
+                <p class="error-description">
+                    Länken kan vara gammal, sidan kan ha flyttats eller adressen kan vara felstavad.
+                    Du kan gå tillbaka till startsidan, söka bland annonser eller rapportera ett problem till VORQ Fordon.
+                </p>
+
+                <div class="action-row" aria-label="Snabblänkar">
+                    <a href="index.html" class="btn btn-primary"><i class="fa-solid fa-house" aria-hidden="true"></i> Till startsidan</a>
+                    <a href="filter.html" class="btn btn-dark"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Sök annonser</a>
+                    <a href="javascript:history.back()" class="btn btn-light"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Gå tillbaka</a>
+                </div>
+
+                <form class="search-box" id="notFoundSearch" role="search" aria-label="Sök fordonsannonser">
+                    <div class="search-input-wrap">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <input id="searchInput" name="q" type="search" maxlength="80" autocomplete="off" placeholder="Sök efter märke, modell eller plats">
+                    </div>
+                    <button type="submit">Sök</button>
+                </form>
+
+                <div class="help-links" aria-label="Hjälpsamma länkar">
+                    <a class="help-card" href="sell.html">
+                        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i>
+                        <strong>Publicera annons</strong>
+                        <span>Lägg till en fordonsannons med tydliga uppgifter och bilder.</span>
+                    </a>
+
+                    <a class="help-card" href="notice-action.html">
+                        <i class="fa-solid fa-flag" aria-hidden="true"></i>
+                        <strong>Rapportera annons</strong>
+                        <span>Anmäl felaktiga, misstänkta eller vilseledande annonser.</span>
+                    </a>
+
+                    <a class="help-card" href="foretagsinfo.html">
+                        <i class="fa-solid fa-building" aria-hidden="true"></i>
+                        <strong>Företagsinfo</strong>
+                        <span>Se information om ansvarig operatör och kontaktvägar.</span>
+                    </a>
+                </div>
+            </div>
+
+            <aside class="visual-panel" aria-hidden="true">
+                <div class="panel-card">
+                    <div class="floating-label"><i class="fa-solid fa-route"></i> Fel väg · säker omdirigering</div>
+
+                    <div class="car-illustration">
+                        <div class="car-body"></div>
+                        <div class="window"></div>
+                        <div class="wheel left"></div>
+                        <div class="wheel right"></div>
+                        <div class="road"></div>
+                    </div>
+
+                    <div class="status-box">
+                        <h2>Vad kan du göra nu?</h2>
+                        <p>Välj en säker väg tillbaka till fungerande sidor på VORQ Fordon.</p>
+                        <div class="status-list">
+                            <div class="status-item"><i class="fa-solid fa-check"></i> Startsidan är tillgänglig via huvudmenyn.</div>
+                            <div class="status-item"><i class="fa-solid fa-check"></i> Sökfunktionen leder till filtersidan.</div>
+                            <div class="status-item"><i class="fa-solid fa-check"></i> Rapportering sker via Rapportera-sidan.</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <strong>VORQ Fordon</strong>
+                <span>Drivs under VORQ Digital, Inhaber: Haitham Kojar. Fordonsannonser för den svenska marknaden.</span>
+                <span>Kontakt: info@vorq.group</span>
+            </div>
+
+            <nav class="footer-links" aria-label="Juridiska länkar">
+                <a href="foretagsinfo.html">Företagsinfo</a>
+                <a href="legal.html">Legal</a>
+                <a href="privacy.html">Integritet</a>
+                <a href="cookies.html">Cookies</a>
+                <a href="notice-action.html">Rapportera</a>
+            </nav>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("notFoundSearch")?.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const query = String(document.getElementById("searchInput")?.value || "").trim();
+            const target = query ? `filter.html?q=${encodeURIComponent(query)}` : "filter.html";
+            window.location.href = target;
+        });
+    </script>
+</body>
+</html>

@@ -12,8 +12,8 @@
  * info@vorq.group
  *
  * Legal note:
- * VORQ Fordon is a Swedish vehicle-advertising platform. VORQ Digital does not
- * own, sell, inspect, store, guarantee, or control vehicles advertised by users.
+ * VORQ Fordon is a vehicle-advertising platform directed to the Swedish market.
+ * VORQ Digital does not own, sell, inspect, store, guarantee, or control vehicles advertised by users.
  *
  * Security notes:
  * 1. Firebase Web Config is public by design. It is NOT an Admin secret.
@@ -88,6 +88,7 @@ const APP_CHECK_RECAPTCHA_ENTERPRISE_SITE_KEY = "";
 
 /**
  * Optional: after deployment, add your exact production domains here.
+ * The current bilmarknad-hk domains are technical Firebase project domains, not the public brand name.
  * Empty array means no frontend host-blocking is applied.
  * Security must still be enforced by Firebase Rules and Google Cloud restrictions.
  */
@@ -126,10 +127,14 @@ export const APP_META = Object.freeze({
     LONG_NAME: "VORQ Fordon",
     OWNER_NAME: "VORQ Digital, Inhaber: Haitham Kojar",
     OWNER_EMAIL: "info@vorq.group",
-    OWNER_SLOGAN: "VORQ Fordon – fordonsannonser i Sverige",
+    OWNER_SLOGAN: "VORQ Fordon – fordonsannonsplattform riktad till den svenska marknaden",
     BUSINESS_NAME: "VORQ Digital",
     LEGAL_RESPONSIBLE_PERSON: "Haitham Kojar",
     LEGAL_OPERATOR: "VORQ Digital, Inhaber: Haitham Kojar",
+    LEGAL_ADDRESS: "Ziegelstraße 26, 42289 Wuppertal, Deutschland",
+    LEGAL_FORM: "nicht eingetragenes gewerbliches Einzelunternehmen",
+    REGISTERED_ACTIVITY: "IT-Dienstleistungen, Webdesign, Webentwicklung und Betrieb von Internetportalen",
+    PLATFORM_MARKET: "Fordonsannonsplattform riktad till den svenska marknaden",
     PROJECT_TYPE: "vehicle_classifieds_platform",
     MARKET_COUNTRY: "SE",
     DEFAULT_LANGUAGE: "sv",
