@@ -8,14 +8,18 @@ Status: Updated
 Change note: Bumps cache after delete/report fixes so browsers do not keep old broken pages.
 */
 
-/* VORQ Fordon service worker
-   Project operator in legal pages: VORQ Digital, Inhaber: Haitham Kojar.
-   VORQ Fordon is a vehicle-ad platform directed to the Swedish market.
-   No payment, invoice or pricing logic is handled here.
+/*
+VORQ-FORDON-FILE-VERSION
+File: service-worker.js
+Project: VORQ Fordon
+Version: 2026-06-06-report-hotfix-v2
+Last reviewed/updated: 2026-06-06 22:15 Europe/Berlin
+Status: Updated
+Change note: Cache bumped so browsers fetch the corrected notice-action.html and Firestore-dependent pages.
 */
 
 const CACHE_PREFIX = "vorq-fordon-pwa-";
-const CACHE_NAME = `${CACHE_PREFIX}v14-20260606`;
+const CACHE_NAME = `${CACHE_PREFIX}v14-20260606-report-hotfix`;
 
 const APP_SHELL = [
   "./",

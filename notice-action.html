@@ -3,10 +3,10 @@
 VORQ-FORDON-FILE-VERSION
 File: notice-action.html
 Project: VORQ Fordon
-Version: 2026-06-06-report-fix-v1
-Last reviewed/updated: 2026-06-06 21:35 Europe/Berlin
+Version: 2026-06-06-report-hotfix-v2
+Last reviewed/updated: 2026-06-06 22:15 Europe/Berlin
 Status: Updated
-Change note: Aligns report form payload with Firestore rules and adds DSA-friendly reporter/contact and content URL fields.
+Change note: Hotfix for report submission; aligns payload with Firestore rules and shows permission-specific diagnostics.
 -->
 <html lang="sv">
 <head>
@@ -731,7 +731,7 @@ Change note: Aligns report form payload with Firestore rules and adds DSA-friend
                 showStatus(successMessage, "success");
             } catch (error) {
                 console.error("[VORQ Fordon] Could not submit report", error);
-                showStatus("Rapporten kunde inte skickas just nu. Kontrollera internetanslutningen och försök igen, eller kontakta info@vq-dx.com.", "error");
+                showStatus(getReadableSubmitError(error), "error");
             } finally {
                 setSubmitting(false);
             }
@@ -747,6 +747,10 @@ Change note: Aligns report form payload with Firestore rules and adds DSA-friend
             const description = cleanLongText(elements.description.value, REPORT_CONFIG.MAX_DESCRIPTION_LENGTH);
             const user = state.currentUser;
 
+            /*
+             * Keep the report payload intentionally small and stable.
+             * Firestore Rules are strict, so every field below must be allowed there.
+             */
             return removeEmptyFields({
                 adId,
                 annonsnummer: adId,
@@ -758,7 +762,7 @@ Change note: Aligns report form payload with Firestore rules and adds DSA-friend
                 reporterEmail,
                 reporterId: user?.uid || null,
                 reporterUserEmail: user?.email || null,
-                status: "new",
+                status: "received",
                 priority: category === "illegal_content" || category === "suspected_fraud" ? "high" : "normal",
                 platform: "VORQ Fordon",
                 operator: "VORQ Digital, Inhaber: Haitham Kojar",
@@ -770,7 +774,6 @@ Change note: Aligns report form payload with Firestore rules and adds DSA-friend
                 privacyAccepted: Boolean(elements.privacyAccepted.checked),
                 privacyVersion: REPORT_CONFIG.PRIVACY_VERSION,
                 noticeActionVersion: REPORT_CONFIG.TERMS_VERSION,
-                userAgent: navigator.userAgent || "",
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
             });
@@ -810,6 +813,21 @@ Change note: Aligns report form payload with Firestore rules and adds DSA-friend
             }
 
             return "";
+        }
+
+        function getReadableSubmitError(error) {
+            const code = String(error?.code || "").toLowerCase();
+            const message = String(error?.message || "").toLowerCase();
+
+            if (code.includes("permission-denied") || message.includes("permission-denied") || message.includes("insufficient permissions")) {
+                return "Rapporten stoppades av Firestore-reglerna. Publicera den nya firestore.rules.txt i Firebase Console → Firestore Database → Rules → Publish och försök igen. Teknisk kod: permission-denied.";
+            }
+
+            if (code.includes("unavailable") || code.includes("network") || message.includes("network")) {
+                return "Rapporten kunde inte skickas på grund av nätverksproblem. Kontrollera internetanslutningen och försök igen, eller kontakta info@vq-dx.com.";
+            }
+
+            return `Rapporten kunde inte skickas just nu. Kontakta info@vq-dx.com. Teknisk kod: ${error?.code || "okänd"}.`;
         }
 
         function setSubmitting(isSubmitting) {
