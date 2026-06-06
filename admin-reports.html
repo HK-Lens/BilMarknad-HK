@@ -1,0 +1,1149 @@
+<!--
+  VORQ Fordon - admin-reports.html
+  Project: VORQ Fordon / VORQ Digital
+  File version: admin-reports-v1-20260606
+  Last reviewed/updated: 2026-06-06 23:05 Europe/Berlin
+  Status: Admin moderation page for reports, email follow-up links, and ad moderation actions.
+  Important: Access must also be enforced by firestore.rules.txt. Do not rely on client-side checks alone.
+-->
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin rapporter | VORQ Fordon</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Intern adminsida för hantering av rapporter och annonsmoderering på VORQ Fordon.">
+  <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary:#f58220;
+      --primary-hover:#e67312;
+      --primary-soft:rgba(245,130,32,.12);
+      --dark:#0f172a;
+      --muted:#64748b;
+      --bg:#f8fafc;
+      --surface:#fff;
+      --surface-soft:#f1f5f9;
+      --border:#e2e8f0;
+      --danger:#dc2626;
+      --danger-soft:rgba(220,38,38,.10);
+      --success:#16a34a;
+      --success-soft:rgba(22,163,74,.10);
+      --warning:#f59e0b;
+      --warning-soft:rgba(245,158,11,.14);
+      --info:#2563eb;
+      --info-soft:rgba(37,99,235,.10);
+      --shadow:0 18px 45px rgba(15,23,42,.10);
+      --radius:24px;
+      --radius-full:999px;
+      --max-width:1280px;
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      min-height:100vh;
+      font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(245,130,32,.14), transparent 30%),
+        radial-gradient(circle at 92% 0%, rgba(15,23,42,.10), transparent 32%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+      color:var(--dark);
+    }
+    a { color:inherit; text-decoration:none; }
+    button, input, select, textarea { font:inherit; }
+    button { cursor:pointer; }
+
+    .top-warning {
+      padding:10px 18px;
+      background:linear-gradient(90deg, var(--dark), #1e293b 70%, #2b1d12);
+      color:#fff;
+      text-align:center;
+      font-size:12px;
+      font-weight:800;
+      line-height:1.5;
+    }
+    .top-warning i { color:var(--primary); }
+
+    .site-header {
+      background:rgba(255,255,255,.94);
+      border-bottom:1px solid var(--border);
+      backdrop-filter:blur(18px);
+      position:sticky;
+      top:0;
+      z-index:50;
+    }
+    .header-inner {
+      max-width:var(--max-width);
+      margin:0 auto;
+      padding:15px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+    }
+    .logo { display:inline-flex; align-items:center; min-width:0; }
+    .logo img { width:260px; max-width:46vw; max-height:58px; object-fit:contain; display:block; }
+    .header-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; }
+    .pill, .nav-btn {
+      min-height:40px;
+      border:1px solid var(--border);
+      border-radius:var(--radius-full);
+      background:#fff;
+      padding:9px 13px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      color:var(--dark);
+      font-size:12px;
+      font-weight:900;
+    }
+    .nav-btn:hover { border-color:rgba(245,130,32,.45); color:var(--primary-hover); }
+    .pill.admin { background:var(--success-soft); color:#166534; border-color:rgba(22,163,74,.20); }
+    .pill.blocked { background:var(--danger-soft); color:#991b1b; border-color:rgba(220,38,38,.22); }
+
+    .page-shell { max-width:var(--max-width); margin:0 auto; padding:34px 22px 70px; }
+    .hero {
+      background:linear-gradient(135deg, rgba(15,23,42,.98), rgba(30,41,59,.95));
+      color:#fff;
+      border-radius:32px;
+      padding:34px;
+      box-shadow:var(--shadow);
+      margin-bottom:22px;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:20px;
+      align-items:end;
+      overflow:hidden;
+      position:relative;
+    }
+    .hero::after {
+      content:"";
+      position:absolute;
+      right:-130px;
+      top:-130px;
+      width:320px;
+      height:320px;
+      border-radius:999px;
+      background:rgba(245,130,32,.18);
+    }
+    .hero > * { position:relative; z-index:1; }
+    .eyebrow {
+      width:fit-content;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 13px;
+      border-radius:var(--radius-full);
+      background:rgba(255,255,255,.10);
+      color:#e2e8f0;
+      font-size:12px;
+      font-weight:900;
+      margin-bottom:13px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    h1 { font-size:clamp(30px,4vw,48px); line-height:1.06; letter-spacing:-.055em; margin-bottom:12px; }
+    .hero p { color:#cbd5e1; max-width:850px; line-height:1.75; font-size:14px; font-weight:650; }
+
+    .toolbar {
+      background:rgba(255,255,255,.96);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:16px;
+      box-shadow:0 8px 22px rgba(15,23,42,.06);
+      display:grid;
+      grid-template-columns:minmax(220px,1fr) minmax(150px,220px) auto auto;
+      gap:12px;
+      align-items:center;
+      margin-bottom:18px;
+    }
+    .toolbar input, .toolbar select {
+      width:100%;
+      min-height:46px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:10px 13px;
+      background:#fff;
+      color:var(--dark);
+      font-weight:750;
+      outline:none;
+    }
+    .toolbar input:focus, .toolbar select:focus, textarea:focus {
+      border-color:var(--primary);
+      box-shadow:0 0 0 4px rgba(245,130,32,.10);
+    }
+    .btn {
+      min-height:44px;
+      border:none;
+      border-radius:var(--radius-full);
+      padding:10px 14px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      font-size:12px;
+      font-weight:900;
+      transition:.22s ease;
+      white-space:nowrap;
+    }
+    .btn:hover { transform:translateY(-1px); }
+    .btn-primary { background:var(--primary); color:#fff; }
+    .btn-dark { background:var(--dark); color:#fff; }
+    .btn-light { background:#fff; color:var(--dark); border:1px solid var(--border); }
+    .btn-info { background:var(--info-soft); color:var(--info); }
+    .btn-warning { background:var(--warning-soft); color:#92400e; }
+    .btn-success { background:var(--success-soft); color:#166534; }
+    .btn-danger { background:var(--danger-soft); color:#991b1b; }
+    .btn[disabled] { opacity:.55; cursor:not-allowed; transform:none; }
+
+    .stats-grid {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:12px;
+      margin-bottom:18px;
+    }
+    .stat-card {
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:16px;
+      box-shadow:0 6px 18px rgba(15,23,42,.05);
+    }
+    .stat-card strong { display:block; font-size:26px; font-weight:900; letter-spacing:-.04em; }
+    .stat-card span { color:var(--muted); font-size:12px; font-weight:850; }
+
+    .status-box {
+      display:none;
+      margin-bottom:16px;
+      padding:14px 16px;
+      border-radius:18px;
+      font-size:13px;
+      font-weight:800;
+      line-height:1.6;
+    }
+    .status-box.visible { display:block; }
+    .status-box.error { background:var(--danger-soft); border:1px solid rgba(220,38,38,.22); color:#991b1b; }
+    .status-box.success { background:var(--success-soft); border:1px solid rgba(22,163,74,.22); color:#166534; }
+    .status-box.info { background:var(--info-soft); border:1px solid rgba(37,99,235,.20); color:#1e3a8a; }
+
+    .reports-list { display:grid; gap:16px; }
+    .report-card {
+      background:rgba(255,255,255,.97);
+      border:1px solid var(--border);
+      border-radius:26px;
+      box-shadow:0 9px 28px rgba(15,23,42,.07);
+      overflow:hidden;
+    }
+    .report-head {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:14px;
+      padding:18px 20px;
+      background:#fff;
+      border-bottom:1px solid var(--border);
+      align-items:start;
+    }
+    .report-title { min-width:0; }
+    .report-title h2 {
+      font-size:19px;
+      line-height:1.25;
+      font-weight:900;
+      letter-spacing:-.035em;
+      margin-bottom:7px;
+      word-break:break-word;
+    }
+    .badges { display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+    .badge {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border-radius:var(--radius-full);
+      padding:6px 9px;
+      font-size:11px;
+      font-weight:900;
+      background:var(--surface-soft);
+      color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .badge.new { background:#fff7ed; color:#92400e; border-color:#fed7aa; }
+    .badge.under_review { background:var(--info-soft); color:#1e40af; border-color:rgba(37,99,235,.18); }
+    .badge.action_taken { background:var(--success-soft); color:#166534; border-color:rgba(22,163,74,.20); }
+    .badge.rejected { background:var(--danger-soft); color:#991b1b; border-color:rgba(220,38,38,.20); }
+    .badge.needs_more_info { background:var(--warning-soft); color:#92400e; border-color:rgba(245,158,11,.25); }
+
+    .report-body {
+      display:grid;
+      grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);
+      gap:16px;
+      padding:18px 20px 20px;
+    }
+    .data-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .data-item {
+      background:var(--surface-soft);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px;
+      min-width:0;
+    }
+    .data-item.full { grid-column:1/-1; }
+    .data-item span { display:block; color:var(--muted); font-size:11px; font-weight:900; margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em; }
+    .data-item strong, .data-item p { color:var(--dark); font-size:13px; font-weight:800; line-height:1.55; word-break:break-word; white-space:pre-wrap; }
+    .data-item p { color:#334155; font-weight:650; }
+
+    .actions-panel {
+      display:grid;
+      gap:12px;
+      align-content:start;
+    }
+    .panel-box {
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:14px;
+    }
+    .panel-box h3 { font-size:14px; font-weight:900; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+    .panel-box h3 i { color:var(--primary); }
+    .action-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .action-grid.one { grid-template-columns:1fr; }
+    .decision-reason {
+      width:100%;
+      min-height:92px;
+      resize:vertical;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px;
+      background:#fff;
+      outline:none;
+      color:var(--dark);
+      font-size:13px;
+      font-weight:650;
+      line-height:1.6;
+      margin-bottom:10px;
+    }
+    .small-note { color:var(--muted); font-size:11px; font-weight:750; line-height:1.55; margin-top:8px; }
+
+    .empty-state {
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:26px;
+      padding:42px 22px;
+      text-align:center;
+      color:var(--muted);
+      font-weight:800;
+      box-shadow:0 8px 22px rgba(15,23,42,.05);
+    }
+    .empty-state i { color:var(--primary); font-size:34px; margin-bottom:14px; display:block; }
+
+    @media(max-width:980px) {
+      .hero { grid-template-columns:1fr; }
+      .toolbar { grid-template-columns:1fr 1fr; }
+      .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .report-body { grid-template-columns:1fr; }
+    }
+    @media(max-width:640px) {
+      .header-inner { flex-direction:column; align-items:flex-start; }
+      .logo img { max-width:86vw; width:260px; }
+      .toolbar { grid-template-columns:1fr; }
+      .stats-grid { grid-template-columns:1fr; }
+      .report-head { grid-template-columns:1fr; }
+      .data-grid { grid-template-columns:1fr; }
+      .action-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-warning">
+    <i class="fa-solid fa-lock"></i>
+    Intern sida för behöriga administratörer. Sidan ska inte länkas publikt.
+  </div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo" aria-label="VORQ Fordon startsida">
+        <img src="./vorq-fordon-logo-header.png" alt="VORQ Fordon">
+      </a>
+      <div class="header-actions">
+        <span class="pill" id="authPill"><i class="fa-solid fa-circle-notch fa-spin"></i> Kontrollerar...</span>
+        <a class="nav-btn" href="index.html"><i class="fa-solid fa-house"></i> Startsida</a>
+        <button type="button" class="nav-btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div>
+        <div class="eyebrow"><i class="fa-solid fa-shield-halved"></i> Admin moderation</div>
+        <h1>Rapporter och annonsåtgärder</h1>
+        <p>
+          Granska rapporter, öppna kopplad annons, kontakta rapportör eller annonsör via e-postlänk,
+          och pausa eller ta bort en annons från publicering. Alla beslut sparas i rapportdokumentet.
+        </p>
+      </div>
+      <button type="button" class="btn btn-primary" id="refreshTopBtn"><i class="fa-solid fa-rotate-right"></i> Uppdatera</button>
+    </section>
+
+    <section class="stats-grid" aria-label="Rapportstatistik">
+      <div class="stat-card"><strong id="statTotal">0</strong><span>Rapporter laddade</span></div>
+      <div class="stat-card"><strong id="statNew">0</strong><span>Nya / öppna</span></div>
+      <div class="stat-card"><strong id="statReview">0</strong><span>Under granskning</span></div>
+      <div class="stat-card"><strong id="statAction">0</strong><span>Åtgärdade</span></div>
+    </section>
+
+    <section class="toolbar" aria-label="Filter och sökning">
+      <input type="search" id="searchInput" maxlength="160" placeholder="Sök efter referens, annonsnummer, e-post, kategori eller text...">
+      <select id="statusFilter" aria-label="Filtrera status">
+        <option value="all">Alla statusar</option>
+        <option value="new">Nya / mottagna</option>
+        <option value="under_review">Under granskning</option>
+        <option value="needs_more_info">Behöver mer info</option>
+        <option value="action_taken">Åtgärdade</option>
+        <option value="rejected">Avslagna</option>
+      </select>
+      <button type="button" class="btn btn-light" id="refreshBtn"><i class="fa-solid fa-rotate-right"></i> Ladda om</button>
+      <a class="btn btn-dark" href="notice-action.html"><i class="fa-solid fa-flag"></i> Öppna rapportformulär</a>
+    </section>
+
+    <div class="status-box" id="statusBox" role="status" aria-live="polite"></div>
+    <section class="reports-list" id="reportsList" aria-label="Rapporter"></section>
+  </main>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import {
+      collection,
+      query,
+      orderBy,
+      limit,
+      getDocs,
+      getDoc,
+      doc,
+      updateDoc,
+      serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+    const ADMIN_CONFIG = Object.freeze({
+      ADMIN_EMAILS: ['info@vq-dx.com'],
+      COLLECTIONS: {
+        REPORTS: 'reports',
+        CARS: 'cars'
+      },
+      ROUTES: {
+        LOGIN: 'login.html',
+        DETAILS: 'details.html'
+      },
+      MAX_REPORTS: 100,
+      OFFICIAL_EMAIL: 'info@vq-dx.com'
+    });
+
+    const state = {
+      currentUser: null,
+      reports: [],
+      carCache: new Map(),
+      searchText: '',
+      statusFilter: 'all',
+      isLoading: false,
+      isAdmin: false
+    };
+
+    const elements = {
+      authPill: document.getElementById('authPill'),
+      logoutBtn: document.getElementById('logoutBtn'),
+      refreshTopBtn: document.getElementById('refreshTopBtn'),
+      refreshBtn: document.getElementById('refreshBtn'),
+      searchInput: document.getElementById('searchInput'),
+      statusFilter: document.getElementById('statusFilter'),
+      reportsList: document.getElementById('reportsList'),
+      statusBox: document.getElementById('statusBox'),
+      statTotal: document.getElementById('statTotal'),
+      statNew: document.getElementById('statNew'),
+      statReview: document.getElementById('statReview'),
+      statAction: document.getElementById('statAction')
+    };
+
+    initializeAdminPage();
+
+    function initializeAdminPage() {
+      elements.logoutBtn.addEventListener('click', logoutAdmin);
+      elements.refreshBtn.addEventListener('click', loadReports);
+      elements.refreshTopBtn.addEventListener('click', loadReports);
+      elements.searchInput.addEventListener('input', () => {
+        state.searchText = cleanText(elements.searchInput.value, 160).toLowerCase();
+        renderReports();
+      });
+      elements.statusFilter.addEventListener('change', () => {
+        state.statusFilter = elements.statusFilter.value || 'all';
+        renderReports();
+      });
+
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          window.location.href = `${ADMIN_CONFIG.ROUTES.LOGIN}?redirect=${encodeURIComponent(window.location.href)}`;
+          return;
+        }
+
+        state.currentUser = user;
+
+        state.isAdmin = await isAdminUser(user);
+
+        if (!state.isAdmin) {
+          renderBlocked(user);
+          return;
+        }
+
+        renderAdminPill(user);
+        await loadReports();
+      });
+    }
+
+    async function isAdminUser(user) {
+      const email = cleanEmail(user?.email);
+      if (!user?.uid) return false;
+      if (ADMIN_CONFIG.ADMIN_EMAILS.includes(email)) return true;
+
+      try {
+        const tokenResult = await user.getIdTokenResult(true);
+        return tokenResult?.claims?.admin === true;
+      } catch (error) {
+        console.warn('[VORQ Fordon] Could not read admin claims:', error);
+        return false;
+      }
+    }
+
+    function renderAdminPill(user) {
+      elements.authPill.className = 'pill admin';
+      elements.authPill.replaceChildren(createIcon('fa-solid fa-user-shield'), document.createTextNode(cleanEmail(user.email) || 'Admin'));
+    }
+
+    function renderBlocked(user) {
+      elements.authPill.className = 'pill blocked';
+      elements.authPill.replaceChildren(createIcon('fa-solid fa-ban'), document.createTextNode(cleanEmail(user.email) || 'Ej behörig'));
+      clearElement(elements.reportsList);
+      showStatus('Det här kontot är inte behörigt att läsa rapporter. Logga in med administratörskontot som finns i firestore.rules.txt och i ADMIN_CONFIG.ADMIN_EMAILS.', 'error');
+      updateStats([]);
+    }
+
+    async function logoutAdmin() {
+      await signOut(auth);
+      window.location.href = ADMIN_CONFIG.ROUTES.LOGIN;
+    }
+
+    async function loadReports() {
+      if (state.isLoading || !state.currentUser || !state.isAdmin) return;
+
+      state.isLoading = true;
+      showStatus('Laddar rapporter...', 'info');
+      setLoadingState();
+
+      try {
+        const reportsQuery = query(
+          collection(db, ADMIN_CONFIG.COLLECTIONS.REPORTS),
+          orderBy('createdAt', 'desc'),
+          limit(ADMIN_CONFIG.MAX_REPORTS)
+        );
+
+        const snapshot = await getDocs(reportsQuery);
+        const reports = snapshot.docs.map((reportDoc) => ({
+          id: reportDoc.id,
+          ...reportDoc.data()
+        }));
+
+        state.reports = reports;
+        await hydrateCarsForReports(reports);
+        renderReports();
+        showStatus(`Rapporter laddade: ${reports.length}`, 'success');
+      } catch (error) {
+        console.error('[VORQ Fordon] Admin reports load failed:', error);
+        showStatus(getReadableError(error), 'error');
+        renderEmptyState('Kunde inte ladda rapporter. Kontrollera att Firestore-reglerna är publicerade och att du är inloggad som admin.');
+      } finally {
+        state.isLoading = false;
+      }
+    }
+
+    async function hydrateCarsForReports(reports) {
+      const carIds = uniqueArray(reports.map(getReportAdId).filter(Boolean));
+
+      await Promise.all(carIds.map(async (carId) => {
+        if (state.carCache.has(carId)) return;
+
+        try {
+          const carSnapshot = await getDoc(doc(db, ADMIN_CONFIG.COLLECTIONS.CARS, carId));
+          state.carCache.set(carId, carSnapshot.exists() ? { id: carSnapshot.id, ...carSnapshot.data() } : null);
+        } catch (error) {
+          console.warn('[VORQ Fordon] Could not load linked car:', carId, error);
+          state.carCache.set(carId, null);
+        }
+      }));
+    }
+
+    function renderReports() {
+      const filtered = getFilteredReports();
+      updateStats(state.reports);
+      clearElement(elements.reportsList);
+
+      if (!filtered.length) {
+        renderEmptyState('Inga rapporter matchar filtret.');
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+      filtered.forEach((report) => fragment.appendChild(createReportCard(report)));
+      elements.reportsList.appendChild(fragment);
+    }
+
+    function getFilteredReports() {
+      return state.reports.filter((report) => {
+        const status = normalizeStatus(report.status);
+        const statusMatch = state.statusFilter === 'all' || status === state.statusFilter || (state.statusFilter === 'new' && ['new', 'open', 'received'].includes(status));
+        if (!statusMatch) return false;
+
+        if (!state.searchText) return true;
+
+        const car = state.carCache.get(getReportAdId(report)) || {};
+        const haystack = [
+          report.id,
+          report.adId,
+          report.annonsnummer,
+          report.carId,
+          report.category,
+          report.description,
+          report.reporterEmail,
+          report.reporterUserEmail,
+          report.reporterName,
+          report.status,
+          report.source,
+          car.sellerEmail,
+          car.sellerName,
+          car.brand,
+          car.model,
+          car.title
+        ].join(' ').toLowerCase();
+
+        return haystack.includes(state.searchText);
+      });
+    }
+
+    function createReportCard(report) {
+      const carId = getReportAdId(report);
+      const car = state.carCache.get(carId) || null;
+      const status = normalizeStatus(report.status);
+      const reporterEmail = getReporterEmail(report);
+      const sellerEmail = cleanEmail(car?.sellerEmail || car?.ownerEmail || '');
+      const sellerName = cleanText(car?.sellerName || car?.contactName || 'Annonsör', 100);
+      const decisionReasonId = `reason-${report.id}`;
+
+      const card = document.createElement('article');
+      card.className = 'report-card';
+
+      const head = document.createElement('div');
+      head.className = 'report-head';
+
+      const titleBox = document.createElement('div');
+      titleBox.className = 'report-title';
+      const title = document.createElement('h2');
+      title.textContent = `Rapport ${report.id}`;
+      const badges = document.createElement('div');
+      badges.className = 'badges';
+      badges.append(
+        createBadge(status, statusLabel(status)),
+        createBadge('', categoryLabel(report.category)),
+        createBadge('', `Annons: ${carId || 'saknas'}`),
+        createBadge('', formatTimestamp(report.createdAt))
+      );
+      titleBox.append(title, badges);
+
+      const topActions = document.createElement('div');
+      topActions.className = 'badges';
+      if (carId) {
+        const openAd = document.createElement('a');
+        openAd.className = 'btn btn-light';
+        openAd.href = `${ADMIN_CONFIG.ROUTES.DETAILS}?id=${encodeURIComponent(carId)}`;
+        openAd.target = '_blank';
+        openAd.rel = 'noopener';
+        openAd.append(createIcon('fa-solid fa-arrow-up-right-from-square'), document.createTextNode('Öppna annons'));
+        topActions.appendChild(openAd);
+      }
+      const copyRef = createButton('btn btn-light', 'fa-solid fa-copy', 'Kopiera ref', () => copyToClipboard(report.id));
+      topActions.appendChild(copyRef);
+
+      head.append(titleBox, topActions);
+
+      const body = document.createElement('div');
+      body.className = 'report-body';
+
+      const dataGrid = document.createElement('div');
+      dataGrid.className = 'data-grid';
+      dataGrid.append(
+        createDataItem('Reporter', report.reporterName || '-', reporterEmail || '-'),
+        createDataItem('Annonsör', sellerName || '-', sellerEmail || '-'),
+        createDataItem('Kategori', categoryLabel(report.category), report.category || '-'),
+        createDataItem('Källa', report.source || '-', report.pageUrl || report.contentUrl || report.url || '-'),
+        createDataItem('Annonsstatus', car ? buildCarStatusText(car) : 'Annons hittades inte', car?.title || `${car?.brand || ''} ${car?.model || ''}`.trim() || '-'),
+        createDataItem('Prioritet', report.priority || 'normal', report.operator || 'VORQ Digital, Inhaber: Haitham Kojar'),
+        createDataItem('Beskrivning', report.description || '-', '', true),
+        createDataItem('Beslut / historik', buildDecisionText(report), '', true)
+      );
+
+      const actionsPanel = document.createElement('div');
+      actionsPanel.className = 'actions-panel';
+
+      const decisionBox = document.createElement('div');
+      decisionBox.className = 'panel-box';
+      const decisionTitle = document.createElement('h3');
+      decisionTitle.append(createIcon('fa-solid fa-pen-to-square'), document.createTextNode('Beslut och åtgärd'));
+      const reasonInput = document.createElement('textarea');
+      reasonInput.className = 'decision-reason';
+      reasonInput.id = decisionReasonId;
+      reasonInput.maxLength = 900;
+      reasonInput.placeholder = 'Skriv kort skäl för beslutet. Exempel: Annonsen innehåller vilseledande uppgifter eller rapporten saknar tillräcklig information.';
+      const actionGrid = document.createElement('div');
+      actionGrid.className = 'action-grid';
+      actionGrid.append(
+        createButton('btn btn-info', 'fa-solid fa-magnifying-glass', 'Under granskning', () => markReport(report, 'under_review')),
+        createButton('btn btn-warning', 'fa-solid fa-circle-question', 'Behöver info', () => markReport(report, 'needs_more_info')),
+        createButton('btn btn-success', 'fa-solid fa-check', 'Åtgärdad', () => markReport(report, 'action_taken')),
+        createButton('btn btn-danger', 'fa-solid fa-xmark', 'Avslå rapport', () => markReport(report, 'rejected'))
+      );
+      decisionBox.append(decisionTitle, reasonInput, actionGrid, createSmallNote('Beslutet sparas i rapportdokumentet tillsammans med admin-e-post och tidpunkt.'));
+
+      const adBox = document.createElement('div');
+      adBox.className = 'panel-box';
+      const adTitle = document.createElement('h3');
+      adTitle.append(createIcon('fa-solid fa-car-side'), document.createTextNode('Annonsåtgärd'));
+      const adGrid = document.createElement('div');
+      adGrid.className = 'action-grid';
+      adGrid.append(
+        createButton('btn btn-warning', 'fa-solid fa-pause', 'Pausa annons', () => moderateAd(report, 'under_review'), !carId),
+        createButton('btn btn-danger', 'fa-solid fa-eye-slash', 'Ta bort från publicering', () => moderateAd(report, 'removed'), !carId),
+        createButton('btn btn-success', 'fa-solid fa-rotate-left', 'Aktivera igen', () => moderateAd(report, 'active'), !carId),
+        createButton('btn btn-light', 'fa-solid fa-copy', 'Kopiera annonsnr', () => copyToClipboard(carId || ''), !carId)
+      );
+      adBox.append(adTitle, adGrid, createSmallNote('Rekommenderat: använd mjuk borttagning först. Då sparas annonsdokumentet som bevis men visas inte offentligt om sidorna filtrerar status/isDeleted.'));
+
+      const emailBox = document.createElement('div');
+      emailBox.className = 'panel-box';
+      const emailTitle = document.createElement('h3');
+      emailTitle.append(createIcon('fa-solid fa-envelope'), document.createTextNode('E-postuppföljning'));
+      const emailGrid = document.createElement('div');
+      emailGrid.className = 'action-grid';
+      emailGrid.append(
+        createMailButton('Rapportör', reporterEmail, buildReporterMailSubject(report), buildReporterMailBody(report)),
+        createMailButton('Annonsör', sellerEmail, buildSellerMailSubject(report), buildSellerMailBody(report, car))
+      );
+      emailBox.append(emailTitle, emailGrid, createSmallNote('E-postknapparna använder mailto. För automatisk sändning från info@vq-dx.com behövs backend, t.ex. Cloud Functions + e-postleverantör.'));
+
+      actionsPanel.append(decisionBox, adBox, emailBox);
+      body.append(dataGrid, actionsPanel);
+      card.append(head, body);
+      return card;
+    }
+
+    function createDataItem(label, primary, secondary = '', full = false) {
+      const item = document.createElement('div');
+      item.className = full ? 'data-item full' : 'data-item';
+      const labelEl = document.createElement('span');
+      labelEl.textContent = label;
+      const primaryEl = full ? document.createElement('p') : document.createElement('strong');
+      primaryEl.textContent = String(primary || '-');
+      item.append(labelEl, primaryEl);
+      if (secondary) {
+        const secondaryEl = document.createElement('p');
+        secondaryEl.textContent = String(secondary);
+        item.appendChild(secondaryEl);
+      }
+      return item;
+    }
+
+    function createBadge(extraClass, text) {
+      const badge = document.createElement('span');
+      badge.className = extraClass ? `badge ${extraClass}` : 'badge';
+      badge.textContent = text;
+      return badge;
+    }
+
+    function createButton(className, iconClass, text, handler, disabled = false) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = className;
+      button.disabled = Boolean(disabled);
+      button.append(createIcon(iconClass), document.createTextNode(text));
+      button.addEventListener('click', handler);
+      return button;
+    }
+
+    function createMailButton(label, email, subject, body) {
+      const link = document.createElement('a');
+      link.className = email ? 'btn btn-light' : 'btn btn-light';
+      if (!email) {
+        link.setAttribute('aria-disabled', 'true');
+        link.style.opacity = '.55';
+        link.href = '#';
+        link.addEventListener('click', (event) => event.preventDefault());
+        link.append(createIcon('fa-solid fa-envelope'), document.createTextNode(`${label}: e-post saknas`));
+        return link;
+      }
+      const params = new URLSearchParams({ subject, body });
+      link.href = `mailto:${encodeURIComponent(email)}?${params.toString()}`;
+      link.append(createIcon('fa-solid fa-envelope'), document.createTextNode(`E-post till ${label}`));
+      return link;
+    }
+
+    function createSmallNote(text) {
+      const note = document.createElement('p');
+      note.className = 'small-note';
+      note.textContent = text;
+      return note;
+    }
+
+    async function markReport(report, status) {
+      const reason = getReasonValue(report.id);
+      const ownerDecisionMap = {
+        under_review: 'review_started',
+        needs_more_info: 'needs_more_information',
+        action_taken: 'action_taken',
+        rejected: 'no_action'
+      };
+
+      await updateReport(report.id, {
+        status,
+        ownerDecision: ownerDecisionMap[status] || status,
+        decisionReason: reason || defaultDecisionReason(status),
+        reviewedAt: serverTimestamp(),
+        reviewedBy: state.currentUser.uid,
+        reviewedByEmail: cleanEmail(state.currentUser.email),
+        updatedAt: serverTimestamp()
+      });
+    }
+
+    async function moderateAd(report, action) {
+      const carId = getReportAdId(report);
+      if (!carId) {
+        showStatus('Annonsnummer saknas. Kan inte ändra annonsen.', 'error');
+        return;
+      }
+
+      const reason = getReasonValue(report.id) || defaultAdReason(action);
+      const confirmed = window.confirm(`Bekräfta annonsåtgärd: ${actionLabel(action)} för annons ${carId}?`);
+      if (!confirmed) return;
+
+      const carRef = doc(db, ADMIN_CONFIG.COLLECTIONS.CARS, carId);
+      const carPayload = buildCarModerationPayload(action, report.id, reason);
+
+      try {
+        await updateDoc(carRef, carPayload);
+        state.carCache.delete(carId);
+        await updateReport(report.id, {
+          status: action === 'active' ? 'action_taken' : 'action_taken',
+          ownerDecision: action === 'active' ? 'ad_reactivated' : action === 'removed' ? 'ad_removed_from_publication' : 'ad_paused_under_review',
+          decisionReason: reason,
+          linkedAdStatus: action,
+          reviewedAt: serverTimestamp(),
+          reviewedBy: state.currentUser.uid,
+          reviewedByEmail: cleanEmail(state.currentUser.email),
+          actionTakenAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        }, false);
+        await loadReports();
+        showStatus(`Annonsåtgärd sparad: ${actionLabel(action)}.`, 'success');
+      } catch (error) {
+        console.error('[VORQ Fordon] Ad moderation failed:', error);
+        showStatus(getReadableError(error), 'error');
+      }
+    }
+
+    function buildCarModerationPayload(action, reportId, reason) {
+      const base = {
+        moderatedAt: serverTimestamp(),
+        moderatedBy: state.currentUser.uid,
+        moderatedByEmail: cleanEmail(state.currentUser.email),
+        moderationReportId: reportId,
+        moderationReason: reason,
+        updatedAt: serverTimestamp()
+      };
+
+      if (action === 'active') {
+        return {
+          ...base,
+          active: true,
+          isDeleted: false,
+          status: 'active',
+          moderationStatus: 'reactivated'
+        };
+      }
+
+      if (action === 'removed') {
+        return {
+          ...base,
+          active: false,
+          isDeleted: true,
+          status: 'removed',
+          moderationStatus: 'removed_from_publication'
+        };
+      }
+
+      return {
+        ...base,
+        active: false,
+        isDeleted: false,
+        status: 'under_review',
+        moderationStatus: 'under_review'
+      };
+    }
+
+    async function updateReport(reportId, payload, reload = true) {
+      try {
+        await updateDoc(doc(db, ADMIN_CONFIG.COLLECTIONS.REPORTS, reportId), payload);
+        showStatus('Rapporten har uppdaterats.', 'success');
+        if (reload) await loadReports();
+      } catch (error) {
+        console.error('[VORQ Fordon] Report update failed:', error);
+        showStatus(getReadableError(error), 'error');
+      }
+    }
+
+    function getReasonValue(reportId) {
+      return cleanLongText(document.getElementById(`reason-${reportId}`)?.value || '', 900);
+    }
+
+    function getReportAdId(report) {
+      return normalizeDocumentId(report?.adId || report?.carId || report?.annonsnummer || '');
+    }
+
+    function getReporterEmail(report) {
+      return cleanEmail(report?.reporterEmail || report?.reporterUserEmail || report?.email || '');
+    }
+
+    function normalizeStatus(status) {
+      const clean = cleanText(status || 'new', 80);
+      if (clean === 'open' || clean === 'received') return 'new';
+      return clean || 'new';
+    }
+
+    function statusLabel(status) {
+      const labels = {
+        new: 'Ny',
+        under_review: 'Under granskning',
+        needs_more_info: 'Behöver mer info',
+        action_taken: 'Åtgärdad',
+        rejected: 'Avslagen'
+      };
+      return labels[status] || status;
+    }
+
+    function categoryLabel(category) {
+      const labels = {
+        suspected_fraud: 'Misstänkt bedrägeri',
+        illegal_content: 'Misstänkt olagligt innehåll',
+        misleading_information: 'Vilseledande uppgifter',
+        stolen_vehicle_or_goods: 'Misstanke om stöld',
+        privacy_or_personal_data: 'Integritet/personuppgifter',
+        duplicate_or_spam: 'Spam/dubblett',
+        sold_or_unavailable: 'Inte längre tillgänglig',
+        other: 'Annat'
+      };
+      return labels[category] || cleanText(category || 'Okänd kategori', 120);
+    }
+
+    function buildCarStatusText(car) {
+      const active = car.active === false ? 'Inaktiv' : 'Aktiv';
+      const status = car.status || '-';
+      const deleted = car.isDeleted ? ' · borttagen från publicering' : '';
+      return `${active} · status: ${status}${deleted}`;
+    }
+
+    function buildDecisionText(report) {
+      const values = [
+        `Status: ${statusLabel(normalizeStatus(report.status))}`,
+        report.ownerDecision ? `Beslut: ${report.ownerDecision}` : '',
+        report.decisionReason ? `Skäl: ${report.decisionReason}` : '',
+        report.reviewedByEmail ? `Granskad av: ${report.reviewedByEmail}` : '',
+        report.linkedAdStatus ? `Annonsåtgärd: ${report.linkedAdStatus}` : ''
+      ].filter(Boolean);
+      return values.join('\n') || 'Ingen granskning sparad ännu.';
+    }
+
+    function defaultDecisionReason(status) {
+      const map = {
+        under_review: 'Rapporten har tagits emot och granskning har startat.',
+        needs_more_info: 'Rapporten saknar tillräcklig information för beslut.',
+        action_taken: 'Åtgärd har vidtagits efter granskning.',
+        rejected: 'Ingen tydlig överträdelse kunde fastställas utifrån tillgänglig information.'
+      };
+      return map[status] || 'Rapporten har granskats.';
+    }
+
+    function defaultAdReason(action) {
+      const map = {
+        under_review: 'Annonsen pausas medan rapporten granskas.',
+        removed: 'Annonsen tas bort från publicering efter rapport och granskning.',
+        active: 'Annonsen återaktiveras efter granskning.'
+      };
+      return map[action] || 'Administrativ annonsåtgärd.';
+    }
+
+    function actionLabel(action) {
+      const map = {
+        under_review: 'Pausa / under granskning',
+        removed: 'Ta bort från publicering',
+        active: 'Aktivera igen'
+      };
+      return map[action] || action;
+    }
+
+    function buildReporterMailSubject(report) {
+      return `VORQ Fordon – Rapport ${report.id}`;
+    }
+
+    function buildReporterMailBody(report) {
+      return [
+        'Hej,',
+        '',
+        `Tack för din rapport till VORQ Fordon. Referens: ${report.id}.`,
+        `Annonsnummer: ${getReportAdId(report) || '-'}.`,
+        '',
+        'Vi har tagit emot rapporten och kan granska innehållet enligt VORQ Fordons villkor och rapporteringsrutiner.',
+        '',
+        'Vänliga hälsningar,',
+        'VORQ Digital, Inhaber: Haitham Kojar',
+        ADMIN_CONFIG.OFFICIAL_EMAIL
+      ].join('\n');
+    }
+
+    function buildSellerMailSubject(report) {
+      return `VORQ Fordon – information om annons ${getReportAdId(report) || ''}`;
+    }
+
+    function buildSellerMailBody(report, car) {
+      return [
+        'Hej,',
+        '',
+        `Vi kontaktar dig gällande annons ${getReportAdId(report) || '-' } på VORQ Fordon.`,
+        car?.title ? `Annons: ${car.title}` : '',
+        '',
+        'Annonsen har rapporterats och kan komma att granskas enligt VORQ Fordons villkor. Kontrollera att uppgifter, bilder, pris och kontaktinformation är korrekta och lagliga.',
+        '',
+        'Om du anser att ett beslut är felaktigt kan du svara på detta meddelande och ange annonsnummer.',
+        '',
+        'Vänliga hälsningar,',
+        'VORQ Digital, Inhaber: Haitham Kojar',
+        ADMIN_CONFIG.OFFICIAL_EMAIL
+      ].filter(Boolean).join('\n');
+    }
+
+    function updateStats(reports) {
+      const normalized = reports.map((report) => normalizeStatus(report.status));
+      elements.statTotal.textContent = String(reports.length);
+      elements.statNew.textContent = String(normalized.filter((status) => status === 'new').length);
+      elements.statReview.textContent = String(normalized.filter((status) => status === 'under_review').length);
+      elements.statAction.textContent = String(normalized.filter((status) => status === 'action_taken').length);
+    }
+
+    function setLoadingState() {
+      clearElement(elements.reportsList);
+      const loading = document.createElement('div');
+      loading.className = 'empty-state';
+      loading.append(createIcon('fa-solid fa-circle-notch fa-spin'), document.createTextNode('Laddar rapporter...'));
+      elements.reportsList.appendChild(loading);
+    }
+
+    function renderEmptyState(message) {
+      clearElement(elements.reportsList);
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.append(createIcon('fa-regular fa-folder-open'), document.createTextNode(message));
+      elements.reportsList.appendChild(empty);
+    }
+
+    function showStatus(message, type) {
+      elements.statusBox.textContent = message;
+      elements.statusBox.className = `status-box visible ${type}`;
+    }
+
+    function clearElement(element) {
+      while (element.firstChild) element.removeChild(element.firstChild);
+    }
+
+    function createIcon(className) {
+      const icon = document.createElement('i');
+      icon.className = className;
+      icon.setAttribute('aria-hidden', 'true');
+      return icon;
+    }
+
+    async function copyToClipboard(text) {
+      const safeText = String(text || '');
+      if (!safeText) return;
+      try {
+        await navigator.clipboard.writeText(safeText);
+        showStatus('Kopierat.', 'success');
+      } catch (error) {
+        showStatus(safeText, 'info');
+      }
+    }
+
+    function formatTimestamp(value) {
+      try {
+        const date = value?.toDate ? value.toDate() : value ? new Date(value) : null;
+        if (!date || Number.isNaN(date.getTime())) return '-';
+        return new Intl.DateTimeFormat('sv-SE', {
+          dateStyle: 'short',
+          timeStyle: 'short'
+        }).format(date);
+      } catch (error) {
+        return '-';
+      }
+    }
+
+    function uniqueArray(values) {
+      return Array.from(new Set(values.filter(Boolean)));
+    }
+
+    function normalizeDocumentId(value) {
+      return String(value ?? '')
+        .replace(/[^A-Za-z0-9_-]/g, '')
+        .slice(0, 160);
+    }
+
+    function cleanText(value, maxLength = 200) {
+      return String(value ?? '')
+        .replace(/[\u0000-\u001f\u007f]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, maxLength);
+    }
+
+    function cleanLongText(value, maxLength = 1000) {
+      return String(value ?? '')
+        .replace(/\r\n/g, '\n')
+        .replace(/\r/g, '\n')
+        .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, ' ')
+        .trim()
+        .slice(0, maxLength);
+    }
+
+    function cleanEmail(value) {
+      return String(value ?? '')
+        .trim()
+        .toLowerCase()
+        .slice(0, 254);
+    }
+
+    function getReadableError(error) {
+      const code = error?.code || '';
+      if (code === 'permission-denied') {
+        return 'Permission denied: تأكد أنك نشرت firestore.rules.txt الجديد وأن بريد حساب الإدارة موجود في isAdmin().';
+      }
+      if (code === 'failed-precondition') {
+        return 'Firestore يحتاج فهرساً أو ترتيباً مختلفاً. جرّب تحديث الصفحة أو افتح الخطأ في Console.';
+      }
+      return error?.message || 'Ett okänt fel uppstod.';
+    }
+  </script>
+</body>
+</html>

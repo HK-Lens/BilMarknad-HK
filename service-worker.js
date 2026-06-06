@@ -1,25 +1,14 @@
-/*
-VORQ-FORDON-FILE-VERSION
-File: service-worker.js
-Project: VORQ Fordon
-Version: 2026-06-06-cache-v14
-Last reviewed/updated: 2026-06-06 21:35 Europe/Berlin
-Status: Updated
-Change note: Bumps cache after delete/report fixes so browsers do not keep old broken pages.
-*/
-
-/*
-VORQ-FORDON-FILE-VERSION
-File: service-worker.js
-Project: VORQ Fordon
-Version: 2026-06-06-report-hotfix-v2
-Last reviewed/updated: 2026-06-06 22:15 Europe/Berlin
-Status: Updated
-Change note: Cache bumped so browsers fetch the corrected notice-action.html and Firestore-dependent pages.
+/* VORQ Fordon service worker
+   File version: service-worker-admin-reports-v1-20260606
+   Last reviewed/updated: 2026-06-06 23:05 Europe/Berlin
+   Change note: Keeps admin-reports.html out of cache and bumps PWA cache.
+   Project operator in legal pages: VORQ Digital, Inhaber: Haitham Kojar.
+   VORQ Fordon is a vehicle-ad platform directed to the Swedish market.
+   No payment, invoice or pricing logic is handled here.
 */
 
 const CACHE_PREFIX = "vorq-fordon-pwa-";
-const CACHE_NAME = `${CACHE_PREFIX}v14-20260606-report-hotfix`;
+const CACHE_NAME = `${CACHE_PREFIX}v14-20260606-admin-reports`;
 
 const APP_SHELL = [
   "./",
@@ -42,6 +31,7 @@ const APP_SHELL = [
 
 const OFFLINE_URL = "./offline.html";
 const NOT_FOUND_URL = "./404.html";
+const ADMIN_REPORTS_PATH = "/admin-reports.html";
 
 async function cacheAppShell() {
   const cache = await caches.open(CACHE_NAME);
@@ -99,6 +89,10 @@ self.addEventListener("message", (event) => {
   }
 });
 
+function isAdminReportsRequest(requestUrl) {
+  return requestUrl.pathname.endsWith(ADMIN_REPORTS_PATH);
+}
+
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
@@ -106,6 +100,11 @@ self.addEventListener("fetch", (event) => {
 
   if (requestUrl.origin !== self.location.origin) {
     event.respondWith(fetch(event.request));
+    return;
+  }
+
+  if (isAdminReportsRequest(requestUrl)) {
+    event.respondWith(fetch(event.request, { cache: "no-store" }));
     return;
   }
 
