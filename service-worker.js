@@ -1,14 +1,14 @@
 /* VORQ Fordon service worker
-   File version: service-worker-admin-reports-v1-20260606
-   Last reviewed/updated: 2026-06-06 23:05 Europe/Berlin
-   Change note: Keeps admin-reports.html out of cache and bumps PWA cache.
+   File version: service-worker-admin-login-v2-20260606
+   Last reviewed/updated: 2026-06-06 23:52 Europe/Berlin
+   Change note: Keeps admin-reports.html out of cache after protected admin login update and bumps PWA cache.
    Project operator in legal pages: VORQ Digital, Inhaber: Haitham Kojar.
    VORQ Fordon is a vehicle-ad platform directed to the Swedish market.
    No payment, invoice or pricing logic is handled here.
 */
 
 const CACHE_PREFIX = "vorq-fordon-pwa-";
-const CACHE_NAME = `${CACHE_PREFIX}v14-20260606-admin-reports`;
+const CACHE_NAME = `${CACHE_PREFIX}v15-20260606-admin-login`;
 
 const APP_SHELL = [
   "./",

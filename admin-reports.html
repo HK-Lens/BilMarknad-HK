@@ -1,9 +1,9 @@
 <!--
   VORQ Fordon - admin-reports.html
   Project: VORQ Fordon / VORQ Digital
-  File version: admin-reports-v1-20260606
-  Last reviewed/updated: 2026-06-06 23:05 Europe/Berlin
-  Status: Admin moderation page for reports, email follow-up links, and ad moderation actions.
+  File version: admin-reports-v2-20260606
+  Last reviewed/updated: 2026-06-06 23:52 Europe/Berlin
+  Status: Professional protected admin moderation page with built-in Firebase email/password login, admin-only report view, email follow-up links, and ad moderation actions.
   Important: Access must also be enforced by firestore.rules.txt. Do not rely on client-side checks alone.
 -->
 <!DOCTYPE html>
@@ -338,6 +338,113 @@
     }
     .empty-state i { color:var(--primary); font-size:34px; margin-bottom:14px; display:block; }
 
+
+
+    .admin-login-section {
+      max-width: 560px;
+      margin: 34px auto 70px;
+      padding: 0 22px;
+    }
+    .admin-login-card {
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .admin-login-head {
+      padding: 28px;
+      color: #fff;
+      background: linear-gradient(135deg, rgba(15,23,42,.98), rgba(30,41,59,.95));
+    }
+    .admin-login-head .login-badge {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,.10);
+      color: #e2e8f0;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .admin-login-head .login-badge i { color: var(--primary); }
+    .admin-login-head h2 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -.045em;
+    }
+    .admin-login-head p {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 650;
+    }
+    .admin-login-form {
+      display: grid;
+      gap: 16px;
+      padding: 28px;
+    }
+    .admin-login-form label {
+      display: block;
+      margin-bottom: 7px;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .035em;
+    }
+    .admin-login-form input {
+      width: 100%;
+      min-height: 52px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 15px;
+      background: var(--surface-soft);
+      color: var(--dark);
+      outline: none;
+      font-weight: 760;
+      transition: .22s ease;
+    }
+    .admin-login-form input:focus {
+      background: #fff;
+      border-color: rgba(245,130,32,.70);
+      box-shadow: 0 0 0 4px rgba(245,130,32,.10);
+    }
+    .admin-login-form input:disabled { opacity: .65; cursor: not-allowed; }
+    .admin-login-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .admin-login-note {
+      padding: 13px 14px;
+      border-radius: 18px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #92400e;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 750;
+    }
+    .login-status {
+      display: none;
+      padding: 13px 14px;
+      border-radius: 18px;
+      font-size: 12px;
+      font-weight: 760;
+      line-height: 1.6;
+    }
+    .login-status.visible { display: block; }
+    .login-status.error { background: var(--danger-soft); border: 1px solid rgba(220,38,38,.22); color: #991b1b; }
+    .login-status.success { background: var(--success-soft); border: 1px solid rgba(22,163,74,.20); color: #166534; }
+    .login-status.info { background: var(--info-soft); border: 1px solid rgba(37,99,235,.18); color: #1e3a8a; }
+    .admin-hidden { display: none !important; }
+
     @media(max-width:980px) {
       .hero { grid-template-columns:1fr; }
       .toolbar { grid-template-columns:1fr 1fr; }
@@ -358,7 +465,7 @@
 <body>
   <div class="top-warning">
     <i class="fa-solid fa-lock"></i>
-    Intern sida för behöriga administratörer. Sidan ska inte länkas publikt.
+    Intern sida för behöriga administratörer. Kräver administratörsinloggning och skyddas även av Firestore-regler.
   </div>
 
   <header class="site-header">
@@ -369,12 +476,45 @@
       <div class="header-actions">
         <span class="pill" id="authPill"><i class="fa-solid fa-circle-notch fa-spin"></i> Kontrollerar...</span>
         <a class="nav-btn" href="index.html"><i class="fa-solid fa-house"></i> Startsida</a>
-        <button type="button" class="nav-btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
+        <button type="button" class="nav-btn admin-hidden" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logga ut</button>
       </div>
     </div>
   </header>
 
-  <main class="page-shell">
+
+
+  <section class="admin-login-section" id="adminLoginSection" aria-label="Admininloggning">
+    <div class="admin-login-card">
+      <div class="admin-login-head">
+        <div class="login-badge"><i class="fa-solid fa-user-shield"></i> Skyddad administratörssida</div>
+        <h2>Logga in som administratör</h2>
+        <p>
+          Ange administratörens Firebase-konto. Endast godkända admin-e-postadresser eller konton med admin-claim kan läsa rapporter och utföra åtgärder.
+        </p>
+      </div>
+      <form class="admin-login-form" id="adminLoginForm" novalidate>
+        <div class="login-status" id="loginStatusBox" role="status" aria-live="polite"></div>
+        <div>
+          <label for="adminEmail">Admin-e-post</label>
+          <input type="email" id="adminEmail" autocomplete="username" maxlength="120" placeholder="info@vq-dx.com" required>
+        </div>
+        <div>
+          <label for="adminPassword">Lösenord</label>
+          <input type="password" id="adminPassword" autocomplete="current-password" maxlength="128" placeholder="Admin-lösenord" required>
+        </div>
+        <div class="admin-login-note">
+          <i class="fa-solid fa-shield-halved"></i>
+          Den här inloggningen använder Firebase Authentication. Den verkliga behörigheten kontrolleras dessutom av Firestore Security Rules.
+        </div>
+        <div class="admin-login-actions">
+          <button type="submit" class="btn btn-primary" id="adminLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Logga in</button>
+          <button type="button" class="btn btn-light" id="resetAdminPasswordBtn"><i class="fa-solid fa-key"></i> Skicka återställningslänk</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <main class="page-shell" id="adminPanel" hidden>
     <section class="hero">
       <div>
         <div class="eyebrow"><i class="fa-solid fa-shield-halved"></i> Admin moderation</div>
@@ -414,7 +554,7 @@
 
   <script type="module">
     import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
     import {
       collection,
       query,
@@ -448,7 +588,8 @@
       searchText: '',
       statusFilter: 'all',
       isLoading: false,
-      isAdmin: false
+      isAdmin: false,
+      isLoginSubmitting: false
     };
 
     const elements = {
@@ -463,13 +604,23 @@
       statTotal: document.getElementById('statTotal'),
       statNew: document.getElementById('statNew'),
       statReview: document.getElementById('statReview'),
-      statAction: document.getElementById('statAction')
+      statAction: document.getElementById('statAction'),
+      adminLoginSection: document.getElementById('adminLoginSection'),
+      adminPanel: document.getElementById('adminPanel'),
+      adminLoginForm: document.getElementById('adminLoginForm'),
+      adminEmail: document.getElementById('adminEmail'),
+      adminPassword: document.getElementById('adminPassword'),
+      adminLoginBtn: document.getElementById('adminLoginBtn'),
+      resetAdminPasswordBtn: document.getElementById('resetAdminPasswordBtn'),
+      loginStatusBox: document.getElementById('loginStatusBox')
     };
 
     initializeAdminPage();
 
     function initializeAdminPage() {
       elements.logoutBtn.addEventListener('click', logoutAdmin);
+      elements.adminLoginForm.addEventListener('submit', loginAdmin);
+      elements.resetAdminPasswordBtn.addEventListener('click', resetAdminPassword);
       elements.refreshBtn.addEventListener('click', loadReports);
       elements.refreshTopBtn.addEventListener('click', loadReports);
       elements.searchInput.addEventListener('input', () => {
@@ -483,12 +634,11 @@
 
       onAuthStateChanged(auth, async (user) => {
         if (!user) {
-          window.location.href = `${ADMIN_CONFIG.ROUTES.LOGIN}?redirect=${encodeURIComponent(window.location.href)}`;
+          renderLoginMode();
           return;
         }
 
         state.currentUser = user;
-
         state.isAdmin = await isAdminUser(user);
 
         if (!state.isAdmin) {
@@ -496,9 +646,55 @@
           return;
         }
 
-        renderAdminPill(user);
+        renderAdminMode(user);
         await loadReports();
       });
+    }
+
+    async function loginAdmin(event) {
+      event.preventDefault();
+
+      if (state.isLoginSubmitting) return;
+
+      const email = cleanEmail(elements.adminEmail.value);
+      const password = String(elements.adminPassword.value || '').slice(0, 128);
+
+      if (!email || !password) {
+        showLoginStatus('Ange admin-e-post och lösenord.', 'error');
+        return;
+      }
+
+      state.isLoginSubmitting = true;
+      setLoginLoading(true, 'Loggar in...');
+      showLoginStatus('Kontrollerar administratörsbehörighet...', 'info');
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        console.error('[VORQ Fordon] Admin login failed:', error);
+        showLoginStatus(getReadableAuthError(error), 'error');
+      } finally {
+        state.isLoginSubmitting = false;
+        setLoginLoading(false, 'Logga in');
+      }
+    }
+
+    async function resetAdminPassword() {
+      const email = cleanEmail(elements.adminEmail.value);
+
+      if (!email) {
+        showLoginStatus('Skriv admin-e-postadressen först.', 'error');
+        elements.adminEmail.focus();
+        return;
+      }
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showLoginStatus('Om kontot finns skickas en återställningslänk till admin-e-posten.', 'success');
+      } catch (error) {
+        console.error('[VORQ Fordon] Admin password reset failed:', error);
+        showLoginStatus(getReadableAuthError(error), 'error');
+      }
     }
 
     async function isAdminUser(user) {
@@ -515,22 +711,66 @@
       }
     }
 
+    function renderLoginMode() {
+      state.currentUser = null;
+      state.isAdmin = false;
+      elements.adminLoginSection.hidden = false;
+      elements.adminPanel.hidden = true;
+      elements.logoutBtn.classList.add('admin-hidden');
+      elements.authPill.className = 'pill';
+      elements.authPill.replaceChildren(createIcon('fa-solid fa-lock'), document.createTextNode('Admin krävs'));
+      updateStats([]);
+      clearElement(elements.reportsList);
+    }
+
+    function renderAdminMode(user) {
+      elements.adminLoginSection.hidden = true;
+      elements.adminPanel.hidden = false;
+      elements.logoutBtn.classList.remove('admin-hidden');
+      hideLoginStatus();
+      renderAdminPill(user);
+    }
+
+    function showLoginStatus(message, type) {
+      elements.loginStatusBox.className = `login-status visible ${type || 'info'}`;
+      elements.loginStatusBox.textContent = message;
+    }
+
+    function hideLoginStatus() {
+      elements.loginStatusBox.className = 'login-status';
+      elements.loginStatusBox.textContent = '';
+    }
+
+    function setLoginLoading(isLoading, label) {
+      elements.adminLoginBtn.disabled = isLoading;
+      elements.resetAdminPasswordBtn.disabled = isLoading;
+      elements.adminEmail.disabled = isLoading;
+      elements.adminPassword.disabled = isLoading;
+      elements.adminLoginBtn.replaceChildren(
+        createIcon(isLoading ? 'fa-solid fa-circle-notch fa-spin' : 'fa-solid fa-right-to-bracket'),
+        document.createTextNode(label || 'Logga in')
+      );
+    }
+
     function renderAdminPill(user) {
       elements.authPill.className = 'pill admin';
       elements.authPill.replaceChildren(createIcon('fa-solid fa-user-shield'), document.createTextNode(cleanEmail(user.email) || 'Admin'));
     }
 
     function renderBlocked(user) {
+      elements.adminLoginSection.hidden = false;
+      elements.adminPanel.hidden = true;
+      elements.logoutBtn.classList.remove('admin-hidden');
       elements.authPill.className = 'pill blocked';
       elements.authPill.replaceChildren(createIcon('fa-solid fa-ban'), document.createTextNode(cleanEmail(user.email) || 'Ej behörig'));
       clearElement(elements.reportsList);
-      showStatus('Det här kontot är inte behörigt att läsa rapporter. Logga in med administratörskontot som finns i firestore.rules.txt och i ADMIN_CONFIG.ADMIN_EMAILS.', 'error');
       updateStats([]);
+      showLoginStatus('Det här kontot är inloggat men saknar adminbehörighet. Logga ut och använd administratörskontot, eller lägg e-posten i ADMIN_CONFIG.ADMIN_EMAILS och firestore.rules.txt.', 'error');
     }
 
     async function logoutAdmin() {
       await signOut(auth);
-      window.location.href = ADMIN_CONFIG.ROUTES.LOGIN;
+      renderLoginMode();
     }
 
     async function loadReports() {
@@ -1132,6 +1372,18 @@
         .trim()
         .toLowerCase()
         .slice(0, 254);
+    }
+
+    function getReadableAuthError(error) {
+      const code = error?.code || '';
+
+      if (code === 'auth/invalid-email') return 'E-postadressen är ogiltig.';
+      if (code === 'auth/user-disabled') return 'Kontot är avstängt.';
+      if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') return 'Fel e-post eller lösenord.';
+      if (code === 'auth/too-many-requests') return 'För många försök. Vänta en stund och försök igen.';
+      if (code === 'auth/network-request-failed') return 'Nätverksfel. Kontrollera anslutningen och försök igen.';
+
+      return error?.message || 'Inloggningen misslyckades.';
     }
 
     function getReadableError(error) {
