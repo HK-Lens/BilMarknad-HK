@@ -1,3 +1,13 @@
+/*
+VORQ File Version
+File: firebase-config.js
+Project: VORQ Fordon
+File version: 2026-06-06-necessary-legal-consistency
+Last reviewed/updated: 2026-06-06
+Last reviewed/updated time: 2026-06-06 20:04 Europe/Berlin
+Status: Updated
+Change note: Necessary legal, branding, contact, reporting and cache consistency update. Original filename preserved.
+*/
 /**
  * ============================================================
  * VORQ Fordon - firebase-config.js
@@ -9,7 +19,7 @@
  * Project:
  * VORQ Fordon
  * Contact email:
- * info@vorq.group
+ * info@vq-dx.com
  *
  * Legal note:
  * VORQ Fordon is a vehicle-advertising platform directed to the Swedish market.
@@ -126,7 +136,7 @@ export const APP_META = Object.freeze({
     NAME: "VORQ Fordon",
     LONG_NAME: "VORQ Fordon",
     OWNER_NAME: "VORQ Digital, Inhaber: Haitham Kojar",
-    OWNER_EMAIL: "info@vorq.group",
+    OWNER_EMAIL: "info@vq-dx.com",
     OWNER_SLOGAN: "VORQ Fordon – fordonsannonsplattform riktad till den svenska marknaden",
     BUSINESS_NAME: "VORQ Digital",
     LEGAL_RESPONSIBLE_PERSON: "Haitham Kojar",

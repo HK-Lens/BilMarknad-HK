@@ -1,4 +1,14 @@
 <!DOCTYPE html>
+<!--
+VORQ File Version
+File: notice-action.html
+Project: VORQ Fordon
+File version: 2026-06-06-necessary-legal-consistency
+Last reviewed/updated: 2026-06-06
+Last reviewed/updated time: 2026-06-06 20:04 Europe/Berlin
+Status: Updated
+Change note: Necessary legal, branding, contact, reporting and cache consistency update. Original filename preserved.
+-->
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +17,7 @@
     <meta name="description" content="Rapportera en annons eller ett misstänkt innehåll på VORQ Fordon. Ange annonsnummer och skicka en tydlig rapport till VORQ Digital, Inhaber: Haitham Kojar.">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Rapportera annons | VORQ Fordon">
-    <meta property="og:description" content="Använd VORQ Fordons rapporteringsformulär för att anmäla misstänkt, felaktigt eller olagligt innehåll.">
+    <meta property="og:description" content="Använd VORQ Fordons rapporteringsformulär för att rapportera misstänkt, felaktigt eller olagligt innehåll.">
     <meta property="og:site_name" content="VORQ Fordon">
     <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -522,6 +532,12 @@
                         <span class="hint">Exempel: listing, details eller manual.</span>
                     </div>
 
+                    <div class="form-group full">
+                        <label for="contentUrl">Länk till annons eller innehåll <span class="hint">valfritt</span></label>
+                        <input type="url" id="contentUrl" name="contentUrl" maxlength="500" autocomplete="url" placeholder="https://b.vq-dx.com/details.html?id=...">
+                        <span class="hint">Fylls automatiskt när det går. Hjälper oss att hitta exakt innehåll.</span>
+                    </div>
+
                     <div class="form-group">
                         <label for="category">Typ av rapport *</label>
                         <select id="category" name="category" required>
@@ -538,9 +554,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="reporterEmail">Din e-post <span class="hint">valfritt</span></label>
-                        <input type="email" id="reporterEmail" name="reporterEmail" maxlength="120" autocomplete="email" placeholder="namn@example.com">
-                        <span class="hint">Används endast om vi behöver följa upp rapporten.</span>
+                        <label for="reporterName">Ditt namn *</label>
+                        <input type="text" id="reporterName" name="reporterName" maxlength="120" autocomplete="name" placeholder="För- och efternamn" required>
+                        <span class="hint">Behövs för en tydlig Notice & Action-rapport.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reporterEmail">Din e-post *</label>
+                        <input type="email" id="reporterEmail" name="reporterEmail" maxlength="120" autocomplete="email" placeholder="namn@example.com" required>
+                        <span class="hint">Används för bekräftelse eller uppföljning av rapporten.</span>
                     </div>
 
                     <div class="form-group full">
@@ -594,6 +616,8 @@
             MAX_ID_LENGTH: 160,
             MAX_SOURCE_LENGTH: 60,
             MAX_EMAIL_LENGTH: 120,
+            MAX_NAME_LENGTH: 120,
+            MAX_URL_LENGTH: 500,
             MAX_DESCRIPTION_LENGTH: 3000,
             MIN_DESCRIPTION_LENGTH: 20,
             TERMS_VERSION: "notice-action-2026-05",
@@ -609,7 +633,9 @@
             form: document.getElementById("reportForm"),
             adId: document.getElementById("adId"),
             source: document.getElementById("source"),
+            contentUrl: document.getElementById("contentUrl"),
             category: document.getElementById("category"),
+            reporterName: document.getElementById("reporterName"),
             reporterEmail: document.getElementById("reporterEmail"),
             description: document.getElementById("description"),
             goodFaith: document.getElementById("goodFaith"),
@@ -638,6 +664,21 @@
 
             if (adId) {
                 elements.adId.value = cleanText(adId, REPORT_CONFIG.MAX_ID_LENGTH);
+
+                const autoDetailsUrl = new URL("details.html", window.location.href);
+                autoDetailsUrl.searchParams.set("id", elements.adId.value);
+                elements.contentUrl.value = firstNonEmpty(
+                    params.get("url"),
+                    params.get("contentUrl"),
+                    params.get("listingUrl"),
+                    autoDetailsUrl.href
+                );
+            } else {
+                elements.contentUrl.value = firstNonEmpty(
+                    params.get("url"),
+                    params.get("contentUrl"),
+                    params.get("listingUrl")
+                );
             }
 
             elements.source.value = cleanText(source, REPORT_CONFIG.MAX_SOURCE_LENGTH) || "manual";
@@ -646,7 +687,7 @@
         function attachEvents() {
             elements.form.addEventListener("submit", handleSubmit);
 
-            [elements.adId, elements.source, elements.category, elements.reporterEmail, elements.description].forEach((element) => {
+            [elements.adId, elements.source, elements.contentUrl, elements.category, elements.reporterName, elements.reporterEmail, elements.description].forEach((element) => {
                 element.addEventListener("input", clearStatus);
                 element.addEventListener("change", clearStatus);
             });
@@ -659,6 +700,10 @@
         function watchAuthState() {
             onAuthStateChanged(auth, (user) => {
                 state.currentUser = user || null;
+
+                if (user?.displayName && !elements.reporterName.value.trim()) {
+                    elements.reporterName.value = cleanText(user.displayName, REPORT_CONFIG.MAX_NAME_LENGTH);
+                }
 
                 if (user?.email && !elements.reporterEmail.value.trim()) {
                     elements.reporterEmail.value = cleanEmail(user.email);
@@ -693,7 +738,7 @@
                 showStatus(successMessage, "success");
             } catch (error) {
                 console.error("[VORQ Fordon] Could not submit report", error);
-                showStatus("Rapporten kunde inte skickas just nu. Kontrollera internetanslutningen och försök igen, eller kontakta info@vorq.group.", "error");
+                showStatus("Rapporten kunde inte skickas just nu. Kontrollera internetanslutningen och försök igen, eller kontakta info@vq-dx.com.", "error");
             } finally {
                 setSubmitting(false);
             }
@@ -702,7 +747,9 @@
         function buildPayload() {
             const adId = cleanText(elements.adId.value, REPORT_CONFIG.MAX_ID_LENGTH);
             const source = cleanText(elements.source.value, REPORT_CONFIG.MAX_SOURCE_LENGTH) || "manual";
+            const contentUrl = cleanUrl(elements.contentUrl.value);
             const category = cleanText(elements.category.value, 80);
+            const reporterName = cleanText(elements.reporterName.value, REPORT_CONFIG.MAX_NAME_LENGTH);
             const reporterEmail = cleanEmail(elements.reporterEmail.value);
             const description = cleanLongText(elements.description.value, REPORT_CONFIG.MAX_DESCRIPTION_LENGTH);
             const user = state.currentUser;
@@ -710,14 +757,18 @@
             return removeEmptyFields({
                 adId,
                 annonsnummer: adId,
+                carId: adId,
                 source,
                 category,
                 description,
+                reporterName,
                 reporterEmail,
-                reporterUid: user?.uid || null,
-                reporterUserEmail: user?.email || null,
-                status: "new",
+                reporterId: user?.uid || null,
+                status: "received",
                 priority: category === "illegal_content" || category === "suspected_fraud" ? "high" : "normal",
+                pageUrl: window.location.href,
+                url: contentUrl,
+                userAgent: navigator.userAgent || "",
                 platform: "VORQ Fordon",
                 operator: "VORQ Digital, Inhaber: Haitham Kojar",
                 marketCountry: "SE",
@@ -726,8 +777,6 @@
                 privacyAccepted: Boolean(elements.privacyAccepted.checked),
                 privacyVersion: REPORT_CONFIG.PRIVACY_VERSION,
                 noticeActionVersion: REPORT_CONFIG.TERMS_VERSION,
-                pageUrl: window.location.href,
-                userAgent: navigator.userAgent || "",
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
             });
@@ -746,8 +795,20 @@
                 return `Beskrivningen måste vara minst ${REPORT_CONFIG.MIN_DESCRIPTION_LENGTH} tecken.`;
             }
 
-            if (payload.reporterEmail && !isValidEmail(payload.reporterEmail)) {
+            if (!payload.reporterName || payload.reporterName.length < 2) {
+                return "Ange ditt namn innan du skickar rapporten.";
+            }
+
+            if (!payload.reporterEmail) {
+                return "Ange din e-postadress innan du skickar rapporten.";
+            }
+
+            if (!isValidEmail(payload.reporterEmail)) {
                 return "E-postadressen verkar inte vara giltig.";
+            }
+
+            if (payload.url && !isLikelyUrl(payload.url)) {
+                return "Länken till innehållet verkar inte vara giltig.";
             }
 
             if (!payload.goodFaithConfirmed) {
@@ -819,8 +880,24 @@
                 .slice(0, REPORT_CONFIG.MAX_EMAIL_LENGTH);
         }
 
+        function cleanUrl(value) {
+            return String(value ?? "")
+                .replace(/[\u0000-\u001f\u007f]/g, " ")
+                .trim()
+                .slice(0, REPORT_CONFIG.MAX_URL_LENGTH);
+        }
+
         function isValidEmail(value) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || ""));
+        }
+
+        function isLikelyUrl(value) {
+            try {
+                const parsed = new URL(String(value));
+                return parsed.protocol === "https:" || parsed.protocol === "http:";
+            } catch (error) {
+                return false;
+            }
         }
 
         function removeEmptyFields(object) {
