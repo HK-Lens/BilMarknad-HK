@@ -1,13 +1,13 @@
 /*
-VORQ File Version
+VORQ-FORDON-FILE-VERSION
 File: service-worker.js
 Project: VORQ Fordon
-File version: 2026-06-06-necessary-legal-consistency
-Last reviewed/updated: 2026-06-06
-Last reviewed/updated time: 2026-06-06 20:04 Europe/Berlin
+Version: 2026-06-06-cache-v14
+Last reviewed/updated: 2026-06-06 21:35 Europe/Berlin
 Status: Updated
-Change note: Necessary legal, branding, contact, reporting and cache consistency update. Original filename preserved.
+Change note: Bumps cache after delete/report fixes so browsers do not keep old broken pages.
 */
+
 /* VORQ Fordon service worker
    Project operator in legal pages: VORQ Digital, Inhaber: Haitham Kojar.
    VORQ Fordon is a vehicle-ad platform directed to the Swedish market.
@@ -15,7 +15,7 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
 */
 
 const CACHE_PREFIX = "vorq-fordon-pwa-";
-const CACHE_NAME = `${CACHE_PREFIX}v13-20260606`;
+const CACHE_NAME = `${CACHE_PREFIX}v14-20260606`;
 
 const APP_SHELL = [
   "./",

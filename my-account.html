@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+<!--
+VORQ-FORDON-FILE-VERSION
+File: my-account.html
+Project: VORQ Fordon
+Version: 2026-06-06-delete-fix-v1
+Last reviewed/updated: 2026-06-06 21:35 Europe/Berlin
+Status: Updated
+Change note: Makes ad deletion reliable by deleting the owner car document first and running related cleanup as best-effort only.
+-->
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
@@ -770,8 +779,8 @@
         }
 
         await deleteUserCars(safeUid);
-        await deleteUserFavorites(safeUid);
-        await deleteUserChats(safeUid);
+        await runBestEffortCleanup('delete user favorites', () => deleteUserFavorites(safeUid));
+        await runBestEffortCleanup('delete user chats', () => deleteUserChats(safeUid));
         await safeDeleteDoc(CONFIG.COLLECTIONS.USERS, safeUid);
     }
 
@@ -808,10 +817,25 @@
             throw new Error('Du kan bara radera dina egna annonser.');
         }
 
-        await deleteCarImagesFromStorage(carData);
-        await deleteChatsByCarId(safeCarId);
-        await deleteFavoritesByCarId(safeCarId);
         await deleteDoc(doc(db, CONFIG.COLLECTIONS.CARS, safeCarId));
+
+        /*
+         * The ad document is the critical item. Related chats and favorites may
+         * belong to other users, and Firestore rules intentionally do not allow
+         * this page to delete data owned by other accounts. Run cleanup after the
+         * ad is removed and never let cleanup block the user's own deletion.
+         */
+        await runBestEffortCleanup('delete storage images', () => deleteCarImagesFromStorage(carData));
+        await runBestEffortCleanup('delete chats linked to car', () => deleteChatsByCarId(safeCarId));
+        await runBestEffortCleanup('delete favorites linked to car', () => deleteFavoritesByCarId(safeCarId));
+    }
+
+    async function runBestEffortCleanup(label, task) {
+        try {
+            await task();
+        } catch (error) {
+            console.warn(`[VORQ Fordon] Optional cleanup failed: ${label}`, error);
+        }
     }
 
     async function deleteCarImagesFromStorage(carData) {

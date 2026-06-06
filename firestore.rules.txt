@@ -1,15 +1,15 @@
-rules_version = '2';
-
 /*
-VORQ File Version
+VORQ-FORDON-FILE-VERSION
 File: firestore.rules.txt
 Project: VORQ Fordon
-File version: 2026-06-06-necessary-legal-consistency
-Last reviewed/updated: 2026-06-06
-Last reviewed/updated time: 2026-06-06 20:04 Europe/Berlin
+Version: 2026-06-06-delete-report-fix-v1
+Last reviewed/updated: 2026-06-06 21:35 Europe/Berlin
 Status: Updated
-Change note: Necessary legal, branding, contact, reporting and cache consistency update. Original filename preserved.
+Change note: Allows the corrected report payload and fixes user document deletion while keeping chat cleanup protected.
 */
+
+rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() {
@@ -263,12 +263,7 @@ service cloud.firestore {
           'reporterEmail',
           'reporterName',
           'reporterId',
-          'goodFaithConfirmed',
-          'privacyAccepted',
-          'privacyVersion',
-          'noticeActionVersion',
-          'marketCountry',
-          'language',
+          'reporterUserEmail',
           'status',
           'priority',
           'pageUrl',
@@ -276,6 +271,12 @@ service cloud.firestore {
           'userAgent',
           'platform',
           'operator',
+          'marketCountry',
+          'language',
+          'goodFaithConfirmed',
+          'privacyAccepted',
+          'privacyVersion',
+          'noticeActionVersion',
           'createdAt',
           'updatedAt'
         ])
@@ -295,14 +296,15 @@ service cloud.firestore {
         && isNonEmptyString(request.resource.data.reporterName)
         && isShortString(request.resource.data.reporterName, 120)
         && (!request.resource.data.keys().hasAny(['reporterId']) || (signedIn() && request.resource.data.reporterId == request.auth.uid))
-        && request.resource.data.goodFaithConfirmed == true
-        && request.resource.data.privacyAccepted == true
+        && (!request.resource.data.keys().hasAny(['reporterUserEmail']) || isShortString(request.resource.data.reporterUserEmail, 254))
         && (!request.resource.data.keys().hasAny(['url']) || isShortString(request.resource.data.url, 500))
         && (!request.resource.data.keys().hasAny(['pageUrl']) || isShortString(request.resource.data.pageUrl, 500))
+        && (!request.resource.data.keys().hasAny(['marketCountry']) || request.resource.data.marketCountry == 'SE')
+        && (!request.resource.data.keys().hasAny(['language']) || request.resource.data.language == 'sv')
+        && (!request.resource.data.keys().hasAny(['goodFaithConfirmed']) || request.resource.data.goodFaithConfirmed == true)
+        && (!request.resource.data.keys().hasAny(['privacyAccepted']) || request.resource.data.privacyAccepted == true)
         && (!request.resource.data.keys().hasAny(['privacyVersion']) || isShortString(request.resource.data.privacyVersion, 120))
         && (!request.resource.data.keys().hasAny(['noticeActionVersion']) || isShortString(request.resource.data.noticeActionVersion, 120))
-        && (!request.resource.data.keys().hasAny(['marketCountry']) || isShortString(request.resource.data.marketCountry, 10))
-        && (!request.resource.data.keys().hasAny(['language']) || isShortString(request.resource.data.language, 10))
         && (!request.resource.data.keys().hasAny(['status']) || request.resource.data.status in ['new', 'open', 'received'])
         && (!request.resource.data.keys().hasAny(['priority']) || request.resource.data.priority in ['low', 'normal', 'high', 'urgent'])
         && (!request.resource.data.keys().hasAny(['createdAt']) || isLegalTimestampOrString(request.resource.data.createdAt))
@@ -310,7 +312,9 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow read, create, update, delete: if validUserDocument(request.resource.data, userId);
+      allow read: if signedIn() && request.auth.uid == userId;
+      allow create, update: if validUserDocument(request.resource.data, userId);
+      allow delete: if signedIn() && request.auth.uid == userId;
     }
 
     match /cars/{carId} {

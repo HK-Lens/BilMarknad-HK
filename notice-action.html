@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <!--
-VORQ File Version
+VORQ-FORDON-FILE-VERSION
 File: notice-action.html
 Project: VORQ Fordon
-File version: 2026-06-06-necessary-legal-consistency
-Last reviewed/updated: 2026-06-06
-Last reviewed/updated time: 2026-06-06 20:04 Europe/Berlin
+Version: 2026-06-06-report-fix-v1
+Last reviewed/updated: 2026-06-06 21:35 Europe/Berlin
 Status: Updated
-Change note: Necessary legal, branding, contact, reporting and cache consistency update. Original filename preserved.
+Change note: Aligns report form payload with Firestore rules and adds DSA-friendly reporter/contact and content URL fields.
 -->
 <html lang="sv">
 <head>
@@ -17,7 +16,7 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
     <meta name="description" content="Rapportera en annons eller ett misstänkt innehåll på VORQ Fordon. Ange annonsnummer och skicka en tydlig rapport till VORQ Digital, Inhaber: Haitham Kojar.">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Rapportera annons | VORQ Fordon">
-    <meta property="og:description" content="Använd VORQ Fordons rapporteringsformulär för att rapportera misstänkt, felaktigt eller olagligt innehåll.">
+    <meta property="og:description" content="Använd VORQ Fordons rapporteringsformulär för att anmäla misstänkt, felaktigt eller olagligt innehåll.">
     <meta property="og:site_name" content="VORQ Fordon">
     <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -532,12 +531,6 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
                         <span class="hint">Exempel: listing, details eller manual.</span>
                     </div>
 
-                    <div class="form-group full">
-                        <label for="contentUrl">Länk till annons eller innehåll <span class="hint">valfritt</span></label>
-                        <input type="url" id="contentUrl" name="contentUrl" maxlength="500" autocomplete="url" placeholder="https://b.vq-dx.com/details.html?id=...">
-                        <span class="hint">Fylls automatiskt när det går. Hjälper oss att hitta exakt innehåll.</span>
-                    </div>
-
                     <div class="form-group">
                         <label for="category">Typ av rapport *</label>
                         <select id="category" name="category" required>
@@ -562,7 +555,13 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
                     <div class="form-group">
                         <label for="reporterEmail">Din e-post *</label>
                         <input type="email" id="reporterEmail" name="reporterEmail" maxlength="120" autocomplete="email" placeholder="namn@example.com" required>
-                        <span class="hint">Används för bekräftelse eller uppföljning av rapporten.</span>
+                        <span class="hint">Används för bekräftelse och eventuell uppföljning.</span>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="contentUrl">Länk till annonsen eller innehållet</label>
+                        <input type="url" id="contentUrl" name="contentUrl" maxlength="500" autocomplete="url" placeholder="https://b.vq-dx.com/details.html?id=...">
+                        <span class="hint">Fylls automatiskt om länken skickas från sidan. Annonsnummer räcker om URL saknas.</span>
                     </div>
 
                     <div class="form-group full">
@@ -633,10 +632,10 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
             form: document.getElementById("reportForm"),
             adId: document.getElementById("adId"),
             source: document.getElementById("source"),
-            contentUrl: document.getElementById("contentUrl"),
             category: document.getElementById("category"),
             reporterName: document.getElementById("reporterName"),
             reporterEmail: document.getElementById("reporterEmail"),
+            contentUrl: document.getElementById("contentUrl"),
             description: document.getElementById("description"),
             goodFaith: document.getElementById("goodFaith"),
             privacyAccepted: document.getElementById("privacyAccepted"),
@@ -661,33 +660,27 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
                 params.get("carId")
             );
             const source = firstNonEmpty(params.get("source"), "manual");
+            const contentUrl = firstNonEmpty(
+                params.get("url"),
+                params.get("pageUrl"),
+                params.get("contentUrl")
+            );
 
             if (adId) {
                 elements.adId.value = cleanText(adId, REPORT_CONFIG.MAX_ID_LENGTH);
-
-                const autoDetailsUrl = new URL("details.html", window.location.href);
-                autoDetailsUrl.searchParams.set("id", elements.adId.value);
-                elements.contentUrl.value = firstNonEmpty(
-                    params.get("url"),
-                    params.get("contentUrl"),
-                    params.get("listingUrl"),
-                    autoDetailsUrl.href
-                );
-            } else {
-                elements.contentUrl.value = firstNonEmpty(
-                    params.get("url"),
-                    params.get("contentUrl"),
-                    params.get("listingUrl")
-                );
             }
 
             elements.source.value = cleanText(source, REPORT_CONFIG.MAX_SOURCE_LENGTH) || "manual";
+
+            if (contentUrl) {
+                elements.contentUrl.value = cleanUrl(contentUrl, REPORT_CONFIG.MAX_URL_LENGTH);
+            }
         }
 
         function attachEvents() {
             elements.form.addEventListener("submit", handleSubmit);
 
-            [elements.adId, elements.source, elements.contentUrl, elements.category, elements.reporterName, elements.reporterEmail, elements.description].forEach((element) => {
+            [elements.adId, elements.source, elements.category, elements.reporterName, elements.reporterEmail, elements.contentUrl, elements.description].forEach((element) => {
                 element.addEventListener("input", clearStatus);
                 element.addEventListener("change", clearStatus);
             });
@@ -701,12 +694,12 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
             onAuthStateChanged(auth, (user) => {
                 state.currentUser = user || null;
 
-                if (user?.displayName && !elements.reporterName.value.trim()) {
-                    elements.reporterName.value = cleanText(user.displayName, REPORT_CONFIG.MAX_NAME_LENGTH);
-                }
-
                 if (user?.email && !elements.reporterEmail.value.trim()) {
                     elements.reporterEmail.value = cleanEmail(user.email);
+                }
+
+                if (user?.displayName && !elements.reporterName.value.trim()) {
+                    elements.reporterName.value = cleanText(user.displayName, REPORT_CONFIG.MAX_NAME_LENGTH);
                 }
             });
         }
@@ -747,10 +740,10 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
         function buildPayload() {
             const adId = cleanText(elements.adId.value, REPORT_CONFIG.MAX_ID_LENGTH);
             const source = cleanText(elements.source.value, REPORT_CONFIG.MAX_SOURCE_LENGTH) || "manual";
-            const contentUrl = cleanUrl(elements.contentUrl.value);
             const category = cleanText(elements.category.value, 80);
             const reporterName = cleanText(elements.reporterName.value, REPORT_CONFIG.MAX_NAME_LENGTH);
             const reporterEmail = cleanEmail(elements.reporterEmail.value);
+            const contentUrl = cleanUrl(elements.contentUrl.value, REPORT_CONFIG.MAX_URL_LENGTH);
             const description = cleanLongText(elements.description.value, REPORT_CONFIG.MAX_DESCRIPTION_LENGTH);
             const user = state.currentUser;
 
@@ -764,19 +757,20 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
                 reporterName,
                 reporterEmail,
                 reporterId: user?.uid || null,
-                status: "received",
+                reporterUserEmail: user?.email || null,
+                status: "new",
                 priority: category === "illegal_content" || category === "suspected_fraud" ? "high" : "normal",
-                pageUrl: window.location.href,
-                url: contentUrl,
-                userAgent: navigator.userAgent || "",
                 platform: "VORQ Fordon",
                 operator: "VORQ Digital, Inhaber: Haitham Kojar",
                 marketCountry: "SE",
                 language: "sv",
+                url: contentUrl,
+                pageUrl: window.location.href,
                 goodFaithConfirmed: Boolean(elements.goodFaith.checked),
                 privacyAccepted: Boolean(elements.privacyAccepted.checked),
                 privacyVersion: REPORT_CONFIG.PRIVACY_VERSION,
                 noticeActionVersion: REPORT_CONFIG.TERMS_VERSION,
+                userAgent: navigator.userAgent || "",
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
             });
@@ -791,24 +785,20 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
                 return "Välj typ av rapport.";
             }
 
-            if (!payload.description || payload.description.length < REPORT_CONFIG.MIN_DESCRIPTION_LENGTH) {
-                return `Beskrivningen måste vara minst ${REPORT_CONFIG.MIN_DESCRIPTION_LENGTH} tecken.`;
-            }
-
-            if (!payload.reporterName || payload.reporterName.length < 2) {
+            if (!payload.reporterName) {
                 return "Ange ditt namn innan du skickar rapporten.";
             }
 
-            if (!payload.reporterEmail) {
-                return "Ange din e-postadress innan du skickar rapporten.";
+            if (!payload.reporterEmail || !isValidEmail(payload.reporterEmail)) {
+                return "Ange en giltig e-postadress innan du skickar rapporten.";
             }
 
-            if (!isValidEmail(payload.reporterEmail)) {
-                return "E-postadressen verkar inte vara giltig.";
+            if (payload.url && !isValidHttpUrl(payload.url)) {
+                return "Länken till annonsen eller innehållet verkar inte vara giltig.";
             }
 
-            if (payload.url && !isLikelyUrl(payload.url)) {
-                return "Länken till innehållet verkar inte vara giltig.";
+            if (!payload.description || payload.description.length < REPORT_CONFIG.MIN_DESCRIPTION_LENGTH) {
+                return `Beskrivningen måste vara minst ${REPORT_CONFIG.MIN_DESCRIPTION_LENGTH} tecken.`;
             }
 
             if (!payload.goodFaithConfirmed) {
@@ -880,21 +870,20 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
                 .slice(0, REPORT_CONFIG.MAX_EMAIL_LENGTH);
         }
 
-        function cleanUrl(value) {
+        function cleanUrl(value, maxLength) {
             return String(value ?? "")
-                .replace(/[\u0000-\u001f\u007f]/g, " ")
                 .trim()
-                .slice(0, REPORT_CONFIG.MAX_URL_LENGTH);
+                .slice(0, maxLength);
         }
 
         function isValidEmail(value) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || ""));
         }
 
-        function isLikelyUrl(value) {
+        function isValidHttpUrl(value) {
             try {
-                const parsed = new URL(String(value));
-                return parsed.protocol === "https:" || parsed.protocol === "http:";
+                const url = new URL(String(value || ""));
+                return url.protocol === "https:" || url.protocol === "http:";
             } catch (error) {
                 return false;
             }
