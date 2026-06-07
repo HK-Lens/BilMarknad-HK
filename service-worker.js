@@ -1,14 +1,19 @@
+/* 
+  File: service-worker.js
+  Project: VORQ Fordon
+  File version: vorq-fordon-pwa-v15-20260607-login-required-reports
+  Last reviewed/updated: 2026-06-07 10:58 Europe/Berlin
+  Status: Cache version bump after report-login requirement.
+  Change note: Forces browsers to refresh notice-action.html after report access policy change.
+*/
 /* VORQ Fordon service worker
-   File version: service-worker-admin-login-v2-20260606
-   Last reviewed/updated: 2026-06-06 23:52 Europe/Berlin
-   Change note: Keeps admin-reports.html out of cache after protected admin login update and bumps PWA cache.
    Project operator in legal pages: VORQ Digital, Inhaber: Haitham Kojar.
    VORQ Fordon is a vehicle-ad platform directed to the Swedish market.
    No payment, invoice or pricing logic is handled here.
 */
 
 const CACHE_PREFIX = "vorq-fordon-pwa-";
-const CACHE_NAME = `${CACHE_PREFIX}v15-20260606-admin-login`;
+const CACHE_NAME = `${CACHE_PREFIX}v15-20260607-login-required-reports`;
 
 const APP_SHELL = [
   "./",
@@ -31,7 +36,6 @@ const APP_SHELL = [
 
 const OFFLINE_URL = "./offline.html";
 const NOT_FOUND_URL = "./404.html";
-const ADMIN_REPORTS_PATH = "/admin-reports.html";
 
 async function cacheAppShell() {
   const cache = await caches.open(CACHE_NAME);
@@ -89,10 +93,6 @@ self.addEventListener("message", (event) => {
   }
 });
 
-function isAdminReportsRequest(requestUrl) {
-  return requestUrl.pathname.endsWith(ADMIN_REPORTS_PATH);
-}
-
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
@@ -100,11 +100,6 @@ self.addEventListener("fetch", (event) => {
 
   if (requestUrl.origin !== self.location.origin) {
     event.respondWith(fetch(event.request));
-    return;
-  }
-
-  if (isAdminReportsRequest(requestUrl)) {
-    event.respondWith(fetch(event.request, { cache: "no-store" }));
     return;
   }
 
