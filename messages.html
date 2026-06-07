@@ -2,10 +2,10 @@
 <!--
   File: messages.html
   Project: VORQ Fordon
-  File version: vorq-fordon-messages-delivery-fix-2026-06-07
-  Last reviewed/updated: 2026-06-07 16:18 Europe/Berlin
-  Status: Fixes message delivery visibility for the other participant.
-  Change note: Sending a message now updates parent chat metadata, restores the chat from hiddenFor for all participants, keeps participant IDs synchronized, and stores ad identity on each message.
+  File version: vorq-fordon-message-to-seller-fix-2026-06-07
+  Last reviewed/updated: 2026-06-07 16:58 Europe/Berlin
+  Status: Fixes message delivery to seller by making message creation and parent chat update atomic.
+  Change note: Sending now writes the message and updates chats/{chatId} in one batch, keeps seller/buyer in participants, clears hiddenFor, sets unreadBy, and stores ad identity on the message.
 -->
 <html lang="sv">
 <head>
@@ -751,53 +751,47 @@
             }
 
             const receiverIds = getMessageReceiverIds(roomData);
+
+            if (!receiverIds.length) {
+                throw new Error("Mottagare saknas. Konversationen saknar säljare/köpare i deltagarlistan.");
+            }
+
             const participantIds = uniqueArray([
                 ...getRoomParticipantIds(roomData),
                 state.user.uid,
                 ...receiverIds
             ]);
-            const adId = getRoomAnnonsnummer(roomData) || roomData.carId || "";
 
-            await addDoc(collection(db, `chats/${state.activeRoomId}/messages`), {
+            const annonsnummer = getRoomAnnonsnummer(roomData) || roomData.carId || "";
+            const messageRef = doc(collection(db, `chats/${state.activeRoomId}/messages`));
+            const batch = writeBatch(db);
+
+            batch.set(messageRef, {
                 senderId: state.user.uid,
                 senderEmail: state.user.email || "",
                 senderName: state.user.displayName || getNameFromEmail(state.user.email) || "Användare",
                 text,
                 carId: roomData.carId || "",
-                adId: roomData.adId || adId || "",
-                annonsnummer: roomData.annonsnummer || adId || "",
+                adId: roomData.adId || annonsnummer || roomData.carId || "",
+                annonsnummer: roomData.annonsnummer || annonsnummer || roomData.carId || "",
                 createdAt: serverTimestamp()
             });
 
             /*
-             * Delivery visibility depends on the parent chat document.
-             * The receiver's message list listens to chats where their UID exists in participants.
-             * If the receiver previously removed/hidden the chat, hiddenFor must be cleared when a new message is sent.
+             * The seller sees the conversation through chats/{chatId}.
+             * Therefore the message and the parent chat metadata must be updated together.
+             * If this update fails, we show an error instead of saving a message that the seller cannot see.
              */
-            const chatUpdatePayload = {
+            batch.update(roomRef, {
+                participants: arrayUnion(...participantIds),
+                hiddenFor: arrayRemove(...participantIds),
                 lastMessage: text,
                 lastSenderId: state.user.uid,
                 unreadBy: receiverIds,
                 updatedAt: serverTimestamp()
-            };
+            });
 
-            if (participantIds.length > 0) {
-                chatUpdatePayload.participants = arrayUnion(...participantIds);
-                chatUpdatePayload.hiddenFor = arrayRemove(...participantIds);
-            }
-
-            try {
-                await updateDoc(roomRef, chatUpdatePayload);
-            } catch (previewUpdateError) {
-                console.error("Message was saved, but parent chat metadata could not be updated:", previewUpdateError);
-
-                await Swal.fire({
-                    icon: "warning",
-                    title: "Meddelandet sparades",
-                    text: "Meddelandet finns i chatten, men konversationen kunde inte uppdateras för mottagarens lista. Kontrollera Firestore-reglerna om mottagaren inte ser chatten.",
-                    confirmButtonColor: "#f58220"
-                });
-            }
+            await batch.commit();
 
             elements.msgInput.value = "";
             elements.msgInput.style.height = "auto";
@@ -806,7 +800,7 @@
             await Swal.fire({
                 icon: "error",
                 title: "Meddelandet kunde inte skickas",
-                text: error.message || "Kontrollera anslutningen och försök igen.",
+                text: getSendMessageErrorText(error),
                 confirmButtonColor: "#f58220"
             });
         } finally {
@@ -817,6 +811,20 @@
                 elements.sendBtn.disabled = !elements.msgInput.value.trim();
             }
         }
+    }
+
+    function getSendMessageErrorText(error) {
+        const code = error?.code || "";
+
+        if (code === "permission-denied") {
+            return "Meddelandet sparades inte eftersom Firestore-reglerna inte tillåter att chatten uppdateras för mottagaren. Publicera den uppdaterade firestore.rules.txt.";
+        }
+
+        if (code === "not-found") {
+            return "Konversationen hittades inte längre. Öppna annonsen och starta chatten igen.";
+        }
+
+        return error?.message || "Kontrollera anslutningen och försök igen.";
     }
 
     async function deleteSingleMessage(messageId) {
