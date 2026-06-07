@@ -3,11 +3,11 @@
 VORQ File Version
 File: index.html
 Project: VORQ Fordon
-File version: 2026-06-06-necessary-legal-consistency
+File version: 2026-06-07-internal-admin-mail-link
 Last reviewed/updated: 2026-06-06
-Last reviewed/updated time: 2026-06-06 20:04 Europe/Berlin
+Last reviewed/updated time: 2026-06-07 20:15 Europe/Berlin
 Status: Updated
-Change note: Necessary legal, branding, contact, reporting and cache consistency update. Original filename preserved.
+Change note: Added logged-in navigation link to internal admin mail without changing layout.
 -->
 <html lang="sv">
 <head>
@@ -521,6 +521,12 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
         accountLink.innerHTML = '<i class="fa-solid fa-circle-user" aria-hidden="true"></i> Mitt konto';
         accountLink.title = user.email || 'Mitt konto';
 
+        const internalMailLink = document.createElement('a');
+        internalMailLink.href = 'internal-mail.html';
+        internalMailLink.className = 'account-link';
+        internalMailLink.innerHTML = '<i class="fa-solid fa-inbox" aria-hidden="true"></i> Admin-brev';
+        internalMailLink.title = 'Intern post från VORQ Fordon admin';
+
         const logoutButton = document.createElement('button');
         logoutButton.type = 'button';
         logoutButton.className = 'logout-btn';
@@ -535,7 +541,7 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
             }
         });
 
-        elements.authContainer.append(installButton, notificationWrap, accountLink, logoutButton);
+        elements.authContainer.append(installButton, notificationWrap, accountLink, internalMailLink, logoutButton);
     }
 
     function renderLoggedOutNav() {

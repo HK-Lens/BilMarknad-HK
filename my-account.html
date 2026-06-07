@@ -2,10 +2,10 @@
 <!--
   File: my-account.html
   Project: VORQ Fordon
-  File version: vorq-fordon-my-account-delete-cascade-2026-06-07
-  Last reviewed/updated: 2026-06-07 15:55 Europe/Berlin
-  Status: Deletes ad with related images, favorites, chats and chat messages.
-  Change note: Deleting an ad now searches related chats/favorites by carId, adId and annonsnummer; deletes subcollection messages first; removes Firebase Storage images from stored paths and download URLs.
+  File version: vorq-fordon-my-account-internal-mail-link-2026-06-07-2015-Europe-Berlin
+  Last reviewed/updated: 2026-06-07 20:15 Europe/Berlin
+  Status: Account page with internal admin mail link plus existing ad deletion tools.
+  Change note: Added internal-mail.html navigation so users can read admin replies to reports/ads without external email.
 -->
 <html lang="sv">
 <head>
@@ -97,6 +97,7 @@
         <button class="tab-btn" id="btnFavs" type="button">Sparade Bilar</button>
         <button class="tab-btn" id="btnProfile" type="button">Min profil</button>
         <button class="tab-btn" id="btnMessages" type="button">Meddelanden</button>
+        <button class="tab-btn" id="btnInternalMail" type="button">Admin-brev</button>
         <button class="tab-btn" id="btnDashboard" type="button">Dashboard</button>
         <a class="tab-btn report-link" href="notice-action.html?source=my-account" aria-label="Rapportera felaktig eller olaglig annons"><i class="fa-solid fa-flag"></i> Rapportera</a>
     </div>
@@ -157,6 +158,7 @@
             DETAILS: 'details.html',
             MESSAGES: 'messages.html',
             DASHBOARD: 'dashboard.html',
+            INTERNAL_MAIL: 'internal-mail.html',
             REPORT: 'notice-action.html',
             PLACEHOLDER_IMAGE: 'placeholder.jpg'
         },
@@ -186,6 +188,7 @@
         btnFavs: document.getElementById('btnFavs'),
         btnProfile: document.getElementById('btnProfile'),
         btnMessages: document.getElementById('btnMessages'),
+        btnInternalMail: document.getElementById('btnInternalMail'),
         btnDashboard: document.getElementById('btnDashboard')
     };
 
@@ -201,6 +204,7 @@
         elements.btnFavs.addEventListener('click', () => switchTab('favs'));
         elements.btnProfile.addEventListener('click', () => switchTab('profile'));
         elements.btnMessages.addEventListener('click', () => safeNavigate(CONFIG.ROUTES.MESSAGES));
+        elements.btnInternalMail.addEventListener('click', () => safeNavigate(CONFIG.ROUTES.INTERNAL_MAIL));
         elements.btnDashboard.addEventListener('click', () => safeNavigate(CONFIG.ROUTES.DASHBOARD));
     }
 

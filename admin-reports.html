@@ -1,9 +1,9 @@
 <!--
   VORQ Fordon - admin-reports.html
   Project: VORQ Fordon / VORQ Digital
-  File version: admin-reports-v2-20260606
-  Last reviewed/updated: 2026-06-06 23:52 Europe/Berlin
-  Status: Professional protected admin moderation page with built-in Firebase email/password login, admin-only report view, email follow-up links, and ad moderation actions.
+  File version: admin-reports-internal-mail-replies-2026-06-07-2015-Europe-Berlin
+  Last reviewed/updated: 2026-06-07 20:15 Europe/Berlin
+  Status: Admin report page with internal replies to report submitter and advertiser through adminMessages.
   Important: Access must also be enforced by firestore.rules.txt. Do not rely on client-side checks alone.
 -->
 <!DOCTYPE html>
@@ -520,7 +520,7 @@
         <div class="eyebrow"><i class="fa-solid fa-shield-halved"></i> Admin moderation</div>
         <h1>Rapporter och annonsåtgärder</h1>
         <p>
-          Granska rapporter, öppna kopplad annons, kontakta rapportör eller annonsör via e-postlänk,
+          Granska rapporter, öppna kopplad annons, svara internt till rapportör eller annonsör via konto-post,
           och pausa eller ta bort en annons från publicering. Alla beslut sparas i rapportdokumentet.
         </p>
       </div>
@@ -564,6 +564,7 @@
       getDoc,
       doc,
       updateDoc,
+      addDoc,
       serverTimestamp
     } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
@@ -571,7 +572,8 @@
       ADMIN_EMAILS: ['info@vq-dx.com'],
       COLLECTIONS: {
         REPORTS: 'reports',
-        CARS: 'cars'
+        CARS: 'cars',
+        ADMIN_MESSAGES: 'adminMessages'
       },
       ROUTES: {
         LOGIN: 'login.html',
@@ -874,9 +876,12 @@
       const car = state.carCache.get(carId) || null;
       const status = normalizeStatus(report.status);
       const reporterEmail = getReporterEmail(report);
-      const sellerEmail = cleanEmail(car?.sellerEmail || car?.ownerEmail || '');
-      const sellerName = cleanText(car?.sellerName || car?.contactName || 'Annonsör', 100);
+      const sellerEmail = cleanEmail(car?.sellerEmail || car?.ownerEmail || car?.contactEmail || '');
+      const sellerName = cleanText(car?.sellerName || car?.contactName || car?.ownerName || 'Annonsör', 100);
+      const reporterUid = getReporterUid(report);
+      const sellerUid = getSellerUidFromCar(car);
       const decisionReasonId = `reason-${report.id}`;
+      const internalReplyId = `internal-reply-${report.id}`;
 
       const card = document.createElement('article');
       card.className = 'report-card';
@@ -966,19 +971,36 @@
       );
       adBox.append(adTitle, adGrid, createSmallNote('Rekommenderat: använd mjuk borttagning först. Då sparas annonsdokumentet som bevis men visas inte offentligt om sidorna filtrerar status/isDeleted.'));
 
+      const internalMailBox = document.createElement('div');
+      internalMailBox.className = 'panel-box';
+      const internalMailTitle = document.createElement('h3');
+      internalMailTitle.append(createIcon('fa-solid fa-inbox'), document.createTextNode('Internt svar'));
+      const internalReplyInput = document.createElement('textarea');
+      internalReplyInput.className = 'decision-reason';
+      internalReplyInput.id = internalReplyId;
+      internalReplyInput.maxLength = 2000;
+      internalReplyInput.placeholder = 'Skriv svaret som ska skickas internt till rapportören eller annonsören. Det visas i användarens interna post, inte som extern e-post.';
+      const internalGrid = document.createElement('div');
+      internalGrid.className = 'action-grid';
+      internalGrid.append(
+        createButton('btn btn-info', 'fa-solid fa-reply', 'Skicka till rapportör', () => sendInternalReply(report, 'reporter'), !reporterUid),
+        createButton('btn btn-warning', 'fa-solid fa-car-side', 'Skicka till annonsör', () => sendInternalReply(report, 'seller'), !sellerUid)
+      );
+      internalMailBox.append(internalMailTitle, internalReplyInput, internalGrid, createSmallNote('Interna svar sparas i adminMessages och visas för mottagaren i internal-mail.html. Mottagaren måste ha konto/UID.'));
+
       const emailBox = document.createElement('div');
       emailBox.className = 'panel-box';
       const emailTitle = document.createElement('h3');
-      emailTitle.append(createIcon('fa-solid fa-envelope'), document.createTextNode('E-postuppföljning'));
+      emailTitle.append(createIcon('fa-solid fa-envelope'), document.createTextNode('Extern e-post som reserv'));
       const emailGrid = document.createElement('div');
       emailGrid.className = 'action-grid';
       emailGrid.append(
         createMailButton('Rapportör', reporterEmail, buildReporterMailSubject(report), buildReporterMailBody(report)),
         createMailButton('Annonsör', sellerEmail, buildSellerMailSubject(report), buildSellerMailBody(report, car))
       );
-      emailBox.append(emailTitle, emailGrid, createSmallNote('E-postknapparna använder mailto. För automatisk sändning från info@vq-dx.com behövs backend, t.ex. Cloud Functions + e-postleverantör.'));
+      emailBox.append(emailTitle, emailGrid, createSmallNote('Använd extern e-post bara som reserv. Primär uppföljning ska ske via intern post när UID finns.'));
 
-      actionsPanel.append(decisionBox, adBox, emailBox);
+      actionsPanel.append(decisionBox, adBox, internalMailBox, emailBox);
       body.append(dataGrid, actionsPanel);
       card.append(head, body);
       return card;
@@ -1032,6 +1054,121 @@
       link.href = `mailto:${encodeURIComponent(email)}?${params.toString()}`;
       link.append(createIcon('fa-solid fa-envelope'), document.createTextNode(`E-post till ${label}`));
       return link;
+    }
+
+    async function sendInternalReply(report, targetRole) {
+      if (!state.currentUser || !state.isAdmin) {
+        showStatus('Adminbehörighet saknas.', 'error');
+        return;
+      }
+
+      const target = getInternalReplyTarget(report, targetRole);
+      if (!target.uid) {
+        showStatus(targetRole === 'reporter' ? 'Rapportörens konto-ID saknas. Kan inte skicka intern post.' : 'Annonsörens konto-ID saknas i annonsdokumentet. Kan inte skicka intern post.', 'error');
+        return;
+      }
+
+      const customMessage = cleanLongText(document.getElementById(`internal-reply-${report.id}`)?.value || '', 2000);
+      const fallbackMessage = targetRole === 'reporter'
+        ? buildReporterInternalBody(report)
+        : buildSellerInternalBody(report, state.carCache.get(getReportAdId(report)) || null);
+      const message = customMessage || fallbackMessage;
+
+      if (!message || message.length < 3) {
+        showStatus('Skriv ett internt svar innan du skickar.', 'error');
+        return;
+      }
+
+      const confirmed = window.confirm(`Skicka internt svar till ${target.label}?`);
+      if (!confirmed) return;
+
+      try {
+        await addDoc(collection(db, ADMIN_CONFIG.COLLECTIONS.ADMIN_MESSAGES), {
+          type: 'report_reply',
+          reportId: report.id,
+          adId: getReportAdId(report),
+          carId: getReportAdId(report),
+          annonsnummer: getReportAdId(report),
+          targetUid: target.uid,
+          targetEmail: target.email,
+          targetRole,
+          targetLabel: target.label,
+          subject: targetRole === 'reporter' ? buildReporterInternalSubject(report) : buildSellerInternalSubject(report),
+          message,
+          senderUid: state.currentUser.uid,
+          senderEmail: cleanEmail(state.currentUser.email),
+          senderRole: 'admin',
+          platform: 'VORQ Fordon',
+          source: 'admin-reports',
+          read: false,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+
+        await updateReport(report.id, {
+          lastInternalReplyAt: serverTimestamp(),
+          lastInternalReplyTo: targetRole,
+          lastInternalReplyTargetUid: target.uid,
+          lastInternalReplyBy: state.currentUser.uid,
+          lastInternalReplyByEmail: cleanEmail(state.currentUser.email),
+          updatedAt: serverTimestamp()
+        }, false);
+
+        showStatus(`Internt svar skickat till ${target.label}.`, 'success');
+        await loadReports();
+      } catch (error) {
+        console.error('[VORQ Fordon] Internal reply failed:', error);
+        showStatus(getReadableError(error), 'error');
+      }
+    }
+
+    function getInternalReplyTarget(report, targetRole) {
+      const car = state.carCache.get(getReportAdId(report)) || null;
+      if (targetRole === 'reporter') {
+        return { uid: getReporterUid(report), email: getReporterEmail(report), label: 'rapportören' };
+      }
+
+      return {
+        uid: getSellerUidFromCar(car),
+        email: cleanEmail(car?.sellerEmail || car?.ownerEmail || car?.contactEmail || ''),
+        label: 'annonsören'
+      };
+    }
+
+    function buildReporterInternalSubject(report) {
+      return `Svar på rapport ${report.id}`;
+    }
+
+    function buildSellerInternalSubject(report) {
+      return `Meddelande om annons ${getReportAdId(report) || ''}`.trim();
+    }
+
+    function buildReporterInternalBody(report) {
+      const reason = getReasonValue(report.id) || report.decisionReason || 'Rapporten har granskats av VORQ Fordon.';
+      return [
+        `Hej,`,
+        `Tack för din rapport till VORQ Fordon.`,
+        `Referens: ${report.id}.`,
+        `Annonsnummer: ${getReportAdId(report) || '-'}.`,
+        `Status: ${statusLabel(normalizeStatus(report.status))}.`,
+        `Meddelande: ${reason}`,
+        `Vänliga hälsningar,`,
+        `VORQ Fordon admin`
+      ].join('\n');
+    }
+
+    function buildSellerInternalBody(report, car) {
+      const reason = getReasonValue(report.id) || report.decisionReason || 'Din annons har kopplats till ett ärende som granskas av VORQ Fordon.';
+      return [
+        `Hej,`,
+        `Vi kontaktar dig gällande din annons på VORQ Fordon.`,
+        `Annonsnummer: ${getReportAdId(report) || '-'}.`,
+        `Annons: ${cleanText(car?.title || `${car?.brand || ''} ${car?.model || ''}`.trim() || '-', 180)}.`,
+        `Meddelande: ${reason}`,
+        `Logga in på ditt konto för att se intern post och eventuella uppdateringar.`,
+        `Vänliga hälsningar,`,
+        `VORQ Fordon admin`
+      ].join('\n');
     }
 
     function createSmallNote(text) {
@@ -1159,6 +1296,15 @@
       return cleanEmail(report?.reporterEmail || report?.reporterUserEmail || report?.email || '');
     }
 
+    function getReporterUid(report) {
+      return normalizeDocumentId(report?.reporterUid || report?.reporterId || report?.uid || '');
+    }
+
+    function getSellerUidFromCar(car) {
+      if (!car) return '';
+      return normalizeDocumentId(car.sellerId || car.ownerId || car.userId || car.uid || car.createdBy || car.createdById || car.termsAcceptedBy || '');
+    }
+
     function normalizeStatus(status) {
       const clean = cleanText(status || 'new', 80);
       if (clean === 'open' || clean === 'received') return 'new';
@@ -1203,7 +1349,8 @@
         report.ownerDecision ? `Beslut: ${report.ownerDecision}` : '',
         report.decisionReason ? `Skäl: ${report.decisionReason}` : '',
         report.reviewedByEmail ? `Granskad av: ${report.reviewedByEmail}` : '',
-        report.linkedAdStatus ? `Annonsåtgärd: ${report.linkedAdStatus}` : ''
+        report.linkedAdStatus ? `Annonsåtgärd: ${report.linkedAdStatus}` : '',
+        report.lastInternalReplyAt ? `Senaste interna svar: ${formatTimestamp(report.lastInternalReplyAt)} till ${report.lastInternalReplyTo || '-'}` : ''
       ].filter(Boolean);
       return values.join('\n') || 'Ingen granskning sparad ännu.';
     }
