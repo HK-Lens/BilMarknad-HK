@@ -1,9 +1,9 @@
 /* 
   File: service-worker.js
   Project: VORQ Fordon
-  File version: vorq-fordon-pwa-v27-20260607-internal-admin-mail
-  Last reviewed/updated: 2026-06-07 20:15 Europe/Berlin
-  Status: Cache version bump after internal admin mail feature.
+  File version: vorq-fordon-pwa-v29-20260607-restore-mobile-edit-files
+  Last reviewed/updated: 2026-06-07 22:45 Europe/Berlin
+  Status: Cache version bump after restoring app/mobile edit-management files.
 */
 /* VORQ Fordon service worker
    Project operator in legal pages: VORQ Digital, Inhaber: Haitham Kojar.
@@ -12,7 +12,7 @@
 */
 
 const CACHE_PREFIX = "vorq-fordon-pwa-";
-const CACHE_NAME = `${CACHE_PREFIX}v27-20260607-internal-admin-mail`;
+const CACHE_NAME = `${CACHE_PREFIX}v29-20260607-restore-mobile-edit-files`;
 
 const APP_SHELL = [
   "./",
@@ -32,7 +32,16 @@ const APP_SHELL = [
   "./notice-action.html",
   "./rapportera.html",
   "./messages.html",
-  "./internal-mail.html"
+  "./internal-mail.html",
+  "./add-car.html",
+  "./edit-car.html",
+  "./manage.html",
+  "./app.js",
+  "./sell.html",
+  "./results.html",
+  "./details.html",
+  "./my-account.html",
+  "./dashboard.html"
 ];
 
 const OFFLINE_URL = "./offline.html";
