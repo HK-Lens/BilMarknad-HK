@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <!--
-VORQ File Version
-File: messages.html
-Project: VORQ Fordon
-File version: 2026-06-06-necessary-legal-consistency
-Last reviewed/updated: 2026-06-06
-Last reviewed/updated time: 2026-06-06 20:04 Europe/Berlin
-Status: Updated
-Change note: Necessary legal, branding, contact, reporting and cache consistency update. Original filename preserved.
+  File: messages.html
+  Project: VORQ Fordon
+  File version: vorq-fordon-messages-auto-retry-fix-2026-06-07
+  Last reviewed/updated: 2026-06-07 15:20 Europe/Berlin
+  Status: Fixes first-load chat error by retrying conversation listener after auth/network initialization.
+  Change note: Refresh now re-subscribes to chats; initial permission/network race retries automatically; page restore/visibility also refreshes conversations.
 -->
 <html lang="sv">
 <head>
@@ -132,6 +130,9 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
         rooms: [],
         roomUnsubscribe: null,
         messageUnsubscribe: null,
+        roomRetryTimer: null,
+        roomRetryCount: 0,
+        roomListenerStartedAt: 0,
         searchText: "",
         isSending: false,
         pendingOpenRoomKey: ""
@@ -168,6 +169,18 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
     function initializePage() {
         attachStaticEvents();
         window.addEventListener("beforeunload", cleanupListeners);
+
+        window.addEventListener("pageshow", () => {
+            if (state.user) {
+                listenToRooms();
+            }
+        });
+
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden && state.user) {
+                listenToRooms();
+            }
+        });
         onAuthStateChanged(auth, async (currentUser) => {
             if (!currentUser) {
                 const returnURL = `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -208,7 +221,13 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
         });
 
         elements.backMobile.addEventListener("click", closeChatMobile);
-        elements.refreshBtn.addEventListener("click", () => renderChatList());
+        elements.refreshBtn.addEventListener("click", () => {
+            if (state.user) {
+                listenToRooms();
+            } else {
+                renderChatList();
+            }
+        });
 
         elements.chatSearch.addEventListener("input", () => {
             state.searchText = elements.chatSearch.value.trim().toLowerCase();
@@ -228,10 +247,19 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
     }
 
     function listenToRooms() {
-        if (state.roomUnsubscribe) {
-            state.roomUnsubscribe();
+        if (!state.user) {
+            showChatListError("Du måste vara inloggad för att läsa meddelanden.");
+            return;
         }
 
+        clearRoomRetryTimer();
+
+        if (state.roomUnsubscribe) {
+            state.roomUnsubscribe();
+            state.roomUnsubscribe = null;
+        }
+
+        state.roomListenerStartedAt = Date.now();
         showChatListLoading();
 
         const roomsQuery = query(
@@ -242,6 +270,8 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
         state.roomUnsubscribe = onSnapshot(
             roomsQuery,
             (snapshot) => {
+                state.roomRetryCount = 0;
+
                 state.rooms = snapshot.docs.map((roomDoc) => ({
                     id: roomDoc.id,
                     ...roomDoc.data()
@@ -253,9 +283,50 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
             },
             (error) => {
                 console.error("Could not load chats:", error);
-                showChatListError("Kunde inte hämta konversationer. Kontrollera Firebase-regler och nätverk.");
+
+                if (state.roomUnsubscribe) {
+                    state.roomUnsubscribe = null;
+                }
+
+                const shouldRetry = state.user && state.roomRetryCount < 3;
+
+                if (shouldRetry) {
+                    state.roomRetryCount += 1;
+                    showChatListLoading(`Försöker hämta konversationer igen... (${state.roomRetryCount}/3)`);
+                    state.roomRetryTimer = setTimeout(() => {
+                        listenToRooms();
+                    }, 900 * state.roomRetryCount);
+                    return;
+                }
+
+                showChatListError(getConversationLoadErrorMessage(error));
             }
         );
+    }
+
+    function clearRoomRetryTimer() {
+        if (state.roomRetryTimer) {
+            clearTimeout(state.roomRetryTimer);
+            state.roomRetryTimer = null;
+        }
+    }
+
+    function getConversationLoadErrorMessage(error) {
+        const code = error?.code || "";
+
+        if (code === "permission-denied") {
+            return "Konversationer kunde inte hämtas på grund av Firestore-regler. Om de visas efter uppdatering beror det oftast på en första laddningsfördröjning. Kontrollera att senaste reglerna är publicerade.";
+        }
+
+        if (code === "failed-precondition") {
+            return "Konversationer kräver ett Firestore-index. Öppna webbkonsolen och skapa indexet om Firebase visar en indexlänk.";
+        }
+
+        if (code === "unauthenticated") {
+            return "Du måste vara inloggad för att läsa meddelanden.";
+        }
+
+        return "Kunde inte hämta konversationer. Kontrollera nätverket och försök igen.";
     }
 
     async function openRoomFromURLIfNeeded() {
@@ -896,8 +967,8 @@ Change note: Necessary legal, branding, contact, reporting and cache consistency
         elements.chatWindow.classList.remove("show-mobile");
     }
 
-    function showChatListLoading() {
-        elements.chatList.innerHTML = '<div class="loading-state"><div class="state-card"><div class="state-icon"><i class="fa-solid fa-circle-notch fa-spin"></i></div><h3>Laddar chattar</h3><p>Hämtar dina konversationer...</p></div></div>';
+    function showChatListLoading(message = "Hämtar dina konversationer...") {
+        elements.chatList.innerHTML = `<div class="loading-state"><div class="state-card"><div class="state-icon"><i class="fa-solid fa-circle-notch fa-spin"></i></div><h3>Laddar chattar</h3><p>${escapeHTML(message)}</p></div></div>`;
     }
 
     function showChatListEmpty() {
