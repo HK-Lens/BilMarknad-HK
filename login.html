@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<!--
+  File: login.html
+  Project: VORQ Fordon
+  File version: vorq-fordon-login-auth-success-fix-2026-06-07
+  Last reviewed/updated: 2026-06-07 14:36 Europe/Berlin
+  Status: Fixes false Google login error when Firebase Authentication succeeds but profile sync/write fails.
+  Change note: Login success is no longer blocked by Firestore profile update. If the user is authenticated, redirect continues safely.
+-->
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
@@ -722,10 +730,22 @@
                 return;
             }
 
-            await upsertUserProfileAfterLogin(user, "email-password");
-            window.location.href = LOGIN_CONFIG.ROUTES.HOME;
+            const profileSynced = await safeUpsertUserProfileAfterLogin(user, "email-password");
+            if (!profileSynced) {
+                showStatus(getProfileSyncWarning(), "success");
+            }
+            window.location.href = getSafeRedirectUrl();
         } catch (error) {
-            console.error("[VORQ Fordon] Login failed:", error);
+            console.error("[VORQ Fordon] Login warning/error:", error);
+
+            if (auth.currentUser) {
+                console.warn("[VORQ Fordon] Auth user exists after login error. Continuing as logged in.");
+                showStatus("Inloggningen lyckades. Du skickas vidare...", "success");
+                await safeUpsertUserProfileAfterLogin(auth.currentUser, "email-password");
+                window.location.href = getSafeRedirectUrl();
+                return;
+            }
+
             showStatus(getReadableLoginError(error), "error");
         } finally {
             state.isSubmitting = false;
@@ -755,10 +775,22 @@
 
         try {
             const result = await signInWithPopup(auth, googleProvider);
-            await upsertUserProfileAfterLogin(result.user, "google");
-            window.location.href = LOGIN_CONFIG.ROUTES.HOME;
+            const profileSynced = await safeUpsertUserProfileAfterLogin(result.user, "google");
+            if (!profileSynced) {
+                showStatus(getProfileSyncWarning(), "success");
+            }
+            window.location.href = getSafeRedirectUrl();
         } catch (error) {
-            console.error("[VORQ Fordon] Google login failed:", error);
+            console.error("[VORQ Fordon] Google login flow warning/error:", error);
+
+            if (auth.currentUser) {
+                console.warn("[VORQ Fordon] Google auth user exists after error. Continuing as logged in.");
+                showStatus("Google-inloggningen lyckades. Du skickas vidare...", "success");
+                await safeUpsertUserProfileAfterLogin(auth.currentUser, "google");
+                window.location.href = getSafeRedirectUrl();
+                return;
+            }
+
             showStatus(getReadableGoogleError(error), "error");
         } finally {
             state.isSubmitting = false;
@@ -841,6 +873,20 @@
         await setDoc(userRef, payload, { merge: true });
     }
 
+    async function safeUpsertUserProfileAfterLogin(user, provider) {
+        try {
+            await upsertUserProfileAfterLogin(user, provider);
+            return true;
+        } catch (profileError) {
+            console.warn("[VORQ Fordon] Login succeeded but profile sync failed:", profileError);
+            return false;
+        }
+    }
+
+    function getProfileSyncWarning() {
+        return "Du är inloggad, men profiluppdateringen kunde inte sparas just nu. Du skickas ändå vidare.";
+    }
+
     async function trySendVerificationEmail(user) {
         try {
             await sendEmailVerification(user);
@@ -882,6 +928,27 @@
         elements.statusBox.className = "notice-box hidden";
     }
 
+    function getSafeRedirectUrl(candidate = "") {
+        const params = new URLSearchParams(window.location.search);
+        const rawRedirect = String(candidate || params.get("redirect") || "").trim();
+
+        if (!rawRedirect) {
+            return LOGIN_CONFIG.ROUTES.HOME;
+        }
+
+        try {
+            const url = new URL(rawRedirect, window.location.href);
+
+            if (url.origin !== window.location.origin) {
+                return LOGIN_CONFIG.ROUTES.HOME;
+            }
+
+            return url.href;
+        } catch (error) {
+            return LOGIN_CONFIG.ROUTES.HOME;
+        }
+    }
+
     function getReadableLoginError(error) {
         const code = error?.code || "";
         if (code === "auth/invalid-email") return "E-postadressen är inte giltig.";
@@ -897,7 +964,7 @@
         if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") return "Google-inloggningen avbröts.";
         if (code === "auth/network-request-failed") return "Nätverksfel. Kontrollera internetanslutningen.";
         if (code === "auth/account-exists-with-different-credential") return "Det finns redan ett konto med samma e-post men annan inloggningsmetod.";
-        return "Kunde inte logga in med Google just nu.";
+        return "Google-inloggningen kunde inte slutföras just nu. Om du redan är inloggad, uppdatera sidan eller gå vidare till startsidan.";
     }
 
     function getReadablePasswordResetError(error) {

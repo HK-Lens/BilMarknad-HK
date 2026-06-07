@@ -1,10 +1,9 @@
 /* 
   File: service-worker.js
   Project: VORQ Fordon
-  File version: vorq-fordon-pwa-v15-20260607-login-required-reports
-  Last reviewed/updated: 2026-06-07 10:58 Europe/Berlin
-  Status: Cache version bump after report-login requirement.
-  Change note: Forces browsers to refresh notice-action.html after report access policy change.
+  File version: vorq-fordon-pwa-v17-20260607-login-auth-success-fix
+  Last reviewed/updated: 2026-06-07 14:36 Europe/Berlin
+  Status: Cache version bump after login false-error fix.
 */
 /* VORQ Fordon service worker
    Project operator in legal pages: VORQ Digital, Inhaber: Haitham Kojar.
@@ -13,7 +12,7 @@
 */
 
 const CACHE_PREFIX = "vorq-fordon-pwa-";
-const CACHE_NAME = `${CACHE_PREFIX}v15-20260607-login-required-reports`;
+const CACHE_NAME = `${CACHE_PREFIX}v17-20260607-login-auth-success-fix`;
 
 const APP_SHELL = [
   "./",
