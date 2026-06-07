@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<!--
+  File: dashboard.html
+  Project: VORQ Fordon
+  File version: vorq-fordon-dashboard-permission-safe-2026-06-07
+  Last reviewed/updated: 2026-06-07 19:55 Europe/Berlin
+  Status: Dashboard permission-safe hotfix.
+  Change note: Dashboard no longer stops when optional count queries are denied; it loads the user profile safely and counts own ads/chats with participant/owner fallbacks.
+-->
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
@@ -33,7 +41,7 @@
     <script type="module">
         import { auth, db } from "./firebase-config.js";
         import { onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { doc, getDoc, collection, query, where, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const CONFIG={COLLECTIONS:{USERS:"users",CARS:"cars",CHATS:"chats"},ROUTES:{LOGIN:"login.html"},DEFAULTS:{EMPTY:"Ej angivet",LOADING:"..."},LIMITS:{TEXT:180}};
         const state={currentUser:null,userProfile:null,isLoading:false,isResettingPassword:false};
@@ -42,10 +50,14 @@
 
         init();
         function init(){setInitialLoadingState();el.refreshBtn.addEventListener("click",()=>{if(state.currentUser&&!state.isLoading)loadDashboardData(state.currentUser)});el.resetPasswordBtn.addEventListener("click",handlePasswordReset);onAuthStateChanged(auth,user=>{if(!user){redirectToLogin();return}state.currentUser=user;loadDashboardData(user)});}
-        async function loadDashboardData(user){if(!user?.uid){redirectToLogin();return}setDashboardLoading(true);try{setStatusPill("loading","Laddar konto...");const [profile,carTotal,chatTotal]=await Promise.all([fetchUserProfile(user),fetchUserCarCount(user.uid),fetchUserChatCount(user.uid)]);state.userProfile=profile;renderUserProfile(user,profile);renderStatistics({carTotal,chatTotal,profile});setStatusPill("success","Konto aktivt");}catch(error){console.error("Dashboard load error:",error);setStatusPill("error","Kunde inte ladda");await Swal.fire({icon:"error",title:"Kunde inte ladda dashboard",text:getFriendlyFirestoreErrorMessage(error),confirmButtonColor:"#f58220"});}finally{setDashboardLoading(false)}}
+        async function loadDashboardData(user){if(!user?.uid){redirectToLogin();return}setDashboardLoading(true);try{setStatusPill("loading","Laddar konto...");const profile=await fetchUserProfileSafely(user);const [carTotal,chatTotal]=await Promise.all([fetchUserCarCount(user.uid),fetchUserChatCount(user.uid)]);state.userProfile=profile;renderUserProfile(user,profile);renderStatistics({carTotal,chatTotal,profile});setStatusPill("success","Konto aktivt");}catch(error){console.error("Dashboard load error:",error);setStatusPill("error","Kunde inte ladda");await Swal.fire({icon:"error",title:"Kunde inte ladda dashboard",text:getFriendlyFirestoreErrorMessage(error),confirmButtonColor:"#f58220"});}finally{setDashboardLoading(false)}}
         async function fetchUserProfile(user){const snap=await getDoc(doc(db,CONFIG.COLLECTIONS.USERS,user.uid));return snap.exists()?normalizeUserProfile({uid:user.uid,authEmail:user.email,authDisplayName:user.displayName,data:snap.data()}):buildFallbackProfile(user)}
-        async function fetchUserCarCount(uid){const q=query(collection(db,CONFIG.COLLECTIONS.CARS),where("sellerId","==",uid),where("active","==",true));const snap=await getCountFromServer(q);return toSafeInteger(snap.data().count,0)}
-        async function fetchUserChatCount(uid){const q=query(collection(db,CONFIG.COLLECTIONS.CHATS),where("participants","array-contains",uid));const snap=await getCountFromServer(q);return toSafeInteger(snap.data().count,0)}
+        async function fetchUserProfileSafely(user){try{return await fetchUserProfile(user)}catch(error){console.warn("Dashboard profile fallback used:",error);return buildFallbackProfile(user)}}
+        async function fetchUserCarCount(uid){const carDocs=new Map();const ownerFields=["sellerId","ownerId","userId","uid","createdBy","createdById"];for(const field of ownerFields){await addDocumentsFromQuery(carDocs,query(collection(db,CONFIG.COLLECTIONS.CARS),where(field,"==",uid)),`cars.${field}`)}let total=0;carDocs.forEach((car)=>{if(isVisibleActiveCar(car))total+=1});return total}
+        async function fetchUserChatCount(uid){const chatDocs=new Map();const chatQueries=[query(collection(db,CONFIG.COLLECTIONS.CHATS),where("participants","array-contains",uid)),query(collection(db,CONFIG.COLLECTIONS.CHATS),where("buyerId","==",uid)),query(collection(db,CONFIG.COLLECTIONS.CHATS),where("sellerId","==",uid))];for(const chatQuery of chatQueries){await addDocumentsFromQuery(chatDocs,chatQuery,"chats")};let total=0;chatDocs.forEach((chat)=>{if(isVisibleChatForUser(chat,uid))total+=1});return total}
+        async function addDocumentsFromQuery(targetMap,firestoreQuery,label){try{const snapshot=await getDocs(firestoreQuery);snapshot.forEach((documentSnapshot)=>targetMap.set(documentSnapshot.id,{id:documentSnapshot.id,...documentSnapshot.data()}))}catch(error){console.warn(`Dashboard optional query skipped (${label}):`,error)}}
+        function isVisibleActiveCar(car){return car?.isDeleted!==true&&car?.status!=="deleted"&&car?.active!==false}
+        function isVisibleChatForUser(chat,uid){const hiddenFor=Array.isArray(chat?.hiddenFor)?chat.hiddenFor:[];return !hiddenFor.includes(uid)}
         function buildFallbackProfile(user){return{uid:user.uid,email:normalizeEmail(user.email),phone:"",userType:"private",name:normalizeDisplayText(user.displayName),companyName:"",taxId:"",address:"",accountStatus:"active",companyVerificationStatus:"",profileExists:false}}
         function normalizeUserProfile({uid,authEmail,authDisplayName,data}){const userType=normalizeUserType(data?.userType||data?.accountType);const companyName=normalizeDisplayText(data?.companyName||data?.businessName);const personalName=normalizeDisplayText(data?.name||data?.displayName||data?.sellerName||authDisplayName);return{uid,email:normalizeEmail(data?.email||authEmail),phone:normalizeDisplayText(data?.phone||data?.phoneNumber),userType,name:userType==="business"?(companyName||personalName):personalName,companyName,taxId:normalizeDisplayText(data?.taxId||data?.orgNumber),address:normalizeDisplayText(data?.address),accountStatus:normalizeDisplayText(data?.accountStatus||data?.status||"active"),companyVerificationStatus:normalizeDisplayText(data?.companyVerificationStatus||data?.businessVerificationStatus||(data?.businessVerified===true?"approved":"")),profileExists:true}}
         function renderUserProfile(authUser,profile){const displayName=truncateDisplayText(profile.name||profile.companyName||authUser.email||"Användare");setText(el.welcomeUser,`Hej, ${displayName}!`);setText(el.welcomeText,profile.profileExists?"Här ser du en säker sammanfattning av ditt konto, dina annonser och dina aktiva chattar.":"Din Firebase-inloggning finns, men ingen fullständig profil hittades i databasen ännu.");setText(el.displayEmail,profile.email||authUser.email||CONFIG.DEFAULTS.EMPTY);setText(el.displayPhone,profile.phone||CONFIG.DEFAULTS.EMPTY);setText(el.displayUserType,translateUserType(profile.userType));setText(el.displayName,displayName||CONFIG.DEFAULTS.EMPTY);setText(el.displayCompanyName,profile.companyName||CONFIG.DEFAULTS.EMPTY);setText(el.displayTaxId,profile.taxId||CONFIG.DEFAULTS.EMPTY);setText(el.displayAddress,profile.address||CONFIG.DEFAULTS.EMPTY);setText(el.displayCompanyVerification,translateVerificationStatus(profile.companyVerificationStatus,profile.userType))}
