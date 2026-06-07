@@ -2,10 +2,10 @@
 <!--
   File: messages.html
   Project: VORQ Fordon
-  File version: vorq-fordon-messages-auto-retry-fix-2026-06-07
-  Last reviewed/updated: 2026-06-07 15:20 Europe/Berlin
-  Status: Fixes first-load chat error by retrying conversation listener after auth/network initialization.
-  Change note: Refresh now re-subscribes to chats; initial permission/network race retries automatically; page restore/visibility also refreshes conversations.
+  File version: vorq-fordon-messages-stable-load-fix-2026-06-07
+  Last reviewed/updated: 2026-06-07 15:32 Europe/Berlin
+  Status: Stable message list loading; prevents loaded conversations from being replaced by retry/loading state.
+  Change note: Removed aggressive pageshow/visibility re-subscribe, made refresh non-destructive, and keeps existing conversations visible if a refresh attempt is slow or fails.
 -->
 <html lang="sv">
 <head>
@@ -131,8 +131,10 @@
         roomUnsubscribe: null,
         messageUnsubscribe: null,
         roomRetryTimer: null,
+        roomFallbackTimer: null,
         roomRetryCount: 0,
         roomListenerStartedAt: 0,
+        hasLoadedRoomsOnce: false,
         searchText: "",
         isSending: false,
         pendingOpenRoomKey: ""
@@ -170,17 +172,6 @@
         attachStaticEvents();
         window.addEventListener("beforeunload", cleanupListeners);
 
-        window.addEventListener("pageshow", () => {
-            if (state.user) {
-                listenToRooms();
-            }
-        });
-
-        document.addEventListener("visibilitychange", () => {
-            if (!document.hidden && state.user) {
-                listenToRooms();
-            }
-        });
         onAuthStateChanged(auth, async (currentUser) => {
             if (!currentUser) {
                 const returnURL = `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -190,7 +181,7 @@
 
             state.user = currentUser;
             renderUserStatus(currentUser);
-            listenToRooms();
+            listenToRooms({ showLoading: true, reason: "initial-auth" });
 
             try {
                 await openRoomFromURLIfNeeded();
@@ -223,7 +214,7 @@
         elements.backMobile.addEventListener("click", closeChatMobile);
         elements.refreshBtn.addEventListener("click", () => {
             if (state.user) {
-                listenToRooms();
+                listenToRooms({ showLoading: state.rooms.length === 0, reason: "manual-refresh" });
             } else {
                 renderChatList();
             }
@@ -246,13 +237,17 @@
         elements.userStatus.append(icon, text);
     }
 
-    function listenToRooms() {
+    function listenToRooms(options = {}) {
+        const showLoading = options.showLoading !== false;
+        const reason = options.reason || "auto";
+
         if (!state.user) {
             showChatListError("Du måste vara inloggad för att läsa meddelanden.");
             return;
         }
 
         clearRoomRetryTimer();
+        clearRoomFallbackTimer();
 
         if (state.roomUnsubscribe) {
             state.roomUnsubscribe();
@@ -260,17 +255,31 @@
         }
 
         state.roomListenerStartedAt = Date.now();
-        showChatListLoading();
+
+        if (showLoading && state.rooms.length === 0) {
+            showChatListLoading();
+        }
 
         const roomsQuery = query(
             collection(db, "chats"),
             where("participants", "array-contains", state.user.uid)
         );
 
+        state.roomFallbackTimer = setTimeout(() => {
+            if (state.rooms.length > 0) {
+                renderChatList();
+                return;
+            }
+
+            showChatListLoading("Hämtar fortfarande konversationer. Om detta tar för lång tid, tryck uppdatera igen.");
+        }, 4500);
+
         state.roomUnsubscribe = onSnapshot(
             roomsQuery,
             (snapshot) => {
+                clearRoomFallbackTimer();
                 state.roomRetryCount = 0;
+                state.hasLoadedRoomsOnce = true;
 
                 state.rooms = snapshot.docs.map((roomDoc) => ({
                     id: roomDoc.id,
@@ -282,19 +291,25 @@
                 renderChatList();
             },
             (error) => {
+                clearRoomFallbackTimer();
                 console.error("Could not load chats:", error);
 
                 if (state.roomUnsubscribe) {
                     state.roomUnsubscribe = null;
                 }
 
-                const shouldRetry = state.user && state.roomRetryCount < 3;
+                if (state.rooms.length > 0 || state.hasLoadedRoomsOnce) {
+                    renderChatList();
+                    return;
+                }
+
+                const shouldRetry = state.user && state.roomRetryCount < 2;
 
                 if (shouldRetry) {
                     state.roomRetryCount += 1;
-                    showChatListLoading(`Försöker hämta konversationer igen... (${state.roomRetryCount}/3)`);
+                    showChatListLoading(`Försöker hämta konversationer igen... (${state.roomRetryCount}/2)`);
                     state.roomRetryTimer = setTimeout(() => {
-                        listenToRooms();
+                        listenToRooms({ showLoading: true, reason: `retry-${state.roomRetryCount}` });
                     }, 900 * state.roomRetryCount);
                     return;
                 }
@@ -308,6 +323,13 @@
         if (state.roomRetryTimer) {
             clearTimeout(state.roomRetryTimer);
             state.roomRetryTimer = null;
+        }
+    }
+
+    function clearRoomFallbackTimer() {
+        if (state.roomFallbackTimer) {
+            clearTimeout(state.roomFallbackTimer);
+            state.roomFallbackTimer = null;
         }
     }
 

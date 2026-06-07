@@ -1,9 +1,9 @@
 /* 
   File: service-worker.js
   Project: VORQ Fordon
-  File version: vorq-fordon-pwa-v19-20260607-messages-auto-retry-fix
-  Last reviewed/updated: 2026-06-07 15:20 Europe/Berlin
-  Status: Cache version bump after messages auto-retry fix.
+  File version: vorq-fordon-pwa-v20-20260607-messages-stable-load-fix
+  Last reviewed/updated: 2026-06-07 15:32 Europe/Berlin
+  Status: Cache version bump after stable messages loading fix.
 */
 /* VORQ Fordon service worker
    Project operator in legal pages: VORQ Digital, Inhaber: Haitham Kojar.
@@ -12,7 +12,7 @@
 */
 
 const CACHE_PREFIX = "vorq-fordon-pwa-";
-const CACHE_NAME = `${CACHE_PREFIX}v19-20260607-messages-auto-retry-fix`;
+const CACHE_NAME = `${CACHE_PREFIX}v20-20260607-messages-stable-load-fix`;
 
 const APP_SHELL = [
   "./",
