@@ -2,10 +2,10 @@
 <!--
   File: messages.html
   Project: VORQ Fordon
-  File version: vorq-fordon-message-to-seller-fix-2026-06-07
-  Last reviewed/updated: 2026-06-07 16:58 Europe/Berlin
-  Status: Fixes message delivery to seller by making message creation and parent chat update atomic.
-  Change note: Sending now writes the message and updates chats/{chatId} in one batch, keeps seller/buyer in participants, clears hiddenFor, sets unreadBy, and stores ad identity on the message.
+  File version: vorq-fordon-messages-final-delivery-fix-2026-06-07
+  Last reviewed/updated: 2026-06-07 17:22 Europe/Berlin
+  Status: Final delivery fix: seller receives chats through sellerId + participants and parent chat updates are mandatory.
+  Change note: Chat list now loads via participants, buyerId and sellerId queries; sending message updates the parent chat in the same batch so the seller's inbox receives the conversation.
 -->
 <html lang="sv">
 <head>
@@ -135,6 +135,7 @@
         roomRetryCount: 0,
         roomListenerStartedAt: 0,
         hasLoadedRoomsOnce: false,
+        roomSnapshotMaps: new Map(),
         searchText: "",
         isSending: false,
         pendingOpenRoomKey: ""
@@ -239,7 +240,6 @@
 
     function listenToRooms(options = {}) {
         const showLoading = options.showLoading !== false;
-        const reason = options.reason || "auto";
 
         if (!state.user) {
             showChatListError("Du måste vara inloggad för att läsa meddelanden.");
@@ -255,15 +255,31 @@
         }
 
         state.roomListenerStartedAt = Date.now();
+        state.roomSnapshotMaps = new Map();
 
         if (showLoading && state.rooms.length === 0) {
             showChatListLoading();
         }
 
-        const roomsQuery = query(
-            collection(db, "chats"),
-            where("participants", "array-contains", state.user.uid)
-        );
+        /*
+         * The seller must receive the conversation.
+         * Do not rely only on participants array, because if a parent chat update failed once,
+         * sellerId/buyerId are still the stable fallback fields on the chat document.
+         */
+        const queryDefinitions = [
+            {
+                key: "participants",
+                q: query(collection(db, "chats"), where("participants", "array-contains", state.user.uid))
+            },
+            {
+                key: "buyerId",
+                q: query(collection(db, "chats"), where("buyerId", "==", state.user.uid))
+            },
+            {
+                key: "sellerId",
+                q: query(collection(db, "chats"), where("sellerId", "==", state.user.uid))
+            }
+        ];
 
         state.roomFallbackTimer = setTimeout(() => {
             if (state.rooms.length > 0) {
@@ -271,55 +287,107 @@
                 return;
             }
 
-            showChatListLoading("Hämtar fortfarande konversationer. Om detta tar för lång tid, tryck uppdatera igen.");
+            showChatListLoading("Hämtar konversationer...");
         }, 4500);
 
-        state.roomUnsubscribe = onSnapshot(
-            roomsQuery,
-            (snapshot) => {
-                clearRoomFallbackTimer();
-                state.roomRetryCount = 0;
-                state.hasLoadedRoomsOnce = true;
+        const unsubscribers = [];
 
-                state.rooms = snapshot.docs.map((roomDoc) => ({
-                    id: roomDoc.id,
-                    ...roomDoc.data()
-                })).filter((room) => !isRoomHiddenForCurrentUser(room)).sort((a, b) => {
-                    return timestampToMillis(b.updatedAt || b.createdAt) - timestampToMillis(a.updatedAt || a.createdAt);
-                });
+        queryDefinitions.forEach((definition) => {
+            const unsubscribe = onSnapshot(
+                definition.q,
+                (snapshot) => {
+                    clearRoomFallbackTimer();
+                    state.roomRetryCount = 0;
+                    state.hasLoadedRoomsOnce = true;
 
-                renderChatList();
-            },
-            (error) => {
-                clearRoomFallbackTimer();
-                console.error("Could not load chats:", error);
+                    const mapForQuery = new Map();
 
-                if (state.roomUnsubscribe) {
-                    state.roomUnsubscribe = null;
+                    snapshot.docs.forEach((roomDoc) => {
+                        mapForQuery.set(roomDoc.id, {
+                            id: roomDoc.id,
+                            ...roomDoc.data()
+                        });
+                    });
+
+                    state.roomSnapshotMaps.set(definition.key, mapForQuery);
+                    mergeAndRenderRooms();
+                },
+                (error) => {
+                    console.error(`Could not load chats with ${definition.key} query:`, error);
+
+                    /*
+                     * One query may fail because of a missing index/rule during deployment.
+                     * Do not wipe already loaded conversations if another query succeeds.
+                     */
+                    state.roomSnapshotMaps.delete(definition.key);
+
+                    if (state.rooms.length > 0 || state.hasLoadedRoomsOnce) {
+                        renderChatList();
+                        return;
+                    }
+
+                    const shouldRetry = state.user && state.roomRetryCount < 2;
+
+                    if (shouldRetry) {
+                        state.roomRetryCount += 1;
+                        showChatListLoading(`Försöker hämta konversationer igen... (${state.roomRetryCount}/2)`);
+                        state.roomRetryTimer = setTimeout(() => {
+                            listenToRooms({ showLoading: true, reason: `retry-${state.roomRetryCount}` });
+                        }, 900 * state.roomRetryCount);
+                        return;
+                    }
+
+                    clearRoomFallbackTimer();
+                    showChatListError(getConversationLoadErrorMessage(error));
                 }
+            );
 
-                if (state.rooms.length > 0 || state.hasLoadedRoomsOnce) {
-                    renderChatList();
-                    return;
+            unsubscribers.push(unsubscribe);
+        });
+
+        state.roomUnsubscribe = () => {
+            unsubscribers.forEach((unsubscribe) => {
+                try {
+                    unsubscribe();
+                } catch (error) {
+                    console.warn("Could not unsubscribe chat listener:", error);
                 }
-
-                const shouldRetry = state.user && state.roomRetryCount < 2;
-
-                if (shouldRetry) {
-                    state.roomRetryCount += 1;
-                    showChatListLoading(`Försöker hämta konversationer igen... (${state.roomRetryCount}/2)`);
-                    state.roomRetryTimer = setTimeout(() => {
-                        listenToRooms({ showLoading: true, reason: `retry-${state.roomRetryCount}` });
-                    }, 900 * state.roomRetryCount);
-                    return;
-                }
-
-                showChatListError(getConversationLoadErrorMessage(error));
-            }
-        );
+            });
+        };
     }
 
-    function clearRoomRetryTimer() {
+    function mergeAndRenderRooms() {
+        const merged = new Map();
+
+        state.roomSnapshotMaps.forEach((roomMap) => {
+            roomMap.forEach((room, roomId) => {
+                merged.set(roomId, {
+                    ...(merged.get(roomId) || {}),
+                    ...room,
+                    id: roomId
+                });
+            });
+        });
+
+        state.rooms = Array.from(merged.values())
+            .filter((room) => isCurrentUserRelatedToRoom(room))
+            .filter((room) => !isRoomHiddenForCurrentUser(room))
+            .sort((a, b) => timestampToMillis(b.updatedAt || b.createdAt) - timestampToMillis(a.updatedAt || a.createdAt));
+
+        renderChatList();
+    }
+
+    function isCurrentUserRelatedToRoom(room) {
+        if (!state.user || !room) {
+            return false;
+        }
+
+        return getRoomParticipantIds(room).includes(state.user.uid)
+            || room.buyerId === state.user.uid
+            || room.sellerId === state.user.uid;
+    }
+
+    function clearRoomRetryTimer()    function clearRoomRetryTimer() {
         if (state.roomRetryTimer) {
             clearTimeout(state.roomRetryTimer);
             state.roomRetryTimer = null;
@@ -337,7 +405,7 @@
         const code = error?.code || "";
 
         if (code === "permission-denied") {
-            return "Konversationer kunde inte hämtas på grund av Firestore-regler. Om de visas efter uppdatering beror det oftast på en första laddningsfördröjning. Kontrollera att senaste reglerna är publicerade.";
+            return "Konversationer kunde inte hämtas. Publicera senaste firestore.rules.txt så att chattar kan läsas via participants, buyerId och sellerId.";
         }
 
         if (code === "failed-precondition") {
