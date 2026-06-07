@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <!--
-VORQ-FORDON-FILE-VERSION
-File: notice-action.html
-Project: VORQ Fordon
-Version: 2026-06-06-report-hotfix-v2
-Last reviewed/updated: 2026-06-06 22:15 Europe/Berlin
-Status: Updated
-Change note: Hotfix for report submission; aligns payload with Firestore rules and shows permission-specific diagnostics.
+  File: notice-action.html
+  Project: VORQ Fordon
+  File version: vorq-fordon-notice-action-login-required-2026-06-07
+  Last reviewed/updated: 2026-06-07 10:58 Europe/Berlin
+  Status: Login required for reporting; reports are linked to authenticated user accounts for internal follow-up.
+  Change note: Visitors must log in before sending a report. reporterUid and reporterUserEmail are stored for admin/internal replies.
 -->
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rapportera annons | VORQ Fordon</title>
-    <meta name="description" content="Rapportera en annons eller ett misstänkt innehåll på VORQ Fordon. Ange annonsnummer och skicka en tydlig rapport till VORQ Digital, Inhaber: Haitham Kojar.">
+    <meta name="description" content="Rapportera en annons eller ett misstänkt innehåll på VORQ Fordon. Inloggat konto krävs för att skicka rapport så att ärendet kan följas upp internt.">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Rapportera annons | VORQ Fordon">
-    <meta property="og:description" content="Använd VORQ Fordons rapporteringsformulär för att anmäla misstänkt, felaktigt eller olagligt innehåll.">
+    <meta property="og:description" content="Använd VORQ Fordons rapporteringsformulär för att rapportera misstänkt, felaktigt eller olagligt innehåll. Inloggning krävs.">
     <meta property="og:site_name" content="VORQ Fordon">
     <link rel="icon" href="./vorq-fordon-logo-header.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -454,6 +453,66 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
             .action-row { display: grid; grid-template-columns: 1fr; }
             .btn { width: 100%; }
         }
+
+        .auth-gate {
+            margin-bottom: 18px;
+            padding: 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid #fed7aa;
+            background: #fff7ed;
+            color: #92400e;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .auth-gate.success {
+            border-color: rgba(22, 163, 74, 0.28);
+            background: rgba(22, 163, 74, 0.08);
+            color: #166534;
+        }
+
+        .auth-gate.error {
+            border-color: rgba(220, 38, 38, 0.22);
+            background: rgba(220, 38, 38, 0.08);
+            color: #7f1d1d;
+        }
+
+        .auth-gate strong {
+            display: block;
+            font-size: 14px;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .auth-gate p {
+            max-width: 680px;
+            font-size: 13px;
+            font-weight: 750;
+            line-height: 1.65;
+        }
+
+        .auth-gate-actions {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .report-form.locked {
+            opacity: 0.58;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        input[readonly] {
+            background: #f1f5f9;
+            color: var(--muted);
+            cursor: not-allowed;
+        }
+
     </style>
 </head>
 <body>
@@ -514,10 +573,22 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
         <section class="form-card" aria-label="Rapporteringsformulär">
             <div class="form-header">
                 <h2>Rapporteringsformulär</h2>
-                <p>Fyll i uppgifterna så tydligt som möjligt. Fält markerade med * är obligatoriska.</p>
+                <p>Inloggat VORQ Fordon-konto krävs för att skicka rapport. Fält markerade med * är obligatoriska.</p>
             </div>
 
-            <form class="report-form" id="reportForm" novalidate>
+
+            <div class="auth-gate" id="authGate" aria-live="polite">
+                <div>
+                    <strong id="authGateTitle">Kontrollerar inloggning...</strong>
+                    <p id="authGateText">Rapporter kan endast skickas av inloggade användare. Detta gör att VORQ Fordon kan följa upp ärendet internt och minska missbruk av rapporteringsfunktionen.</p>
+                </div>
+                <div class="auth-gate-actions" id="authGateActions">
+                    <a class="btn btn-light" id="loginLink" href="login.html"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Logga in</a>
+                    <a class="btn btn-light" id="signupLink" href="signup.html"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Skapa konto</a>
+                </div>
+            </div>
+
+            <form class="report-form locked" id="reportForm" novalidate>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="adId">Annonsnummer *</label>
@@ -547,21 +618,9 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
                     </div>
 
                     <div class="form-group">
-                        <label for="reporterName">Ditt namn *</label>
-                        <input type="text" id="reporterName" name="reporterName" maxlength="120" autocomplete="name" placeholder="För- och efternamn" required>
-                        <span class="hint">Behövs för en tydlig Notice & Action-rapport.</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="reporterEmail">Din e-post *</label>
-                        <input type="email" id="reporterEmail" name="reporterEmail" maxlength="120" autocomplete="email" placeholder="namn@example.com" required>
-                        <span class="hint">Används för bekräftelse och eventuell uppföljning.</span>
-                    </div>
-
-                    <div class="form-group full">
-                        <label for="contentUrl">Länk till annonsen eller innehållet</label>
-                        <input type="url" id="contentUrl" name="contentUrl" maxlength="500" autocomplete="url" placeholder="https://b.vq-dx.com/details.html?id=...">
-                        <span class="hint">Fylls automatiskt om länken skickas från sidan. Annonsnummer räcker om URL saknas.</span>
+                        <label for="reporterEmail">Inloggat konto *</label>
+                        <input type="email" id="reporterEmail" name="reporterEmail" maxlength="120" autocomplete="email" placeholder="Logga in för att fylla i kontots e-post" readonly required>
+                        <span class="hint">Rapporten kopplas till ditt inloggade VORQ Fordon-konto för intern uppföljning.</span>
                     </div>
 
                     <div class="form-group full">
@@ -615,8 +674,6 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
             MAX_ID_LENGTH: 160,
             MAX_SOURCE_LENGTH: 60,
             MAX_EMAIL_LENGTH: 120,
-            MAX_NAME_LENGTH: 120,
-            MAX_URL_LENGTH: 500,
             MAX_DESCRIPTION_LENGTH: 3000,
             MIN_DESCRIPTION_LENGTH: 20,
             TERMS_VERSION: "notice-action-2026-05",
@@ -633,14 +690,18 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
             adId: document.getElementById("adId"),
             source: document.getElementById("source"),
             category: document.getElementById("category"),
-            reporterName: document.getElementById("reporterName"),
             reporterEmail: document.getElementById("reporterEmail"),
-            contentUrl: document.getElementById("contentUrl"),
             description: document.getElementById("description"),
             goodFaith: document.getElementById("goodFaith"),
             privacyAccepted: document.getElementById("privacyAccepted"),
             statusBox: document.getElementById("statusBox"),
-            submitBtn: document.getElementById("submitBtn")
+            submitBtn: document.getElementById("submitBtn"),
+            authGate: document.getElementById("authGate"),
+            authGateTitle: document.getElementById("authGateTitle"),
+            authGateText: document.getElementById("authGateText"),
+            authGateActions: document.getElementById("authGateActions"),
+            loginLink: document.getElementById("loginLink"),
+            signupLink: document.getElementById("signupLink")
         };
 
         initializePage();
@@ -660,27 +721,18 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
                 params.get("carId")
             );
             const source = firstNonEmpty(params.get("source"), "manual");
-            const contentUrl = firstNonEmpty(
-                params.get("url"),
-                params.get("pageUrl"),
-                params.get("contentUrl")
-            );
 
             if (adId) {
                 elements.adId.value = cleanText(adId, REPORT_CONFIG.MAX_ID_LENGTH);
             }
 
             elements.source.value = cleanText(source, REPORT_CONFIG.MAX_SOURCE_LENGTH) || "manual";
-
-            if (contentUrl) {
-                elements.contentUrl.value = cleanUrl(contentUrl, REPORT_CONFIG.MAX_URL_LENGTH);
-            }
         }
 
         function attachEvents() {
             elements.form.addEventListener("submit", handleSubmit);
 
-            [elements.adId, elements.source, elements.category, elements.reporterName, elements.reporterEmail, elements.contentUrl, elements.description].forEach((element) => {
+            [elements.adId, elements.source, elements.category, elements.description].forEach((element) => {
                 element.addEventListener("input", clearStatus);
                 element.addEventListener("change", clearStatus);
             });
@@ -691,23 +743,66 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
         }
 
         function watchAuthState() {
+            updateAuthLinks();
+
             onAuthStateChanged(auth, (user) => {
                 state.currentUser = user || null;
 
-                if (user?.email && !elements.reporterEmail.value.trim()) {
+                if (user?.email) {
                     elements.reporterEmail.value = cleanEmail(user.email);
+                } else {
+                    elements.reporterEmail.value = "";
                 }
 
-                if (user?.displayName && !elements.reporterName.value.trim()) {
-                    elements.reporterName.value = cleanText(user.displayName, REPORT_CONFIG.MAX_NAME_LENGTH);
-                }
+                updateReportAccess();
             });
+        }
+
+        function updateAuthLinks() {
+            const currentUrl = window.location.href;
+            const redirect = encodeURIComponent(currentUrl);
+
+            if (elements.loginLink) {
+                elements.loginLink.href = `login.html?redirect=${redirect}`;
+            }
+
+            if (elements.signupLink) {
+                elements.signupLink.href = `signup.html?redirect=${redirect}`;
+            }
+        }
+
+        function updateReportAccess() {
+            const isLoggedIn = Boolean(state.currentUser);
+
+            elements.form.classList.toggle("locked", !isLoggedIn);
+            elements.submitBtn.disabled = !isLoggedIn || state.isSubmitting;
+
+            if (!elements.authGate) return;
+
+            elements.authGate.classList.toggle("success", isLoggedIn);
+            elements.authGate.classList.toggle("error", !isLoggedIn);
+
+            if (isLoggedIn) {
+                elements.authGateTitle.textContent = "Inloggad rapportering";
+                elements.authGateText.textContent = `Rapporten skickas från kontot ${state.currentUser.email || "inloggad användare"}. VORQ Fordon kan svara internt via kontot och hantera ärendet i adminpanelen.`;
+                elements.authGateActions.style.display = "none";
+            } else {
+                elements.authGateTitle.textContent = "Inloggning krävs";
+                elements.authGateText.textContent = "Du måste logga in eller skapa konto innan du kan skicka en rapport. Detta minskar falska rapporter och gör att VORQ Fordon kan följa upp beslut internt.";
+                elements.authGateActions.style.display = "flex";
+            }
         }
 
         async function handleSubmit(event) {
             event.preventDefault();
 
             if (state.isSubmitting) {
+                return;
+            }
+
+            if (!state.currentUser) {
+                showStatus("Du måste vara inloggad för att skicka rapport. Logga in och försök igen.", "error");
+                updateReportAccess();
                 return;
             }
 
@@ -724,14 +819,21 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
 
             try {
                 const docRef = await addDoc(collection(db, REPORT_CONFIG.COLLECTION), payload);
+                const currentAdId = payload.adId;
+                const currentSource = payload.source;
                 elements.form.reset();
-                elements.source.value = "manual";
+                elements.adId.value = currentAdId;
+                elements.source.value = currentSource || "manual";
+                if (state.currentUser?.email) {
+                    elements.reporterEmail.value = cleanEmail(state.currentUser.email);
+                }
+                updateReportAccess();
 
-                const successMessage = `Tack. Rapporten har sparats. Referens: ${docRef.id}`;
+                const successMessage = `Tack. Rapporten har sparats och kopplats till ditt konto. Referens: ${docRef.id}`;
                 showStatus(successMessage, "success");
             } catch (error) {
                 console.error("[VORQ Fordon] Could not submit report", error);
-                showStatus(getReadableSubmitError(error), "error");
+                showStatus(getReportSubmitErrorMessage(error), "error");
             } finally {
                 setSubmitting(false);
             }
@@ -741,45 +843,49 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
             const adId = cleanText(elements.adId.value, REPORT_CONFIG.MAX_ID_LENGTH);
             const source = cleanText(elements.source.value, REPORT_CONFIG.MAX_SOURCE_LENGTH) || "manual";
             const category = cleanText(elements.category.value, 80);
-            const reporterName = cleanText(elements.reporterName.value, REPORT_CONFIG.MAX_NAME_LENGTH);
             const reporterEmail = cleanEmail(elements.reporterEmail.value);
-            const contentUrl = cleanUrl(elements.contentUrl.value, REPORT_CONFIG.MAX_URL_LENGTH);
             const description = cleanLongText(elements.description.value, REPORT_CONFIG.MAX_DESCRIPTION_LENGTH);
             const user = state.currentUser;
 
-            /*
-             * Keep the report payload intentionally small and stable.
-             * Firestore Rules are strict, so every field below must be allowed there.
-             */
             return removeEmptyFields({
                 adId,
                 annonsnummer: adId,
-                carId: adId,
                 source,
                 category,
                 description,
-                reporterName,
-                reporterEmail,
+                reporterEmail: cleanEmail(user?.email || reporterEmail),
+                reporterUid: user?.uid || null,
                 reporterId: user?.uid || null,
-                reporterUserEmail: user?.email || null,
-                status: "received",
+                reporterUserEmail: cleanEmail(user?.email || reporterEmail),
+                reporterName: cleanText(user?.displayName || "", 120),
+                accountRequired: true,
+                internalReplyPreferred: true,
+                status: "new",
                 priority: category === "illegal_content" || category === "suspected_fraud" ? "high" : "normal",
                 platform: "VORQ Fordon",
                 operator: "VORQ Digital, Inhaber: Haitham Kojar",
                 marketCountry: "SE",
                 language: "sv",
-                url: contentUrl,
-                pageUrl: window.location.href,
                 goodFaithConfirmed: Boolean(elements.goodFaith.checked),
                 privacyAccepted: Boolean(elements.privacyAccepted.checked),
                 privacyVersion: REPORT_CONFIG.PRIVACY_VERSION,
                 noticeActionVersion: REPORT_CONFIG.TERMS_VERSION,
+                pageUrl: window.location.href,
+                userAgent: navigator.userAgent || "",
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
             });
         }
 
         function validatePayload(payload) {
+            if (!state.currentUser || !payload.reporterUid) {
+                return "Du måste vara inloggad för att skicka rapport.";
+            }
+
+            if (!payload.reporterUserEmail || !isValidEmail(payload.reporterUserEmail)) {
+                return "Det inloggade kontot saknar giltig e-postadress.";
+            }
+
             if (!payload.adId) {
                 return "Ange annonsnummer innan du skickar rapporten.";
             }
@@ -788,20 +894,12 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
                 return "Välj typ av rapport.";
             }
 
-            if (!payload.reporterName) {
-                return "Ange ditt namn innan du skickar rapporten.";
-            }
-
-            if (!payload.reporterEmail || !isValidEmail(payload.reporterEmail)) {
-                return "Ange en giltig e-postadress innan du skickar rapporten.";
-            }
-
-            if (payload.url && !isValidHttpUrl(payload.url)) {
-                return "Länken till annonsen eller innehållet verkar inte vara giltig.";
-            }
-
             if (!payload.description || payload.description.length < REPORT_CONFIG.MIN_DESCRIPTION_LENGTH) {
                 return `Beskrivningen måste vara minst ${REPORT_CONFIG.MIN_DESCRIPTION_LENGTH} tecken.`;
+            }
+
+            if (payload.reporterEmail && !isValidEmail(payload.reporterEmail)) {
+                return "E-postadressen verkar inte vara giltig.";
             }
 
             if (!payload.goodFaithConfirmed) {
@@ -815,24 +913,23 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
             return "";
         }
 
-        function getReadableSubmitError(error) {
-            const code = String(error?.code || "").toLowerCase();
-            const message = String(error?.message || "").toLowerCase();
+        function getReportSubmitErrorMessage(error) {
+            const code = error?.code || "";
 
-            if (code.includes("permission-denied") || message.includes("permission-denied") || message.includes("insufficient permissions")) {
-                return "Rapporten stoppades av Firestore-reglerna. Publicera den nya firestore.rules.txt i Firebase Console → Firestore Database → Rules → Publish och försök igen. Teknisk kod: permission-denied.";
+            if (code === "permission-denied") {
+                return "Rapporten nekades av Firestore-reglerna. Kontrollera att du är inloggad och att de nya reglerna för inloggad rapportering är publicerade.";
             }
 
-            if (code.includes("unavailable") || code.includes("network") || message.includes("network")) {
-                return "Rapporten kunde inte skickas på grund av nätverksproblem. Kontrollera internetanslutningen och försök igen, eller kontakta info@vq-dx.com.";
+            if (code === "unauthenticated") {
+                return "Du måste vara inloggad för att skicka rapport.";
             }
 
-            return `Rapporten kunde inte skickas just nu. Kontakta info@vq-dx.com. Teknisk kod: ${error?.code || "okänd"}.`;
+            return "Rapporten kunde inte skickas just nu. Kontrollera internetanslutningen och försök igen, eller kontakta info@vq-dx.com.";
         }
 
         function setSubmitting(isSubmitting) {
             state.isSubmitting = isSubmitting;
-            elements.submitBtn.disabled = isSubmitting;
+            elements.submitBtn.disabled = isSubmitting || !state.currentUser;
             elements.submitBtn.textContent = isSubmitting ? "Skickar..." : "Skicka rapport";
 
             if (!isSubmitting) {
@@ -888,23 +985,8 @@ Change note: Hotfix for report submission; aligns payload with Firestore rules a
                 .slice(0, REPORT_CONFIG.MAX_EMAIL_LENGTH);
         }
 
-        function cleanUrl(value, maxLength) {
-            return String(value ?? "")
-                .trim()
-                .slice(0, maxLength);
-        }
-
         function isValidEmail(value) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || ""));
-        }
-
-        function isValidHttpUrl(value) {
-            try {
-                const url = new URL(String(value || ""));
-                return url.protocol === "https:" || url.protocol === "http:";
-            } catch (error) {
-                return false;
-            }
         }
 
         function removeEmptyFields(object) {
