@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <!--
-VORQ-FORDON-FILE-VERSION
-File: my-account.html
-Project: VORQ Fordon
-Version: 2026-06-06-delete-fix-v1
-Last reviewed/updated: 2026-06-06 21:35 Europe/Berlin
-Status: Updated
-Change note: Makes ad deletion reliable by deleting the owner car document first and running related cleanup as best-effort only.
+  File: my-account.html
+  Project: VORQ Fordon
+  File version: vorq-fordon-my-account-delete-cascade-2026-06-07
+  Last reviewed/updated: 2026-06-07 15:55 Europe/Berlin
+  Status: Deletes ad with related images, favorites, chats and chat messages.
+  Change note: Deleting an ad now searches related chats/favorites by carId, adId and annonsnummer; deletes subcollection messages first; removes Firebase Storage images from stored paths and download URLs.
 -->
 <html lang="sv">
 <head>
@@ -165,6 +164,7 @@ Change note: Makes ad deletion reliable by deleting the owner car document first
             CARS: 'cars',
             FAVORITES: 'favorites',
             CHATS: 'chats',
+            MESSAGES: 'messages',
             USERS: 'users'
         },
         LIMITS: {
@@ -779,8 +779,8 @@ Change note: Makes ad deletion reliable by deleting the owner car document first
         }
 
         await deleteUserCars(safeUid);
-        await runBestEffortCleanup('delete user favorites', () => deleteUserFavorites(safeUid));
-        await runBestEffortCleanup('delete user chats', () => deleteUserChats(safeUid));
+        await deleteUserFavorites(safeUid);
+        await deleteUserChats(safeUid);
         await safeDeleteDoc(CONFIG.COLLECTIONS.USERS, safeUid);
     }
 
@@ -817,45 +817,35 @@ Change note: Makes ad deletion reliable by deleting the owner car document first
             throw new Error('Du kan bara radera dina egna annonser.');
         }
 
-        await deleteDoc(doc(db, CONFIG.COLLECTIONS.CARS, safeCarId));
+        const identifiers = buildAdIdentifierSet(safeCarId, carData);
 
         /*
-         * The ad document is the critical item. Related chats and favorites may
-         * belong to other users, and Firestore rules intentionally do not allow
-         * this page to delete data owned by other accounts. Run cleanup after the
-         * ad is removed and never let cleanup block the user's own deletion.
+         * Deletion order matters:
+         * 1) Storage images first, while the ad still contains image paths.
+         * 2) Chats/messages and favorites next.
+         * 3) Car document last, so we do not leave orphaned data after a partial delete.
          */
-        await runBestEffortCleanup('delete storage images', () => deleteCarImagesFromStorage(carData));
-        await runBestEffortCleanup('delete chats linked to car', () => deleteChatsByCarId(safeCarId));
-        await runBestEffortCleanup('delete favorites linked to car', () => deleteFavoritesByCarId(safeCarId));
+        await deleteCarImagesFromStorage(carData, identifiers);
+        await deleteChatsByCarIdentifiers(identifiers);
+        await deleteTopLevelMessagesByCarIdentifiers(identifiers);
+        await deleteFavoritesByCarIdentifiers(identifiers);
+        await deleteDoc(doc(db, CONFIG.COLLECTIONS.CARS, safeCarId));
     }
 
-    async function runBestEffortCleanup(label, task) {
-        try {
-            await task();
-        } catch (error) {
-            console.warn(`[VORQ Fordon] Optional cleanup failed: ${label}`, error);
-        }
-    }
-
-    async function deleteCarImagesFromStorage(carData) {
+    async function deleteCarImagesFromStorage(carData, identifiers = new Set()) {
         const imagePaths = new Set();
 
-        if (Array.isArray(carData?.imageFiles)) {
-            carData.imageFiles.forEach((image) => {
-                const path = normalizeStoragePath(image?.path);
-                if (path) {
-                    imagePaths.add(path);
-                }
-            });
-        }
+        collectImageStoragePaths(carData, imagePaths);
 
-        if (Array.isArray(carData?.imagesPaths)) {
-            carData.imagesPaths.forEach((path) => {
-                const normalizedPath = normalizeStoragePath(path);
-                if (normalizedPath) {
-                    imagePaths.add(normalizedPath);
-                }
+        /*
+         * Backward-compatible fallback for very old documents:
+         * if image paths were not stored but the folder structure is known,
+         * the individual files cannot be listed from the browser safely.
+         * Therefore this function deletes every path/url already stored in the ad document.
+         */
+        if (!imagePaths.size) {
+            console.warn('[VORQ Fordon] No stored image paths found for ad. Storage cleanup may need Firebase Console if old documents stored only public URLs without paths.', {
+                identifiers: Array.from(identifiers)
             });
         }
 
@@ -863,17 +853,120 @@ Change note: Makes ad deletion reliable by deleting the owner car document first
             try {
                 await deleteObject(ref(storage, imagePath));
             } catch (error) {
+                /*
+                 * Do not stop the entire ad deletion if one image is already missing.
+                 * Permission errors should still be visible in the console and are usually fixed by Storage rules.
+                 */
                 console.warn('Could not delete storage image:', imagePath, error);
             }
         }
     }
 
-    async function deleteChatsByCarId(carId) {
-        const chatsQuery = query(collection(db, CONFIG.COLLECTIONS.CHATS), where('carId', '==', carId));
-        const chatsSnapshot = await getDocs(chatsQuery);
+    function collectImageStoragePaths(carData, imagePaths) {
+        const possibleArrays = [
+            carData?.imageFiles,
+            carData?.imagesPaths,
+            carData?.imagePaths,
+            carData?.images,
+            carData?.photos,
+            carData?.photoFiles
+        ];
 
-        for (const chatDoc of chatsSnapshot.docs) {
-            await deleteChatWithMessages(chatDoc.id);
+        possibleArrays.forEach((items) => {
+            if (!Array.isArray(items)) {
+                return;
+            }
+
+            items.forEach((item) => {
+                if (typeof item === 'string') {
+                    addImagePathCandidate(item, imagePaths);
+                    return;
+                }
+
+                if (item && typeof item === 'object') {
+                    [
+                        item.path,
+                        item.fullPath,
+                        item.storagePath,
+                        item.name,
+                        item.url,
+                        item.downloadURL
+                    ].forEach((candidate) => addImagePathCandidate(candidate, imagePaths));
+                }
+            });
+        });
+
+        [
+            carData?.mainImagePath,
+            carData?.mainImageStoragePath,
+            carData?.mainImage,
+            carData?.image,
+            carData?.photo
+        ].forEach((candidate) => addImagePathCandidate(candidate, imagePaths));
+    }
+
+    function addImagePathCandidate(value, imagePaths) {
+        const directPath = normalizeStoragePath(value);
+        if (directPath) {
+            imagePaths.add(directPath);
+            return;
+        }
+
+        const pathFromDownloadUrl = extractStoragePathFromDownloadUrl(value);
+        if (pathFromDownloadUrl) {
+            imagePaths.add(pathFromDownloadUrl);
+        }
+    }
+
+    async function deleteChatsByCarIdentifiers(identifiers) {
+        const chatIds = new Set();
+
+        for (const identifier of identifiers) {
+            const chatQueries = [
+                query(collection(db, CONFIG.COLLECTIONS.CHATS), where('carId', '==', identifier)),
+                query(collection(db, CONFIG.COLLECTIONS.CHATS), where('adId', '==', identifier)),
+                query(collection(db, CONFIG.COLLECTIONS.CHATS), where('annonsnummer', '==', identifier))
+            ];
+
+            for (const chatQuery of chatQueries) {
+                try {
+                    const chatsSnapshot = await getDocs(chatQuery);
+                    chatsSnapshot.forEach((chatDoc) => chatIds.add(chatDoc.id));
+                } catch (error) {
+                    console.warn('Could not fetch chats for ad identifier:', identifier, error);
+                }
+            }
+        }
+
+        /*
+         * Fallback: older chat documents may have incomplete ad fields.
+         * Query seller chats and filter client-side by any known ad identity.
+         */
+        if (state.user?.uid) {
+            try {
+                const sellerChatsSnapshot = await getDocs(
+                    query(collection(db, CONFIG.COLLECTIONS.CHATS), where('sellerId', '==', state.user.uid))
+                );
+
+                sellerChatsSnapshot.forEach((chatDoc) => {
+                    const data = chatDoc.data();
+                    const values = [
+                        normalizeDocumentId(data?.carId),
+                        normalizeDocumentId(data?.adId),
+                        normalizeDocumentId(data?.annonsnummer)
+                    ];
+
+                    if (values.some((value) => value && identifiers.has(value))) {
+                        chatIds.add(chatDoc.id);
+                    }
+                });
+            } catch (error) {
+                console.warn('Could not fetch seller chats during ad deletion:', error);
+            }
+        }
+
+        for (const chatId of chatIds) {
+            await deleteChatWithMessages(chatId);
         }
     }
 
@@ -936,10 +1029,54 @@ Change note: Makes ad deletion reliable by deleting the owner car document first
         await deleteSnapshotInBatches(favoritesSnapshot);
     }
 
-    async function deleteFavoritesByCarId(carId) {
-        const favoritesQuery = query(collection(db, CONFIG.COLLECTIONS.FAVORITES), where('carId', '==', carId));
-        const favoritesSnapshot = await getDocs(favoritesQuery);
-        await deleteSnapshotInBatches(favoritesSnapshot);
+    async function deleteFavoritesByCarIdentifiers(identifiers) {
+        const favoriteRefs = new Map();
+
+        for (const identifier of identifiers) {
+            const favoriteQueries = [
+                query(collection(db, CONFIG.COLLECTIONS.FAVORITES), where('carId', '==', identifier)),
+                query(collection(db, CONFIG.COLLECTIONS.FAVORITES), where('adId', '==', identifier)),
+                query(collection(db, CONFIG.COLLECTIONS.FAVORITES), where('annonsnummer', '==', identifier))
+            ];
+
+            for (const favoriteQuery of favoriteQueries) {
+                try {
+                    const favoritesSnapshot = await getDocs(favoriteQuery);
+                    favoritesSnapshot.docs.forEach((favoriteDoc) => favoriteRefs.set(favoriteDoc.id, favoriteDoc.ref));
+                } catch (error) {
+                    console.warn('Could not fetch favorites for ad identifier:', identifier, error);
+                }
+            }
+        }
+
+        await deleteDocumentRefsInBatches(Array.from(favoriteRefs.values()));
+    }
+
+    async function deleteTopLevelMessagesByCarIdentifiers(identifiers) {
+        const messageRefs = new Map();
+
+        for (const identifier of identifiers) {
+            const messageQueries = [
+                query(collection(db, CONFIG.COLLECTIONS.MESSAGES), where('carId', '==', identifier)),
+                query(collection(db, CONFIG.COLLECTIONS.MESSAGES), where('adId', '==', identifier)),
+                query(collection(db, CONFIG.COLLECTIONS.MESSAGES), where('annonsnummer', '==', identifier))
+            ];
+
+            for (const messageQuery of messageQueries) {
+                try {
+                    const messagesSnapshot = await getDocs(messageQuery);
+                    messagesSnapshot.docs.forEach((messageDoc) => messageRefs.set(messageDoc.id, messageDoc.ref));
+                } catch (error) {
+                    /*
+                     * The project mainly uses chats/{chatId}/messages.
+                     * Top-level messages are optional legacy data, so failing this query should not block deletion.
+                     */
+                    console.warn('Could not fetch top-level messages for ad identifier:', identifier, error);
+                }
+            }
+        }
+
+        await deleteDocumentRefsInBatches(Array.from(messageRefs.values()));
     }
 
     async function deleteSnapshotInBatches(snapshot) {
@@ -948,6 +1085,26 @@ Change note: Makes ad deletion reliable by deleting the owner car document first
 
         for (const documentSnapshot of snapshot.docs) {
             batch.delete(documentSnapshot.ref);
+            operationCount += 1;
+
+            if (operationCount >= CONFIG.LIMITS.BATCH_LIMIT) {
+                await batch.commit();
+                batch = writeBatch(db);
+                operationCount = 0;
+            }
+        }
+
+        if (operationCount > 0) {
+            await batch.commit();
+        }
+    }
+
+    async function deleteDocumentRefsInBatches(documentRefs) {
+        let batch = writeBatch(db);
+        let operationCount = 0;
+
+        for (const documentRef of documentRefs) {
+            batch.delete(documentRef);
             operationCount += 1;
 
             if (operationCount >= CONFIG.LIMITS.BATCH_LIMIT) {
@@ -1073,6 +1230,49 @@ Change note: Makes ad deletion reliable by deleting the owner car document first
         }
 
         return normalized;
+    }
+
+    function buildAdIdentifierSet(carId, carData) {
+        const identifiers = new Set();
+
+        [
+            carId,
+            carData?.adId,
+            carData?.annonsnummer,
+            carData?.carId,
+            carData?.id
+        ].forEach((value) => {
+            const normalized = normalizeDocumentId(value);
+            if (normalized) {
+                identifiers.add(normalized);
+            }
+        });
+
+        return identifiers;
+    }
+
+    function extractStoragePathFromDownloadUrl(value) {
+        const url = normalizeText(value);
+
+        if (!url || !url.includes('/o/')) {
+            return '';
+        }
+
+        try {
+            const parsedUrl = new URL(url);
+            const marker = '/o/';
+            const markerIndex = parsedUrl.pathname.indexOf(marker);
+
+            if (markerIndex === -1) {
+                return '';
+            }
+
+            const encodedPath = parsedUrl.pathname.slice(markerIndex + marker.length);
+            const decodedPath = decodeURIComponent(encodedPath);
+            return normalizeStoragePath(decodedPath);
+        } catch (error) {
+            return '';
+        }
     }
 
     function normalizeStoragePath(value) {
