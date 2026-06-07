@@ -1,9 +1,9 @@
 /* 
   File: service-worker.js
   Project: VORQ Fordon
-  File version: vorq-fordon-pwa-v21-20260607-delete-cascade-fix
-  Last reviewed/updated: 2026-06-07 15:55 Europe/Berlin
-  Status: Cache version bump after my-account delete cascade fix.
+  File version: vorq-fordon-pwa-v22-20260607-message-delivery-fix
+  Last reviewed/updated: 2026-06-07 16:18 Europe/Berlin
+  Status: Cache version bump after message delivery fix.
 */
 /* VORQ Fordon service worker
    Project operator in legal pages: VORQ Digital, Inhaber: Haitham Kojar.
@@ -12,7 +12,7 @@
 */
 
 const CACHE_PREFIX = "vorq-fordon-pwa-";
-const CACHE_NAME = `${CACHE_PREFIX}v21-20260607-delete-cascade-fix`;
+const CACHE_NAME = `${CACHE_PREFIX}v22-20260607-message-delivery-fix`;
 
 const APP_SHELL = [
   "./",

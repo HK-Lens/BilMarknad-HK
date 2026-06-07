@@ -2,10 +2,10 @@
 <!--
   File: messages.html
   Project: VORQ Fordon
-  File version: vorq-fordon-messages-stable-load-fix-2026-06-07
-  Last reviewed/updated: 2026-06-07 15:32 Europe/Berlin
-  Status: Stable message list loading; prevents loaded conversations from being replaced by retry/loading state.
-  Change note: Removed aggressive pageshow/visibility re-subscribe, made refresh non-destructive, and keeps existing conversations visible if a refresh attempt is slow or fails.
+  File version: vorq-fordon-messages-delivery-fix-2026-06-07
+  Last reviewed/updated: 2026-06-07 16:18 Europe/Berlin
+  Status: Fixes message delivery visibility for the other participant.
+  Change note: Sending a message now updates parent chat metadata, restores the chat from hiddenFor for all participants, keeps participant IDs synchronized, and stores ad identity on each message.
 -->
 <html lang="sv">
 <head>
@@ -751,30 +751,52 @@
             }
 
             const receiverIds = getMessageReceiverIds(roomData);
+            const participantIds = uniqueArray([
+                ...getRoomParticipantIds(roomData),
+                state.user.uid,
+                ...receiverIds
+            ]);
+            const adId = getRoomAnnonsnummer(roomData) || roomData.carId || "";
 
             await addDoc(collection(db, `chats/${state.activeRoomId}/messages`), {
                 senderId: state.user.uid,
                 senderEmail: state.user.email || "",
                 senderName: state.user.displayName || getNameFromEmail(state.user.email) || "Användare",
                 text,
+                carId: roomData.carId || "",
+                adId: roomData.adId || adId || "",
+                annonsnummer: roomData.annonsnummer || adId || "",
                 createdAt: serverTimestamp()
             });
 
             /*
-             * The message is the critical write. Updating the chat preview is useful,
-             * but some Firestore Rules allow message creation while limiting parent
-             * chat updates. Do not tell the user that the message failed if only the
-             * preview/update metadata is rejected.
+             * Delivery visibility depends on the parent chat document.
+             * The receiver's message list listens to chats where their UID exists in participants.
+             * If the receiver previously removed/hidden the chat, hiddenFor must be cleared when a new message is sent.
              */
+            const chatUpdatePayload = {
+                lastMessage: text,
+                lastSenderId: state.user.uid,
+                unreadBy: receiverIds,
+                updatedAt: serverTimestamp()
+            };
+
+            if (participantIds.length > 0) {
+                chatUpdatePayload.participants = arrayUnion(...participantIds);
+                chatUpdatePayload.hiddenFor = arrayRemove(...participantIds);
+            }
+
             try {
-                await updateDoc(roomRef, {
-                    lastMessage: text,
-                    lastSenderId: state.user.uid,
-                    unreadBy: receiverIds,
-                    updatedAt: serverTimestamp()
-                });
+                await updateDoc(roomRef, chatUpdatePayload);
             } catch (previewUpdateError) {
-                console.warn("Message was sent, but chat preview could not be updated:", previewUpdateError);
+                console.error("Message was saved, but parent chat metadata could not be updated:", previewUpdateError);
+
+                await Swal.fire({
+                    icon: "warning",
+                    title: "Meddelandet sparades",
+                    text: "Meddelandet finns i chatten, men konversationen kunde inte uppdateras för mottagarens lista. Kontrollera Firestore-reglerna om mottagaren inte ser chatten.",
+                    confirmButtonColor: "#f58220"
+                });
             }
 
             elements.msgInput.value = "";
