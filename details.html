@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<!--
+  File: details.html
+  Project: VORQ Fordon
+  File version: vorq-fordon-details-message-seller-fallback-2026-06-07
+  Last reviewed/updated: 2026-06-07 20:25 Europe/Berlin
+  Status: Message button seller identity fallback fix.
+  Change note: Contact seller flow now recognizes seller owner aliases from the ad document so messages can open when older/new ads store ownerId/userId/createdBy instead of only sellerId.
+-->
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
@@ -461,7 +469,7 @@
             await showElegantAlert({
                 type: "warning",
                 title: "Annonsen behöver publiceras igen",
-                message: "Den här annonsen saknar rätt sellerId för nya chattsystemet. Publicera en ny annons via Sälj bil."
+                message: "Den här annonsen saknar säljarkoppling för chattsystemet. Kontrollera att annonsen publicerades från ett inloggat konto."
             });
             return;
         }
@@ -510,7 +518,16 @@
 
     function getSellerIdFromCar(car) {
         if (!car) return '';
-        return cleanId(car.sellerId);
+
+        return cleanId(
+            car.sellerId
+            || car.ownerId
+            || car.userId
+            || car.uid
+            || car.createdBy
+            || car.createdById
+            || car.termsAcceptedBy
+        );
     }
 
     function galleryAnchor(src, className = '', alt = 'Fordonsbild') {

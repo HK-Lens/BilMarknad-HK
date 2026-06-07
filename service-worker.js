@@ -1,9 +1,9 @@
 /* 
   File: service-worker.js
   Project: VORQ Fordon
-  File version: vorq-fordon-pwa-v25-20260607-final-message-delivery
-  Last reviewed/updated: 2026-06-07 17:22 Europe/Berlin
-  Status: Cache version bump after final message delivery fix.
+  File version: vorq-fordon-pwa-v26-20260607-full-project-message-dashboard-fix
+  Last reviewed/updated: 2026-06-07 20:25 Europe/Berlin
+  Status: Cache version bump after full-project message/dashboard/detail fix.
 */
 /* VORQ Fordon service worker
    Project operator in legal pages: VORQ Digital, Inhaber: Haitham Kojar.
@@ -12,7 +12,7 @@
 */
 
 const CACHE_PREFIX = "vorq-fordon-pwa-";
-const CACHE_NAME = `${CACHE_PREFIX}v25-20260607-final-message-delivery`;
+const CACHE_NAME = `${CACHE_PREFIX}v26-20260607-full-project-message-dashboard-fix`;
 
 const APP_SHELL = [
   "./",
