@@ -2,10 +2,10 @@
 <!--
   File: messages.html
   Project: VORQ Fordon
-  File version: vorq-fordon-messages-final-delivery-fix-2026-06-07
-  Last reviewed/updated: 2026-06-07 17:22 Europe/Berlin
-  Status: Final delivery fix: seller receives chats through sellerId + participants and parent chat updates are mandatory.
-  Change note: Chat list now loads via participants, buyerId and sellerId queries; sending message updates the parent chat in the same batch so the seller's inbox receives the conversation.
+  File version: vorq-fordon-messages-delivery-hotfix-2026-06-07-1746-Europe-Berlin
+  Last reviewed/updated: 2026-06-07 17:46 Europe/Berlin
+  Status: Hotfix: messaging script restored and seller identity fallback improved.
+  Change note: Fixed broken JavaScript function declaration that stopped messages.html from running; added safe sellerId fallback aliases from the car document so messages can reach the advertiser when ads store ownerId/userId/createdBy instead of sellerId.
 -->
 <html lang="sv">
 <head>
@@ -387,7 +387,7 @@
             || room.sellerId === state.user.uid;
     }
 
-    function clearRoomRetryTimer()    function clearRoomRetryTimer() {
+    function clearRoomRetryTimer() {
         if (state.roomRetryTimer) {
             clearTimeout(state.roomRetryTimer);
             state.roomRetryTimer = null;
@@ -483,8 +483,8 @@
         const roomId = directRoomId || buildRoomId({ buyerId, sellerId, carId });
         const carTitle = rawTitle || buildCarTitle(carData) || "Bilannons";
         const annonsnummer = getCarAnnonsnummer(carData, carId);
-        const sellerName = sellerNameFromURL || cleanText(carData?.sellerName) || "Säljare";
-        const sellerEmail = sellerEmailFromURL || cleanText(carData?.sellerEmail || "");
+        const sellerName = sellerNameFromURL || getSellerNameFromCar(carData) || "Säljare";
+        const sellerEmail = sellerEmailFromURL || getSellerEmailFromCar(carData);
         const buyerName = state.user.displayName || getNameFromEmail(state.user.email) || "Köpare";
         const buyerEmail = state.user.email || "";
         const roomRef = doc(db, "chats", roomId);
@@ -1245,7 +1245,47 @@
             return "";
         }
 
-        return sanitizeId(carData.sellerId);
+        return sanitizeId(
+            carData.sellerId
+            || carData.ownerId
+            || carData.userId
+            || carData.uid
+            || carData.createdBy
+            || carData.createdById
+            || carData.termsAcceptedBy
+            || ""
+        );
+    }
+
+    function getSellerNameFromCar(carData) {
+        if (!carData) {
+            return "";
+        }
+
+        return cleanText(
+            carData.sellerName
+            || carData.ownerName
+            || carData.userName
+            || carData.createdByName
+            || carData.contactName
+            || ""
+        );
+    }
+
+    function getSellerEmailFromCar(carData) {
+        if (!carData) {
+            return "";
+        }
+
+        return cleanText(
+            carData.sellerEmail
+            || carData.ownerEmail
+            || carData.userEmail
+            || carData.createdByEmail
+            || carData.termsAcceptedEmail
+            || carData.contactEmail
+            || ""
+        );
     }
 
     function buildCarTitle(carData) {
